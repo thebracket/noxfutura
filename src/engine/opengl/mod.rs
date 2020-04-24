@@ -127,6 +127,9 @@ pub fn main_loop() {
                             "Mouse Position: ({:.1},{:.1})",
                             mouse_pos[0], mouse_pos[1]
                         ));
+                        if ui.button(im_str!("Button"), [50.0, 20.0]) {
+                            println!("Clicked button");
+                        }
                     });
 
                 platform.prepare_render(&ui, windowed_context.window());
