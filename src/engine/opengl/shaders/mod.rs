@@ -1,4 +1,3 @@
-use super::support::gl::*;
 use super::Shader;
 
 const VS_SRC: &str = "
@@ -22,6 +21,6 @@ void main() {
 }
 \0";
 
-pub fn load(gl: &Gl) -> Shader {
-    Shader::new(gl, VS_SRC, FS_SRC)
+pub fn load() -> Shader {
+    Shader::new(VS_SRC, FS_SRC)
 }

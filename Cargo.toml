@@ -6,10 +6,14 @@ edition = "2018"
 build = "build.rs"
 
 [dependencies]
-glutin = "0.24.0"
+glutin = "0.23.0"
 takeable-option = "0.4"
 image = "0.21"
 ultraviolet = "0.4.5"
+imgui = "0.3.0"
+imgui-winit-support = { version = "0.3.1", default-features = false, features = ["winit-20"] }
+parking_lot = "0.10.2"
+lazy_static = "1.4.0"
 
 [build-dependencies]
 gl_generator = "0.14.0"

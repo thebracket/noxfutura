@@ -1,5 +1,6 @@
 use super::support::gl::*;
 use super::support::gl::types::*;
+use super::GL;
 use std::ptr;
 use std::str;
 
@@ -8,7 +9,9 @@ pub struct Shader {
 }
 
 impl Shader {
-    pub fn new(gl: &Gl, vertex_code: &str, fragment_code: &str) -> Shader {
+    pub fn new(vertex_code: &str, fragment_code: &str) -> Shader {
+        let glock = GL.lock();
+        let gl = glock.gl.as_ref().unwrap();
         // 1. compile shaders from strings
         let shader;
         let mut success = i32::from(FALSE);
@@ -80,7 +83,9 @@ impl Shader {
         shader
     }
 
-    pub fn activate(&self, gl: &Gl) {
+    pub fn activate(&self) {
+        let glock = GL.lock();
+        let gl = glock.gl.as_ref().unwrap();
         unsafe {
             gl.UseProgram(self.id);
         }
