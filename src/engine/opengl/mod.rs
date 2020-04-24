@@ -1,4 +1,7 @@
-pub mod support;
+mod support;
+pub mod shader;
+mod shaders;
+pub use shader::Shader;
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
 use glutin::window::WindowBuilder;
@@ -19,6 +22,7 @@ pub fn main_loop() {
     );
 
     let gl = support::load(&windowed_context.context());
+    let shader = shaders::load(&gl.gl);
 
     el.run(move |event, _, control_flow| {
         //println!("{:?}", event);
@@ -36,6 +40,7 @@ pub fn main_loop() {
                 _ => (),
             },
             Event::RedrawRequested(_) => {
+                shader.activate(&gl.gl);
                 gl.draw_frame([1.0, 0.5, 0.7, 1.0]);
                 windowed_context.swap_buffers().unwrap();
             }

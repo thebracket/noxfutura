@@ -12,8 +12,7 @@ pub struct Gl {
 }
 
 pub fn load(gl_context: &glutin::Context<PossiblyCurrent>) -> Gl {
-    let gl =
-        gl::Gl::load_with(|ptr| gl_context.get_proc_address(ptr) as *const _);
+    let gl = gl::Gl::load_with(|ptr| gl_context.get_proc_address(ptr) as *const _);
 
     let version = unsafe {
         let data = CStr::from_ptr(gl.GetString(gl::VERSION) as *const _)
@@ -25,30 +24,6 @@ pub fn load(gl_context: &glutin::Context<PossiblyCurrent>) -> Gl {
     println!("OpenGL version {}", version);
 
     unsafe {
-        let vs = gl.CreateShader(gl::VERTEX_SHADER);
-        gl.ShaderSource(
-            vs,
-            1,
-            [VS_SRC.as_ptr() as *const _].as_ptr(),
-            std::ptr::null(),
-        );
-        gl.CompileShader(vs);
-
-        let fs = gl.CreateShader(gl::FRAGMENT_SHADER);
-        gl.ShaderSource(
-            fs,
-            1,
-            [FS_SRC.as_ptr() as *const _].as_ptr(),
-            std::ptr::null(),
-        );
-        gl.CompileShader(fs);
-
-        let program = gl.CreateProgram();
-        gl.AttachShader(program, vs);
-        gl.AttachShader(program, fs);
-        gl.LinkProgram(program);
-        gl.UseProgram(program);
-
         let mut vb = std::mem::zeroed();
         gl.GenBuffers(1, &mut vb);
         gl.BindBuffer(gl::ARRAY_BUFFER, vb);
@@ -66,12 +41,8 @@ pub fn load(gl_context: &glutin::Context<PossiblyCurrent>) -> Gl {
             gl.BindVertexArray(vao);
         }
 
-        let pos_attrib =
-            gl.GetAttribLocation(program, b"position\0".as_ptr() as *const _);
-        let color_attrib =
-            gl.GetAttribLocation(program, b"color\0".as_ptr() as *const _);
         gl.VertexAttribPointer(
-            pos_attrib as gl::types::GLuint,
+            0,
             2,
             gl::FLOAT,
             0,
@@ -79,15 +50,15 @@ pub fn load(gl_context: &glutin::Context<PossiblyCurrent>) -> Gl {
             std::ptr::null(),
         );
         gl.VertexAttribPointer(
-            color_attrib as gl::types::GLuint,
+            1,
             3,
             gl::FLOAT,
             0,
             5 * std::mem::size_of::<f32>() as gl::types::GLsizei,
             (2 * std::mem::size_of::<f32>()) as *const () as *const _,
         );
-        gl.EnableVertexAttribArray(pos_attrib as gl::types::GLuint);
-        gl.EnableVertexAttribArray(color_attrib as gl::types::GLuint);
+        gl.EnableVertexAttribArray(0);
+        gl.EnableVertexAttribArray(1);
     }
 
     Gl { gl }
@@ -110,23 +81,3 @@ static VERTEX_DATA: [f32; 15] = [
      0.5, -0.5,  0.0,  0.0,  1.0,
 ];
 
-const VS_SRC: &[u8] = b"
-#version 100
-precision mediump float;
-attribute vec2 position;
-attribute vec3 color;
-varying vec3 v_color;
-void main() {
-    gl_Position = vec4(position, 0.0, 1.0);
-    v_color = color;
-}
-\0";
-
-const FS_SRC: &[u8] = b"
-#version 100
-precision mediump float;
-varying vec3 v_color;
-void main() {
-    gl_FragColor = vec4(v_color, 1.0);
-}
-\0";

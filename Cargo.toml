@@ -9,6 +9,7 @@ build = "build.rs"
 glutin = "0.24.0"
 takeable-option = "0.4"
 image = "0.21"
+ultraviolet = "0.4.5"
 
 [build-dependencies]
 gl_generator = "0.14.0"
