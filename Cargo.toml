@@ -1,0 +1,14 @@
+[package]
+name = "noxfutura"
+version = "0.1.0"
+authors = ["Herbert Wolverson <herberticus@gmail.com>"]
+edition = "2018"
+build = "build.rs"
+
+[dependencies]
+glutin = "0.24.0"
+takeable-option = "0.4"
+image = "0.21"
+
+[build-dependencies]
+gl_generator = "0.14.0"
