@@ -8,7 +8,6 @@ edition = "2018"
 wgpu = { version = "0.5.0" }
 winit = { version = "0.21.0", features = ["web-sys"] }
 futures = "0.3"
-env_logger = "0.7"
 glsl-to-spirv = "0.1.7"
 imgui = "0.3.0"
 imgui-wgpu = "0.6.0"

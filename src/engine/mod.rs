@@ -7,6 +7,7 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
+mod shader;
 
 async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
     let size = window.inner_size();
@@ -32,6 +33,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         .await;
 
     // Newer shader
+    /*
     let vs_src = include_str!("../../resources/shaders/shader.vert");
     let fs_src = include_str!("../../resources/shaders/shader.frag");
     let vs_spirv = glsl_to_spirv::compile(vs_src, glsl_to_spirv::ShaderType::Vertex).unwrap();
@@ -40,6 +42,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let fs_data = wgpu::read_spirv(fs_spirv).unwrap();
     let vs_module = device.create_shader_module(&vs_data);
     let fs_module = device.create_shader_module(&fs_data);
+    */
+    let demo_shader = shader::Shader::from_source(&device, "resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         bind_group_layouts: &[],
@@ -48,11 +52,11 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         layout: &pipeline_layout,
         vertex_stage: wgpu::ProgrammableStageDescriptor {
-            module: &vs_module,
+            module: &demo_shader.vs_module,
             entry_point: "main",
         },
         fragment_stage: Some(wgpu::ProgrammableStageDescriptor {
-            module: &fs_module,
+            module: &demo_shader.fs_module,
             entry_point: "main",
         }),
         rasterization_state: Some(wgpu::RasterizationStateDescriptor {
@@ -226,7 +230,6 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 pub fn main_loop() {
     let event_loop = EventLoop::new();
     let window = winit::window::Window::new(&event_loop).unwrap();
-    env_logger::init();
     // Temporarily avoid srgb formats for the swapchain on the web
     futures::executor::block_on(run(event_loop, window, wgpu::TextureFormat::Bgra8UnormSrgb));
 }
