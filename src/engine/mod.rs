@@ -1,12 +1,12 @@
+use imgui::*;
+use imgui_wgpu::Renderer;
+use imgui_winit_support;
+use std::time::Instant;
 use winit::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
-use imgui::*;
-use imgui_wgpu::Renderer;
-use imgui_winit_support;
-use std::time::Instant;
 
 async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
     let size = window.inner_size();
@@ -111,13 +111,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         }),
     }]);
 
-    let mut renderer = Renderer::new(
-        &mut imgui,
-        &device,
-        &mut queue,
-        sc_desc.format,
-        None,
-    );
+    let mut renderer = Renderer::new(&mut imgui, &device, &mut queue, sc_desc.format, None);
 
     let mut last_frame = Instant::now();
 
@@ -148,8 +142,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                     .get_next_texture()
                     .expect("Timeout when acquiring next swap chain texture");
                 {
-                    let mut encoder =
-                        device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+                    let mut encoder = device
+                        .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
                     {
                         let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                             color_attachments: &[wgpu::RenderPassColorAttachmentDescriptor {
@@ -173,18 +167,11 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                     let delta_s = last_frame.elapsed();
                     last_frame = imgui.io_mut().update_delta_time(last_frame);
 
-                    /*let frame = match swap_chain.get_next_texture() {
-                        Ok(frame) => frame,
-                        Err(e) => {
-                            eprintln!("dropped frame: {:?}", e);
-                            return;
-                        }
-                    };*/
                     platform
                         .prepare_frame(imgui.io_mut(), &window)
                         .expect("Failed to prepare frame");
                     let ui = imgui.frame();
-    
+
                     {
                         let window = imgui::Window::new(im_str!("Hello world"));
                         window
@@ -200,7 +187,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                                     mouse_pos[1]
                                 ));
                             });
-    
+
                         let window = imgui::Window::new(im_str!("Hello too"));
                         window
                             .size([400.0, 200.0], Condition::FirstUseEver)
@@ -208,12 +195,11 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                             .build(&ui, || {
                                 ui.text(im_str!("Frametime: {:?}", delta_s));
                             });
-    
                     }
-    
-                    let mut encoder: wgpu::CommandEncoder =
-                        device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
-    
+
+                    let mut encoder: wgpu::CommandEncoder = device
+                        .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+
                     if last_cursor != Some(ui.mouse_cursor()) {
                         last_cursor = Some(ui.mouse_cursor());
                         platform.prepare_render(&ui, &window);
@@ -224,7 +210,6 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
                     queue.submit(&[encoder.finish()]);
                 }
-
 
                 //queue.submit(&[encoder.finish()]);
             }
