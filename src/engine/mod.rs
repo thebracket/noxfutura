@@ -8,6 +8,8 @@ use winit::{
     window::Window,
 };
 mod shader;
+mod vertex_buffer;
+use vertex_buffer::VertexBuffer;
 
 async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
     let size = window.inner_size();
@@ -32,18 +34,19 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         })
         .await;
 
-    // Newer shader
-    /*
-    let vs_src = include_str!("../../resources/shaders/shader.vert");
-    let fs_src = include_str!("../../resources/shaders/shader.frag");
-    let vs_spirv = glsl_to_spirv::compile(vs_src, glsl_to_spirv::ShaderType::Vertex).unwrap();
-    let fs_spirv = glsl_to_spirv::compile(fs_src, glsl_to_spirv::ShaderType::Fragment).unwrap();
-    let vs_data = wgpu::read_spirv(vs_spirv).unwrap();
-    let fs_data = wgpu::read_spirv(fs_spirv).unwrap();
-    let vs_module = device.create_shader_module(&vs_data);
-    let fs_module = device.create_shader_module(&fs_data);
-    */
     let demo_shader = shader::Shader::from_source(&device, "resources/shaders/shader.vert", "resources/shaders/shader.frag");
+
+    let mut vertex_buffer = VertexBuffer::<f32>::new(&[ 3, 3 ]);
+    vertex_buffer.add_slice(&[-0.0868241,  0.49240386,  0.0, 0.5, 0.0, 0.5]);
+    vertex_buffer.add_slice(&[-0.49513406, 0.06958647,  0.0, 0.5, 0.0, 0.5]);
+    vertex_buffer.add_slice(&[-0.21918549, -0.44939706, 0.0, 0.5, 0.0, 0.5]);
+    vertex_buffer.add_slice(&[0.35966998,  -0.3473291,  0.0, 0.5, 0.0, 0.5]);
+    vertex_buffer.add_slice(&[0.44147372,   0.2347359,  0.0, 0.5, 0.0, 0.5]);
+
+    let mut index_buffer = VertexBuffer::<u16>::new(&[1]);
+    index_buffer.add_slice(&[0, 1, 4]);
+    index_buffer.add_slice(&[1, 2, 4]);
+    index_buffer.add_slice(&[2, 3, 4]);
 
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         bind_group_layouts: &[],
@@ -76,12 +79,16 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         depth_stencil_state: None,
         vertex_state: wgpu::VertexStateDescriptor {
             index_format: wgpu::IndexFormat::Uint16,
-            vertex_buffers: &[],
+            vertex_buffers: &[
+                vertex_buffer.descriptor()
+            ],
         },
         sample_count: 1,
         sample_mask: !0,
         alpha_to_coverage_enabled: false,
     });
+    vertex_buffer.build(&device, wgpu::BufferUsage::VERTEX);
+    index_buffer.build(&device, wgpu::BufferUsage::INDEX);
 
     let mut sc_desc = wgpu::SwapChainDescriptor {
         usage: wgpu::TextureUsage::OUTPUT_ATTACHMENT,
@@ -155,12 +162,14 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                                 resolve_target: None,
                                 load_op: wgpu::LoadOp::Clear,
                                 store_op: wgpu::StoreOp::Store,
-                                clear_color: wgpu::Color::GREEN,
+                                clear_color: wgpu::Color::BLACK,
                             }],
                             depth_stencil_attachment: None,
                         });
                         rpass.set_pipeline(&render_pipeline);
-                        rpass.draw(0..3, 0..1);
+                        rpass.set_vertex_buffer(0, &vertex_buffer.buffer.as_ref().unwrap(), 0, 0);
+                        rpass.set_index_buffer(&index_buffer.buffer.as_ref().unwrap(), 0, 0);
+                        rpass.draw_indexed(0..index_buffer.len(), 0, 0..1);
                     }
 
                     queue.submit(&[encoder.finish()]);

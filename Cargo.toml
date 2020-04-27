@@ -12,3 +12,4 @@ glsl-to-spirv = "0.1.7"
 imgui = "0.3.0"
 imgui-wgpu = "0.6.0"
 imgui-winit-support = { version = "0.3", default-features = false, features = [ "winit-20" ] }
+bytemuck = "1.2.0"
