@@ -10,6 +10,7 @@ use winit::{
 mod shader;
 mod vertex_buffer;
 use vertex_buffer::VertexBuffer;
+mod texture;
 
 async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
     let size = window.inner_size();

@@ -13,3 +13,5 @@ imgui = "0.3.0"
 imgui-wgpu = "0.6.0"
 imgui-winit-support = { version = "0.3", default-features = false, features = [ "winit-20" ] }
 bytemuck = "1.2.0"
+image = "0.22"
+failure = "0.1"
