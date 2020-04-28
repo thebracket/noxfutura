@@ -37,20 +37,66 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
     let demo_shader = shader::Shader::from_source(&device, "resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
-    let mut vertex_buffer = VertexBuffer::<f32>::new(&[ 3, 3 ]);
-    vertex_buffer.add_slice(&[-0.0868241,  0.49240386,  0.0, 0.5, 0.0, 0.5]);
-    vertex_buffer.add_slice(&[-0.49513406, 0.06958647,  0.0, 0.5, 0.0, 0.5]);
-    vertex_buffer.add_slice(&[-0.21918549, -0.44939706, 0.0, 0.5, 0.0, 0.5]);
-    vertex_buffer.add_slice(&[0.35966998,  -0.3473291,  0.0, 0.5, 0.0, 0.5]);
-    vertex_buffer.add_slice(&[0.44147372,   0.2347359,  0.0, 0.5, 0.0, 0.5]);
+    let mut vertex_buffer = VertexBuffer::<f32>::new(&[ 3, 2 ]);
+    vertex_buffer.add_slice(&[-0.0868241,  0.49240386,  0.0,  0.4131759, 0.00759614]);
+    vertex_buffer.add_slice(&[-0.49513406, 0.06958647,  0.0,  0.0048659444, 0.43041354]);
+    vertex_buffer.add_slice(&[-0.21918549, -0.44939706, 0.0,  0.28081453, 0.949397057]);
+    vertex_buffer.add_slice(&[0.35966998,  -0.3473291,  0.0,  0.85967, 0.84732911]);
+    vertex_buffer.add_slice(&[0.44147372,   0.2347359,  0.0,  0.9414737, 0.2652641]);
 
     let mut index_buffer = VertexBuffer::<u16>::new(&[1]);
     index_buffer.add_slice(&[0, 1, 4]);
     index_buffer.add_slice(&[1, 2, 4]);
     index_buffer.add_slice(&[2, 3, 4]);
 
+    // Textures
+    let diffuse_bytes = include_bytes!("../../resources/avon-and-guards.png");
+    let (diffuse_texture, cmd_buffer) = texture::Texture::from_bytes(
+        &device, 
+        diffuse_bytes, 
+        "../../resources/avon-and-guards.png"
+    ).unwrap();
+    queue.submit(&[cmd_buffer]);
+
+    let texture_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        bindings: &[
+            wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStage::FRAGMENT,
+                ty: wgpu::BindingType::SampledTexture {
+                    multisampled: false,
+                    dimension: wgpu::TextureViewDimension::D2,
+                    component_type: wgpu::TextureComponentType::Uint,
+                },
+            },
+            wgpu::BindGroupLayoutEntry {
+                binding: 1,
+                visibility: wgpu::ShaderStage::FRAGMENT,
+                ty: wgpu::BindingType::Sampler {
+                    comparison: false,
+                },
+            },
+        ],
+        label: Some("texture_bind_group_layout"),
+    });
+
+    let diffuse_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        layout: &texture_bind_group_layout,
+        bindings: &[
+            wgpu::Binding {
+                binding: 0,
+                resource: wgpu::BindingResource::TextureView(&diffuse_texture.view),
+            },
+            wgpu::Binding {
+                binding: 1,
+                resource: wgpu::BindingResource::Sampler(&diffuse_texture.sampler),
+            }
+        ],
+        label: Some("diffuse_bind_group"),
+    });
+
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-        bind_group_layouts: &[],
+        bind_group_layouts: &[&texture_bind_group_layout],
     });
 
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -99,7 +145,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         present_mode: wgpu::PresentMode::Mailbox,
     };
 
-    let mut swap_chain = device.create_swap_chain(&surface, &sc_desc);
+    let mut swap_chain = device.create_swap_chain(&surface, &sc_desc);    
 
     // IMGUI
     let mut hidpi_factor = 1.0;
@@ -168,6 +214,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                             depth_stencil_attachment: None,
                         });
                         rpass.set_pipeline(&render_pipeline);
+                        rpass.set_bind_group(0, &diffuse_bind_group, &[]);
                         rpass.set_vertex_buffer(0, &vertex_buffer.buffer.as_ref().unwrap(), 0, 0);
                         rpass.set_index_buffer(&index_buffer.buffer.as_ref().unwrap(), 0, 0);
                         rpass.draw_indexed(0..index_buffer.len(), 0, 0..1);
