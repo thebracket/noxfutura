@@ -1,4 +1,4 @@
-use ultraviolet::vec::{Vec3, Vec4};
+use ultraviolet::{vec::{Vec3, Vec4}, mat::Mat4};
 
 pub struct Camera {
     eye : Vec3,
@@ -23,16 +23,16 @@ impl Camera {
         }
     }
 
-    pub fn build_view_projection_matrix(&self) -> ultraviolet::mat::Mat4 {
+    pub fn build_view_projection_matrix(&self) -> Mat4 {
         #[cfg_attr(rustfmt, rustfmt_skip)]
-        let opengl_to_wgpu_matrix : ultraviolet::mat::Mat4 = ultraviolet::mat::Mat4::new(
+        let opengl_to_wgpu_matrix : Mat4 = Mat4::new(
             Vec4::new(1.0, 0.0, 0.0, 0.0),
             Vec4::new(0.0, 1.0, 0.0, 0.0),
             Vec4::new(0.0, 0.0, 0.5, 0.0),
             Vec4::new(0.0, 0.0, 0.5, 1.0),
         );
 
-        let view = ultraviolet::mat::Mat4::look_at(self.eye, self.target, self.up);
+        let view = Mat4::look_at(self.eye, self.target, self.up);
         let proj = ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
         opengl_to_wgpu_matrix * proj * view
     }
