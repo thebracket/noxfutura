@@ -11,6 +11,29 @@ mod shader;
 mod vertex_buffer;
 use vertex_buffer::VertexBuffer;
 mod texture;
+mod camera;
+use camera::Camera;
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+struct Uniforms {
+    view_proj: ultraviolet::mat::Mat4,
+}
+
+unsafe impl bytemuck::Pod for Uniforms {}
+unsafe impl bytemuck::Zeroable for Uniforms {}
+
+impl Uniforms {
+    fn new() -> Self {
+        Self {
+            view_proj: ultraviolet::mat::Mat4::identity(),
+        }
+    }
+
+    fn update_view_proj(&mut self, camera: &Camera) {
+        self.view_proj = camera.build_view_projection_matrix();
+    }
+}
 
 async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
     let size = window.inner_size();
@@ -95,8 +118,44 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         label: Some("diffuse_bind_group"),
     });
 
+    let camera = Camera::new(size.width, size.height);
+    let mut uniforms = Uniforms::new();
+    uniforms.update_view_proj(&camera);
+
+    let uniform_buffer = device.create_buffer_with_data(
+        bytemuck::cast_slice(&[uniforms]),
+        wgpu::BufferUsage::UNIFORM | wgpu::BufferUsage::COPY_DST,
+    );
+
+    let uniform_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        bindings: &[
+            wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStage::VERTEX,
+                ty: wgpu::BindingType::UniformBuffer {
+                    dynamic: false,
+                },
+            }
+        ],
+        label: Some("uniform_bind_group_layout"),
+    });
+
+    let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        layout: &uniform_bind_group_layout,
+        bindings: &[
+            wgpu::Binding {
+                binding: 0,
+                resource: wgpu::BindingResource::Buffer {
+                    buffer: &uniform_buffer,
+                    range: 0..std::mem::size_of_val(&uniforms) as wgpu::BufferAddress,
+                }
+            }
+        ],
+        label: Some("uniform_bind_group"),
+    });
+
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-        bind_group_layouts: &[&texture_bind_group_layout],
+        bind_group_layouts: &[&texture_bind_group_layout, &uniform_bind_group_layout],
     });
 
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -145,7 +204,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         present_mode: wgpu::PresentMode::Mailbox,
     };
 
-    let mut swap_chain = device.create_swap_chain(&surface, &sc_desc);    
+    let mut swap_chain = device.create_swap_chain(&surface, &sc_desc);
 
     // IMGUI
     let mut hidpi_factor = 1.0;
@@ -195,6 +254,22 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 swap_chain = device.create_swap_chain(&surface, &sc_desc);
             }
             Event::RedrawRequested(_) => {
+                {
+                    uniforms.update_view_proj(&camera);
+                    let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                        label: Some("update encoder"),
+                    });
+            
+                    let staging_buffer = device.create_buffer_with_data(
+                        bytemuck::cast_slice(&[uniforms]),
+                        wgpu::BufferUsage::COPY_SRC,
+                    );
+            
+                    encoder.copy_buffer_to_buffer(&staging_buffer, 0, &uniform_buffer, 0, std::mem::size_of::<Uniforms>() as wgpu::BufferAddress);
+            
+                    queue.submit(&[encoder.finish()]);
+                }
+
                 // Base
                 let frame = swap_chain
                     .get_next_texture()
@@ -215,6 +290,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                         });
                         rpass.set_pipeline(&render_pipeline);
                         rpass.set_bind_group(0, &diffuse_bind_group, &[]);
+                        rpass.set_bind_group(1, &uniform_bind_group, &[]);
                         rpass.set_vertex_buffer(0, &vertex_buffer.buffer.as_ref().unwrap(), 0, 0);
                         rpass.set_index_buffer(&index_buffer.buffer.as_ref().unwrap(), 0, 0);
                         rpass.draw_indexed(0..index_buffer.len(), 0, 0..1);

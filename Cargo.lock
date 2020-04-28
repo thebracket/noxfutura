@@ -1071,6 +1071,7 @@ dependencies = [
  "imgui",
  "imgui-wgpu",
  "imgui-winit-support",
+ "ultraviolet",
  "wgpu",
  "winit",
 ]
@@ -1573,6 +1574,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "373c8a200f9e67a0c95e62a4f52fbf80c23b4381c05a17845531982fa99e6b33"
 
 [[package]]
+name = "ultraviolet"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "432f35260aff6ee992f3027a1166eaebd7c6ebc0844188b0e545f7fa2121daf7"
+dependencies = [
+ "wide",
+]
+
+[[package]]
 name = "unicode-xid"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1802,6 +1812,15 @@ checksum = "67b69dfe001a8a6b78810c7e479717cd1898b9177dbf646611fa1f258f5a2512"
 dependencies = [
  "bitflags",
  "peek-poke",
+]
+
+[[package]]
+name = "wide"
+version = "0.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a9344068036399f3bef95f0e926653be0c1b6791e850a6a5385d2845ae54c2a5"
+dependencies = [
+ "bytemuck",
 ]
 
 [[package]]

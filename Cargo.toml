@@ -15,3 +15,4 @@ imgui-winit-support = { version = "0.3", default-features = false, features = [ 
 bytemuck = "1.2.0"
 image = "0.22"
 failure = "0.1"
+ultraviolet = "0.4.6"
