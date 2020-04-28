@@ -1,13 +1,13 @@
-use bracket_lib::prelude::*;
+use bracket_random::prelude::*;
+use bracket_noise::prelude::*;
+use crate::engine::VertexBuffer;
 
 pub struct WorldMap {
-    noise : FastNoise,
-    width: f32,
-    height: f32
+    noise : FastNoise
 }
 
 impl WorldMap {
-    pub fn new(width: f32, height: f32) -> Self {
+    pub fn new() -> Self {
         let mut rng = RandomNumberGenerator::new();
         let mut noise = FastNoise::seeded(rng.next_u64());
         noise.set_noise_type(NoiseType::SimplexFractal);
@@ -18,9 +18,7 @@ impl WorldMap {
         noise.set_frequency(0.01);
 
         Self{
-            noise,
-            width,
-            height
+            noise
         }
     }
 
@@ -32,29 +30,37 @@ impl WorldMap {
         )
     }
 
-    fn tile_display(&self, x: i32, y:i32) -> (FontCharType, RGB) {
-        let lat = (((y as f32 / self.height) * 180.0) - 90.0) * 0.017_453_3;
-        let lon = (((x as f32 / self.width) * 360.0) - 180.0) * 0.017_453_3;
-        let coords = self.sphere_vertex(100.0, lat, lon);
-
-        let altitude = self.noise.get_noise3d(coords.0, coords.1, coords.2);
+    fn add_point(&self, lat: f32, lon:f32, buffer: &mut VertexBuffer<f32>) {
+        let base_coords = self.sphere_vertex(100.0, lat as f32, lon as f32);
+        let altitude = self.noise.get_noise3d(base_coords.0, base_coords.1, base_coords.2);
+        let sphere_coords = self.sphere_vertex(0.5 + (altitude / 50.0), lat as f32, lon as f32);
+        buffer.add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
+        
         if altitude < 0.0 {
-            ( to_cp437('▒'), RGB::from_f32(0.0, 0.0, 1.0 + altitude) )
-        } else if altitude < 0.5 {
-            let greenness = 0.5 + (altitude / 1.0);
-            ( to_cp437('█'), RGB::from_f32(0.0, greenness, 0.0) )
+            buffer.add3(0.0, 0.0, 1.0 + altitude);
         } else {
-            let greenness = 0.2 + (altitude / 1.0);
-            ( to_cp437('▲'), RGB::from_f32(greenness, greenness, greenness) )
+            buffer.add3(0.0, 0.2 + altitude, 0.0);
         }
     }
 
-    pub fn render(&self, ctx: &mut BTerm) {
-        for y in 0..self.height as i32 {
-            for x in 0..self.width as i32 {
-                let render = self.tile_display(x, y);
-                ctx.set(x, y, render.1, RGB::from_f32(0.0, 0.0, 0.0), render.0);
+    pub fn build_vertex_buffer(&self) -> VertexBuffer<f32> {
+        let mut buffer = VertexBuffer::new(&[3, 3]);
+        const STEP : f32 = 0.5;
+
+        let mut lat = -180.0;
+        let mut lon = -90.0;
+
+        while lat < 180.0 {
+            while lon < 90.0 {
+                self.add_point(lat, lon, &mut buffer);
+                self.add_point(lat + STEP, lon, &mut buffer);
+                self.add_point(lat + STEP, lon + STEP, &mut buffer);
+                lon += STEP;
             }
+            lon = -90.0;
+            lat += STEP;
         }
+
+        buffer
     }
 }

@@ -9,7 +9,7 @@ use winit::{
 };
 mod shader;
 mod vertex_buffer;
-use vertex_buffer::VertexBuffer;
+pub use vertex_buffer::VertexBuffer;
 mod texture;
 mod camera;
 use camera::Camera;
@@ -60,7 +60,12 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
     let demo_shader = shader::Shader::from_source(&device, "resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
-    let mut vertex_buffer = VertexBuffer::<f32>::new(&[ 3, 2 ]);
+    let world = crate::worldmap::WorldMap::new();
+    let mut vertex_buffer = world.build_vertex_buffer();
+
+    let mut depth_texture = texture::Texture::create_depth_texture(&device, size, "depth_texture");
+
+    /*let mut vertex_buffer = VertexBuffer::<f32>::new(&[ 3, 2 ]);
     vertex_buffer.add_slice(&[-0.0868241,  0.49240386,  0.0,  0.4131759, 0.00759614]);
     vertex_buffer.add_slice(&[-0.49513406, 0.06958647,  0.0,  0.0048659444, 0.43041354]);
     vertex_buffer.add_slice(&[-0.21918549, -0.44939706, 0.0,  0.28081453, 0.949397057]);
@@ -70,10 +75,10 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let mut index_buffer = VertexBuffer::<u16>::new(&[1]);
     index_buffer.add_slice(&[0, 1, 4]);
     index_buffer.add_slice(&[1, 2, 4]);
-    index_buffer.add_slice(&[2, 3, 4]);
+    index_buffer.add_slice(&[2, 3, 4]);*/
 
     // Textures
-    let diffuse_bytes = include_bytes!("../../resources/avon-and-guards.png");
+    /*let diffuse_bytes = include_bytes!("../../resources/avon-and-guards.png");
     let (diffuse_texture, cmd_buffer) = texture::Texture::from_bytes(
         &device, 
         diffuse_bytes, 
@@ -116,7 +121,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
             }
         ],
         label: Some("diffuse_bind_group"),
-    });
+    });*/
 
     let camera = Camera::new(size.width, size.height);
     let mut uniforms = Uniforms::new();
@@ -155,7 +160,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     });
 
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-        bind_group_layouts: &[&texture_bind_group_layout, &uniform_bind_group_layout],
+        //bind_group_layouts: &[&texture_bind_group_layout, &uniform_bind_group_layout],
+        bind_group_layouts: &[&uniform_bind_group_layout],
     });
 
     let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -182,7 +188,15 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
             alpha_blend: wgpu::BlendDescriptor::REPLACE,
             write_mask: wgpu::ColorWrite::ALL,
         }],
-        depth_stencil_state: None,
+        depth_stencil_state: Some(wgpu::DepthStencilStateDescriptor {
+            format: texture::Texture::DEPTH_FORMAT,
+            depth_write_enabled: true,
+            depth_compare: wgpu::CompareFunction::Less,
+            stencil_front: wgpu::StencilStateFaceDescriptor::IGNORE,
+            stencil_back: wgpu::StencilStateFaceDescriptor::IGNORE,
+            stencil_read_mask: 0,
+            stencil_write_mask: 0,
+        }),
         vertex_state: wgpu::VertexStateDescriptor {
             index_format: wgpu::IndexFormat::Uint16,
             vertex_buffers: &[
@@ -194,7 +208,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         alpha_to_coverage_enabled: false,
     });
     vertex_buffer.build(&device, wgpu::BufferUsage::VERTEX);
-    index_buffer.build(&device, wgpu::BufferUsage::INDEX);
+    //index_buffer.build(&device, wgpu::BufferUsage::INDEX);
 
     let mut sc_desc = wgpu::SwapChainDescriptor {
         usage: wgpu::TextureUsage::OUTPUT_ATTACHMENT,
@@ -252,6 +266,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 sc_desc.width = size.width;
                 sc_desc.height = size.height;
                 swap_chain = device.create_swap_chain(&surface, &sc_desc);
+                depth_texture = texture::Texture::create_depth_texture(&device, size, "depth_texture");
             }
             Event::RedrawRequested(_) => {
                 {
@@ -286,14 +301,23 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                                 store_op: wgpu::StoreOp::Store,
                                 clear_color: wgpu::Color::BLACK,
                             }],
-                            depth_stencil_attachment: None,
+                            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachmentDescriptor {
+                                attachment: &depth_texture.view,
+                                depth_load_op: wgpu::LoadOp::Clear,
+                                depth_store_op: wgpu::StoreOp::Store,
+                                clear_depth: 1.0,
+                                stencil_load_op: wgpu::LoadOp::Clear,
+                                stencil_store_op: wgpu::StoreOp::Store,
+                                clear_stencil: 0,
+                            }),
                         });
                         rpass.set_pipeline(&render_pipeline);
-                        rpass.set_bind_group(0, &diffuse_bind_group, &[]);
-                        rpass.set_bind_group(1, &uniform_bind_group, &[]);
+                        //rpass.set_bind_group(0, &diffuse_bind_group, &[]);
+                        rpass.set_bind_group(0, &uniform_bind_group, &[]);
                         rpass.set_vertex_buffer(0, &vertex_buffer.buffer.as_ref().unwrap(), 0, 0);
-                        rpass.set_index_buffer(&index_buffer.buffer.as_ref().unwrap(), 0, 0);
-                        rpass.draw_indexed(0..index_buffer.len(), 0, 0..1);
+                        //rpass.set_index_buffer(&index_buffer.buffer.as_ref().unwrap(), 0, 0);
+                        //rpass.draw_indexed(0..index_buffer.len(), 0, 0..1);
+                        rpass.draw(0..vertex_buffer.len(), 0..1);
                     }
 
                     queue.submit(&[encoder.finish()]);
