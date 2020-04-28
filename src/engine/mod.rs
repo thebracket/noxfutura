@@ -13,11 +13,14 @@ pub use vertex_buffer::VertexBuffer;
 mod texture;
 mod camera;
 use camera::Camera;
+mod context;
+pub use context::Context;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 struct Uniforms {
     view_proj: ultraviolet::mat::Mat4,
+    rot_angle: f32
 }
 
 unsafe impl bytemuck::Pod for Uniforms {}
@@ -27,11 +30,13 @@ impl Uniforms {
     fn new() -> Self {
         Self {
             view_proj: ultraviolet::mat::Mat4::identity(),
+            rot_angle: 0.0
         }
     }
 
     fn update_view_proj(&mut self, camera: &Camera) {
         self.view_proj = camera.build_view_projection_matrix();
+        self.rot_angle += 0.01;
     }
 }
 
@@ -49,7 +54,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     .await
     .unwrap();
 
-    let (mut device, mut queue) = adapter
+    let (device, queue) = adapter
         .request_device(&wgpu::DeviceDescriptor {
             extensions: wgpu::Extensions {
                 anisotropic_filtering: false,
@@ -58,24 +63,21 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         })
         .await;
 
-    let demo_shader = shader::Shader::from_source(&device, "resources/shaders/shader.vert", "resources/shaders/shader.frag");
+    let mut context = Context::new(
+        adapter,
+        device,
+        queue,
+        size,
+        surface
+    );
+
+    let shader_id = context.register_shader("resources/shaders/shader.vert", "resources/shaders/shader.frag");
 
     let world = crate::worldmap::WorldMap::new();
     let mut vertex_buffer = world.build_vertex_buffer();
 
-    let mut depth_texture = texture::Texture::create_depth_texture(&device, size, "depth_texture");
-
-    /*let mut vertex_buffer = VertexBuffer::<f32>::new(&[ 3, 2 ]);
-    vertex_buffer.add_slice(&[-0.0868241,  0.49240386,  0.0,  0.4131759, 0.00759614]);
-    vertex_buffer.add_slice(&[-0.49513406, 0.06958647,  0.0,  0.0048659444, 0.43041354]);
-    vertex_buffer.add_slice(&[-0.21918549, -0.44939706, 0.0,  0.28081453, 0.949397057]);
-    vertex_buffer.add_slice(&[0.35966998,  -0.3473291,  0.0,  0.85967, 0.84732911]);
-    vertex_buffer.add_slice(&[0.44147372,   0.2347359,  0.0,  0.9414737, 0.2652641]);
-
-    let mut index_buffer = VertexBuffer::<u16>::new(&[1]);
-    index_buffer.add_slice(&[0, 1, 4]);
-    index_buffer.add_slice(&[1, 2, 4]);
-    index_buffer.add_slice(&[2, 3, 4]);*/
+    let depth_id = context.register_depth_texture("depth_texture");
+    //let mut depth_texture = texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
 
     // Textures
     /*let diffuse_bytes = include_bytes!("../../resources/avon-and-guards.png");
@@ -127,12 +129,12 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let mut uniforms = Uniforms::new();
     uniforms.update_view_proj(&camera);
 
-    let uniform_buffer = device.create_buffer_with_data(
+    let uniform_buffer = context.device.create_buffer_with_data(
         bytemuck::cast_slice(&[uniforms]),
         wgpu::BufferUsage::UNIFORM | wgpu::BufferUsage::COPY_DST,
     );
 
-    let uniform_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+    let uniform_bind_group_layout = context.device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
         bindings: &[
             wgpu::BindGroupLayoutEntry {
                 binding: 0,
@@ -145,7 +147,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         label: Some("uniform_bind_group_layout"),
     });
 
-    let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+    let uniform_bind_group = context.device.create_bind_group(&wgpu::BindGroupDescriptor {
         layout: &uniform_bind_group_layout,
         bindings: &[
             wgpu::Binding {
@@ -159,19 +161,19 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         label: Some("uniform_bind_group"),
     });
 
-    let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+    let pipeline_layout = context.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         //bind_group_layouts: &[&texture_bind_group_layout, &uniform_bind_group_layout],
         bind_group_layouts: &[&uniform_bind_group_layout],
     });
 
-    let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+    let render_pipeline = context.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         layout: &pipeline_layout,
         vertex_stage: wgpu::ProgrammableStageDescriptor {
-            module: &demo_shader.vs_module,
+            module: &context.shaders[shader_id].vs_module,
             entry_point: "main",
         },
         fragment_stage: Some(wgpu::ProgrammableStageDescriptor {
-            module: &demo_shader.fs_module,
+            module: &context.shaders[shader_id].fs_module,
             entry_point: "main",
         }),
         rasterization_state: Some(wgpu::RasterizationStateDescriptor {
@@ -207,7 +209,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         sample_mask: !0,
         alpha_to_coverage_enabled: false,
     });
-    vertex_buffer.build(&device, wgpu::BufferUsage::VERTEX);
+    vertex_buffer.build(&context.device, wgpu::BufferUsage::VERTEX);
     //index_buffer.build(&device, wgpu::BufferUsage::INDEX);
 
     let mut sc_desc = wgpu::SwapChainDescriptor {
@@ -218,7 +220,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         present_mode: wgpu::PresentMode::Mailbox,
     };
 
-    let mut swap_chain = device.create_swap_chain(&surface, &sc_desc);
+    let mut swap_chain = context.device.create_swap_chain(&context.surface, &sc_desc);
 
     // IMGUI
     let mut hidpi_factor = 1.0;
@@ -242,7 +244,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         }),
     }]);
 
-    let mut renderer = Renderer::new(&mut imgui, &device, &mut queue, sc_desc.format, None);
+    let mut renderer = Renderer::new(&mut imgui, &context.device, &mut context.queue, sc_desc.format, None);
 
     let mut last_frame = Instant::now();
 
@@ -265,24 +267,24 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
             } => {
                 sc_desc.width = size.width;
                 sc_desc.height = size.height;
-                swap_chain = device.create_swap_chain(&surface, &sc_desc);
-                depth_texture = texture::Texture::create_depth_texture(&device, size, "depth_texture");
+                swap_chain = context.device.create_swap_chain(&context.surface, &sc_desc);
+                context.textures[depth_id] = texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
             }
             Event::RedrawRequested(_) => {
                 {
                     uniforms.update_view_proj(&camera);
-                    let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                    let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
                         label: Some("update encoder"),
                     });
-            
-                    let staging_buffer = device.create_buffer_with_data(
+
+                    let staging_buffer = context.device.create_buffer_with_data(
                         bytemuck::cast_slice(&[uniforms]),
                         wgpu::BufferUsage::COPY_SRC,
                     );
-            
+
                     encoder.copy_buffer_to_buffer(&staging_buffer, 0, &uniform_buffer, 0, std::mem::size_of::<Uniforms>() as wgpu::BufferAddress);
-            
-                    queue.submit(&[encoder.finish()]);
+
+                    context.queue.submit(&[encoder.finish()]);
                 }
 
                 // Base
@@ -290,7 +292,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                     .get_next_texture()
                     .expect("Timeout when acquiring next swap chain texture");
                 {
-                    let mut encoder = device
+                    let mut encoder = context.device
                         .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
                     {
                         let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -302,7 +304,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                                 clear_color: wgpu::Color::BLACK,
                             }],
                             depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachmentDescriptor {
-                                attachment: &depth_texture.view,
+                                attachment: &context.textures[depth_id].view,
                                 depth_load_op: wgpu::LoadOp::Clear,
                                 depth_store_op: wgpu::StoreOp::Store,
                                 clear_depth: 1.0,
@@ -320,12 +322,12 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                         rpass.draw(0..vertex_buffer.len(), 0..1);
                     }
 
-                    queue.submit(&[encoder.finish()]);
+                    context.queue.submit(&[encoder.finish()]);
                 }
 
                 // ImGui
                 {
-                    let delta_s = last_frame.elapsed();
+                    //let delta_s = last_frame.elapsed();
                     last_frame = imgui.io_mut().update_delta_time(last_frame);
 
                     platform
@@ -349,16 +351,17 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                                 ));
                             });
 
-                        let window = imgui::Window::new(im_str!("Hello too"));
+                        /*let window = imgui::Window::new(im_str!("Hello too"));
                         window
                             .size([400.0, 200.0], Condition::FirstUseEver)
                             .position([400.0, 200.0], Condition::FirstUseEver)
                             .build(&ui, || {
                                 ui.text(im_str!("Frametime: {:?}", delta_s));
                             });
+                        */
                     }
 
-                    let mut encoder: wgpu::CommandEncoder = device
+                    let mut encoder: wgpu::CommandEncoder = context.device
                         .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
 
                     if last_cursor != Some(ui.mouse_cursor()) {
@@ -366,10 +369,10 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                         platform.prepare_render(&ui, &window);
                     }
                     renderer
-                        .render(ui.render(), &mut device, &mut encoder, &frame.view)
+                        .render(ui.render(), &mut context.device, &mut encoder, &frame.view)
                         .expect("Rendering failed");
 
-                    queue.submit(&[encoder.finish()]);
+                    context.queue.submit(&[encoder.finish()]);
                 }
 
                 //queue.submit(&[encoder.finish()]);

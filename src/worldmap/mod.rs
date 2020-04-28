@@ -35,7 +35,7 @@ impl WorldMap {
         let altitude = self.noise.get_noise3d(base_coords.0, base_coords.1, base_coords.2);
         let sphere_coords = self.sphere_vertex(0.5 + (altitude / 50.0), lat as f32, lon as f32);
         buffer.add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
-        
+
         if altitude < 0.0 {
             buffer.add3(0.0, 0.0, 1.0 + altitude);
         } else {
@@ -45,7 +45,7 @@ impl WorldMap {
 
     pub fn build_vertex_buffer(&self) -> VertexBuffer<f32> {
         let mut buffer = VertexBuffer::new(&[3, 3]);
-        const STEP : f32 = 0.5;
+        const STEP : f32 = 0.25;
 
         let mut lat = -180.0;
         let mut lon = -90.0;
