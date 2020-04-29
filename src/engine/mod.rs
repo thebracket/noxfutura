@@ -17,6 +17,7 @@ mod context;
 pub use context::Context;
 mod uniforms;
 use uniforms::UniformBlock;
+mod pipelines;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -85,58 +86,16 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) =
         uniforms.create_buffer_layout_and_group(&context, 0, "some_uniforms");
 
-    let pipeline_layout = context
-        .device
-        .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            //bind_group_layouts: &[&texture_bind_group_layout, &uniform_bind_group_layout],
-            bind_group_layouts: &[&uniform_bind_group_layout],
-        });
+    let pipeline_layout = context.create_pipeline_layout(&[&uniform_bind_group_layout]);
 
-    let render_pipeline = context
-        .device
-        .create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            layout: &pipeline_layout,
-            vertex_stage: wgpu::ProgrammableStageDescriptor {
-                module: &context.shaders[shader_id].vs_module,
-                entry_point: "main",
-            },
-            fragment_stage: Some(wgpu::ProgrammableStageDescriptor {
-                module: &context.shaders[shader_id].fs_module,
-                entry_point: "main",
-            }),
-            rasterization_state: Some(wgpu::RasterizationStateDescriptor {
-                front_face: wgpu::FrontFace::Ccw,
-                cull_mode: wgpu::CullMode::None,
-                depth_bias: 0,
-                depth_bias_slope_scale: 0.0,
-                depth_bias_clamp: 0.0,
-            }),
-            primitive_topology: wgpu::PrimitiveTopology::TriangleList,
-            color_states: &[wgpu::ColorStateDescriptor {
-                format: swapchain_format,
-                color_blend: wgpu::BlendDescriptor::REPLACE,
-                alpha_blend: wgpu::BlendDescriptor::REPLACE,
-                write_mask: wgpu::ColorWrite::ALL,
-            }],
-            depth_stencil_state: Some(wgpu::DepthStencilStateDescriptor {
-                format: texture::Texture::DEPTH_FORMAT,
-                depth_write_enabled: true,
-                depth_compare: wgpu::CompareFunction::Less,
-                stencil_front: wgpu::StencilStateFaceDescriptor::IGNORE,
-                stencil_back: wgpu::StencilStateFaceDescriptor::IGNORE,
-                stencil_read_mask: 0,
-                stencil_write_mask: 0,
-            }),
-            vertex_state: wgpu::VertexStateDescriptor {
-                index_format: wgpu::IndexFormat::Uint16,
-                vertex_buffers: &[vertex_buffer.descriptor()],
-            },
-            sample_count: 1,
-            sample_mask: !0,
-            alpha_to_coverage_enabled: false,
-        });
+    let render_pipeline = pipelines::RenderPipelineBuilder::new(swapchain_format)
+        .layout(&pipeline_layout)
+        .vf_shader(&context, shader_id)
+        .depth_buffer()
+        .vertex_state(wgpu::IndexFormat::Uint16, &[vertex_buffer.descriptor()])
+        .build(&context.device);
+
     vertex_buffer.build(&context.device, wgpu::BufferUsage::VERTEX);
-    //index_buffer.build(&device, wgpu::BufferUsage::INDEX);
 
     let mut sc_desc = wgpu::SwapChainDescriptor {
         usage: wgpu::TextureUsage::OUTPUT_ATTACHMENT,

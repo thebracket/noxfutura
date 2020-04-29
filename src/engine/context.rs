@@ -50,4 +50,10 @@ impl Context {
         self.textures.push(diffuse_texture);
         self.textures.len() - 1
     }
+
+    pub fn create_pipeline_layout(&self, bind_groups: &[&wgpu::BindGroupLayout]) -> wgpu::PipelineLayout {
+        self.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            bind_group_layouts: bind_groups,
+        })
+    }
 }
