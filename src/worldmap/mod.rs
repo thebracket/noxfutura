@@ -45,7 +45,7 @@ impl WorldMap {
 
     pub fn build_vertex_buffer(&self) -> VertexBuffer<f32> {
         let mut buffer = VertexBuffer::new(&[3, 3]);
-        const STEP : f32 = 0.25;
+        const STEP : f32 = 1.0;
 
         let mut lat = -180.0;
         let mut lon = -90.0;

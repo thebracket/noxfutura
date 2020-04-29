@@ -16,6 +16,7 @@ use camera::Camera;
 mod context;
 pub use context::Context;
 mod uniforms;
+use uniforms::UniformBlock;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -26,6 +27,7 @@ struct Uniforms {
 
 unsafe impl bytemuck::Pod for Uniforms {}
 unsafe impl bytemuck::Zeroable for Uniforms {}
+impl UniformBlock for Uniforms {}
 
 impl Uniforms {
     fn new() -> Self {
@@ -83,14 +85,14 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let mut uniforms = Uniforms::new();
     uniforms.update_view_proj(&camera);
 
-    let uniform_buffer = uniforms::create_buffer_with_data(&context.device, &uniforms);
-    let uniform_bind_group_layout = uniforms::create_uniform_bindgroup_layout(&context.device, 0);
-    let uniform_bind_group = uniforms::create_uniform_bind_group(
+    let uniform_buffer = uniforms.create_buffer_with_data(&context.device);
+    let uniform_bind_group_layout = uniforms.create_bindgroup_layout(&context.device, 0, "some_uniforms");
+    let uniform_bind_group = uniforms.create_bind_group(
         &context.device,
         &uniform_bind_group_layout,
         0,
         &uniform_buffer,
-        &uniforms
+        "some_uniforms"
     );
 
     let pipeline_layout = context.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -203,21 +205,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 context.textures[depth_id] = texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
             }
             Event::RedrawRequested(_) => {
-                {
-                    uniforms.update_view_proj(&camera);
-                    let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                        label: Some("update encoder"),
-                    });
-
-                    let staging_buffer = context.device.create_buffer_with_data(
-                        bytemuck::cast_slice(&[uniforms]),
-                        wgpu::BufferUsage::COPY_SRC,
-                    );
-
-                    encoder.copy_buffer_to_buffer(&staging_buffer, 0, &uniform_buffer, 0, std::mem::size_of::<Uniforms>() as wgpu::BufferAddress);
-
-                    context.queue.submit(&[encoder.finish()]);
-                }
+                uniforms.update_view_proj(&camera);
+                uniforms.update_buffer(&context, &uniform_buffer);
 
                 // Base
                 let frame = swap_chain
