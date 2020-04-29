@@ -1,6 +1,6 @@
 mod engine;
-pub mod worldmap;
 mod modes;
+pub mod worldmap;
 
 fn main() {
     engine::main_loop();

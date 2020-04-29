@@ -1,27 +1,29 @@
 #![allow(dead_code)]
-pub struct VertexBuffer<T> 
-where T : bytemuck::Pod
+pub struct VertexBuffer<T>
+where
+    T: bytemuck::Pod,
 {
-    data : Vec<T>,
-    attributes : Vec<wgpu::VertexAttributeDescriptor>,
-    total_size : wgpu::BufferAddress,
-    row_len : usize,
-    pub buffer : Option<wgpu::Buffer>
+    data: Vec<T>,
+    attributes: Vec<wgpu::VertexAttributeDescriptor>,
+    total_size: wgpu::BufferAddress,
+    row_len: usize,
+    pub buffer: Option<wgpu::Buffer>,
 }
 
-impl<T> VertexBuffer<T> 
-where T : bytemuck::Pod
+impl<T> VertexBuffer<T>
+where
+    T: bytemuck::Pod,
 {
-    pub fn new(layout : &[usize]) -> Self {
+    pub fn new(layout: &[usize]) -> Self {
         let mut attributes = Vec::new();
 
         let mut cumulative_len = 0;
         let mut cumulative_size = 0;
         for (i, size) in layout.iter().enumerate() {
             let attribute = wgpu::VertexAttributeDescriptor {
-                offset : cumulative_size,
-                shader_location : i as u32,
-                format : match size {
+                offset: cumulative_size,
+                shader_location: i as u32,
+                format: match size {
                     1 => wgpu::VertexFormat::Float,
                     2 => wgpu::VertexFormat::Float2,
                     3 => wgpu::VertexFormat::Float3,
@@ -29,7 +31,7 @@ where T : bytemuck::Pod
                     _ => {
                         panic!("Vertices must be 1-4 floats");
                     }
-                }
+                },
             };
             attributes.push(attribute);
             cumulative_size += (std::mem::size_of::<T>() * size) as wgpu::BufferAddress;
@@ -39,9 +41,9 @@ where T : bytemuck::Pod
         Self {
             data: Vec::new(),
             attributes,
-            total_size : cumulative_size,
-            row_len : cumulative_len,
-            buffer: None
+            total_size: cumulative_size,
+            row_len: cumulative_len,
+            buffer: None,
         }
     }
 
@@ -49,17 +51,12 @@ where T : bytemuck::Pod
         wgpu::VertexBufferDescriptor {
             stride: self.total_size,
             step_mode: wgpu::InputStepMode::Vertex,
-            attributes: &self.attributes
+            attributes: &self.attributes,
         }
     }
 
     pub fn build(&mut self, device: &wgpu::Device, usage: wgpu::BufferUsage) {
-        self.buffer = Some(
-            device.create_buffer_with_data(
-                bytemuck::cast_slice(&self.data),
-                usage
-            )
-        );
+        self.buffer = Some(device.create_buffer_with_data(bytemuck::cast_slice(&self.data), usage));
     }
 
     pub fn len(&self) -> u32 {
@@ -70,28 +67,28 @@ where T : bytemuck::Pod
         self.data.clear()
     }
 
-    pub fn add_slice(&mut self, slice : &[T]) {
+    pub fn add_slice(&mut self, slice: &[T]) {
         for e in slice.iter() {
             self.data.push(*e);
         }
     }
 
-    pub fn add(&mut self, f : T) {
+    pub fn add(&mut self, f: T) {
         self.data.push(f);
     }
 
-    pub fn add2(&mut self, f : T, f1 : T) {
+    pub fn add2(&mut self, f: T, f1: T) {
         self.data.push(f);
         self.data.push(f1);
     }
 
-    pub fn add3(&mut self, f : T, f1 : T, f2 : T) {
+    pub fn add3(&mut self, f: T, f1: T, f2: T) {
         self.data.push(f);
         self.data.push(f1);
         self.data.push(f2);
     }
 
-    pub fn add4(&mut self, f : T, f1 : T, f2 : T, f3: T) {
+    pub fn add4(&mut self, f: T, f1: T, f2: T, f3: T) {
         self.data.push(f);
         self.data.push(f1);
         self.data.push(f2);

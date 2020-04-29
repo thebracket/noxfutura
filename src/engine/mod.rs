@@ -10,8 +10,8 @@ use winit::{
 mod shader;
 mod vertex_buffer;
 pub use vertex_buffer::VertexBuffer;
-mod texture;
 mod camera;
+mod texture;
 use camera::Camera;
 mod context;
 pub use context::Context;
@@ -22,7 +22,7 @@ use uniforms::UniformBlock;
 #[derive(Debug, Copy, Clone)]
 struct Uniforms {
     view_proj: ultraviolet::mat::Mat4,
-    rot_angle: f32
+    rot_angle: f32,
 }
 
 unsafe impl bytemuck::Pod for Uniforms {}
@@ -33,7 +33,7 @@ impl Uniforms {
     fn new() -> Self {
         Self {
             view_proj: ultraviolet::mat::Mat4::identity(),
-            rot_angle: 0.0
+            rot_angle: 0.0,
         }
     }
 
@@ -66,15 +66,12 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         })
         .await;
 
-    let mut context = Context::new(
-        adapter,
-        device,
-        queue,
-        size,
-        surface
-    );
+    let mut context = Context::new(adapter, device, queue, size, surface);
 
-    let shader_id = context.register_shader("resources/shaders/shader.vert", "resources/shaders/shader.frag");
+    let shader_id = context.register_shader(
+        "resources/shaders/shader.vert",
+        "resources/shaders/shader.frag",
+    );
 
     let world = crate::worldmap::WorldMap::new();
     let mut vertex_buffer = world.build_vertex_buffer();
@@ -85,64 +82,59 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let mut uniforms = Uniforms::new();
     uniforms.update_view_proj(&camera);
 
-    let uniform_buffer = uniforms.create_buffer_with_data(&context.device);
-    let uniform_bind_group_layout = uniforms.create_bindgroup_layout(&context.device, 0, "some_uniforms");
-    let uniform_bind_group = uniforms.create_bind_group(
-        &context.device,
-        &uniform_bind_group_layout,
-        0,
-        &uniform_buffer,
-        "some_uniforms"
-    );
+    let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) =
+        uniforms.create_buffer_layout_and_group(&context, 0, "some_uniforms");
 
-    let pipeline_layout = context.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-        //bind_group_layouts: &[&texture_bind_group_layout, &uniform_bind_group_layout],
-        bind_group_layouts: &[&uniform_bind_group_layout],
-    });
+    let pipeline_layout = context
+        .device
+        .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            //bind_group_layouts: &[&texture_bind_group_layout, &uniform_bind_group_layout],
+            bind_group_layouts: &[&uniform_bind_group_layout],
+        });
 
-    let render_pipeline = context.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-        layout: &pipeline_layout,
-        vertex_stage: wgpu::ProgrammableStageDescriptor {
-            module: &context.shaders[shader_id].vs_module,
-            entry_point: "main",
-        },
-        fragment_stage: Some(wgpu::ProgrammableStageDescriptor {
-            module: &context.shaders[shader_id].fs_module,
-            entry_point: "main",
-        }),
-        rasterization_state: Some(wgpu::RasterizationStateDescriptor {
-            front_face: wgpu::FrontFace::Ccw,
-            cull_mode: wgpu::CullMode::None,
-            depth_bias: 0,
-            depth_bias_slope_scale: 0.0,
-            depth_bias_clamp: 0.0,
-        }),
-        primitive_topology: wgpu::PrimitiveTopology::TriangleList,
-        color_states: &[wgpu::ColorStateDescriptor {
-            format: swapchain_format,
-            color_blend: wgpu::BlendDescriptor::REPLACE,
-            alpha_blend: wgpu::BlendDescriptor::REPLACE,
-            write_mask: wgpu::ColorWrite::ALL,
-        }],
-        depth_stencil_state: Some(wgpu::DepthStencilStateDescriptor {
-            format: texture::Texture::DEPTH_FORMAT,
-            depth_write_enabled: true,
-            depth_compare: wgpu::CompareFunction::Less,
-            stencil_front: wgpu::StencilStateFaceDescriptor::IGNORE,
-            stencil_back: wgpu::StencilStateFaceDescriptor::IGNORE,
-            stencil_read_mask: 0,
-            stencil_write_mask: 0,
-        }),
-        vertex_state: wgpu::VertexStateDescriptor {
-            index_format: wgpu::IndexFormat::Uint16,
-            vertex_buffers: &[
-                vertex_buffer.descriptor()
-            ],
-        },
-        sample_count: 1,
-        sample_mask: !0,
-        alpha_to_coverage_enabled: false,
-    });
+    let render_pipeline = context
+        .device
+        .create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            layout: &pipeline_layout,
+            vertex_stage: wgpu::ProgrammableStageDescriptor {
+                module: &context.shaders[shader_id].vs_module,
+                entry_point: "main",
+            },
+            fragment_stage: Some(wgpu::ProgrammableStageDescriptor {
+                module: &context.shaders[shader_id].fs_module,
+                entry_point: "main",
+            }),
+            rasterization_state: Some(wgpu::RasterizationStateDescriptor {
+                front_face: wgpu::FrontFace::Ccw,
+                cull_mode: wgpu::CullMode::None,
+                depth_bias: 0,
+                depth_bias_slope_scale: 0.0,
+                depth_bias_clamp: 0.0,
+            }),
+            primitive_topology: wgpu::PrimitiveTopology::TriangleList,
+            color_states: &[wgpu::ColorStateDescriptor {
+                format: swapchain_format,
+                color_blend: wgpu::BlendDescriptor::REPLACE,
+                alpha_blend: wgpu::BlendDescriptor::REPLACE,
+                write_mask: wgpu::ColorWrite::ALL,
+            }],
+            depth_stencil_state: Some(wgpu::DepthStencilStateDescriptor {
+                format: texture::Texture::DEPTH_FORMAT,
+                depth_write_enabled: true,
+                depth_compare: wgpu::CompareFunction::Less,
+                stencil_front: wgpu::StencilStateFaceDescriptor::IGNORE,
+                stencil_back: wgpu::StencilStateFaceDescriptor::IGNORE,
+                stencil_read_mask: 0,
+                stencil_write_mask: 0,
+            }),
+            vertex_state: wgpu::VertexStateDescriptor {
+                index_format: wgpu::IndexFormat::Uint16,
+                vertex_buffers: &[vertex_buffer.descriptor()],
+            },
+            sample_count: 1,
+            sample_mask: !0,
+            alpha_to_coverage_enabled: false,
+        });
     vertex_buffer.build(&context.device, wgpu::BufferUsage::VERTEX);
     //index_buffer.build(&device, wgpu::BufferUsage::INDEX);
 
@@ -178,7 +170,13 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         }),
     }]);
 
-    let mut renderer = Renderer::new(&mut imgui, &context.device, &mut context.queue, sc_desc.format, None);
+    let mut renderer = Renderer::new(
+        &mut imgui,
+        &context.device,
+        &mut context.queue,
+        sc_desc.format,
+        None,
+    );
 
     let mut last_frame = Instant::now();
 
@@ -202,7 +200,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 sc_desc.width = size.width;
                 sc_desc.height = size.height;
                 swap_chain = context.device.create_swap_chain(&context.surface, &sc_desc);
-                context.textures[depth_id] = texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
+                context.textures[depth_id] =
+                    texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
             }
             Event::RedrawRequested(_) => {
                 uniforms.update_view_proj(&camera);
@@ -213,7 +212,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                     .get_next_texture()
                     .expect("Timeout when acquiring next swap chain texture");
                 {
-                    let mut encoder = context.device
+                    let mut encoder = context
+                        .device
                         .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
                     {
                         let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -224,15 +224,17 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                                 store_op: wgpu::StoreOp::Store,
                                 clear_color: wgpu::Color::BLACK,
                             }],
-                            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachmentDescriptor {
-                                attachment: &context.textures[depth_id].view,
-                                depth_load_op: wgpu::LoadOp::Clear,
-                                depth_store_op: wgpu::StoreOp::Store,
-                                clear_depth: 1.0,
-                                stencil_load_op: wgpu::LoadOp::Clear,
-                                stencil_store_op: wgpu::StoreOp::Store,
-                                clear_stencil: 0,
-                            }),
+                            depth_stencil_attachment: Some(
+                                wgpu::RenderPassDepthStencilAttachmentDescriptor {
+                                    attachment: &context.textures[depth_id].view,
+                                    depth_load_op: wgpu::LoadOp::Clear,
+                                    depth_store_op: wgpu::StoreOp::Store,
+                                    clear_depth: 1.0,
+                                    stencil_load_op: wgpu::LoadOp::Clear,
+                                    stencil_store_op: wgpu::StoreOp::Store,
+                                    clear_stencil: 0,
+                                },
+                            ),
                         });
                         rpass.set_pipeline(&render_pipeline);
                         //rpass.set_bind_group(0, &diffuse_bind_group, &[]);
@@ -282,7 +284,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                         */
                     }
 
-                    let mut encoder: wgpu::CommandEncoder = context.device
+                    let mut encoder: wgpu::CommandEncoder = context
+                        .device
                         .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
 
                     if last_cursor != Some(ui.mouse_cursor()) {

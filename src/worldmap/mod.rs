@@ -1,9 +1,9 @@
-use bracket_random::prelude::*;
-use bracket_noise::prelude::*;
 use crate::engine::VertexBuffer;
+use bracket_noise::prelude::*;
+use bracket_random::prelude::*;
 
 pub struct WorldMap {
-    noise : FastNoise
+    noise: FastNoise,
 }
 
 impl WorldMap {
@@ -17,22 +17,22 @@ impl WorldMap {
         noise.set_fractal_lacunarity(3.0);
         noise.set_frequency(0.01);
 
-        Self{
-            noise
-        }
+        Self { noise }
     }
 
     fn sphere_vertex(&self, altitude: f32, lat: f32, lon: f32) -> (f32, f32, f32) {
         (
             altitude * f32::cos(lat) * f32::cos(lon),
             altitude * f32::cos(lat) * f32::sin(lon),
-            altitude * f32::sin(lat)
+            altitude * f32::sin(lat),
         )
     }
 
-    fn add_point(&self, lat: f32, lon:f32, buffer: &mut VertexBuffer<f32>) {
+    fn add_point(&self, lat: f32, lon: f32, buffer: &mut VertexBuffer<f32>) {
         let base_coords = self.sphere_vertex(100.0, lat as f32, lon as f32);
-        let altitude = self.noise.get_noise3d(base_coords.0, base_coords.1, base_coords.2);
+        let altitude = self
+            .noise
+            .get_noise3d(base_coords.0, base_coords.1, base_coords.2);
         let sphere_coords = self.sphere_vertex(0.5 + (altitude / 50.0), lat as f32, lon as f32);
         buffer.add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
 
@@ -45,7 +45,7 @@ impl WorldMap {
 
     pub fn build_vertex_buffer(&self) -> VertexBuffer<f32> {
         let mut buffer = VertexBuffer::new(&[3, 3]);
-        const STEP : f32 = 1.0;
+        const STEP: f32 = 1.0;
 
         let mut lat = -180.0;
         let mut lon = -90.0;

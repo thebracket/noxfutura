@@ -1,13 +1,16 @@
-use ultraviolet::{vec::{Vec3, Vec4}, mat::Mat4};
+use ultraviolet::{
+    mat::Mat4,
+    vec::{Vec3, Vec4},
+};
 
 pub struct Camera {
-    eye : Vec3,
-    target : Vec3,
-    up : Vec3,
-    aspect : f32,
-    fovy : f32,
-    znear : f32,
-    zfar : f32
+    eye: Vec3,
+    target: Vec3,
+    up: Vec3,
+    aspect: f32,
+    fovy: f32,
+    znear: f32,
+    zfar: f32,
 }
 
 impl Camera {
@@ -33,7 +36,8 @@ impl Camera {
         );
 
         let view = Mat4::look_at(self.eye, self.target, self.up);
-        let proj = ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
+        let proj =
+            ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
         opengl_to_wgpu_matrix * proj * view
     }
 }
