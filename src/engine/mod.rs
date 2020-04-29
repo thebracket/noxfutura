@@ -15,6 +15,7 @@ mod camera;
 use camera::Camera;
 mod context;
 pub use context::Context;
+mod uniforms;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -77,89 +78,20 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let mut vertex_buffer = world.build_vertex_buffer();
 
     let depth_id = context.register_depth_texture("depth_texture");
-    //let mut depth_texture = texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
-
-    // Textures
-    /*let diffuse_bytes = include_bytes!("../../resources/avon-and-guards.png");
-    let (diffuse_texture, cmd_buffer) = texture::Texture::from_bytes(
-        &device, 
-        diffuse_bytes, 
-        "../../resources/avon-and-guards.png"
-    ).unwrap();
-    queue.submit(&[cmd_buffer]);
-
-    let texture_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-        bindings: &[
-            wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStage::FRAGMENT,
-                ty: wgpu::BindingType::SampledTexture {
-                    multisampled: false,
-                    dimension: wgpu::TextureViewDimension::D2,
-                    component_type: wgpu::TextureComponentType::Uint,
-                },
-            },
-            wgpu::BindGroupLayoutEntry {
-                binding: 1,
-                visibility: wgpu::ShaderStage::FRAGMENT,
-                ty: wgpu::BindingType::Sampler {
-                    comparison: false,
-                },
-            },
-        ],
-        label: Some("texture_bind_group_layout"),
-    });
-
-    let diffuse_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-        layout: &texture_bind_group_layout,
-        bindings: &[
-            wgpu::Binding {
-                binding: 0,
-                resource: wgpu::BindingResource::TextureView(&diffuse_texture.view),
-            },
-            wgpu::Binding {
-                binding: 1,
-                resource: wgpu::BindingResource::Sampler(&diffuse_texture.sampler),
-            }
-        ],
-        label: Some("diffuse_bind_group"),
-    });*/
 
     let camera = Camera::new(size.width, size.height);
     let mut uniforms = Uniforms::new();
     uniforms.update_view_proj(&camera);
 
-    let uniform_buffer = context.device.create_buffer_with_data(
-        bytemuck::cast_slice(&[uniforms]),
-        wgpu::BufferUsage::UNIFORM | wgpu::BufferUsage::COPY_DST,
+    let uniform_buffer = uniforms::create_buffer_with_data(&context.device, &uniforms);
+    let uniform_bind_group_layout = uniforms::create_uniform_bindgroup_layout(&context.device, 0);
+    let uniform_bind_group = uniforms::create_uniform_bind_group(
+        &context.device,
+        &uniform_bind_group_layout,
+        0,
+        &uniform_buffer,
+        &uniforms
     );
-
-    let uniform_bind_group_layout = context.device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-        bindings: &[
-            wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStage::VERTEX,
-                ty: wgpu::BindingType::UniformBuffer {
-                    dynamic: false,
-                },
-            }
-        ],
-        label: Some("uniform_bind_group_layout"),
-    });
-
-    let uniform_bind_group = context.device.create_bind_group(&wgpu::BindGroupDescriptor {
-        layout: &uniform_bind_group_layout,
-        bindings: &[
-            wgpu::Binding {
-                binding: 0,
-                resource: wgpu::BindingResource::Buffer {
-                    buffer: &uniform_buffer,
-                    range: 0..std::mem::size_of_val(&uniforms) as wgpu::BufferAddress,
-                }
-            }
-        ],
-        label: Some("uniform_bind_group"),
-    });
 
     let pipeline_layout = context.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         //bind_group_layouts: &[&texture_bind_group_layout, &uniform_bind_group_layout],
