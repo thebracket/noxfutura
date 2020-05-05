@@ -123,9 +123,9 @@ dependencies = [
 
 [[package]]
 name = "bracket-noise"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b4f210a8c63dd811f0a2eda8b05a0ed6f605aa28a436e4d40db08ba6c9514fc"
+checksum = "f6b1235bcf925e1ed541da32902abe9ea2313ed388cd6b39038d5bb4b39f611f"
 dependencies = [
  "bracket-random",
 ]

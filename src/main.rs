@@ -1,5 +1,5 @@
 mod engine;
-mod modes;
+pub mod modes;
 pub mod worldmap;
 
 fn main() {

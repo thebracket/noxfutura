@@ -11,38 +11,12 @@ mod shader;
 mod vertex_buffer;
 pub use vertex_buffer::VertexBuffer;
 mod camera;
-mod texture;
-use camera::Camera;
 mod context;
+pub mod texture;
 pub use context::Context;
-mod uniforms;
-use uniforms::UniformBlock;
-mod pipelines;
-
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-struct Uniforms {
-    view_proj: ultraviolet::mat::Mat4,
-    rot_angle: f32,
-}
-
-unsafe impl bytemuck::Pod for Uniforms {}
-unsafe impl bytemuck::Zeroable for Uniforms {}
-impl UniformBlock for Uniforms {}
-
-impl Uniforms {
-    fn new() -> Self {
-        Self {
-            view_proj: ultraviolet::mat::Mat4::identity(),
-            rot_angle: 0.0,
-        }
-    }
-
-    fn update_view_proj(&mut self, camera: &Camera) {
-        self.view_proj = camera.build_view_projection_matrix();
-        self.rot_angle += 0.01;
-    }
-}
+pub mod pipelines;
+pub mod renderpass;
+pub mod uniforms;
 
 async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
     let size = window.inner_size();
@@ -67,35 +41,9 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         })
         .await;
 
-    let mut context = Context::new(adapter, device, queue, size, surface);
-
-    let shader_id = context.register_shader(
-        "resources/shaders/shader.vert",
-        "resources/shaders/shader.frag",
-    );
-
-    let world = crate::worldmap::WorldMap::new();
-    let mut vertex_buffer = world.build_vertex_buffer();
+    let mut context = Context::new(adapter, device, queue, size, surface, swapchain_format);
 
     let depth_id = context.register_depth_texture("depth_texture");
-
-    let camera = Camera::new(size.width, size.height);
-    let mut uniforms = Uniforms::new();
-    uniforms.update_view_proj(&camera);
-
-    let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) =
-        uniforms.create_buffer_layout_and_group(&context, 0, "some_uniforms");
-
-    let pipeline_layout = context.create_pipeline_layout(&[&uniform_bind_group_layout]);
-
-    let render_pipeline = pipelines::RenderPipelineBuilder::new(swapchain_format)
-        .layout(&pipeline_layout)
-        .vf_shader(&context, shader_id)
-        .depth_buffer()
-        .vertex_state(wgpu::IndexFormat::Uint16, &[vertex_buffer.descriptor()])
-        .build(&context.device);
-
-    vertex_buffer.build(&context.device, wgpu::BufferUsage::VERTEX);
 
     let mut sc_desc = wgpu::SwapChainDescriptor {
         usage: wgpu::TextureUsage::OUTPUT_ATTACHMENT,
@@ -142,6 +90,9 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let mut last_cursor = None;
     // END IMGUI
 
+    let mut program = crate::modes::Program::new();
+    program.init(&mut context);
+
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
         match event {
@@ -163,86 +114,18 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                     texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
             }
             Event::RedrawRequested(_) => {
-                uniforms.update_view_proj(&camera);
-                uniforms.update_buffer(&context, &uniform_buffer);
+                let frame = renderpass::get_frame(&mut swap_chain);
 
-                // Base
-                let frame = swap_chain
-                    .get_next_texture()
-                    .expect("Timeout when acquiring next swap chain texture");
-                {
-                    let mut encoder = context
-                        .device
-                        .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
-                    {
-                        let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                            color_attachments: &[wgpu::RenderPassColorAttachmentDescriptor {
-                                attachment: &frame.view,
-                                resolve_target: None,
-                                load_op: wgpu::LoadOp::Clear,
-                                store_op: wgpu::StoreOp::Store,
-                                clear_color: wgpu::Color::BLACK,
-                            }],
-                            depth_stencil_attachment: Some(
-                                wgpu::RenderPassDepthStencilAttachmentDescriptor {
-                                    attachment: &context.textures[depth_id].view,
-                                    depth_load_op: wgpu::LoadOp::Clear,
-                                    depth_store_op: wgpu::StoreOp::Store,
-                                    clear_depth: 1.0,
-                                    stencil_load_op: wgpu::LoadOp::Clear,
-                                    stencil_store_op: wgpu::StoreOp::Store,
-                                    clear_stencil: 0,
-                                },
-                            ),
-                        });
-                        rpass.set_pipeline(&render_pipeline);
-                        //rpass.set_bind_group(0, &diffuse_bind_group, &[]);
-                        rpass.set_bind_group(0, &uniform_bind_group, &[]);
-                        rpass.set_vertex_buffer(0, &vertex_buffer.buffer.as_ref().unwrap(), 0, 0);
-                        //rpass.set_index_buffer(&index_buffer.buffer.as_ref().unwrap(), 0, 0);
-                        //rpass.draw_indexed(0..index_buffer.len(), 0, 0..1);
-                        rpass.draw(0..vertex_buffer.len(), 0..1);
-                    }
+                last_frame = imgui.io_mut().update_delta_time(last_frame);
+                platform
+                    .prepare_frame(imgui.io_mut(), &window)
+                    .expect("Failed to prepare frame");
+                let ui = imgui.frame();
 
-                    context.queue.submit(&[encoder.finish()]);
-                }
+                program.tick(&mut context, &frame, depth_id, &ui);
 
                 // ImGui
                 {
-                    //let delta_s = last_frame.elapsed();
-                    last_frame = imgui.io_mut().update_delta_time(last_frame);
-
-                    platform
-                        .prepare_frame(imgui.io_mut(), &window)
-                        .expect("Failed to prepare frame");
-                    let ui = imgui.frame();
-
-                    {
-                        let window = imgui::Window::new(im_str!("Hello world"));
-                        window
-                            .size([300.0, 100.0], Condition::FirstUseEver)
-                            .build(&ui, || {
-                                ui.text(im_str!("Hello world!"));
-                                ui.text(im_str!("This...is...imgui-rs on WGPU!"));
-                                ui.separator();
-                                let mouse_pos = ui.io().mouse_pos;
-                                ui.text(im_str!(
-                                    "Mouse Position: ({:.1},{:.1})",
-                                    mouse_pos[0],
-                                    mouse_pos[1]
-                                ));
-                            });
-
-                        /*let window = imgui::Window::new(im_str!("Hello too"));
-                        window
-                            .size([400.0, 200.0], Condition::FirstUseEver)
-                            .position([400.0, 200.0], Condition::FirstUseEver)
-                            .build(&ui, || {
-                                ui.text(im_str!("Frametime: {:?}", delta_s));
-                            });
-                        */
-                    }
-
                     let mut encoder: wgpu::CommandEncoder = context
                         .device
                         .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
@@ -257,8 +140,6 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
                     context.queue.submit(&[encoder.finish()]);
                 }
-
-                //queue.submit(&[encoder.finish()]);
             }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,

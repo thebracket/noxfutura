@@ -42,25 +42,4 @@ impl WorldMap {
             buffer.add3(0.0, 0.2 + altitude, 0.0);
         }
     }
-
-    pub fn build_vertex_buffer(&self) -> VertexBuffer<f32> {
-        let mut buffer = VertexBuffer::new(&[3, 3]);
-        const STEP: f32 = 1.0;
-
-        let mut lat = -180.0;
-        let mut lon = -90.0;
-
-        while lat < 180.0 {
-            while lon < 90.0 {
-                self.add_point(lat, lon, &mut buffer);
-                self.add_point(lat + STEP, lon, &mut buffer);
-                self.add_point(lat + STEP, lon + STEP, &mut buffer);
-                lon += STEP;
-            }
-            lon = -90.0;
-            lat += STEP;
-        }
-
-        buffer
-    }
 }

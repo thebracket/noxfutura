@@ -10,6 +10,7 @@ pub struct Context {
     pub surface: wgpu::Surface,
     pub shaders: Vec<Shader>,
     pub textures: Vec<Texture>,
+    pub swapchain_format: wgpu::TextureFormat,
 }
 
 impl Context {
@@ -19,6 +20,7 @@ impl Context {
         queue: wgpu::Queue,
         size: winit::dpi::PhysicalSize<u32>,
         surface: wgpu::Surface,
+        swapchain_format: wgpu::TextureFormat,
     ) -> Self {
         Self {
             adapter,
@@ -28,6 +30,7 @@ impl Context {
             surface,
             shaders: Vec::new(),
             textures: Vec::new(),
+            swapchain_format,
         }
     }
 
@@ -51,9 +54,13 @@ impl Context {
         self.textures.len() - 1
     }
 
-    pub fn create_pipeline_layout(&self, bind_groups: &[&wgpu::BindGroupLayout]) -> wgpu::PipelineLayout {
-        self.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            bind_group_layouts: bind_groups,
-        })
+    pub fn create_pipeline_layout(
+        &self,
+        bind_groups: &[&wgpu::BindGroupLayout],
+    ) -> wgpu::PipelineLayout {
+        self.device
+            .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                bind_group_layouts: bind_groups,
+            })
     }
 }
