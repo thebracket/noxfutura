@@ -122,7 +122,10 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                     .expect("Failed to prepare frame");
                 let ui = imgui.frame();
 
-                program.tick(&mut context, &frame, depth_id, &ui);
+                let should_continue = program.tick(&mut context, &frame, depth_id, &ui);
+                if !should_continue {
+                    *control_flow = ControlFlow::Exit;
+                }
 
                 // ImGui
                 {

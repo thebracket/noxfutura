@@ -18,3 +18,6 @@ failure = "0.1"
 ultraviolet = "0.4.6"
 bracket-random = "0.8.0"
 bracket-noise = "0.8.1"
+
+[profile.dev]
+opt-level = 1

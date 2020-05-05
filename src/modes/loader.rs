@@ -1,11 +1,15 @@
 use super::resources::SharedResources;
 use imgui::*;
 
-pub struct Loader {}
+pub struct Loader {
+    counter : i32
+}
 
 impl Loader {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            counter : 0
+        }
     }
 
     pub fn tick(
@@ -24,6 +28,12 @@ impl Loader {
                 ui.text(im_str!("Flipping bits at random..."));
             });
 
-        super::ProgramMode::Loader
+        self.counter += 1;
+
+        if self.counter < 1 {
+            super::ProgramMode::Loader
+        } else {
+            super::ProgramMode::MainMenu
+        }
     }
 }
