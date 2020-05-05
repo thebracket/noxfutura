@@ -58,7 +58,7 @@ impl MainMenu {
 
         let thanks = imgui::Window::new(im_str!("Thanks to our supporters"));
         thanks
-            .position([context.size.width as f32 - 300.0, 125.0], Condition::FirstUseEver)
+            .position([context.size.width as f32 - 300.0, 125.0], Condition::Always)
             .size([400.0, 400.0], Condition::FirstUseEver)
             .always_auto_resize(true)
             .collapsible(false)
@@ -68,7 +68,7 @@ impl MainMenu {
 
         let copyright = imgui::Window::new(im_str!("Copyright"));
         copyright
-            .position([10.0, context.size.height as f32 - 50.0], Condition::FirstUseEver)
+            .position([10.0, context.size.height as f32 - 50.0], Condition::Always)
             .size([400.0, 400.0], Condition::FirstUseEver)
             .always_auto_resize(true)
             .collapsible(false)
@@ -87,7 +87,7 @@ impl MainMenu {
 
         let mainmenu = imgui::Window::new(im_str!("Main Menu"));
         mainmenu
-            .position([hpos, (context.size.height as f32 / 2.0) - 100.0], Condition::FirstUseEver)
+            .position([hpos, (context.size.height as f32 / 2.0) - 100.0], Condition::Always)
             .always_auto_resize(true)
             .collapsible(false)
             .no_decoration()

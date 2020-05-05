@@ -112,6 +112,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 swap_chain = context.device.create_swap_chain(&context.surface, &sc_desc);
                 context.textures[depth_id] =
                     texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
+                context.size = size;
             }
             Event::RedrawRequested(_) => {
                 let frame = renderpass::get_frame(&mut swap_chain);
