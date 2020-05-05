@@ -18,6 +18,9 @@ failure = "0.1"
 ultraviolet = "0.4.6"
 bracket-random = "0.8.0"
 bracket-noise = "0.8.1"
+bracket-geometry = "0.8.1"
+lazy_static = "1.4.0"
+parking_lot = "0.10.0"
 
 [profile.dev]
 opt-level = 1

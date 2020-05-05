@@ -1,0 +1,20 @@
+mod blocktype;
+pub use blocktype::BlockType;
+mod block;
+pub use block::Block;
+mod biome;
+pub use biome::Biome;
+mod river;
+pub use river::{River, RiverStep};
+mod planet;
+pub use planet::*;
+mod builder;
+pub use builder::*;
+
+pub const WORLD_HEIGHT : u16 = 128;
+pub const WORLD_WIDTH : u16 = 256;
+pub const WORLD_TILES_COUNT : u16 = WORLD_HEIGHT * WORLD_WIDTH;
+pub const REGION_WIDTH : i32 = 256;
+pub const REGION_HEIGHT : i32 = 256;
+pub const REGION_DEPTH : i32 =256;
+pub const REGION_TILES_COUNT : usize = (REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH) as usize;

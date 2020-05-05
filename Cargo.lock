@@ -122,6 +122,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "bracket-geometry"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ec613acfe65a809f03d57e2cc8ab97f9c396ddb9929e784bc19b87dd5ccf358"
+dependencies = [
+ "ultraviolet",
+]
+
+[[package]]
 name = "bracket-noise"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1094,6 +1103,7 @@ dependencies = [
 name = "noxfutura"
 version = "0.1.0"
 dependencies = [
+ "bracket-geometry",
  "bracket-noise",
  "bracket-random",
  "bytemuck",
@@ -1104,6 +1114,8 @@ dependencies = [
  "imgui",
  "imgui-wgpu",
  "imgui-winit-support",
+ "lazy_static",
+ "parking_lot",
  "ultraviolet",
  "wgpu",
  "winit",
