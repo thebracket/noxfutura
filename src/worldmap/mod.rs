@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::engine::VertexBuffer;
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;

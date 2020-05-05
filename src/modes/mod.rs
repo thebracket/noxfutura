@@ -31,14 +31,14 @@ impl Program {
         &mut self,
         context: &mut crate::engine::Context,
         frame: &wgpu::SwapChainOutput,
-        depth_id: usize,
+        _depth_id: usize,
         imgui: &imgui::Ui,
     ) {
         match self.mode {
             ProgramMode::Loader => {
                 self.mode = self
                     .loader
-                    .tick(&self.resources, frame, context, depth_id, imgui)
+                    .tick(&self.resources, frame, context, imgui)
             }
         }
     }

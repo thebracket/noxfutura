@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},

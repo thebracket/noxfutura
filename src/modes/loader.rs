@@ -1,5 +1,4 @@
 use super::resources::SharedResources;
-use crate::engine::renderpass;
 use imgui::*;
 
 pub struct Loader {}
@@ -14,7 +13,6 @@ impl Loader {
         resources: &SharedResources,
         frame: &wgpu::SwapChainOutput,
         context: &mut crate::engine::Context,
-        depth_id: usize,
         ui: &imgui::Ui,
     ) -> super::ProgramMode {
         super::helpers::render_menu_background(context, frame, resources);
