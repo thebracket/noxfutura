@@ -2,14 +2,12 @@ use super::resources::SharedResources;
 use imgui::*;
 
 pub struct Loader {
-    counter : i32
+    counter: i32,
 }
 
 impl Loader {
     pub fn new() -> Self {
-        Self {
-            counter : 0
-        }
+        Self { counter: 0 }
     }
 
     pub fn tick(

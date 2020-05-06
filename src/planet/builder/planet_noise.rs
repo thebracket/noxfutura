@@ -1,31 +1,50 @@
-use crate::planet::{WORLD_TILES_COUNT, WORLD_HEIGHT, WORLD_WIDTH, REGION_HEIGHT, REGION_WIDTH, planet_idx};
-use super::{PLANET_BUILD, Block, BlockType, set_worldgen_status};
-use super::noise_helper::{noise_x, noise_y, noise_to_planet_height};
+use super::noise_helper::*;
+use super::{set_worldgen_status, Block, BlockType, PLANET_BUILD};
+use crate::planet::{
+    planet_idx, REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH,
+};
 use bracket_noise::prelude::*;
 
 pub(crate) fn zero_fill() {
     set_worldgen_status("Building initial ball of mud");
-    let blocks : Vec<Block> = vec![Block::blank(); WORLD_TILES_COUNT as usize];
+    let blocks: Vec<Block> = vec![Block::blank(); WORLD_TILES_COUNT as usize];
     PLANET_BUILD.lock().planet.landblocks = blocks;
     PLANET_BUILD.lock().planet.migrant_counter = 0;
     PLANET_BUILD.lock().planet.remaining_settlers = 0;
+}
+
+fn sphere_vertex(altitude: f32, lat: f32, lon: f32) -> (f32, f32, f32) {
+    let rlat = lat * 0.0174533;
+    let rlon = lon * 0.0174533;
+    (
+        altitude * f32::cos(rlat) * f32::cos(rlon),
+        altitude * f32::cos(rlat) * f32::sin(rlon),
+        altitude * f32::sin(rlat),
+    )
 }
 
 pub(crate) fn planetary_noise() {
     set_worldgen_status("Dividing the heavens from the earth");
     let perlin_seed = PLANET_BUILD.lock().planet.perlin_seed;
     let mut noise = FastNoise::seeded(perlin_seed);
-    noise.set_noise_type(NoiseType::SimplexFractal);
+    /*noise.set_noise_type(NoiseType::SimplexFractal);
     noise.set_fractal_type(FractalType::FBM);
     noise.set_fractal_octaves(5);
     noise.set_fractal_gain(0.5);
     noise.set_fractal_lacunarity(2.0);
+    noise.set_frequency(0.01);*/
+    noise.set_noise_type(NoiseType::SimplexFractal);
+    noise.set_fractal_type(FractalType::FBM);
+    noise.set_fractal_octaves(10);
+    noise.set_fractal_gain(0.5);
+    noise.set_fractal_lacunarity(3.0);
+    noise.set_frequency(0.01);
 
     let max_temperature = 56.7;
     let min_temperature = -55.2;
     let temperature_range = max_temperature - min_temperature;
     let half_planet_height = WORLD_HEIGHT as f32 / 2.0;
-    const REGION_FRACTION_TO_CONSIDER : i32 = 64;
+    const REGION_FRACTION_TO_CONSIDER: i32 = 64;
 
     for y in 0..WORLD_HEIGHT as i32 {
         let distance_from_equator = i32::abs((WORLD_HEIGHT as i32 / 2) - y);
@@ -39,13 +58,21 @@ pub(crate) fn planetary_noise() {
             let mut n_tiles = 0;
             for y1 in 0..REGION_HEIGHT / REGION_FRACTION_TO_CONSIDER {
                 for x1 in 0..REGION_WIDTH / REGION_FRACTION_TO_CONSIDER {
-                    let nh = noise.get_noise(
-                        noise_x(x, x1*REGION_FRACTION_TO_CONSIDER),
-                        noise_y(y, y1*REGION_FRACTION_TO_CONSIDER)
-                    );
+                    let lat = noise_lat(y, y1 * REGION_FRACTION_TO_CONSIDER);
+                    let lon = noise_lon(x, x1 * REGION_FRACTION_TO_CONSIDER);
+                    let sphere_coords = sphere_vertex(100.0, lat, lon);
+                    let nh = noise.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
+                    /*let nh = noise.get_noise(
+                        noise_x(x, x1 * REGION_FRACTION_TO_CONSIDER),
+                        noise_y(y, y1 * REGION_FRACTION_TO_CONSIDER),
+                    );*/
                     let n = noise_to_planet_height(nh);
-                    if n < min { min = n }
-                    if n > max { max = n }
+                    if n < min {
+                        min = n
+                    }
+                    if n > max {
+                        max = n
+                    }
                     total_height += n as u32;
                     n_tiles += 1;
                 }
@@ -54,16 +81,32 @@ pub(crate) fn planetary_noise() {
             let pidx = planet_idx(x, y);
             let mut planet = PLANET_BUILD.lock();
             planet.planet.landblocks[pidx].height = (total_height / n_tiles as u32) as u8;
+            //println!("{}", planet.planet.landblocks[pidx].height);
             planet.planet.landblocks[pidx].btype = BlockType::None;
             planet.planet.landblocks[pidx].variance = max - min;
-            let altitude_deduction = (planet.planet.landblocks[pidx].height as f32 - planet.planet.water_height as f32) / 10.0;
-            planet.planet.landblocks[pidx].temperature = (base_temp_by_latitude - altitude_deduction) as i8;
-            if planet.planet.landblocks[pidx].temperature < -55 { planet.planet.landblocks[pidx].temperature = -55 }
-            if planet.planet.landblocks[pidx].temperature > 55 { planet.planet.landblocks[pidx].temperature = 55 }
+            let altitude_deduction = (planet.planet.landblocks[pidx].height as f32
+                - planet.planet.water_height as f32)
+                / 10.0;
+            planet.planet.landblocks[pidx].temperature =
+                (base_temp_by_latitude - altitude_deduction) as i8;
+            if planet.planet.landblocks[pidx].temperature < -55 {
+                planet.planet.landblocks[pidx].temperature = -55
+            }
+            if planet.planet.landblocks[pidx].temperature > 55 {
+                planet.planet.landblocks[pidx].temperature = 55
+            }
             std::mem::drop(planet);
         }
 
         let percent = y as f32 / WORLD_HEIGHT as f32;
-        set_worldgen_status(format!("Dividing heavens from the earth: {}%", (percent * 100.0) as u8));
+        set_worldgen_status(format!(
+            "Dividing heavens from the earth: {}%",
+            (percent * 100.0) as u8
+        ));
+
+        let planet_copy = PLANET_BUILD.lock().planet.clone();
+        super::WORLDGEN_RENDER
+            .lock()
+            .planet_with_altitude(planet_copy);
     }
 }

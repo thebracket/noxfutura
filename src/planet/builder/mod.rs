@@ -1,8 +1,10 @@
+use super::{Block, BlockType, Planet};
 use parking_lot::Mutex;
-use super::{Planet, Block, BlockType};
-mod planet_noise;
 mod noise_helper;
 mod planet_categories;
+mod planet_noise;
+mod render_interface;
+pub use render_interface::WORLDGEN_RENDER;
 
 #[derive(Clone)]
 pub struct PlanetParams {
@@ -10,38 +12,38 @@ pub struct PlanetParams {
     pub water_level: i32,
     pub plains_level: i32,
     pub starting_settlers: i32,
-    pub strict_beamdown : bool
+    pub strict_beamdown: bool,
 }
 
 struct PlanetBuilder {
-    params : PlanetParams,
-    planet : Planet,
-    done : bool,
-    task : String
+    params: PlanetParams,
+    planet: Planet,
+    done: bool,
+    task: String,
 }
 
 impl PlanetBuilder {
     fn new() -> Self {
         Self {
-            params : PlanetParams{
+            params: PlanetParams {
                 world_seed: 0,
-                water_level : 3,
-                plains_level : 3,
+                water_level: 3,
+                plains_level: 3,
                 starting_settlers: 6,
                 strict_beamdown: true,
             },
-            planet : Planet::new(),
-            done : false,
-            task : "Initializing".to_string()
+            planet: Planet::new(),
+            done: false,
+            task: "Initializing".to_string(),
         }
     }
 }
 
 lazy_static! {
-    static ref PLANET_BUILD : Mutex<PlanetBuilder> = Mutex::new(PlanetBuilder::new());
+    static ref PLANET_BUILD: Mutex<PlanetBuilder> = Mutex::new(PlanetBuilder::new());
 }
 
-pub fn start_building_planet(params : PlanetParams) {
+pub fn start_building_planet(params: PlanetParams) {
     let mut lock = PLANET_BUILD.lock();
     lock.planet.rng_seed = params.world_seed as u64;
     lock.planet.water_divisor = params.water_level;
@@ -68,7 +70,7 @@ fn threaded_builder() {
     // It's all done
 }
 
-fn set_worldgen_status<S:ToString>(status : S) {
+fn set_worldgen_status<S: ToString>(status: S) {
     PLANET_BUILD.lock().task = status.to_string();
 }
 

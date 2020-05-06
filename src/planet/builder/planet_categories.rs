@@ -1,10 +1,14 @@
-use crate::planet::{Planet, WORLD_TILES_COUNT, WORLD_WIDTH, WORLD_HEIGHT, planet_idx, BlockType};
 use super::{set_worldgen_status, PLANET_BUILD};
+use crate::planet::{planet_idx, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 
 pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
     let mut count = 0usize;
     while count < target as usize {
-        count = planet.landblocks.iter().filter(|b| b.height < *candidate as u8).count();
+        count = planet
+            .landblocks
+            .iter()
+            .filter(|b| b.height < *candidate as u8)
+            .count();
         if count >= target as usize {
             return *candidate as u8;
         } else {
@@ -33,12 +37,12 @@ pub(crate) fn planet_type_allocation() {
             block.btype = BlockType::Water;
             block.rainfall = 10;
         }
-        if block.height + block.variance/2 > planet.water_height {
+        if block.height + block.variance / 2 > planet.water_height {
             block.btype = BlockType::SaltMarsh;
         } else if block.height <= planet.plains_height {
             block.btype = BlockType::Plains;
             block.rainfall = 10;
-            if block.height - block.variance/2 > planet.water_height {
+            if block.height - block.variance / 2 > planet.water_height {
                 block.btype = BlockType::Marsh;
                 block.rainfall = 20;
             }
@@ -66,18 +70,18 @@ pub(crate) fn planet_coastlines() {
     set_worldgen_status("Crinkling the coastlines");
     let mut planet = PLANET_BUILD.lock().planet.clone();
 
-    for y in 1..WORLD_HEIGHT as i32 -1 {
+    for y in 1..WORLD_HEIGHT as i32 - 1 {
         for x in 1..WORLD_WIDTH as i32 - 1 {
             let base_idx = planet_idx(x, y);
             if planet.landblocks[base_idx].btype != BlockType::Water {
-                if planet.landblocks[base_idx - 1].btype == BlockType::Water ||
-                    planet.landblocks[base_idx + 1].btype == BlockType::Water ||
-                    planet.landblocks[base_idx - WORLD_WIDTH as usize].btype == BlockType::Water ||
-                    planet.landblocks[base_idx + WORLD_WIDTH as usize].btype == BlockType::Water 
-                    {
-                        planet.landblocks[base_idx].btype = BlockType::Coastal;
-                        planet.landblocks[base_idx].rainfall = 20;
-                    }
+                if planet.landblocks[base_idx - 1].btype == BlockType::Water
+                    || planet.landblocks[base_idx + 1].btype == BlockType::Water
+                    || planet.landblocks[base_idx - WORLD_WIDTH as usize].btype == BlockType::Water
+                    || planet.landblocks[base_idx + WORLD_WIDTH as usize].btype == BlockType::Water
+                {
+                    planet.landblocks[base_idx].btype = BlockType::Coastal;
+                    planet.landblocks[base_idx].rainfall = 20;
+                }
             }
         }
     }
@@ -101,11 +105,19 @@ pub(crate) fn planet_rainfall() {
             } else {
                 rain_amount += 1;
             }
-            if rain_amount < 0 { rain_amount = 0; }
-            if rain_amount > 20 { rain_amount = 20; }
+            if rain_amount < 0 {
+                rain_amount = 0;
+            }
+            if rain_amount > 20 {
+                rain_amount = 20;
+            }
             planet.landblocks[pidx].rainfall += rain_amount;
-            if planet.landblocks[pidx].rainfall < 0 { planet.landblocks[pidx].rainfall = 0 }
-            if planet.landblocks[pidx].rainfall > 100 { planet.landblocks[pidx].rainfall = 100 }
+            if planet.landblocks[pidx].rainfall < 0 {
+                planet.landblocks[pidx].rainfall = 0
+            }
+            if planet.landblocks[pidx].rainfall > 100 {
+                planet.landblocks[pidx].rainfall = 100
+            }
         }
     }
     PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
