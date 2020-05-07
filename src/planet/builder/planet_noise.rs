@@ -104,7 +104,7 @@ pub(crate) fn planetary_noise() {
             (percent * 100.0) as u8
         ));
 
-        if y % 10 == 0 {
+        if y % 3 == 0 {
             let planet_copy = PLANET_BUILD.lock().planet.clone();
             super::WORLDGEN_RENDER
                 .lock()

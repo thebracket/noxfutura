@@ -93,7 +93,7 @@ impl PlanetGen2 {
         use crate::engine::renderpass;
         self.background_and_status(resources, frame, context, ui);
 
-        if let Some(mut uniforms) = self.uniforms {
+        if let Some(uniforms) = self.uniforms.as_mut() {
             uniforms.update_view_proj(self.camera.as_ref().unwrap());
             uniforms.update_buffer(context, self.uniform_buffer.as_ref().unwrap());
         }
@@ -150,7 +150,7 @@ impl Uniforms {
 
     fn update_view_proj(&mut self, camera: &Camera) {
         self.view_proj = camera.build_view_projection_matrix();
-        self.rot_angle += 0.1;
+        self.rot_angle += 0.001;
     }
 }
 
