@@ -1,4 +1,4 @@
-use super::{set_worldgen_status, PLANET_BUILD};
+use super::{set_worldgen_status, PLANET_BUILD, WORLDGEN_RENDER};
 use crate::planet::{planet_idx, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 
 pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
@@ -36,8 +36,7 @@ pub(crate) fn planet_type_allocation() {
         if block.height <= planet.water_height {
             block.btype = BlockType::Water;
             block.rainfall = 10;
-        }
-        if block.height + block.variance / 2 > planet.water_height {
+        } else if block.height as u16 + block.variance as u16 / 2 > planet.water_height as u16 {
             block.btype = BlockType::SaltMarsh;
         } else if block.height <= planet.plains_height {
             block.btype = BlockType::Plains;
@@ -62,6 +61,7 @@ pub(crate) fn planet_type_allocation() {
             }
         }
     }
+    WORLDGEN_RENDER.lock().planet_with_category(&planet);
 
     PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
 }

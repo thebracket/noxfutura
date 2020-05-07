@@ -61,27 +61,6 @@ where
 
     pub fn update_buffer(&mut self, context: &super::Context) {
         self.build(&context.device, wgpu::BufferUsage::VERTEX);
-        /*let mut encoder = context
-            .device
-            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                label: Some("update encoder"),
-            });
-
-        let staging_buffer = context.device.create_buffer_with_data(
-            bytemuck::cast_slice(&self.data),
-            wgpu::BufferUsage::COPY_SRC,
-        );
-
-        let bytes_count = self.data.len() * std::mem::size_of::<T>();
-        encoder.copy_buffer_to_buffer(
-            &staging_buffer,
-            0,
-            self.buffer.as_ref().unwrap(),
-            0,
-            bytes_count as wgpu::BufferAddress,
-        );
-
-        context.queue.submit(&[encoder.finish()]);*/
     }
 
     pub fn len(&self) -> u32 {

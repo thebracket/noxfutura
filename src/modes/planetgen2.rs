@@ -34,7 +34,7 @@ impl PlanetGen2 {
         let mut renderlock = WORLDGEN_RENDER.lock();
         renderlock.vertex_buffer.build(
             &context.device,
-            wgpu::BufferUsage::VERTEX | wgpu::BufferUsage::COPY_DST,
+            wgpu::BufferUsage::VERTEX,
         );
         self.planet_shader = context.register_shader(
             "resources/shaders/planetgen.vert",
@@ -42,11 +42,13 @@ impl PlanetGen2 {
         );
 
         // Uniforms and camera etc.
-        let camera = Camera::new(context.size.width, context.size.height);
-        let mut uniforms = Uniforms::new();
-        uniforms.update_view_proj(&camera);
+        self.camera = Some(Camera::new(context.size.width, context.size.height));
+        self.uniforms = Some(Uniforms::new());
+        self.uniforms.as_mut().unwrap().update_view_proj(self.camera.as_ref().unwrap());
         let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) =
-            uniforms.create_buffer_layout_and_group(&context, 0, "some_uniforms");
+            self.uniforms.as_mut().unwrap().create_buffer_layout_and_group(&context, 0, "some_uniforms");
+        self.uniform_bind_group = Some(uniform_bind_group);
+        self.uniform_buffer = Some(uniform_buffer);
 
         // Pipeline
         let pipeline_layout = context.create_pipeline_layout(&[&uniform_bind_group_layout]);
@@ -60,12 +62,6 @@ impl PlanetGen2 {
             )
             .build(&context.device);
         self.planet_pipeline = Some(render_pipeline);
-
-        // Move
-        self.uniform_bind_group = Some(uniform_bind_group);
-        self.uniforms = Some(uniforms);
-        self.camera = Some(camera);
-        self.uniform_buffer = Some(uniform_buffer);
     }
 
     fn background_and_status(
@@ -108,21 +104,24 @@ impl PlanetGen2 {
             renderlock.needs_update = false;
         }
 
-        let mut encoder = renderpass::get_encoder(&context);
-        {
-            let mut rpass = renderpass::get_render_pass_with_depth(
-                context,
-                &mut encoder,
-                frame,
-                depth_id,
-                wgpu::LoadOp::Load,
-            );
-            rpass.set_pipeline(self.planet_pipeline.as_ref().unwrap());
-            rpass.set_bind_group(0, self.uniform_bind_group.as_ref().unwrap(), &[]);
-            rpass.set_vertex_buffer(0, &renderlock.vertex_buffer.buffer.as_ref().unwrap(), 0, 0);
-            rpass.draw(0..renderlock.vertex_buffer.len(), 0..1);
+        if renderlock.vertex_buffer.len() > 0 {
+            let mut encoder = renderpass::get_encoder(&context);
+            {
+                let mut rpass = renderpass::get_render_pass_with_depth(
+                    context,
+                    &mut encoder,
+                    frame,
+                    depth_id,
+                    wgpu::LoadOp::Load,
+                );
+                rpass.set_pipeline(self.planet_pipeline.as_ref().unwrap());
+                rpass.set_bind_group(0, self.uniform_bind_group.as_ref().unwrap(), &[]);
+                rpass.set_vertex_buffer(0, &renderlock.vertex_buffer.buffer.as_ref().unwrap(), 0, 0);
+                rpass.draw(0..renderlock.vertex_buffer.len(), 0..1);
+                //rpass.draw(0..1, 0..1);
+            }
+            context.queue.submit(&[encoder.finish()]);
         }
-        context.queue.submit(&[encoder.finish()]);
 
         std::mem::drop(renderlock);
 
@@ -151,7 +150,7 @@ impl Uniforms {
 
     fn update_view_proj(&mut self, camera: &Camera) {
         self.view_proj = camera.build_view_projection_matrix();
-        //self.rot_angle += 0.1;
+        self.rot_angle += 0.1;
     }
 }
 
