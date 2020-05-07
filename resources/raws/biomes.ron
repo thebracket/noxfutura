@@ -11,7 +11,7 @@
             max_mutation: 100,
             occurs:[ Water, Coastal ],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ (ptype: "None", freq: 20), (ptype: "Grass", freq: 20), (ptype: "Lavendar", freq: 1), (ptype: "Daisy", freq: 1), (ptype: "Reeds", freq: 2) ],
+            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             wildlife: [ "deer" ],
             nouns: [ "Arctic", "Polar", "Frozen Sea" ]
@@ -27,7 +27,7 @@
             max_mutation: 100,
             occurs: [Water, Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ (ptype: "None", freq: 20), (ptype: "Grass", freq: 20), (ptype: "Lavendar", freq: 1), (ptype: "Daisy", freq: 1), (ptype: "Reeds", freq: 2) ],
+            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             wildlife: [ "deer" ],
             nouns: [ "Arctic", "Ice Sea", "Sea of Razors", "Iceberg" ]
@@ -43,7 +43,7 @@
             max_mutation: 100,
             occurs: [Water, Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ (ptype: "None", freq: 20), (ptype: "Grass", freq: 20), (ptype: "Lavendar", freq: 1), (ptype: "Daisy", freq: 1), (ptype: "Reeds", freq: 2) ],
+            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             wildlife: [ "deer" ],
             nouns: [ "Sea", "Ocean", "Drink", "High Sea" ]
@@ -59,7 +59,7 @@
             max_mutation :100,
             occurs: [Water, Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ (ptype: "None", freq: 20), (ptype: "Grass", freq: 20), (ptype: "Lavendar", freq: 1), (ptype: "Daisy", freq: 1), (ptype: "Reeds", freq: 2) ],
+            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             wildlife: [ "deer" ],
             nouns: [ "Tropical Sea", "Equatorial Sea", "Warm Ocean" ]
@@ -76,7 +76,7 @@
             max_mutation: 100,
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ (ptype: "None", freq: 20), (ptype: "Grass", freq: 20), (ptype: "Lavendar", freq:1), (ptype: "Daisy", freq: 1), (ptype:"Reeds", freq: 2), (ptype:"Heather", freq: 2) ],
+            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1", "heather=2" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             wildlife: [ "deer" ],
             nouns : ["Ice Cliffs", "Ice Shelf", "Glacier", "Needles" ]
@@ -92,7 +92,7 @@
             max_mutation: 100,
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ (ptype: "None", freq: 20), (ptype: "Grass", freq: 20), (ptype: "Lavendar", freq:1), (ptype: "Daisy", freq: 1), (ptype:"Reeds", freq: 2), (ptype:"Heather", freq: 2) ],
+            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1", "heather=2" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             wildlife: [ "deer", "boar" ],
             nouns: [ "Coast", "Seashore", "Littoral" ]
@@ -108,7 +108,7 @@
             max_mutation: 100,
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [], // none=5, grass=20, sage=1, daisy=1, reeds=2, strawberry=1, beetroot=1, cabbage=1, cress=1, leek=1, lentil=1, onion=1, parsnip=1, pea=1, potato=1, radish=1, red_bean=1, rhubarb=1, soybean=1, spinach=1, turnip=1, hemp=1, cotton=1
+            plants: ["none=5", "grass=20", "sage=1", "daisy=1", "reeds=2", "strawberry=1", "beetroot=1", "cabbage=1", "cress=1", "leek=1", "lentil=1", "onion=1", "parsnip=1", "pea=1", "potato=1", "radish=1", "red_bean=1", "rhubarb=1", "soybean=1", "spinach=1", "turnip=1", "hemp=1", "cotton=1"],
             trees: [ (tree: "D", freq: 5), (tree: "E", freq: 2) ],
             wildlife:["deer","badger","boar","antelope","horse"],
             nouns: ["Coast", "Cliffs", "Seashore", "Littoral", "Seaside"]
@@ -118,7 +118,7 @@
             name: "Tropical Coast", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [], // none=5, grass=20, reeds_paper=2, reeds_giant=2, sage=1, daisy=1, reeds=2, strawberry=1, goya=1, cabbage=1, caper=1, cassava=1, horned_melon=1, lentil=1, lettuce=1, onion=1, parsnip=1, soybean=1, watermelon=1, yam=1, jute=1, ramie=1, cotton=1
+            plants: ["none=5", "grass=20", "reeds_paper=2", "reeds_giant=2", "sage=1", "daisy=1", "reeds=2", "strawberry=1", "goya=1", "cabbage=1", "caper=1", "cassava=1", "horned_melon=1", "lentil=1", "lettuce=1", "onion=1", "parsnip=1", "soybean=1", "watermelon=1", "yam=1", "jute=1", "ramie=1", "cotton=1"],
             trees: [ (tree: "D", freq: 10), (tree: "E", freq: 0) ],
             wildlife: [ "deer","armadillo","boar","antelope","horse" ],
             nouns: [ "Coast", "Cliffs", "Seashore", "Seaside", "Resort", "Littoral", "Bay" ]

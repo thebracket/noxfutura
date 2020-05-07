@@ -27,7 +27,7 @@ pub struct BiomeType {
     max_mutation: u8,
     occurs: Vec<BlockType>,
     soils: SoilTypes,
-    plants: Vec<PlantType>,
+    plants: Vec<String>,
     trees: Vec<TreeType>,
     wildlife: Vec<String>,
     nouns: Vec<String>
