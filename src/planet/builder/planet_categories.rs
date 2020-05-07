@@ -32,7 +32,8 @@ pub(crate) fn planet_type_allocation() {
     planet.plains_height = planet_determine_proportion(&mut planet, &mut candidate, n_cells_plains);
     planet.hills_height = planet_determine_proportion(&mut planet, &mut candidate, n_cells_hills);
 
-    for block in planet.landblocks.iter_mut() {
+    for i in 0..planet.landblocks.len() {
+        let mut block = &mut planet.landblocks[i];
         if block.height <= planet.water_height {
             block.btype = BlockType::Water;
             block.rainfall = 10;
@@ -60,6 +61,11 @@ pub(crate) fn planet_type_allocation() {
                 block.rainfall = 10;
             }
         }
+        if i % (WORLD_WIDTH as usize) * 200 == 0 {
+            WORLDGEN_RENDER.lock().planet_with_category(&planet);
+            let percent = ((i as f32 / planet.landblocks.len() as f32) * 100.0) as i32;
+            set_worldgen_status(format!("Dividing the waters from the earth - {}%", percent));
+        }
     }
     WORLDGEN_RENDER.lock().planet_with_category(&planet);
 
@@ -69,6 +75,7 @@ pub(crate) fn planet_type_allocation() {
 pub(crate) fn planet_coastlines() {
     set_worldgen_status("Crinkling the coastlines");
     let mut planet = PLANET_BUILD.lock().planet.clone();
+    let mut n = 0;
 
     for y in 1..WORLD_HEIGHT as i32 - 1 {
         for x in 1..WORLD_WIDTH as i32 - 1 {
@@ -81,6 +88,10 @@ pub(crate) fn planet_coastlines() {
                 {
                     planet.landblocks[base_idx].btype = BlockType::Coastal;
                     planet.landblocks[base_idx].rainfall = 20;
+                    n += 1;
+                    if n % 100 == 0 {
+                        WORLDGEN_RENDER.lock().planet_with_category(&planet);
+                    }
                 }
             }
         }
@@ -120,5 +131,6 @@ pub(crate) fn planet_rainfall() {
             }
         }
     }
+    WORLDGEN_RENDER.lock().planet_with_category(&planet);
     PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
 }

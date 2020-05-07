@@ -136,7 +136,7 @@ impl WorldGenPlanetRender {
             BlockType::Plateau => [0.7, 0.9, 0.7, 1.0],
             BlockType::SaltMarsh => [0.2, 1.0, 0.4, 1.0],
             BlockType::Water => [ 0.0, 0.0, 1.0, 1.0 ],
-            _ => [0.0, 0.0, 0.0, 1.0]
+            _ => self.altitude_to_color(lb.height)
         };
         let mag = lb.height as f32 / 255.0;
         color.iter_mut().for_each(|c| *c *= mag);
