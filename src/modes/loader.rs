@@ -26,6 +26,8 @@ impl Loader {
                 ui.text(im_str!("Flipping bits at random..."));
             });
 
+        crate::raws::load_raws();
+
         self.counter += 1;
 
         if self.counter < 1 {
