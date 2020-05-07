@@ -61,7 +61,7 @@ pub(crate) fn planet_type_allocation() {
                 block.rainfall = 10;
             }
         }
-        if i % (WORLD_WIDTH as usize) * 200 == 0 {
+        if i % ((WORLD_WIDTH as usize) * 1000) == 0 {
             WORLDGEN_RENDER.lock().planet_with_category(&planet);
             let percent = ((i as f32 / planet.landblocks.len() as f32) * 100.0) as i32;
             set_worldgen_status(format!("Dividing the waters from the earth - {}%", percent));
@@ -89,7 +89,7 @@ pub(crate) fn planet_coastlines() {
                     planet.landblocks[base_idx].btype = BlockType::Coastal;
                     planet.landblocks[base_idx].rainfall = 20;
                     n += 1;
-                    if n % 100 == 0 {
+                    if n % 1000 == 0 {
                         WORLDGEN_RENDER.lock().planet_with_category(&planet);
                     }
                 }
