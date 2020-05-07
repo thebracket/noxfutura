@@ -5,6 +5,7 @@ mod planet_categories;
 mod planet_noise;
 mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
+mod biomes;
 
 #[derive(Clone)]
 pub struct PlanetParams {
@@ -61,7 +62,7 @@ fn threaded_builder() {
     planet_categories::planet_type_allocation();
     planet_categories::planet_coastlines();
     planet_categories::planet_rainfall();
-    // Biomes
+    biomes::build_biomes();
     // Rivers
     // History
     // Save
