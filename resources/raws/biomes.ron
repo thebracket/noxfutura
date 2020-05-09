@@ -11,9 +11,7 @@
             max_mutation: 100,
             occurs:[ Water, Coastal ],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            wildlife: [ "deer" ],
             nouns: [ "Arctic", "Polar", "Frozen Sea" ]
         ),
 
@@ -27,9 +25,7 @@
             max_mutation: 100,
             occurs: [Water, Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            wildlife: [ "deer" ],
             nouns: [ "Arctic", "Ice Sea", "Sea of Razors", "Iceberg" ]
         ),
 
@@ -43,9 +39,7 @@
             max_mutation: 100,
             occurs: [Water, Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            wildlife: [ "deer" ],
             nouns: [ "Sea", "Ocean", "Drink", "High Sea" ]
         ),
 
@@ -59,9 +53,7 @@
             max_mutation :100,
             occurs: [Water, Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            wildlife: [ "deer" ],
             nouns: [ "Tropical Sea", "Equatorial Sea", "Warm Ocean" ]
         ),
 
@@ -76,9 +68,7 @@
             max_mutation: 100,
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1", "heather=2" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            wildlife: [ "deer" ],
             nouns : ["Ice Cliffs", "Ice Shelf", "Glacier", "Needles" ]
         ),
 
@@ -92,9 +82,7 @@
             max_mutation: 100,
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: [ "none=20", "grass=20", "lavendar=1", "reed=2", "daisy=1", "heather=2" ],
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            wildlife: [ "deer", "boar" ],
             nouns: [ "Coast", "Seashore", "Littoral" ]
         ),
 
@@ -108,339 +96,519 @@
             max_mutation: 100,
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: ["none=5", "grass=20", "sage=1", "daisy=1", "reeds=2", "strawberry=1", "beetroot=1", "cabbage=1", "cress=1", "leek=1", "lentil=1", "onion=1", "parsnip=1", "pea=1", "potato=1", "radish=1", "red_bean=1", "rhubarb=1", "soybean=1", "spinach=1", "turnip=1", "hemp=1", "cotton=1"],
             trees: [ (tree: "D", freq: 5), (tree: "E", freq: 2) ],
-            wildlife:["deer","badger","boar","antelope","horse"],
             nouns: ["Coast", "Cliffs", "Seashore", "Littoral", "Seaside"]
         ),
 
         BiomeType(
-            name: "Tropical Coast", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
+            name: "Tropical Coast", 
+            min_temp: 25, 
+            max_temp: 55, 
+            min_rain: 0, 
+            max_rain: 100, 
+            min_mutation: 0, 
+            max_mutation: 100,
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
-            plants: ["none=5", "grass=20", "reeds_paper=2", "reeds_giant=2", "sage=1", "daisy=1", "reeds=2", "strawberry=1", "goya=1", "cabbage=1", "caper=1", "cassava=1", "horned_melon=1", "lentil=1", "lettuce=1", "onion=1", "parsnip=1", "soybean=1", "watermelon=1", "yam=1", "jute=1", "ramie=1", "cotton=1"],
             trees: [ (tree: "D", freq: 10), (tree: "E", freq: 0) ],
-            wildlife: [ "deer","armadillo","boar","antelope","horse" ],
             nouns: [ "Coast", "Cliffs", "Seashore", "Seaside", "Resort", "Littoral", "Bay" ]
-        )
+        ),
 
         // Salt Marsh Zones
+        BiomeType(
+            name: "Arctic Salt",
+            min_temp: -100,
+            max_temp: -5,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [Coastal, SaltMarsh ],
+            soils: SoilTypes( soil: 70, sand: 30 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
+            nouns: [ "Arctic", "Tundra", "Devil's Icebox" ],
+        ),
+
+        BiomeType(
+            name: "Cold Salt",
+            min_temp: -5,
+            max_temp: 5,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0, max_mutation: 100,
+            occurs: [Coastal, SaltMarsh ],
+            soils: SoilTypes( soil: 70, sand: 30 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 10) ],
+            nouns: [ "Tundra", "Cold Desert" ],
+        ),
+
+        BiomeType(
+            name: "Temperate Salt",
+            min_temp: 5,
+            max_temp: 25,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [Coastal, SaltMarsh ],
+            soils: SoilTypes( soil: 70, sand: 30 ),
+            trees: [ (tree: "D", freq: 15), (tree: "E", freq: 1) ],
+            nouns: [ "Salty Badlands", "Waste", "Flats", "Scar" ]
+        ),
+
+        BiomeType(
+            name: "Tropical Salt",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [Coastal, SaltMarsh ],
+            trees: [ (tree: "D", freq: 15), (tree: "E", freq: 1) ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            nouns: [ "Badlands", "Waste", "Flats", "Alkali Flat" ],
+        ),
+
+        // Flatlands
+        BiomeType(
+            name: "Permafrost Plain",
+            min_temp: -100,
+            max_temp: 3,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [Plains, Coastal, Marsh],
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            nouns: [ "Permafrost", "Tundra", "Frozen Plain" ],
+        ),
+
+        BiomeType(
+            name: "Rocky Plain",
+            min_temp: -5,
+            max_temp: 5,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [Plains, Coastal, Marsh],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "Plain", "Scarp", "Scree", "Boulderland" ]
+        ),
+
+        BiomeType(
+            name: "Grass Plain",
+            min_temp: 0,
+            max_temp: 25,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [Plains, Coastal, Marsh],
+            soils: SoilTypes( soil: 75, sand: 25 ),
+            trees: [ (tree: "D", freq: 20), (tree: "E", freq: 3) ],
+            nouns: [ "Grasslands", "Plain", "Prairie", "Heath", "Level" ]
+        ),
+
+        BiomeType(
+            name: "Savannah Plain",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [Plains, Coastal, Marsh],
+            soils: SoilTypes( soil: 25, sand: 75 ),
+            trees: [ (tree: "D", freq: 20), (tree: "E", freq: 3) ],
+            nouns: [ "Savannah", "Grassland", "Heath", "Scrub", "Level" ],
+        ),
+
+        // Hills
+        BiomeType(
+            name: "Permafrost Hills",
+            min_temp: -100,
+            max_temp: 3,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Hills, Highlands ],
+            soils: SoilTypes( soil: 80, sand: 20 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "Ice Hill", "Hill", "Mound", "Roughs" ],
+        ),
+
+        BiomeType(
+            name: "Rocky Hills",
+            min_temp: -5,
+            max_temp: 5,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Hills, Highlands ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "Rocky Hills", "Hill", "Mound", "Bump", "Scree", "Scar" ]
+        ),
+
+        BiomeType(
+            name: "Grass Hills",
+            min_temp: 0,
+            max_temp: 25,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Hills, Highlands ],
+            soils: SoilTypes( soil: 75, sand: 25 ),
+            trees: [ (tree: "D", freq: 5), (tree: "E", freq: 3) ],
+            nouns: [ "Rolling Hill", "Hill", "Rolling Heath", "Moor" ]
+        ),
+
+        BiomeType(
+            name: "Savannah Hills",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Hills, Highlands ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 10), (tree: "E", freq: 0) ],
+            nouns: [ "Savannah Hills", "Hill", "Rolling Savannah", "Savannah Moor" ],
+        ),
+
+        // Plateau
+        BiomeType(
+            name: "Permafrost Plateau",
+            min_temp: -100,
+            max_temp: 3,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plateau ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "Glacier", "Plateau", "Ice Plain", "Steppe" ],
+        ),
+
+        BiomeType(
+            name: "Rocky Plateau",
+            min_temp: -5,
+            max_temp: 5,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plateau ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 3) ],
+            nouns: [ "Tableland", "Tablerock", "Plateau", "Rocky Plateau" ]
+        ),
+
+        BiomeType(
+            name: "Grass Plateau",
+            min_temp: 0,
+            max_temp: 25,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plateau ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 20), (tree: "E", freq: 5) ],
+            nouns: [ "Hog's Back", "Plateau", "Table", "Fell", "Downs" ]
+        ),
+
+        BiomeType(
+            name: "Savannah Plateau",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plateau ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 25), (tree: "E", freq: 0) ],
+            nouns: [ "Upland", "Table", "Plateau" ],
+        ),
+
+        BiomeType(
+            name: "Badland Plateau",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 20,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plateau ],
+            soils: SoilTypes( soil: 5, sand: 90 ),
+            trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
+            nouns: [ "Devil's Table", "Badland Plateau" ],
+        ),
+
+        // Highlands
+        BiomeType(
+            name: "Permafrost Highlands",
+            min_temp: -100,
+            max_temp: 3,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Highlands ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "High Waste", "High Tundra", "Hillock", "Promontary" ]
+        ),
+
+        BiomeType(
+            name: "Rocky Highlands",
+            min_temp: -5,
+            max_temp: 5,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Highlands ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
+            nouns: [ "Waste", "Scree", "Fell", "Promontary", "Dales", "Pike" ]
+        ),
+
+        BiomeType(
+            name: "Grass Highlands",
+            min_temp: 0,
+            max_temp: 25,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Highlands ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 10), (tree: "E", freq: 3) ],
+            nouns: [ "Moor", "Heath", "Uplands", "Dales", "Scar" ]
+        ),
+
+        BiomeType(
+            name: "Savannah Highlands",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Highlands ],
+            soils: SoilTypes( soil: 25, sand: 75 ),
+            trees: [ (tree: "D", freq: 20), (tree: "E", freq: 1) ],
+            nouns: [ "Savannah Hills", "Highlands", "Uplands", "Peaks", "Mounds" ],
+        ),
+
+        BiomeType(
+            name: "Badland Highlands",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 20,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Highlands ],
+            soils: SoilTypes( soil: 10, sand: 90 ),
+            trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
+            nouns: [ "Scree", "Heights" ]
+        ),
+
+        // Mountains
+        BiomeType(
+            name: "Permafrost Mountains",
+            min_temp: -100,
+            max_temp: 3,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Mountains ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ]
+        ),
+
+        BiomeType(
+            name: "Rocky Mountains",
+            min_temp: -5,
+            max_temp: 5,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Mountains ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ]
+        ),
+
+        BiomeType(
+            name: "Grass Mountains",
+            min_temp: 0,
+            max_temp: 25,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Mountains ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
+            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ]
+        ),
+
+        BiomeType(
+            name: "Savannah Mountains",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Mountains ],
+            soils: SoilTypes( soil: 25, sand: 75 ),
+            trees: [ (tree: "D", freq: 3), (tree: "E", freq: 0) ],
+            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
+        ),
+
+        BiomeType(
+            name: "Badlands",
+            min_temp: 25,
+            max_temp: 55,
+            min_rain: 0,
+            max_rain: 20,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Mountains ],
+            soils: SoilTypes( soil: 10, sand: 90 ),
+            trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
+            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
+        ),
+
+        // Desert Regions
+        BiomeType(
+            name: "Tundra",
+            min_temp: -100,
+            max_temp: 3,
+            min_rain: 0,
+            max_rain: 10,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plains, Hills, Highlands, Plateau, Coastal ],
+            soils: SoilTypes( soil: 50, sand: 50 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "Tundra", "Waste", "Ice Waste" ],
+        ),
+
+        BiomeType(
+            name: "Cold Desert",
+            min_temp: 1,
+            max_temp: 10,
+            min_rain: 0,
+            max_rain: 10,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plains, Hills, Highlands, Plateau, Coastal ],
+            soils: SoilTypes( soil: 15, sand: 86 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
+            nouns: [ "Semi-Tundra", "Expanse", "Steppe" ],
+        ),
+
+        BiomeType(
+            name: "Sand Desert",
+            min_temp: 9,
+            max_temp: 100,
+            min_rain: 0,
+            max_rain: 10,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plains, Hills, Highlands, Plateau, Coastal ],
+            soils: SoilTypes( soil: 5, sand: 95 ),
+            trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
+            nouns: [ "Desert", "Waste", "Wild", "Dunes", "Barren" ],
+        ),
+
+        BiomeType(
+            name: "Rocky Desert",
+            min_temp: 9,
+            max_temp: 100,
+            min_rain: 0,
+            max_rain: 10,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plains, Hills, Highlands, Plateau, Coastal ],
+            soils: SoilTypes( soil: 5, sand: 95 ),
+            trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
+            nouns: [ "Barrens", "Platter" ],
+        ),
+
+        // High Precipitation Areas
+        BiomeType(
+            name: "Deciduous Broadleaf",
+            min_temp: 5,
+            max_temp: 34,
+            min_rain: 15,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plains, Hills, Highlands, Plateau, Coastal ],
+            soils: SoilTypes( soil: 80, sand: 20 ),
+            trees: [ (tree: "D", freq: 100), (tree: "E", freq: 0) ],
+            nouns: [ "Forest", "Backwoods", "Old Forest", "Grove", "Timberland", "Chase" ]
+        ),
+
+        BiomeType(
+            name: "Deciduous Needleleaf",
+            min_temp: 5,
+            max_temp: 34,
+            min_rain: 15,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Highlands, Hills, Plateau ],
+            soils: SoilTypes( soil: 80, sand: 20 ),
+            trees: [ (tree: "D", freq: 95), (tree: "E", freq: 5) ],
+            nouns: [ "Forest", "Woods", "Old WOods", "Grove", "Chase", "Weald" ]
+        ),
+
+        BiomeType(
+            name: "Evergreen Broadleaf",
+            min_temp: -5,
+            max_temp: 20,
+            min_rain: 15,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Highlands, Hills, Plateau ],
+            soils: SoilTypes( soil: 80, sand: 20 ),
+            trees: [ (tree: "D", freq: 0), (tree: "E", freq: 100) ],
+            nouns: [ "Forest", "Coppice", "Chase", "Weald", "Pines" ]
+        ),
+
+        BiomeType(
+            name: "Rainforest",
+            min_temp: 20,
+            max_temp: 34,
+            min_rain: 25,
+            max_rain: 100,
+            min_mutation: 0,
+            max_mutation: 100,
+            occurs: [ Plains, Hills, Highlands, Plateau, Coastal ],
+            soils: SoilTypes( soil: 80, sand: 20 ),
+            trees: [ (tree: "D", freq: 200), (tree: "E", freq: 0) ],
+            nouns: [ "Jungle", "Morass", "Tangle" ]
+        )
     ]
 )
-
-/*
-    -- Salt-marsh Zones
-    arctic_salt: {
-        name: "Arctic Coast", min_temp: -100, max_temp: -5, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["salt_marsh"] }, soils: { soil=70, sand=30 },
-        plants: { none=20, grass=20, lavendar=1, daisy=1, reeds=2 },
-        trees: { deciduous: 0, evergreen: 5 },
-        wildlife: { "deer","mammoth"},
-        nouns: { "Arctic", "Tundra", "Devil's Icebox" },
-        worldgen_texture_index: biomeTex("tundra")
-    },
-    cold_salt: {
-        name: "Cold Coast", min_temp: -5, max_temp: 5, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["salt_marsh"] }, soils: { soil=70, sand=30 },
-        plants: { none=10, grass=20, lavendar=1, daisy=1, reeds=2, cabbage=1, cress=1 },
-        trees: { deciduous: 3, evergreen: 10 },
-        wildlife: { "deer","mammoth"},
-        nouns: { "Tundra", "Cold Desert" },
-        worldgen_texture_index: biomeTex("tundra")
-    },
-    temperate_salt: {
-        name: "Temperate Coast", min_temp: 5, max_temp: 25, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["salt_marsh"] }, soils: { soil=70, sand=30 },
-        trees: { deciduous: 15, evergreen: 0 },
-        wildlife: { "deer","boar"},
-        nouns: { "Badlands", "Waste", "Flats" }
-    },
-    tropical_salt: {
-        name: "Tropical Coast", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["salt_marsh"] }, soils: { soil=50, sand=50 },
-        trees: { deciduous: 15, evergreen: 0 },
-        wildlife: { "deer","boar"},
-        nouns: { "Badlands", "Waste", "Flats", "Alkali Flat" },
-        worldgen_texture_index: biomeTex("badlands")
-    },
-
-    -- Flatlands
-    permafrost_plain: {
-        name: "Permafrost Plain", min_temp: -100, max_temp: 3, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plains"], biome_types["coast"], biome_types["marsh"] }, soils: { soil=50, sand=50 },
-        plants: { none=20, grass=20, lavendar=1, daisy=1, reeds=2, heather=2 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer","mammoth"},
-        nouns: { "Permafrost", "Tundra", "Frozen Plain" },
-        worldgen_texture_index: biomeTex("tundra")
-    },
-    rocky_plain: {
-        name: "Rocky Plain", min_temp: -5, max_temp: 5, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plains"], biome_types["coast"], biome_types["marsh"] }, soils: { soil=50, sand=50 },
-        plants: { none=25, grass=20, sage=1, daisy=1, reeds=2, cabbage=1, leek=1, hemp=1 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer","horse"},
-        nouns: { "Plain", "Scarp", "Scree", "Boulderland" }
-    },
-    grass_plain: {
-        name: "Grass Plain", min_temp: 0, max_temp: 25, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plains"], biome_types["coast"], biome_types["marsh"] }, soils: { soil=75, sand=25 },
-        worldgen_render: { glyph=glyphs['one_half_solid'], color=colors['green'] },
-        plants: { none=3, grass=20, sage=1, daisy=1, reeds=2, strawberry=1, artichoke=1, asparagus=1, string_bean=1, broad_bean=1, beetroot=1, cabbage=1, carrot=1, celery=1, chickpea=1, chickory=1, cucumber=1, cress=1, garlic=1, leek=1, lentil=1, onion=1, parsnip=1, pea=1, potato=1, radish=1, red_bean=1, rhubarb=1, soybean=1, spinach=1, turnip=1, hemp=1, ramie=1, cotton=1 },
-        trees: { deciduous: 20, evergreen: 3 },
-        wildlife: { "deer","boar","hedgehog","horse"},
-        nouns: { "Grasslands", "Plain", "Prairie", "Heath", "Level" }
-    },
-    savannah_plain: {
-        name: "Savannah Plain", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plains"], biome_types["coast"], biome_types["marsh"] }, soils: { soil=25, sand=75 },
-        plants: { none=3, grass=25, reeds_giant=2, sage=1, daisy=1, reeds=2, strawberry=1,asparagus=1, string_bean=1, broad_bean=1, caper=1, carrot=1, cassava=1, celery=1, chickpea=1, chickory=1, cowpea=1, cucumber=1, eggplant=1, garlic=1, horned_melon=1, lentil=1, lettuce=1, mung_bean=1, onion=1, parsnip=1, peanut=1, pepper=1, soybean=1, spinach=1, squash=1, sweet_potato=1, tomatillo=1, watermelon=1, yam=1, reeds_paper=2, jute=1, hemp=1, ramie=1, cotton=1 },
-        trees: { deciduous: 20, evergreen: 0 },
-        wildlife: { "deer","armadillo","boar","elephant","antelope","horse"},
-        nouns: { "Savannah", "Grassland", "Heath", "Scrub", "Level" },
-        worldgen_texture_index: biomeTex("brown_grass")
-    },
-
-    -- Hills
-    permafrost_hills: {
-        name: "Permafrost Hills", min_temp: -100, max_temp: 3, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["hills"], biome_types["highlands"] }, soils: { soil=80, sand=20 },
-        plants: { none=20, grass=20, lavendar=1, daisy=1, reeds=2, heather=2 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer","mammoth"},
-        nouns: { "Ice Hill", "Hill", "Mound", "Roughs" },
-        worldgen_texture_index: biomeTex("tundra")
-    },
-    rocky_hills: {
-        name: "Rocky Hills", min_temp: -5, max_temp: 5, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["hills"], biome_types["highlands"] }, soils: { soil=50, sand=50 },
-        plants: { none=30, grass=20, lavendar=1, daisy=1, reeds=2, heather=2, cabbage=1, parsnip=1, hemp=1 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: {"deer","horse"},
-        nouns: { "Rocky Hills", "Hill", "Mound", "Bump", "Scree", "Scar" }
-    },
-    grass_hills: {
-        name: "Grass Hills", min_temp: 0, max_temp: 25, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["hills"], biome_types["highlands"] }, soils: { soil=75, sand=25 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2, strawberry=1, artichoke=1,asparagus=1, string_bean=1, broad_bean=1, beetroot=1, cabbage=1, carrot=1, celery=1, chickpea=1, chickory=1, cress=1, garlic=1, lentil=1, onion=1, parsnip=1, pea=1, soybean=1, turnip=1, hemp=1, ramie=1, cotton=1 },
-        trees: { deciduous: 5, evergreen: 3 },
-        wildlife: { "deer","boar","horse"},
-        nouns: { "Rolling Hill", "Hill", "Rolling Heath", "Moor" }
-    },
-    savannah_hills: {
-        name: "Savannah Hills", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["hills"], biome_types["highlands"] }, soils: { soil=50, sand=50 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2,asparagus=1, cabbage=1, caper=1, carrot=1, celery=1, chickpea=1, chickory=1, eggplant=1, lentil=1, onion=1, peanut=1, pepper=1, soybean=1, jute=1, ramie=1, cotton=1 },
-        trees: { deciduous: 10, evergreen: 0 },
-        wildlife: { "deer","boar","elephant","antelope","horse"},
-        nouns: { "Savannah Hills", "Hill", "Rolling Savannah", "Savannah Moor" },
-        worldgen_texture_index: biomeTex("brown_grass")
-    },
-
-     -- Plateau
-    permafrost_plateau: {
-        name: "Permafrost Plateau", min_temp: -100, max_temp: 3, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plateau"] }, soils: { soil=50, sand=50 },
-        plants: { none=20, grass=20, lavendar=1, daisy=1, reeds=2, heather=2 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer"},
-        nouns: { "Glacier", "Plateau", "Ice Plain", "Steppe" },
-        worldgen_texture_index: biomeTex("tundra")
-    },
-    rocky_plateau: {
-        name: "Rocky Plateau", min_temp: -5, max_temp: 5, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plateau"] }, soils: { soil=50, sand=50 },
-        plants: { none=15, grass=20, sage=1, daisy=1, reeds=2, cabbage=1, hemp=1 },
-        trees: { deciduous: 0, evergreen: 3 },
-        wildlife: {"deer","horse"},
-        nouns: { "Tableland", "Tablerock", "Plateau", "Rocky Plateau" }
-    },
-    grass_plateau: {
-        name: "Grass Plateau", min_temp: 0, max_temp: 25, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plateau"] }, soils: { soil=50, sand=50 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2, strawberry=1, asparagus=1, beetroot=1, cabbage=1, celery=1, chickpea=1, chickory=1, cucumber=1, lentil=1, garlic=1, onion=1, soybean=1, turnip=1, hemp=1, ramie=1, cotton=1 },
-        trees: { deciduous: 20, evergreen: 5 },
-        wildlife: { "deer","badger","boar","horse"},
-        nouns: { "Hog's Back", "Plateau", "Table", "Fell", "Downs" }
-    },
-    savannah_plateau: {
-        name: "Savannah Plateau", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plateau"] }, soils: { soil=50, sand=50 },
-        plants: { none=2, grass=20, sage=1, daisy=1, reeds=2, strawberry=1, asparagus=1, bambara_groundnut=1, goya=1, cabbage=1, caper=1, celery=1, chickpea=1, chickory=1, cucumber=1, eggplant=1, horned_melon=1, lentil=1, onion=1, soybean=1, tomatillo=1, hemp=1, ramie=1, cotton=1 },
-        trees: { deciduous: 25, evergreen: 0 },
-        wildlife: { "deer","armadillo","boar","antelope","horse"},
-        nouns: { "Upland", "Table", "Plateau" },
-        worldgen_texture_index: biomeTex("brown_grass")
-    },
-    badland_plateau: {
-        name: "Badlands", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 20, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plateau"] }, soils: { soil=50, sand=50 },
-        trees: { deciduous: 1, evergreen: 0 },
-        wildlife: { "deer","armadillo"},
-        nouns: { "Devil's Table", "Badland Plateau" },
-        worldgen_texture_index: biomeTex("badlands")
-    },
-
-    -- Highlands
-    permafrost_highlands: {
-        name: "Permafrost Highlands", min_temp: -100, max_temp: 3, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["highlands"] }, soils: { soil=50, sand=50 },
-        plants: { none=20, grass=10, lavendar=1, daisy=1, reeds=2, heather=2 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer"},
-        nouns: { "High Waste", "High Tundra", "Hillock", "Promontary" }
-    },
-    rocky_highlands: {
-        name: "Rocky Highlands", min_temp: -5, max_temp: 5, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["highlands"] }, soils: { soil=50, sand=50 },
-        plants: { none=25, grass=10, sage=1, daisy=1, reeds=2, cabbage=1 },
-        trees: { deciduous: 0, evergreen: 5 },
-        wildlife: { "deer","boar","horse"},
-        nouns: { "Waste", "Scree", "Fell", "Promontary", "Dales", "Pike" }
-    },
-    grass_highlands: {
-        name: "Grass Highlands", min_temp: 0, max_temp: 25, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["highlands"] }, soils: { soil=50, sand=50 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2, beetroot=1, strawberry=1, cabbage=1, onion=1, turnip=1, hemp=1 },
-        trees: { deciduous: 10, evergreen: 3 },
-        wildlife: { "deer","badger","boar","horse"},
-        nouns: { "Moor", "Heath", "Uplands", "Dales", "Scar" }
-    },
-    savannah_highlands: {
-        name: "Savannah Highlands", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["highlands"] }, soils: { soil=25, sand=75 },
-        plants: { none=2, grass=20, sage=1, daisy=1, reeds=2, beetroot=1, strawberry=1, goya=1, cabbage=1, hemp=1 },
-        trees: { deciduous: 20, evergreen: 1 },
-        wildlife: { "deer","armadillo","boar","horse"},
-        nouns: { "Savannah Hills", "Highlands", "Uplands", "Peaks", "Mounds" },
-        worldgen_texture_index: biomeTex("brown_grass")
-    },
-    badland_highlands: {
-        name: "Badland Highlands", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 20, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["highlands"] }, soils: { soil=10, sand=90 },
-        trees: { deciduous: 1, evergreen: 0 },
-        wildlife: { "deer","armadillo"},
-        nouns: { "Scree", "Heights" }
-    },
-
-    -- Mountains
-    permafrost_mountains: {
-        name: "Permafrost Mountains", min_temp: -100, max_temp: 3, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["mountains"] }, soils: { soil=50, sand=50 },
-        plants: { none=40, grass=20, lavendar=1, daisy=1, reeds=2, heather=2 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer"},
-        nouns: { "Mountains", "Peaks", "Pikes", "Alps" }
-    },
-    rocky_mountains: {
-        name: "Rocky Mountains", min_temp: -5, max_temp: 5, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["mountains"] }, soils: { soil=50, sand=50 },
-        plants: { none=25, grass=20, sage=1, daisy=1, reeds=2 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer","horse"},
-        nouns: { "Mountains", "Peaks", "Pikes", "Alps" }
-    },
-    grass_mountains: {
-        name: "Grass Mountains", min_temp: 0, max_temp: 25, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["mountains"] }, soils: { soil=50, sand=50 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2, hemp=1 },
-        trees: { deciduous: 0, evergreen: 5 },
-        wildlife: { "deer","boar","horse"},
-        nouns: { "Mountains", "Peaks", "Pikes", "Alps" }
-    },
-    savannah_mountains: {
-        name: "Savannah Mountains", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 100, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["mountains"] }, soils: { soil=25, sand=75 },
-        plants: { none=2, grass=20, sage=1, daisy=1, reeds=2, goya=1, hemp=1 },
-        trees: { deciduous: 3, evergreen: 0 },
-        wildlife: { "deer","armadillo","boar","horse"},
-        nouns: { "Mountains", "Peaks", "Pikes", "Alps" },
-        worldgen_texture_index: biomeTex("brown_grass")
-    },
-    badland_mountains: {
-        name: "Badlands", min_temp: 25, max_temp: 55, min_rain: 0, max_rain: 20, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["mountains"] }, soils: { soil=10, sand=90 },
-        trees: { deciduous: 1, evergreen: 0 },
-        wildlife: { "deer","armadillo"},
-        nouns: { "Mountains", "Peaks", "Pikes", "Alps" },
-        worldgen_texture_index: biomeTex("badlands")
-    },
-
-    -- Low precipitation desert areas
-    tundra: {
-        name: "Tundra", min_temp: -100, max_temp: 3, min_rain: 0, max_rain: 10, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plains"], biome_types["hills"], biome_types["highlands"], biome_types["plateau"], biome_types["coast"] }, soils: { soil=50, sand=50 },
-        plants: { none=40, grass=20, lavendar=1, daisy=1, reeds=2, heather=2 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer"},
-        nouns: { "Tundra", "Waste", "Ice Waste" },
-        worldgen_texture_index: biomeTex("tundra")
-    },
-    cold_desert: {
-        name: "Cold Desert", min_temp: 1, max_temp: 10, min_rain: 0, max_rain: 10, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plains"], biome_types["hills"], biome_types["highlands"], biome_types["plateau"], biome_types["coast"] }, soils: { soil=15, sand=85 },
-        plants: { none=40, grass=20, lavendar=1, daisy=1, reeds=2, heather=2 },
-        trees: { deciduous: 0, evergreen: 1 },
-        wildlife: { "deer"},
-        nouns: { "Semi-Tundra", "Expanse", "Steppe" },
-        worldgen_texture_index: biomeTex("cold_desert")
-    },
-    sand_desert: {
-        name: "Sand Desert", min_temp: 9, max_temp: 100, min_rain: 0, max_rain: 10, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["plains"], biome_types["hills"], biome_types["coast"] }, soils: { soil=5, sand=95 },
-        trees: { deciduous: 1, evergreen: 0 },
-        wildlife: { "deer","horse"},
-        nouns: { "Desert", "Waste", "Wild", "Dunes", "Barren" },
-        worldgen_texture_index: biomeTex("desert")
-    },
-    rock_desert: {
-        name: "Rocky Desert", min_temp: 9, max_temp: 100, min_rain: 0, max_rain: 10, min_mutation: 0, max_mutation: 100,       
-        occurs: { biome_types["mountains"], biome_types["plateau"], biome_types["hills"], biome_types["coast"] }, soils: { soil=50, sand=50 },
-        trees: { deciduous: 1, evergreen: 0 },
-        wildlife: { "deer","armadillo","horse"},
-        nouns: { "Barrens", "Platter" },
-        worldgen_texture_index: biomeTex("desert"),
-        worldgen_texture_index: biomeTex("badlands")
-    },
-
-    -- High-precipitation areas
-    deciduous_broadleaf: {
-        name: "Deciduous Broadleaf", min_temp: 5, max_temp: 34, min_rain: 15, max_rain: 100, min_mutation: 0, max_mutation: 100,        
-        occurs: { biome_types["plains"], biome_types["hills"], biome_types["coast"] }, soils: { soil=80, sand=20 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2, bambara_groundnut=1, strawberry=1, cucumber=1, eggplant=1, garlic=1, tomato=1, tomatillo=1, hemp=1 },
-        trees: { deciduous: 100, evergreen: 0 },
-        wildlife: { "deer","badger","boar","hedgehog","antelope","horse"},
-        nouns: { "Forest", "Backwoods", "Old Forest", "Grove", "Timberland", "Chase" }
-    },
-    deciduous_needleleaf: {
-        name: "Deciduous Needleleaf", min_temp: 5, max_temp: 34, min_rain: 15, max_rain: 100, min_mutation: 0, max_mutation: 100,        
-        occurs: { biome_types["highlands"], biome_types["hills"], biome_types["plateau"] }, soils: { soil=80, sand=20 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2, cucumber=1, garlic=1, tomato=1, tomatillo=1, hemp=1 },
-        trees: { deciduous: 100, evergreen: 5 },
-        wildlife: { "deer","badger","boar","hedgehog","antelope","horse"},
-        nouns: { "Forest", "Woods", "Old WOods", "Grove", "Chase", "Weald" }
-    },
-    evergreen_broadleef: {
-        name: "Evergreen Broadleaf", min_temp: -5, max_temp: 20, min_rain: 15, max_rain: 100, min_mutation: 0, max_mutation: 100,        
-        occurs: { biome_types["highlands"], biome_types["hills"], biome_types["plateau"] }, soils: { soil=80, sand=20 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2, garlic=1, hemp=1 },
-        trees: { deciduous: 0, evergreen: 100 },
-        wildlife: { "deer","badger","boar","hedgehog","horse"},
-        nouns: { "Forest", "Coppice", "Chase", "Weald", "Pines" }
-    },
-    evergreen_needleleef: {
-        name: "Evergreen Broadleaf", min_temp: -15, max_temp: 30, min_rain: 15, max_rain: 100, min_mutation: 0, max_mutation: 100,        
-        occurs: { biome_types["highlands"], biome_types["mountains"], biome_types["plateau"] }, soils: { soil=80, sand=20 },
-        plants: { none=5, grass=20, sage=1, daisy=1, reeds=2, garlic=1, hemp=1 },
-        trees: { deciduous: 5, evergreen: 100 },
-        wildlife: { "deer","badger","boar","horse"},
-        nouns: { "Forest", "Coppice", "Chase", "Weald", "Pines", "Timber" }
-    },
-    rainforest: {
-        name: "Rainforest", min_temp: 20, max_temp: 34, min_rain: 25, max_rain: 100, min_mutation: 0, max_mutation: 100,        
-        occurs: { biome_types["plains"], biome_types["hills"], biome_types["coast"] }, soils: { soil=90, sand=10 },
-        trees: { deciduous: 200, evergreen: 0 },
-        wildlife: { "deer","antelope"},
-        nouns: { "Jungle", "Morass", "Tangle" }
-    }
-*/

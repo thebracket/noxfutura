@@ -27,9 +27,7 @@ pub struct BiomeType {
     max_mutation: u8,
     occurs: Vec<BlockType>,
     soils: SoilTypes,
-    plants: Vec<String>,
     trees: Vec<TreeType>,
-    wildlife: Vec<String>,
     nouns: Vec<String>
 }
 
@@ -37,12 +35,6 @@ pub struct BiomeType {
 pub struct SoilTypes {
     soil: i8,
     sand: i8
-}
-
-#[derive(Clone, Serialize, Deserialize, Debug)]
-pub struct PlantType {
-    ptype: String,
-    freq: f32
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
