@@ -7,6 +7,9 @@ mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
 mod biomes;
 mod rivers;
+use std::fs::File;
+use bracket_geometry::prelude::Point;
+use bracket_random::prelude::RandomNumberGenerator;
 
 #[derive(Clone)]
 pub struct PlanetParams {
@@ -66,12 +69,44 @@ fn threaded_builder() {
     biomes::build_biomes();
     rivers::run_rivers();
     // History
-    set_worldgen_status("Saving the world");
     // Save
+    save_world();
+
     // Find crash site
+    let crash = find_crash_site();
+
     // Materialize region
+
     // It's all done
+    set_worldgen_status("Done");
     PLANET_BUILD.lock().done = true;
+}
+
+fn save_world() {
+    set_worldgen_status("Saving the world. To disk, sadly.");
+    let world_file = File::create("world.dat").unwrap();
+    let clone_planet = &PLANET_BUILD.lock().planet.clone();
+    serde_cbor::to_writer(world_file, &clone_planet).unwrap();
+}
+
+fn find_crash_site() -> Point {
+    use super::{WORLD_HEIGHT, WORLD_WIDTH};
+    set_worldgen_status("Deciding where to crash");
+    let seed = PLANET_BUILD.lock().planet.rng_seed;
+    let mut rng = RandomNumberGenerator::seeded(seed);
+    let mut result;
+    loop {
+        result = Point::new(
+            rng.roll_dice(1, WORLD_WIDTH as i32-1),
+            rng.roll_dice(1, WORLD_HEIGHT as i32-1)
+        );
+        let pidx = super::planet_idx(result.x, result.y);
+        if PLANET_BUILD.lock().planet.landblocks[pidx].btype != BlockType::Water {
+            break;
+        }
+    }
+
+    result
 }
 
 fn set_worldgen_status<S: ToString>(status: S) {

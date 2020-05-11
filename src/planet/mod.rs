@@ -11,8 +11,8 @@ pub use planet::*;
 mod builder;
 pub use builder::*;
 
-pub const WORLD_HEIGHT: u16 = 180;
-pub const WORLD_WIDTH: u16 = 360;
+pub const WORLD_HEIGHT: u16 = 90;
+pub const WORLD_WIDTH: u16 = 180;
 pub const WORLD_TILES_COUNT: u16 = WORLD_HEIGHT * WORLD_WIDTH;
 pub const REGION_WIDTH: i32 = 256;
 pub const REGION_HEIGHT: i32 = 256;
