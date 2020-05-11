@@ -33,7 +33,7 @@ pub fn build_biomes() {
             let mut closest_index = -1;
 
             for (i, biome) in centroids.iter().enumerate() {
-                let biome_distance = DistanceAlg::Manhattan
+                let biome_distance = DistanceAlg::Pythagoras
                     .distance2d(Point::new(x, y), Point::new(biome.0, biome.1));
                 if (biome_distance as i32) < distance {
                     distance = biome_distance as i32;
