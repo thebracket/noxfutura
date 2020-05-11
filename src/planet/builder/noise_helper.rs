@@ -1,16 +1,24 @@
 use crate::planet::{REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_WIDTH};
 
-pub(crate) fn lat_to_y(lat : f32) -> i32 {
-    let mut y = ( ( (lat + 90.0) / 180.0 ) * WORLD_HEIGHT as f32) as i32;
-    if y < 0 { y = WORLD_HEIGHT as i32 + y }
-    if y > WORLD_HEIGHT as i32 - 1 { y -= WORLD_HEIGHT as i32 }
+pub(crate) fn lat_to_y(lat: f32) -> i32 {
+    let mut y = (((lat + 90.0) / 180.0) * WORLD_HEIGHT as f32) as i32;
+    if y < 0 {
+        y = WORLD_HEIGHT as i32 + y
+    }
+    if y > WORLD_HEIGHT as i32 - 1 {
+        y -= WORLD_HEIGHT as i32
+    }
     y
 }
 
-pub(crate) fn lon_to_x(lon : f32) -> i32 {
-    let mut x = ( ( (lon + 180.0) / 360.0 ) * WORLD_WIDTH as f32) as i32;
-    if x < 0 { x = WORLD_WIDTH as i32 + x }
-    if x > WORLD_WIDTH as i32 - 1 { x -= WORLD_WIDTH as i32 }
+pub(crate) fn lon_to_x(lon: f32) -> i32 {
+    let mut x = (((lon + 180.0) / 360.0) * WORLD_WIDTH as f32) as i32;
+    if x < 0 {
+        x = WORLD_WIDTH as i32 + x
+    }
+    if x > WORLD_WIDTH as i32 - 1 {
+        x -= WORLD_WIDTH as i32
+    }
     x
 }
 

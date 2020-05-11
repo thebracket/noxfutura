@@ -1,2 +1,2 @@
 mod biomes;
-pub use biomes::{Biomes, load_biomes};
+pub use biomes::{load_biomes, Biomes};

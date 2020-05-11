@@ -1,24 +1,22 @@
-use ron::de::from_reader;
-use std::fs::File;
-use serde::{Serialize, Deserialize};
 use crate::planet::BlockType;
+use ron::de::from_reader;
+use serde::{Deserialize, Serialize};
+use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Biomes {
-    pub areas: Vec<BiomeType>
+    pub areas: Vec<BiomeType>,
 }
 
 impl Biomes {
     pub fn new() -> Self {
-        Self {
-            areas: Vec::new()
-        }
+        Self { areas: Vec::new() }
     }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct BiomeType {
-    pub name : String,
+    pub name: String,
     pub min_temp: i8,
     pub max_temp: i8,
     pub min_rain: i8,
@@ -29,19 +27,19 @@ pub struct BiomeType {
     pub soils: SoilTypes,
     pub trees: Vec<TreeType>,
     pub nouns: Vec<String>,
-    pub color: Vec<f32>
+    pub color: Vec<f32>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct SoilTypes {
     soil: i8,
-    sand: i8
+    sand: i8,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct TreeType {
     tree: String,
-    freq: f32
+    freq: f32,
 }
 
 pub fn load_biomes() -> Biomes {

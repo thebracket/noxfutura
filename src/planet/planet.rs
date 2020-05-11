@@ -1,5 +1,5 @@
 use super::{Biome, Block, River};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Planet {

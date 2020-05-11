@@ -1,5 +1,5 @@
 use bracket_geometry::prelude::Point;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Biome {
@@ -27,7 +27,7 @@ impl Biome {
             warp_mutation: 0,
             evil: 0,
             savagery: 0,
-            center: Point::zero()
+            center: Point::zero(),
         }
     }
 }

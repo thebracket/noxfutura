@@ -1,16 +1,16 @@
 mod formats;
-pub use formats::{Biomes};
 use formats::load_biomes;
+pub use formats::Biomes;
 use parking_lot::Mutex;
 
 pub struct Raws {
-    pub biomes : Biomes
+    pub biomes: Biomes,
 }
 
 impl Raws {
     fn new() -> Self {
         Self {
-            biomes : Biomes::new()
+            biomes: Biomes::new(),
         }
     }
 
@@ -20,8 +20,7 @@ impl Raws {
 }
 
 lazy_static! {
-    pub static ref RAWS: Mutex<Raws> =
-        Mutex::new(Raws::new());
+    pub static ref RAWS: Mutex<Raws> = Mutex::new(Raws::new());
 }
 
 pub fn load_raws() {

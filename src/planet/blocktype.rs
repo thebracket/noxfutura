@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::slice::Iter;
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Debug)]
@@ -27,7 +27,7 @@ impl BlockType {
             BlockType::Plateau,
             BlockType::Highlands,
             BlockType::Coastal,
-            BlockType::SaltMarsh
+            BlockType::SaltMarsh,
         ];
         BTYPES.iter()
     }

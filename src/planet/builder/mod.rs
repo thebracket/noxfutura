@@ -7,9 +7,9 @@ mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
 mod biomes;
 mod rivers;
-use std::fs::File;
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
+use std::fs::File;
 
 #[derive(Clone)]
 pub struct PlanetParams {
@@ -97,8 +97,8 @@ fn find_crash_site() -> Point {
     let mut result;
     loop {
         result = Point::new(
-            rng.roll_dice(1, WORLD_WIDTH as i32-1),
-            rng.roll_dice(1, WORLD_HEIGHT as i32-1)
+            rng.roll_dice(1, WORLD_WIDTH as i32 - 1),
+            rng.roll_dice(1, WORLD_HEIGHT as i32 - 1),
         );
         let pidx = super::planet_idx(result.x, result.y);
         if PLANET_BUILD.lock().planet.landblocks[pidx].btype != BlockType::Water {

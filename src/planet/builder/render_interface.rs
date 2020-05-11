@@ -1,6 +1,6 @@
-use crate::engine::VertexBuffer;
-use crate::planet::{planet_idx, Planet, WORLD_HEIGHT, WORLD_WIDTH, Block, BlockType};
 use super::noise_helper::{lat_to_y, lon_to_x};
+use crate::engine::VertexBuffer;
+use crate::planet::{planet_idx, Block, BlockType, Planet, WORLD_HEIGHT, WORLD_WIDTH};
 use parking_lot::Mutex;
 
 lazy_static! {
@@ -38,7 +38,8 @@ impl WorldGenPlanetRender {
         self.vertex_buffer
             .add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
 
-        self.vertex_buffer.add4(color[0], color[1], color[2], color[3]);
+        self.vertex_buffer
+            .add4(color[0], color[1], color[2], color[3]);
     }
 
     pub fn build_blank_planet(&mut self) {
@@ -62,7 +63,7 @@ impl WorldGenPlanetRender {
         }
     }
 
-    fn altitude_to_color(&self, altitude : u8) -> [f32; 4] {
+    fn altitude_to_color(&self, altitude: u8) -> [f32; 4] {
         let mag = altitude as f32 / 255.0;
         [mag, mag, mag, 1.0]
     }
@@ -80,41 +81,72 @@ impl WorldGenPlanetRender {
             lon = -180.0;
             while lon < 180.0 {
                 self.add_point(
-                    lat, 
-                    lon, 
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR, 
-                    &self.altitude_to_color(planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height),
+                    lat,
+                    lon,
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.altitude_to_color(
+                        planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height,
+                    ),
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon,
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.altitude_to_color(planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height),
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.altitude_to_color(
+                        planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))]
+                            .height,
+                    ),
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.altitude_to_color(planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))].height),
+                    planet.landblocks
+                        [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]
+                    .height as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.altitude_to_color(
+                        planet.landblocks
+                            [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]
+                        .height,
+                    ),
                 );
 
                 self.add_point(
                     lat,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.altitude_to_color(planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))].height),
+                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.altitude_to_color(
+                        planet.landblocks
+                            [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]
+                        .height,
+                    ),
                 );
                 self.add_point(
-                    lat, 
-                    lon, 
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR, 
-                    &self.altitude_to_color(planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height),
+                    lat,
+                    lon,
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.altitude_to_color(
+                        planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height,
+                    ),
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.altitude_to_color(planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))].height),
+                    planet.landblocks
+                        [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]
+                    .height as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.altitude_to_color(
+                        planet.landblocks
+                            [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]
+                        .height,
+                    ),
                 );
 
                 lon += LON_STEP;
@@ -125,7 +157,7 @@ impl WorldGenPlanetRender {
         self.needs_update = true;
     }
 
-    fn landblock_to_color(&self, lb : &Block) -> [f32; 4] {
+    fn landblock_to_color(&self, lb: &Block) -> [f32; 4] {
         let mut color = match lb.btype {
             BlockType::Coastal => [1.0, 1.0, 0.0, 1.0],
             BlockType::Highlands => [0.7, 0.7, 0.7, 1.0],
@@ -135,8 +167,8 @@ impl WorldGenPlanetRender {
             BlockType::Plains => [0.0, 1.0, 0.0, 1.0],
             BlockType::Plateau => [0.7, 0.9, 0.7, 1.0],
             BlockType::SaltMarsh => [0.2, 1.0, 0.4, 1.0],
-            BlockType::Water => [ 0.0, 0.0, 1.0, 1.0 ],
-            _ => self.altitude_to_color(lb.height)
+            BlockType::Water => [0.0, 0.0, 1.0, 1.0],
+            _ => self.altitude_to_color(lb.height),
         };
         let mag = lb.height as f32 / 255.0;
         color.iter_mut().for_each(|c| *c *= mag);
@@ -156,42 +188,68 @@ impl WorldGenPlanetRender {
             lon = -180.0;
             while lon < 180.0 {
                 self.add_point(
-                    lat, 
-                    lon, 
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR, 
-                    &self.landblock_to_color(&planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))]),
+                    lat,
+                    lon,
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.landblock_to_color(
+                        &planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))],
+                    ),
                 );
                 self.add_point(
                     lat,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.landblock_to_color(&planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]),
+                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.landblock_to_color(
+                        &planet.landblocks
+                            [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))],
+                    ),
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon,
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.landblock_to_color(&planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))]),
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.landblock_to_color(
+                        &planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))],
+                    ),
                 );
-
 
                 self.add_point(
                     lat,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.landblock_to_color(&planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]),
+                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.landblock_to_color(
+                        &planet.landblocks
+                            [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))],
+                    ),
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon,
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.landblock_to_color(&planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))]),
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.landblock_to_color(
+                        &planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))],
+                    ),
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
-                    &self.landblock_to_color(&planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]),
+                    planet.landblocks
+                        [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]
+                    .height as f32
+                        / ALTITUDE_DIVISOR,
+                    &self.landblock_to_color(
+                        &planet.landblocks
+                            [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))],
+                    ),
                 );
 
                 lon += LON_STEP;
@@ -212,12 +270,14 @@ impl WorldGenPlanetRender {
                 self.landblock_to_color(&planet.landblocks[index])
             } else {
                 let lb_color = self.landblock_to_color(&planet.landblocks[index]);
-                let base_color = crate::raws::RAWS.lock().biomes.areas[biome_type_idx].color.clone();
+                let base_color = crate::raws::RAWS.lock().biomes.areas[biome_type_idx]
+                    .color
+                    .clone();
                 [
                     (base_color[0] + lb_color[0]) / 2.0,
                     (base_color[1] + lb_color[1]) / 2.0,
                     (base_color[2] + lb_color[2]) / 2.0,
-                    1.0
+                    1.0,
                 ]
             }
         }
@@ -239,39 +299,50 @@ impl WorldGenPlanetRender {
                 self.add_point(
                     lat,
                     lon,
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR, 
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].height as f32
+                        / ALTITUDE_DIVISOR,
                     &bcolor,
                 );
                 self.add_point(
                     lat,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR,
+                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
                     &bcolor,
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon,
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
                     &bcolor,
                 );
-
 
                 self.add_point(
                     lat,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height as f32 / ALTITUDE_DIVISOR,
+                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
                     &bcolor,
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon,
-                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
+                    planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat + LAT_STEP))].height
+                        as f32
+                        / ALTITUDE_DIVISOR,
                     &bcolor,
                 );
                 self.add_point(
                     lat + LAT_STEP,
                     lon + LON_STEP,
-                    planet.landblocks[planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))].height as f32 / ALTITUDE_DIVISOR,
+                    planet.landblocks
+                        [planet_idx(lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP))]
+                    .height as f32
+                        / ALTITUDE_DIVISOR,
                     &bcolor,
                 );
 

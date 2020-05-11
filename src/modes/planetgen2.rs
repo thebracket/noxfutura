@@ -32,10 +32,9 @@ impl PlanetGen2 {
         use crate::engine::*;
 
         let mut renderlock = WORLDGEN_RENDER.lock();
-        renderlock.vertex_buffer.build(
-            &context.device,
-            wgpu::BufferUsage::VERTEX,
-        );
+        renderlock
+            .vertex_buffer
+            .build(&context.device, wgpu::BufferUsage::VERTEX);
         self.planet_shader = context.register_shader(
             "resources/shaders/planetgen.vert",
             "resources/shaders/planetgen.frag",
@@ -44,9 +43,15 @@ impl PlanetGen2 {
         // Uniforms and camera etc.
         self.camera = Some(Camera::new(context.size.width, context.size.height));
         self.uniforms = Some(Uniforms::new());
-        self.uniforms.as_mut().unwrap().update_view_proj(self.camera.as_ref().unwrap());
-        let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) =
-            self.uniforms.as_mut().unwrap().create_buffer_layout_and_group(&context, 0, "some_uniforms");
+        self.uniforms
+            .as_mut()
+            .unwrap()
+            .update_view_proj(self.camera.as_ref().unwrap());
+        let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) = self
+            .uniforms
+            .as_mut()
+            .unwrap()
+            .create_buffer_layout_and_group(&context, 0, "some_uniforms");
         self.uniform_bind_group = Some(uniform_bind_group);
         self.uniform_buffer = Some(uniform_buffer);
 
@@ -116,7 +121,12 @@ impl PlanetGen2 {
                 );
                 rpass.set_pipeline(self.planet_pipeline.as_ref().unwrap());
                 rpass.set_bind_group(0, self.uniform_bind_group.as_ref().unwrap(), &[]);
-                rpass.set_vertex_buffer(0, &renderlock.vertex_buffer.buffer.as_ref().unwrap(), 0, 0);
+                rpass.set_vertex_buffer(
+                    0,
+                    &renderlock.vertex_buffer.buffer.as_ref().unwrap(),
+                    0,
+                    0,
+                );
                 rpass.draw(0..renderlock.vertex_buffer.len(), 0..1);
                 //rpass.draw(0..1, 0..1);
             }

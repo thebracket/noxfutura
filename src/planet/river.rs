@@ -1,5 +1,5 @@
 use bracket_geometry::prelude::Point;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct RiverStep {
@@ -15,10 +15,10 @@ pub struct River {
 
 impl River {
     pub fn new() -> Self {
-        Self{
-            name : String::new(),
+        Self {
+            name: String::new(),
             start: Point::zero(),
-            steps: Vec::new()
+            steps: Vec::new(),
         }
     }
 }
