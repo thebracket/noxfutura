@@ -1,6 +1,7 @@
 use bracket_geometry::prelude::Point;
+use serde::{Serialize, Deserialize};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Biome {
     pub biome_type: usize,
     pub name: String,

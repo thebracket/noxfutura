@@ -1,5 +1,7 @@
 use super::BlockType;
-#[derive(Clone)]
+use serde::{Serialize, Deserialize};
+
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Block {
     pub height: u8,
     pub variance: u8,

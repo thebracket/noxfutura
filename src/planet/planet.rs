@@ -1,6 +1,7 @@
 use super::{Biome, Block, River};
+use serde::{Serialize, Deserialize};
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Planet {
     pub rng_seed: u64,
     pub perlin_seed: u64,

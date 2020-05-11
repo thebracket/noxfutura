@@ -1,11 +1,12 @@
 use bracket_geometry::prelude::Point;
+use serde::{Serialize, Deserialize};
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct RiverStep {
     pub pos: Point,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct River {
     pub name: String,
     pub start: Point,
