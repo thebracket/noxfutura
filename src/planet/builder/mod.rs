@@ -6,6 +6,7 @@ mod planet_noise;
 mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
 mod biomes;
+mod rivers;
 
 #[derive(Clone)]
 pub struct PlanetParams {
@@ -63,12 +64,14 @@ fn threaded_builder() {
     planet_categories::planet_coastlines();
     planet_categories::planet_rainfall();
     biomes::build_biomes();
-    // Rivers
+    rivers::run_rivers();
     // History
+    set_worldgen_status("Saving the world");
     // Save
     // Find crash site
     // Materialize region
     // It's all done
+    PLANET_BUILD.lock().done = true;
 }
 
 fn set_worldgen_status<S: ToString>(status: S) {

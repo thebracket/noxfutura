@@ -11,3 +11,13 @@ pub struct River {
     pub start: Point,
     pub steps: Vec<RiverStep>,
 }
+
+impl River {
+    pub fn new() -> Self {
+        Self{
+            name : String::new(),
+            start: Point::zero(),
+            steps: Vec::new()
+        }
+    }
+}

@@ -33,7 +33,7 @@ pub fn build_biomes() {
             let mut closest_index = -1;
 
             for (i,biome) in centroids.iter().enumerate() {
-                let biome_distance = DistanceAlg::Pythagoras.distance2d(Point::new(x, y), Point::new(biome.0, biome.1));
+                let biome_distance = DistanceAlg::Manhattan.distance2d(Point::new(x, y), Point::new(biome.0, biome.1));
                 if (biome_distance as i32) < distance {
                     distance = biome_distance as i32;
                     closest_index = i as i32;
@@ -55,15 +55,13 @@ pub fn build_biomes() {
             if let Some(biome_index) = biome_index {
                 planet.biomes[count].biome_type = biome_index;
                 planet.biomes[count].name = name_biome(&planet.biomes[count]);
-                if count % 200 == 0 {
-                    WORLDGEN_RENDER.lock().planet_with_biome(&planet);
-                }
             }
         }
 
         count += 1;
     }
 
+    WORLDGEN_RENDER.lock().planet_with_biome(&planet);
     PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
     PLANET_BUILD.lock().planet.biomes = planet.biomes;
 
