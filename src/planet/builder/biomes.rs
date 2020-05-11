@@ -1,12 +1,15 @@
 use super::{set_worldgen_status, PLANET_BUILD, WORLDGEN_RENDER};
-use crate::planet::{planet_idx, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
+use crate::planet::{planet_idx, BlockType, Biome, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 use bracket_random::prelude::*;
 use bracket_geometry::prelude::*;
 use std::collections::HashMap;
 
+type BiomeCounts = HashMap<BlockType, i32>;
+
 pub fn build_biomes() {
     set_worldgen_status("Growing Biomes");
 
+    let mut planet = PLANET_BUILD.lock().planet.clone();
     let seed = PLANET_BUILD.lock().planet.rng_seed;
     let mut rng = RandomNumberGenerator::seeded(seed);
     let n_biomes = WORLD_TILES_COUNT / 64 + rng.roll_dice(1, 32) as u16;
@@ -22,6 +25,7 @@ pub fn build_biomes() {
     }
 
     set_worldgen_status(format!("Scanning {} Biomes.", n_biomes));
+    planet.biomes = vec![Biome::new(); n_biomes as usize];
 
     for y in 0..WORLD_HEIGHT {
         for x in 0..WORLD_WIDTH {
@@ -37,32 +41,37 @@ pub fn build_biomes() {
             }
 
             let pidx = planet_idx(x as i32, y as i32);
-            PLANET_BUILD.lock().planet.landblocks[pidx].biome_idx = closest_index as usize;
+            planet.landblocks[pidx].biome_idx = closest_index as usize;
         }
     }
 
     set_worldgen_status("Hand-crafting Fjords");
     let mut count = 0;
-    let mut no_match = 0;
-    let mut planet = PLANET_BUILD.lock().planet.clone();
     while count < planet.biomes.len() {
         let membership_count = biome_membership(&mut planet, count);
         if !membership_count.is_empty() {
-
-        } else {
-            no_match += 1;
+            let possible_types = find_possible_biomes(&membership_count, &planet.biomes[count]);
+            let biome_index = pick_random_biome(&possible_types, &mut rng);
+            if let Some(biome_index) = biome_index {
+                planet.biomes[count].biome_type = biome_index;
+                planet.biomes[count].name = name_biome(&planet.biomes[count]);
+                if count % 200 == 0 {
+                    WORLDGEN_RENDER.lock().planet_with_biome(&planet);
+                }
+            }
         }
 
         count += 1;
     }
 
+    PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
+    PLANET_BUILD.lock().planet.biomes = planet.biomes;
+
     set_worldgen_status("Biomes are cooked.");
-    println!("Biomes that didn't match: {}", no_match);
 }
 
-fn biome_membership(planet : &mut Planet, idx: usize) -> HashMap<u8, f32> {
-    let mut percents : HashMap<u8, f32> = HashMap::new();
-    let mut counts : HashMap<u8, i32> = HashMap::new();
+fn biome_membership(planet : &mut Planet, idx: usize) -> BiomeCounts {
+    let mut counts : BiomeCounts = HashMap::new();
     let mut n_cells = 0;
     let mut total_temperature = 0i32;
     let mut total_rainfall = 0i32;
@@ -71,29 +80,24 @@ fn biome_membership(planet : &mut Planet, idx: usize) -> HashMap<u8, f32> {
     let mut total_x = 0i32;
     let mut total_y = 0i32;
 
-    for y in 0..WORLD_HEIGHT as i32 {
-        for x in 0..WORLD_WIDTH as i32 {
-            let block_idx = planet_idx(x, y);
+    for (i,lb) in planet.landblocks
+        .iter()
+        .filter(|lb| lb.biome_idx == idx)
+        .enumerate()
+    {
+        n_cells += 1;
+        total_temperature += lb.temperature as i32;
+        total_rainfall += lb.rainfall as i32;
+        total_height += lb.height as i32;
+        total_variance = lb.variance as i32;
+        total_x += (i % WORLD_WIDTH as usize) as i32;
+        total_y += (i / WORLD_WIDTH as usize) as i32;
 
-            if planet.landblocks[block_idx].biome_idx == idx {
-                let b = &planet.landblocks[block_idx];
-                n_cells += 1;
-                total_temperature += b.temperature as i32;
-                total_rainfall += b.rainfall as i32;
-                total_height += b.height as i32;
-                total_variance += b.variance as i32;
-                total_x += x;
-                total_y += y;
-
-                // Increment counts by cell type
-                let c_index = b.btype as u8;
-                if counts.contains_key(&c_index) {
-                    let old_c = counts[&c_index];
-                    counts.insert(c_index, old_c + 1);
-                } else {
-                    counts.insert(c_index, 1);
-                }
-            }
+        if counts.contains_key(&lb.btype) {
+            let old_count = counts[&lb.btype];
+            counts.insert(lb.btype, old_count+1);
+        } else {
+            counts.insert(lb.btype, 1);
         }
     }
 
@@ -120,14 +124,68 @@ fn biome_membership(planet : &mut Planet, idx: usize) -> HashMap<u8, f32> {
     }
     planet.biomes[idx].savagery = u8::min(100, distance_from_center as u8);
 
-    // Percentage counts - 10 is the max blocktype
-    for i in 0..10 {
-        if !counts.contains_key(&i) {
-            percents.insert(i, 0.0);
-        } else {
-            let pct = counts[&i] as f32 / counter;
-            percents.insert(i, pct);
+    counts
+}
+
+fn find_possible_biomes(membership: &BiomeCounts, biome: &Biome) -> Vec<(usize, i32)> {
+    let mut result: Vec<(usize, i32)> = Vec::new();
+
+    let raws = crate::raws::RAWS.lock();
+    for (i,biome) in raws
+        .biomes
+        .areas
+        .iter()
+        .enumerate()
+        .filter(|(_,b)|
+            biome.mean_temperature >= b.min_temp &&
+            biome.mean_temperature <= b.max_temp &&
+            biome.mean_rainfall >= b.min_rain &&
+            biome.mean_rainfall <= b.max_rain &&
+            biome.warp_mutation >= b.min_mutation &&
+            biome.warp_mutation <= b.max_mutation
+        )
+    {
+        for bt in biome.occurs.iter() {
+            if membership.contains_key(bt) && membership[&bt] > 0 {
+                result.push((i, membership[bt]));
+            }
         }
     }
-    percents
+
+    result
+}
+
+fn pick_random_biome(distribution : &Vec<(usize, i32)>, rng : &mut RandomNumberGenerator) -> Option<usize> {
+    if distribution.len() == 1 {
+        return Some(distribution[0].0);
+    }
+    if distribution.is_empty() {
+        return None;
+    }
+
+    let sum : usize = distribution.iter().map(|(_,pct)| (*pct) as usize ).sum();
+    if sum == 0 { return Some(distribution[0].0); }
+    let roll = rng.range(0, sum);
+    let mut cumulative = 0;
+    for item in distribution.iter() {
+        cumulative += item.1 as usize;
+        if (roll as usize) < cumulative {
+            return Some(item.0);
+        }
+    }
+    Some(distribution[distribution.len()-1].0)
+}
+
+fn name_biome(biome: &Biome) -> String {
+    let mut result = String::from("Nameless");
+    let mut adjectives : Vec<String> = Vec::new();
+
+    // Location-based
+    if i32::abs(biome.center.x - WORLD_WIDTH as i32/2) < WORLD_WIDTH as i32/10 && i32::abs(biome.center.y - WORLD_HEIGHT as i32/2) < WORLD_HEIGHT as i32 / 10 {
+        adjectives.push(String::from("Central"));
+    } else {
+        if biome.center.x < (WORLD_WIDTH as i32 / 2) { adjectives.push(String::from("Western")) }
+    }
+
+    result
 }

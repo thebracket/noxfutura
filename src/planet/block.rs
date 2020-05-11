@@ -17,7 +17,7 @@ impl Block {
             btype: BlockType::None,
             temperature: 0,
             rainfall: 0,
-            biome_idx: 0,
+            biome_idx: std::usize::MAX,
         }
     }
 }

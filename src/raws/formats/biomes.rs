@@ -5,7 +5,7 @@ use crate::planet::BlockType;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Biomes {
-    areas: Vec<BiomeType>
+    pub areas: Vec<BiomeType>
 }
 
 impl Biomes {
@@ -18,17 +18,18 @@ impl Biomes {
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct BiomeType {
-    name : String,
-    min_temp: i8,
-    max_temp: i8,
-    min_rain: u8,
-    max_rain: u8,
-    min_mutation: u8,
-    max_mutation: u8,
-    occurs: Vec<BlockType>,
-    soils: SoilTypes,
-    trees: Vec<TreeType>,
-    nouns: Vec<String>
+    pub name : String,
+    pub min_temp: i8,
+    pub max_temp: i8,
+    pub min_rain: i8,
+    pub max_rain: i8,
+    pub min_mutation: u8,
+    pub max_mutation: u8,
+    pub occurs: Vec<BlockType>,
+    pub soils: SoilTypes,
+    pub trees: Vec<TreeType>,
+    pub nouns: Vec<String>,
+    pub color: Vec<f32>
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

@@ -37,8 +37,10 @@ pub(crate) fn planet_type_allocation() {
         if block.height <= planet.water_height {
             block.btype = BlockType::Water;
             block.rainfall = 10;
-        } else if block.height as u16 + block.variance as u16 / 2 > planet.water_height as u16 {
-            block.btype = BlockType::SaltMarsh;
+
+            if block.height as u16 + block.variance as u16 / 2 > planet.water_height as u16 {
+                block.btype = BlockType::SaltMarsh;
+            }
         } else if block.height <= planet.plains_height {
             block.btype = BlockType::Plains;
             block.rainfall = 10;

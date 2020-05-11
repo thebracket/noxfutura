@@ -9,10 +9,11 @@
             max_rain: 100,
             min_mutation: 0,
             max_mutation: 100,
-            occurs:[ Water, Coastal ],
+            occurs:[ Water ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Arctic", "Polar", "Frozen Sea" ]
+            nouns: [ "Arctic", "Polar", "Frozen Sea" ],
+            color: [0.8, 0.8, 0.9, 1.0]
         ),
 
         BiomeType(
@@ -23,10 +24,11 @@
             max_rain: 100,
             min_mutation: 0,
             max_mutation: 100,
-            occurs: [Water, Coastal],
+            occurs: [Water],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Arctic", "Ice Sea", "Sea of Razors", "Iceberg" ]
+            nouns: [ "Arctic", "Ice Sea", "Sea of Razors", "Iceberg" ],
+            color: [0.7, 0.7, 0.9, 1.0]
         ),
 
         BiomeType(
@@ -37,10 +39,11 @@
             max_rain: 100,
             min_mutation: 0,
             max_mutation: 100,
-            occurs: [Water, Coastal],
+            occurs: [Water],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Sea", "Ocean", "Drink", "High Sea" ]
+            nouns: [ "Sea", "Ocean", "Drink", "High Sea" ],
+            color: [0.0, 0.0, 1.0, 1.0]
         ),
 
         BiomeType(
@@ -51,10 +54,11 @@
             max_rain :100,
             min_mutation:0,
             max_mutation :100,
-            occurs: [Water, Coastal],
+            occurs: [Water],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Tropical Sea", "Equatorial Sea", "Warm Ocean" ]
+            nouns: [ "Tropical Sea", "Equatorial Sea", "Warm Ocean" ],
+            color: [0.0, 0.0, 1.0, 1.0]
         ),
 
         // Coastal Zones
@@ -69,7 +73,8 @@
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns : ["Ice Cliffs", "Ice Shelf", "Glacier", "Needles" ]
+            nouns : ["Ice Cliffs", "Ice Shelf", "Glacier", "Needles" ],
+            color: [0.8, 0.8, 0.9, 1.0]
         ),
 
         BiomeType(
@@ -83,7 +88,8 @@
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Coast", "Seashore", "Littoral" ]
+            nouns: [ "Coast", "Seashore", "Littoral" ],
+            color: [0.7, 0.7, 0.9, 1.0]
         ),
 
         BiomeType(
@@ -97,7 +103,8 @@
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 5), (tree: "E", freq: 2) ],
-            nouns: ["Coast", "Cliffs", "Seashore", "Littoral", "Seaside"]
+            nouns: ["Coast", "Cliffs", "Seashore", "Littoral", "Seaside"],
+            color: [0.7, 0.7, 0.0, 1.0]
         ),
 
         BiomeType(
@@ -111,7 +118,8 @@
             occurs: [Coastal],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 10), (tree: "E", freq: 0) ],
-            nouns: [ "Coast", "Cliffs", "Seashore", "Seaside", "Resort", "Littoral", "Bay" ]
+            nouns: [ "Coast", "Cliffs", "Seashore", "Seaside", "Resort", "Littoral", "Bay" ],
+            color: [1.0, 1.0, 0.0, 1.0]
         ),
 
         // Salt Marsh Zones
@@ -127,6 +135,7 @@
             soils: SoilTypes( soil: 70, sand: 30 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
             nouns: [ "Arctic", "Tundra", "Devil's Icebox" ],
+            color: [0.8, 0.8, 0.9, 1.0]
         ),
 
         BiomeType(
@@ -140,6 +149,7 @@
             soils: SoilTypes( soil: 70, sand: 30 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 10) ],
             nouns: [ "Tundra", "Cold Desert" ],
+            color: [0.7, 0.7, 0.8, 1.0]
         ),
 
         BiomeType(
@@ -153,7 +163,8 @@
             occurs: [Coastal, SaltMarsh ],
             soils: SoilTypes( soil: 70, sand: 30 ),
             trees: [ (tree: "D", freq: 15), (tree: "E", freq: 1) ],
-            nouns: [ "Salty Badlands", "Waste", "Flats", "Scar" ]
+            nouns: [ "Salty Badlands", "Waste", "Flats", "Scar" ],
+            color: [0.0, 0.9, 0.5, 1.0]
         ),
 
         BiomeType(
@@ -168,6 +179,7 @@
             trees: [ (tree: "D", freq: 15), (tree: "E", freq: 1) ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             nouns: [ "Badlands", "Waste", "Flats", "Alkali Flat" ],
+            color: [0.0, 1.0, 0.6, 1.0]
         ),
 
         // Flatlands
@@ -183,6 +195,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             nouns: [ "Permafrost", "Tundra", "Frozen Plain" ],
+            color: [0.8, 0.8, 0.8, 1.0]
         ),
 
         BiomeType(
@@ -196,7 +209,8 @@
             occurs: [Plains, Coastal, Marsh],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Plain", "Scarp", "Scree", "Boulderland" ]
+            nouns: [ "Plain", "Scarp", "Scree", "Boulderland" ],
+            color: [0.2, 0.5, 0.2, 1.0]
         ),
 
         BiomeType(
@@ -210,7 +224,8 @@
             occurs: [Plains, Coastal, Marsh],
             soils: SoilTypes( soil: 75, sand: 25 ),
             trees: [ (tree: "D", freq: 20), (tree: "E", freq: 3) ],
-            nouns: [ "Grasslands", "Plain", "Prairie", "Heath", "Level" ]
+            nouns: [ "Grasslands", "Plain", "Prairie", "Heath", "Level" ],
+            color: [0.0, 1.0, 0.0, 1.0]
         ),
 
         BiomeType(
@@ -225,6 +240,7 @@
             soils: SoilTypes( soil: 25, sand: 75 ),
             trees: [ (tree: "D", freq: 20), (tree: "E", freq: 3) ],
             nouns: [ "Savannah", "Grassland", "Heath", "Scrub", "Level" ],
+            color: [0.45, 0.6, 0.42, 1.0]
         ),
 
         // Hills
@@ -240,6 +256,7 @@
             soils: SoilTypes( soil: 80, sand: 20 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Ice Hill", "Hill", "Mound", "Roughs" ],
+            color: [0.9, 0.9, 0.9, 1.0]
         ),
 
         BiomeType(
@@ -253,7 +270,8 @@
             occurs: [ Hills, Highlands ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Rocky Hills", "Hill", "Mound", "Bump", "Scree", "Scar" ]
+            nouns: [ "Rocky Hills", "Hill", "Mound", "Bump", "Scree", "Scar" ],
+            color: [0.36, 0.26, 0.12, 1.0]
         ),
 
         BiomeType(
@@ -267,7 +285,8 @@
             occurs: [ Hills, Highlands ],
             soils: SoilTypes( soil: 75, sand: 25 ),
             trees: [ (tree: "D", freq: 5), (tree: "E", freq: 3) ],
-            nouns: [ "Rolling Hill", "Hill", "Rolling Heath", "Moor" ]
+            nouns: [ "Rolling Hill", "Hill", "Rolling Heath", "Moor" ],
+            color: [0.1, 0.6, 0.05, 1.0]
         ),
 
         BiomeType(
@@ -282,6 +301,7 @@
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 10), (tree: "E", freq: 0) ],
             nouns: [ "Savannah Hills", "Hill", "Rolling Savannah", "Savannah Moor" ],
+            color: [0.45, 0.6, 0.42, 1.0]
         ),
 
         // Plateau
@@ -297,6 +317,7 @@
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Glacier", "Plateau", "Ice Plain", "Steppe" ],
+            color: [0.7, 0.8, 0.7, 1.0]
         ),
 
         BiomeType(
@@ -310,7 +331,8 @@
             occurs: [ Plateau ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 3) ],
-            nouns: [ "Tableland", "Tablerock", "Plateau", "Rocky Plateau" ]
+            nouns: [ "Tableland", "Tablerock", "Plateau", "Rocky Plateau" ],
+            color: [0.5, 0.6, 0.5, 1.0]
         ),
 
         BiomeType(
@@ -324,7 +346,8 @@
             occurs: [ Plateau ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 20), (tree: "E", freq: 5) ],
-            nouns: [ "Hog's Back", "Plateau", "Table", "Fell", "Downs" ]
+            nouns: [ "Hog's Back", "Plateau", "Table", "Fell", "Downs" ],
+            color: [0.0, 0.9, 0.0, 1.0]
         ),
 
         BiomeType(
@@ -339,6 +362,7 @@
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 25), (tree: "E", freq: 0) ],
             nouns: [ "Upland", "Table", "Plateau" ],
+            color: [0.45, 0.6, 0.42, 1.0]
         ),
 
         BiomeType(
@@ -353,6 +377,7 @@
             soils: SoilTypes( soil: 5, sand: 90 ),
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Devil's Table", "Badland Plateau" ],
+            color: [0.4, 0.0, 0.0, 1.0]
         ),
 
         // Highlands
@@ -367,7 +392,8 @@
             occurs: [ Highlands ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "High Waste", "High Tundra", "Hillock", "Promontary" ]
+            nouns: [ "High Waste", "High Tundra", "Hillock", "Promontary" ],
+            color: [1.0, 1.0, 1.0, 1.0]
         ),
 
         BiomeType(
@@ -381,7 +407,8 @@
             occurs: [ Highlands ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
-            nouns: [ "Waste", "Scree", "Fell", "Promontary", "Dales", "Pike" ]
+            nouns: [ "Waste", "Scree", "Fell", "Promontary", "Dales", "Pike" ],
+            color: [0.8, 0.9, 0.8, 1.0]
         ),
 
         BiomeType(
@@ -395,7 +422,8 @@
             occurs: [ Highlands ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 10), (tree: "E", freq: 3) ],
-            nouns: [ "Moor", "Heath", "Uplands", "Dales", "Scar" ]
+            nouns: [ "Moor", "Heath", "Uplands", "Dales", "Scar" ],
+            color: [0.0, 1.0, 0.0, 1.0]
         ),
 
         BiomeType(
@@ -410,6 +438,7 @@
             soils: SoilTypes( soil: 25, sand: 75 ),
             trees: [ (tree: "D", freq: 20), (tree: "E", freq: 1) ],
             nouns: [ "Savannah Hills", "Highlands", "Uplands", "Peaks", "Mounds" ],
+            color: [0.45, 0.6, 0.42, 1.0]
         ),
 
         BiomeType(
@@ -423,7 +452,8 @@
             occurs: [ Highlands ],
             soils: SoilTypes( soil: 10, sand: 90 ),
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
-            nouns: [ "Scree", "Heights" ]
+            nouns: [ "Scree", "Heights" ],
+            color: [0.5, 0.0, 0.0, 1.0]
         ),
 
         // Mountains
@@ -438,7 +468,8 @@
             occurs: [ Mountains ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ]
+            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
+            color: [1.0, 1.0, 1.0, 1.0]
         ),
 
         BiomeType(
@@ -452,7 +483,8 @@
             occurs: [ Mountains ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
-            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ]
+            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
+            color: [0.9, 1.0, 0.9, 1.0]
         ),
 
         BiomeType(
@@ -466,7 +498,8 @@
             occurs: [ Mountains ],
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
-            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ]
+            nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
+            color: [0.4, 1.0, 0.4, 1.0]
         ),
 
         BiomeType(
@@ -481,6 +514,7 @@
             soils: SoilTypes( soil: 25, sand: 75 ),
             trees: [ (tree: "D", freq: 3), (tree: "E", freq: 0) ],
             nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
+            color: [0.45, 0.6, 0.42, 1.0]
         ),
 
         BiomeType(
@@ -495,6 +529,7 @@
             soils: SoilTypes( soil: 10, sand: 90 ),
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
+            color: [0.5, 0.0, 0.0, 1.0]
         ),
 
         // Desert Regions
@@ -510,6 +545,7 @@
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Tundra", "Waste", "Ice Waste" ],
+            color: [1.0, 1.0, 1.0, 1.0]
         ),
 
         BiomeType(
@@ -524,6 +560,7 @@
             soils: SoilTypes( soil: 15, sand: 86 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Semi-Tundra", "Expanse", "Steppe" ],
+            color: [0.9, 0.9, 0.9, 1.0]
         ),
 
         BiomeType(
@@ -538,6 +575,7 @@
             soils: SoilTypes( soil: 5, sand: 95 ),
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Desert", "Waste", "Wild", "Dunes", "Barren" ],
+            color: [1.0, 1.0, 0.0, 1.0]
         ),
 
         BiomeType(
@@ -552,6 +590,7 @@
             soils: SoilTypes( soil: 5, sand: 95 ),
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Barrens", "Platter" ],
+            color: [0.4, 0.4, 0.4, 1.0]
         ),
 
         // High Precipitation Areas
@@ -566,7 +605,8 @@
             occurs: [ Plains, Hills, Highlands, Plateau, Coastal ],
             soils: SoilTypes( soil: 80, sand: 20 ),
             trees: [ (tree: "D", freq: 100), (tree: "E", freq: 0) ],
-            nouns: [ "Forest", "Backwoods", "Old Forest", "Grove", "Timberland", "Chase" ]
+            nouns: [ "Forest", "Backwoods", "Old Forest", "Grove", "Timberland", "Chase" ],
+            color: [0.0, 0.5, 0.0, 1.0]
         ),
 
         BiomeType(
@@ -580,7 +620,8 @@
             occurs: [ Highlands, Hills, Plateau ],
             soils: SoilTypes( soil: 80, sand: 20 ),
             trees: [ (tree: "D", freq: 95), (tree: "E", freq: 5) ],
-            nouns: [ "Forest", "Woods", "Old WOods", "Grove", "Chase", "Weald" ]
+            nouns: [ "Forest", "Woods", "Old WOods", "Grove", "Chase", "Weald" ],
+            color: [0.0, 0.0, 0.0, 1.0]
         ),
 
         BiomeType(
@@ -594,7 +635,8 @@
             occurs: [ Highlands, Hills, Plateau ],
             soils: SoilTypes( soil: 80, sand: 20 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 100) ],
-            nouns: [ "Forest", "Coppice", "Chase", "Weald", "Pines" ]
+            nouns: [ "Forest", "Coppice", "Chase", "Weald", "Pines" ],
+            color: [0.0, 0.5, 0.0, 1.0]
         ),
 
         BiomeType(
@@ -608,7 +650,8 @@
             occurs: [ Plains, Hills, Highlands, Plateau, Coastal ],
             soils: SoilTypes( soil: 80, sand: 20 ),
             trees: [ (tree: "D", freq: 200), (tree: "E", freq: 0) ],
-            nouns: [ "Jungle", "Morass", "Tangle" ]
+            nouns: [ "Jungle", "Morass", "Tangle" ],
+            color: [0.0, 0.7, 0.0, 1.0]
         )
     ]
 )

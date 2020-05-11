@@ -1,6 +1,6 @@
 use bracket_geometry::prelude::Point;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Biome {
     pub biome_type: usize,
     pub name: String,
@@ -12,4 +12,21 @@ pub struct Biome {
     pub evil: u8,
     pub savagery: u8,
     pub center: Point,
+}
+
+impl Biome {
+    pub fn new() -> Self {
+        Self {
+            biome_type: std::usize::MAX,
+            name: String::new(),
+            mean_temperature: 0,
+            mean_altitude: 0,
+            mean_rainfall: 0,
+            mean_variance: 0,
+            warp_mutation: 0,
+            evil: 0,
+            savagery: 0,
+            center: Point::zero()
+        }
+    }
 }
