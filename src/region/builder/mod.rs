@@ -3,6 +3,7 @@ use crate::planet::{set_worldgen_status, planet_idx, REGION_HEIGHT, REGION_WIDTH
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 mod heightmap;
+mod water_features;
 
 pub fn builder(region : &mut Region, planet: &Planet, crash_site : Point) {
     crate::planet::set_flatmap_status(true);
@@ -29,8 +30,10 @@ pub fn builder(region : &mut Region, planet: &Planet, crash_site : Point) {
     );
     crate::planet::WORLDGEN_RENDER.lock().region_heightmap(&hm, planet.water_height, &pooled_water);
 
-    set_worldgen_status("Adding water");
-    set_worldgen_status("Sub-regions");
+    set_worldgen_status("Adding water features");
+    water_features::just_add_water(planet, region, &mut pooled_water, &mut hm, &mut rng);
+    crate::planet::WORLDGEN_RENDER.lock().region_heightmap(&hm, planet.water_height, &pooled_water);
+
     set_worldgen_status("Stratifying");
     set_worldgen_status("Layer cake");
     set_worldgen_status("Ramping");

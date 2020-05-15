@@ -361,6 +361,7 @@ impl WorldGenPlanetRender {
         const HRH : f32 = (REGION_HEIGHT as f32 / 2.0) / SCALE;
         let min_height = hm.iter().min().unwrap();
         let max_height = hm.iter().max().unwrap();
+        println!("{},{}", min_height, max_height);
         let altitude_range = max_height - min_height;
 
         for (idx, height) in hm.iter().enumerate() {
@@ -368,7 +369,7 @@ impl WorldGenPlanetRender {
             //let mag = *height as f32 / 255.0;
             let x = idx % REGION_WIDTH as usize;
             let y = idx / REGION_WIDTH as usize;
-            let z = *height as f32 / 255.0;
+            let z = ((*height as f32 / 255.0) / 10.0) + 0.6;
 
             let (r,g,b) = 
                 if *height < water_level || water[idx] > *height {
