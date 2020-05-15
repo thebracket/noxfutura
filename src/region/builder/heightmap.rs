@@ -41,7 +41,14 @@ pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_s
     }
 }
 
-pub fn create_subregions(rng: &mut RandomNumberGenerator, variance : u8, hm : &mut Vec<u8>) {
+pub fn create_subregions(
+    rng: &mut RandomNumberGenerator,
+    variance : u8,
+    hm : &mut Vec<u8>,
+    water: &mut Vec<u8>,
+    biome: &crate::planet::Biome
+) {
+    let center_point = Point::new(REGION_WIDTH/2, REGION_HEIGHT/2);
     let n_subregions = 64 + rng.roll_dice(1, 20) + (variance as i32 * 4);
 
     // Set each heightmap tile to be a member of a sub-region
@@ -80,18 +87,28 @@ pub fn create_subregions(rng: &mut RandomNumberGenerator, variance : u8, hm : &m
         let down_variance = rng.roll_dice(1, 2)-1;
         let amount = up_variance - down_variance;
         *sr = amount;
+
+        // Murky pools
+        if rng.roll_dice(1, 500) < biome.mean_rainfall as i32 {
+            *sr = -10;
+        }
     }
 
     // Apply them
-    let center_point = Point::new(REGION_WIDTH/2, REGION_HEIGHT/2);
     for y in 0..REGION_HEIGHT {
         for x in 0..REGION_WIDTH {
             let tile_idx = ((y * REGION_WIDTH) + x) as usize;
             let sub_idx = subregion_idx[tile_idx];
             let delta_z = sb_variance[sub_idx];
             if DistanceAlg::Pythagoras.distance2d(Point::new(x,y), center_point) > 20.0 {
-                let h = hm[tile_idx] as i32;
-                hm[tile_idx] = (h + delta_z) as u8;
+                if delta_z == -10 {
+                    let h = hm[tile_idx] as i32;
+                    hm[tile_idx] = (h + delta_z) as u8;
+                    water[tile_idx] = h as u8-2;
+                } else {
+                    let h = hm[tile_idx] as i32;
+                    hm[tile_idx] = (h + delta_z) as u8;
+                }
             } else {
                 // Ensure the crash site is clear
                 hm[tile_idx] = hm[(( REGION_HEIGHT/2 * REGION_WIDTH) + ((REGION_WIDTH/2))) as usize];

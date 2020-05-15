@@ -354,7 +354,7 @@ impl WorldGenPlanetRender {
         self.needs_update = true;
     }
 
-    pub fn region_heightmap(&mut self, hm : &[u8], water_level : u8) {
+    pub fn region_heightmap(&mut self, hm : &[u8], water_level : u8, water: &[u8]) {
         self.vertex_buffer.clear();
         const SCALE : f32 = 512.0;
         const HRW : f32 = (REGION_WIDTH as f32 / 2.0) / SCALE;
@@ -371,7 +371,7 @@ impl WorldGenPlanetRender {
             let z = *height as f32 / 255.0;
 
             let (r,g,b) = 
-                if *height < water_level {
+                if *height < water_level || water[idx] > *height {
                     (0.0, 0.0, 1.0)
                 } else {
                     (0.0, mag, 0.0)
