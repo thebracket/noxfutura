@@ -17,7 +17,7 @@ fn sphere_vertex(altitude: f32, lat: f32, lon: f32) -> (f32, f32, f32) {
     )
 }
 
-pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_seed : u64) {
+pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_seed : u64, variance: u8) {
     use crate::planet::noise_helper::*;
 
     let mut noise = FastNoise::seeded(perlin_seed);
@@ -32,11 +32,38 @@ pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_s
         let lat = noise_lat(crash_site.y, y);
         for x in 0..REGION_WIDTH {
             let lon = noise_lon(crash_site.x, x);
-            let sphere_coords = sphere_vertex(1000.0, lat, lon);
+            let sphere_coords = sphere_vertex(100.0, lat, lon);
             let nh = noise.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
             let altitude = noise_to_planet_height(nh);
             let cell_idx = ((y * REGION_WIDTH) + x) as usize;
             hm[cell_idx] = altitude;
+        }
+    }
+
+    // Consider adding a second noise layer
+    let mut noise2 = FastNoise::seeded(perlin_seed);
+    noise2.set_noise_type(NoiseType::SimplexFractal);
+    noise2.set_fractal_type(FractalType::FBM);
+    noise2.set_fractal_octaves(20);
+    noise2.set_fractal_gain(0.8);
+    noise2.set_fractal_lacunarity(2.0);
+    noise2.set_frequency(0.05);
+
+    let v = (variance as f32) * 2.0;
+    println!("Variance: {}", variance);
+    for y in 0..REGION_HEIGHT {
+        let lat = noise_lat(crash_site.y, y);
+        for x in 0..REGION_WIDTH {
+            let lon = noise_lon(crash_site.x, x);
+            let sphere_coords = sphere_vertex(100.0, lat, lon);
+            let nh = noise2.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
+            //println!("{}", nh);
+            let cell_idx = ((y * REGION_WIDTH) + x) as usize;
+            let old_h = hm[cell_idx] as f32;
+            let mut new_h = old_h + (nh * v);
+            if new_h < 0.0 { new_h = 0.0 }
+            if new_h > 255.0 { new_h = 255.0 }
+            hm[cell_idx] = new_h as u8;
         }
     }
 }

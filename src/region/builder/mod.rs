@@ -17,7 +17,7 @@ pub fn builder(region : &mut Region, planet: &Planet, crash_site : Point) {
     set_worldgen_status("Establishing ground altitude");
     let mut hm = heightmap::build_empty_heightmap();
     crate::planet::WORLDGEN_RENDER.lock().region_heightmap(&hm, planet.water_height, &pooled_water);
-    heightmap::build_heightmap_from_noise(&mut hm, crash_site, planet.perlin_seed);
+    heightmap::build_heightmap_from_noise(&mut hm, crash_site, planet.perlin_seed, planet.landblocks[planet_idx(crash_site.x, crash_site.y)].variance);
     crate::planet::WORLDGEN_RENDER.lock().region_heightmap(&hm, planet.water_height, &pooled_water);
 
     set_worldgen_status("Locating Sub-Biomes");
