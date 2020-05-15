@@ -1,6 +1,6 @@
 use super::{Block, BlockType, Planet};
 use parking_lot::Mutex;
-mod noise_helper;
+pub mod noise_helper;
 mod planet_categories;
 mod planet_noise;
 mod render_interface;
@@ -81,7 +81,7 @@ fn threaded_builder() {
     set_worldgen_status("Erasing the crash site");
     let clone_planet = &PLANET_BUILD.lock().planet.clone();
     let mut region = Region::zeroed(crash_idx, &clone_planet);
-    crate::region::builder(&mut region, &clone_planet);
+    crate::region::builder(&mut region, &clone_planet, crash);
 
     // It's all done
     set_worldgen_status("Done");
@@ -107,7 +107,7 @@ fn find_crash_site() -> Point {
             rng.roll_dice(1, WORLD_HEIGHT as i32 - 1),
         );
         let pidx = super::planet_idx(result.x, result.y);
-        if PLANET_BUILD.lock().planet.landblocks[pidx].btype != BlockType::Water {
+        if PLANET_BUILD.lock().planet.landblocks[pidx].btype == BlockType::Mountains {
             break;
         }
     }

@@ -1,6 +1,6 @@
 use super::noise_helper::{lat_to_y, lon_to_x};
 use crate::engine::VertexBuffer;
-use crate::planet::{planet_idx, Block, BlockType, Planet, WORLD_HEIGHT, WORLD_WIDTH};
+use crate::planet::{planet_idx, Block, BlockType, Planet, WORLD_HEIGHT, WORLD_WIDTH, REGION_WIDTH, REGION_HEIGHT};
 use parking_lot::Mutex;
 
 lazy_static! {
@@ -351,6 +351,38 @@ impl WorldGenPlanetRender {
             lat += LAT_STEP;
         }
 
+        self.needs_update = true;
+    }
+
+    pub fn region_heightmap(&mut self, hm : &[u8]) {
+        self.vertex_buffer.clear();
+        const SCALE : f32 = 512.0;
+        const HRW : f32 = (REGION_WIDTH as f32 / 2.0) / SCALE;
+        const HRH : f32 = (REGION_HEIGHT as f32 / 2.0) / SCALE;
+        for (idx, height) in hm.iter().enumerate() {
+            let mag = *height as f32 / 255.0;
+            let x = idx % REGION_WIDTH as usize;
+            let y = idx / REGION_WIDTH as usize;
+            let z = mag;
+
+            let x1 = (x as f32 / SCALE) - HRW;
+            let x2 = ((x+1) as f32 / SCALE) - HRW;
+            let y1 = (y as f32 / SCALE) - HRH;
+            let y2 = ((y+1) as f32 / SCALE) - HRH;
+
+            self.vertex_buffer.add3(x1, y2, z);
+            self.vertex_buffer.add4(mag, mag, mag, 1.0);
+            self.vertex_buffer.add3(x1, y1, z);
+            self.vertex_buffer.add4(mag, mag, mag, 1.0);
+            self.vertex_buffer.add3(x2, y1, z);
+            self.vertex_buffer.add4(mag, mag, mag, 1.0);
+            self.vertex_buffer.add3(x1, y2, z);
+            self.vertex_buffer.add4(mag, mag, mag, 1.0);
+            self.vertex_buffer.add3(x2, y1, z);
+            self.vertex_buffer.add4(mag, mag, mag, 1.0);
+            self.vertex_buffer.add3(x2, y2, z);
+            self.vertex_buffer.add4(mag, mag, mag, 1.0);
+        }
         self.needs_update = true;
     }
 }
