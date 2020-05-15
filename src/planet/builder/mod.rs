@@ -26,6 +26,7 @@ struct PlanetBuilder {
     planet: Planet,
     done: bool,
     task: String,
+    flatmap: bool
 }
 
 impl PlanetBuilder {
@@ -41,6 +42,7 @@ impl PlanetBuilder {
             planet: Planet::new(),
             done: false,
             task: "Initializing".to_string(),
+            flatmap: false
         }
     }
 }
@@ -107,7 +109,7 @@ fn find_crash_site() -> Point {
             rng.roll_dice(1, WORLD_HEIGHT as i32 - 1),
         );
         let pidx = super::planet_idx(result.x, result.y);
-        if PLANET_BUILD.lock().planet.landblocks[pidx].btype == BlockType::Mountains {
+        if PLANET_BUILD.lock().planet.landblocks[pidx].btype == BlockType::Coastal {
             break;
         }
     }
@@ -121,4 +123,12 @@ pub fn set_worldgen_status<S: ToString>(status: S) {
 
 pub fn get_worldgen_status() -> String {
     PLANET_BUILD.lock().task.clone()
+}
+
+pub fn get_flatmap_status() -> bool {
+    PLANET_BUILD.lock().flatmap
+}
+
+pub fn set_flatmap_status(status: bool) {
+    PLANET_BUILD.lock().flatmap = status;
 }

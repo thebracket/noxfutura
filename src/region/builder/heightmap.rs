@@ -94,7 +94,7 @@ pub fn create_subregions(rng: &mut RandomNumberGenerator, variance : u8, hm : &m
                 hm[tile_idx] = (h + delta_z) as u8;
             } else {
                 // Ensure the crash site is clear
-                hm[tile_idx] = hm[(( REGION_HEIGHT/2 * REGION_WIDTH) + ((REGION_WIDTH/2) - 20)) as usize];
+                hm[tile_idx] = hm[(( REGION_HEIGHT/2 * REGION_WIDTH) + ((REGION_WIDTH/2))) as usize];
                 if hm[tile_idx] < 7 { hm[tile_idx] = 7; }
             }
         }

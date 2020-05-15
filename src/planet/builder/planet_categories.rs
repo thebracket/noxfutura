@@ -71,7 +71,7 @@ pub(crate) fn planet_type_allocation() {
     }
     WORLDGEN_RENDER.lock().planet_with_category(&planet);
 
-    PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
+    PLANET_BUILD.lock().planet = planet;
 }
 
 pub(crate) fn planet_coastlines() {
