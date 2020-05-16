@@ -6,6 +6,7 @@ pub enum TileType {
     Wall,
     Ramp { direction: RampDirection },
     Stairs { direction: StairsType },
+    SemiMoltenRock,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

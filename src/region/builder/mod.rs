@@ -4,6 +4,7 @@ use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 mod heightmap;
 mod water_features;
+mod strata;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     crate::planet::set_flatmap_status(true);
@@ -50,7 +51,12 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
         .region_heightmap(&hm, planet.water_height, &pooled_water);
 
     set_worldgen_status("Stratifying");
-    set_worldgen_status("Layer cake");
+    set_worldgen_status("Layer cake is yummy");
+    strata::layer_cake(&hm, region);
+    crate::planet::WORLDGEN_RENDER
+        .lock()
+        .region_display(region.clone());
+
     set_worldgen_status("Ramping");
     set_worldgen_status("Beaches");
     set_worldgen_status("Crashing the ship");
