@@ -7,6 +7,7 @@ pub mod planet;
 pub mod raws;
 pub mod worldmap;
 pub mod region;
+pub mod utils;
 
 fn main() {
     engine::main_loop();

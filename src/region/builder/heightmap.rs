@@ -1,20 +1,11 @@
-use crate::planet::{REGION_TILES_COUNT, REGION_HEIGHT, REGION_WIDTH};
+use crate::planet::{REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::*;
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;
+use crate::utils::sphere_vertex;
 
 pub fn build_empty_heightmap() -> Vec<u8> {
     vec![0u8 ; (REGION_WIDTH * REGION_HEIGHT) as usize]
-}
-
-fn sphere_vertex(altitude: f32, lat: f32, lon: f32) -> (f32, f32, f32) {
-    let rlat = lat * 0.0174533;
-    let rlon = lon * 0.0174533;
-    (
-        altitude * f32::cos(rlat) * f32::cos(rlon),
-        altitude * f32::cos(rlat) * f32::sin(rlon),
-        altitude * f32::sin(rlat),
-    )
 }
 
 pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_seed : u64, variance: u8) {
@@ -32,7 +23,7 @@ pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_s
         let lat = noise_lat(crash_site.y, y);
         for x in 0..REGION_WIDTH {
             let lon = noise_lon(crash_site.x, x);
-            let sphere_coords = sphere_vertex(100.0, lat, lon);
+            let sphere_coords = sphere_vertex(100.0, Degrees::new(lat), Degrees::new(lon));
             let nh = noise.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
             let altitude = noise_to_planet_height(nh);
             let cell_idx = ((y * REGION_WIDTH) + x) as usize;
@@ -55,7 +46,7 @@ pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_s
         let lat = noise_lat(crash_site.y, y);
         for x in 0..REGION_WIDTH {
             let lon = noise_lon(crash_site.x, x);
-            let sphere_coords = sphere_vertex(100.0, lat, lon);
+            let sphere_coords = sphere_vertex(100.0, Degrees::new(lat), Degrees::new(lon));
             let nh = noise2.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
             //println!("{}", nh);
             let cell_idx = ((y * REGION_WIDTH) + x) as usize;

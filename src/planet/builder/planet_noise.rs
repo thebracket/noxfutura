@@ -4,6 +4,8 @@ use crate::planet::{
     planet_idx, REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH,
 };
 use bracket_noise::prelude::*;
+use crate::utils::sphere_vertex;
+use bracket_geometry::prelude::Degrees;
 
 pub(crate) fn zero_fill() {
     set_worldgen_status("Building initial ball of mud");
@@ -11,16 +13,6 @@ pub(crate) fn zero_fill() {
     PLANET_BUILD.lock().planet.landblocks = blocks;
     PLANET_BUILD.lock().planet.migrant_counter = 0;
     PLANET_BUILD.lock().planet.remaining_settlers = 0;
-}
-
-fn sphere_vertex(altitude: f32, lat: f32, lon: f32) -> (f32, f32, f32) {
-    let rlat = lat * 0.0174533;
-    let rlon = lon * 0.0174533;
-    (
-        altitude * f32::cos(rlat) * f32::cos(rlon),
-        altitude * f32::cos(rlat) * f32::sin(rlon),
-        altitude * f32::sin(rlat),
-    )
 }
 
 pub(crate) fn planetary_noise() {
@@ -54,7 +46,7 @@ pub(crate) fn planetary_noise() {
                 for x1 in 0..REGION_WIDTH / REGION_FRACTION_TO_CONSIDER {
                     let lat = noise_lat(y, y1 * REGION_FRACTION_TO_CONSIDER);
                     let lon = noise_lon(x, x1 * REGION_FRACTION_TO_CONSIDER);
-                    let sphere_coords = sphere_vertex(100.0, lat, lon);
+                    let sphere_coords = sphere_vertex(100.0, Degrees::new(lat), Degrees::new(lon));
                     let nh = noise.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
                     /*let nh = noise.get_noise(
                         noise_x(x, x1 * REGION_FRACTION_TO_CONSIDER),

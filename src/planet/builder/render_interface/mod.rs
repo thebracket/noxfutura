@@ -1,7 +1,9 @@
 use super::noise_helper::{lat_to_y, lon_to_x};
 use crate::engine::VertexBuffer;
 use crate::planet::{planet_idx, Block, BlockType, Planet, WORLD_HEIGHT, WORLD_WIDTH, REGION_WIDTH, REGION_HEIGHT};
+use crate::utils::sphere_vertex;
 use parking_lot::Mutex;
+use bracket_geometry::prelude::Degrees;
 
 lazy_static! {
     pub static ref WORLDGEN_RENDER: Mutex<WorldGenPlanetRender> =
@@ -23,18 +25,8 @@ impl WorldGenPlanetRender {
         wgpr
     }
 
-    fn sphere_vertex(&self, altitude: f32, lat: f32, lon: f32) -> (f32, f32, f32) {
-        (
-            altitude * f32::cos(lat) * f32::cos(lon),
-            altitude * f32::cos(lat) * f32::sin(lon),
-            altitude * f32::sin(lat),
-        )
-    }
-
     fn add_point(&mut self, lat: f32, lon: f32, altitude: f32, color: &[f32; 4]) {
-        let latr = lat * 0.0174533;
-        let lonr = lon * 0.0174533;
-        let sphere_coords = self.sphere_vertex(0.5 + altitude, latr, lonr);
+        let sphere_coords = sphere_vertex(0.5 + altitude, Degrees::new(lat), Degrees::new(lon));
         self.vertex_buffer
             .add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
 
