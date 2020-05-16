@@ -2,6 +2,7 @@ use crate::planet::{Planet, WORLD_WIDTH, REGION_WIDTH, REGION_HEIGHT, REGION_DEP
 use super::Region;
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::RandomNumberGenerator;
+use std::collections::HashSet;
 
 pub fn just_add_water(
     planet: &Planet, 
@@ -68,15 +69,16 @@ pub fn just_add_water(
         if d > 15.0 { mid_ok = true }
     }
 
+    let mut dig_targets : HashSet<usize> = HashSet::new();
+
     // Run rivers to the confluence
-    let oh = hm.clone();
     for _ in 0..river_entry[0] {
         let start = Point::new(
             0, 
             rng.roll_dice(1, REGION_HEIGHT/2) + REGION_HEIGHT/4 -1
         );
         for point in line2d_vector(start, midpoint) {
-            add_dig_target(point, 2, 2, &oh, hm, water);
+            add_dig_target(point, 2, &mut dig_targets);
         }
     }
     for _ in 0..river_entry[1] {
@@ -85,7 +87,7 @@ pub fn just_add_water(
             rng.roll_dice(1, REGION_HEIGHT/2) + REGION_HEIGHT/4 -1
         );
         for point in line2d_vector(start, midpoint) {
-            add_dig_target(point, 2, 2, &oh, hm, water);
+            add_dig_target(point, 2, &mut dig_targets);
         }
     }
     for _ in 0..river_entry[2] {
@@ -94,7 +96,7 @@ pub fn just_add_water(
             0
         );
         for point in line2d_vector(start, midpoint) {
-            add_dig_target(point, 2, 2, &oh, hm, water);
+            add_dig_target(point, 2, &mut dig_targets);
         }
     }
     for _ in 0..river_entry[3] {
@@ -103,7 +105,7 @@ pub fn just_add_water(
             REGION_HEIGHT-2
         );
         for point in line2d_vector(start, midpoint) {
-            add_dig_target(point, 2, 2, &oh, hm, water);
+            add_dig_target(point, 2, &mut dig_targets);
         }
     }
 
@@ -115,37 +117,41 @@ pub fn just_add_water(
             _ => Point::new(rng.roll_dice(1, REGION_WIDTH/2) + REGION_WIDTH/4 -1, REGION_HEIGHT-1),
         };
         for point in line2d_vector(midpoint, end) {
-            add_dig_target(point, 2, 2, &oh, hm, water);
+            add_dig_target(point, 2, &mut dig_targets);
+        }
+    }
+
+    // Do the digging
+    let orig_height = hm.clone();
+    for idx in dig_targets.iter() {
+        let dig_at = Point::new(
+            idx % REGION_WIDTH as usize,
+            idx / REGION_WIDTH as usize
+        );
+        let mut min_altitude = std::u8::MAX;
+        for off_y in -2..2 {
+            for off_x in -2..=2 {
+                let pt = Point::new(off_x, off_y) + dig_at;
+                let pt_alt = orig_height[((pt.y * REGION_WIDTH) + pt.x) as usize];
+                if pt_alt < min_altitude {
+                    min_altitude = pt_alt;
+                }
+            }
+        }
+        if min_altitude > 4 {
+            hm[*idx] = min_altitude-3;
+            water[*idx] = min_altitude-2;
         }
     }
 }
 
-fn add_dig_target(pt: Point, radius: i32, depth: u8, orig_height:&[u8], hm: &mut Vec<u8>, water: &mut Vec<u8>) {
-    //println!("{:?}", pt);
-    let mut min_altitude = std::u8::MAX;
-    for y in 0-radius..radius {
-        for x in 0-radius..radius {
-            let apt = Point::new(x, y) + pt;
-            if apt.x >= 0 && apt.x < REGION_WIDTH && apt.y >= 0 && apt.y < REGION_HEIGHT {
-                let idx = (apt.y * REGION_WIDTH) + apt.x;
-                //println!("{}", orig_height[idx as usize]);
-                if orig_height[idx as usize] < min_altitude { min_altitude = hm[idx as usize] }
-            }
-        }
-    }
-    //println!("Min: {}", min_altitude);
-    if min_altitude < depth+1 {
-        min_altitude = depth+1;
-    }
-    //println!("Min: {}", min_altitude);
-
+fn add_dig_target(pt: Point, radius: i32, dig_targets: &mut HashSet<usize>) {
     for y in 0-radius..radius {
         for x in 0-radius..radius {
             let apt = Point::new(x, y) + pt;
             if apt.x > 0 && apt.x < REGION_WIDTH-1 && apt.y > 0 && apt.y < REGION_HEIGHT-1 {
                 let idx = (apt.y * REGION_WIDTH) + apt.x;
-                hm[idx as usize] = min_altitude - depth;
-                water[idx as usize] = hm[idx as usize] + 1;
+                dig_targets.insert(idx as usize);
             }
         }
     }
