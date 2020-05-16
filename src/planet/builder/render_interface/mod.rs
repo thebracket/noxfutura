@@ -346,6 +346,10 @@ impl WorldGenPlanetRender {
         self.needs_update = true;
     }
 
+    fn hm_to_z(&self, height: u8) -> f32 {
+        height as f32 / 255.0
+    }
+
     pub fn region_heightmap(&mut self, hm : &[u8], water_level : u8, water: &[u8]) {
         self.vertex_buffer.clear();
         const SCALE : f32 = 512.0;
@@ -356,15 +360,20 @@ impl WorldGenPlanetRender {
         println!("{},{}", min_height, max_height);
         let altitude_range = max_height - min_height;
 
-        for (idx, height) in hm.iter().enumerate() {
-            let mag = (*height - min_height) as f32 / altitude_range as f32;
+        for idx in 0..hm.len()-(REGION_WIDTH+1) as usize {
+            let height = hm[idx];
+            let mag = (height - min_height) as f32 / altitude_range as f32;
             //let mag = *height as f32 / 255.0;
             let x = idx % REGION_WIDTH as usize;
             let y = idx / REGION_WIDTH as usize;
-            let z = ((*height as f32 / 255.0) / 10.0) + 0.6;
 
-            let (r,g,b) = 
-                if *height < water_level || water[idx] > *height {
+            let z00 = self.hm_to_z(height);
+            let z10 = self.hm_to_z(hm[idx+1]);
+            let z01 = self.hm_to_z(hm[idx + REGION_WIDTH as usize]);
+            let z11 = self.hm_to_z(hm[idx + 1 + REGION_WIDTH as usize]);
+
+            let (r,g,b) =
+                if height < water_level || water[idx] > height {
                     (0.0, 0.0, 1.0)
                 } else {
                     (0.0, mag, 0.0)
@@ -375,17 +384,17 @@ impl WorldGenPlanetRender {
             let y1 = (y as f32 / SCALE) - HRH;
             let y2 = ((y+1) as f32 / SCALE) - HRH;
 
-            self.vertex_buffer.add3(x1, y2, z);
+            self.vertex_buffer.add3(x1, y2, z01);
             self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x1, y1, z);
+            self.vertex_buffer.add3(x1, y1, z00);
             self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x2, y1, z);
+            self.vertex_buffer.add3(x2, y1, z10);
             self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x1, y2, z);
+            self.vertex_buffer.add3(x1, y2, z01);
             self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x2, y1, z);
+            self.vertex_buffer.add3(x2, y1, z10);
             self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x2, y2, z);
+            self.vertex_buffer.add3(x2, y2, z11);
             self.vertex_buffer.add4(r, g, b, 1.0);
         }
         self.needs_update = true;

@@ -19,10 +19,11 @@ pub struct PlanetParams {
     pub plains_level: i32,
     pub starting_settlers: i32,
     pub strict_beamdown: bool,
+    pub extra_noise: bool
 }
 
-struct PlanetBuilder {
-    params: PlanetParams,
+pub struct PlanetBuilder {
+    pub params: PlanetParams,
     planet: Planet,
     done: bool,
     task: String,
@@ -38,6 +39,7 @@ impl PlanetBuilder {
                 plains_level: 3,
                 starting_settlers: 6,
                 strict_beamdown: true,
+                extra_noise: true
             },
             planet: Planet::new(),
             done: false,
@@ -48,7 +50,7 @@ impl PlanetBuilder {
 }
 
 lazy_static! {
-    static ref PLANET_BUILD: Mutex<PlanetBuilder> = Mutex::new(PlanetBuilder::new());
+    pub static ref PLANET_BUILD: Mutex<PlanetBuilder> = Mutex::new(PlanetBuilder::new());
 }
 
 pub fn start_building_planet(params: PlanetParams) {

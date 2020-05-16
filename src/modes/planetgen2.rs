@@ -199,8 +199,8 @@ impl Camera {
     }
 
     pub fn down_cam(&mut self) {
-        self.eye = (0.0, 0.05, 1.2).into();
-        self.target = (0.0, 0.0, 0.0).into();
+        self.eye = (0.0, -0.5, 1.2).into();
+        self.target = (0.0, 0.5, 0.0).into();
     }
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {
