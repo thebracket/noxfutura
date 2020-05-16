@@ -3,9 +3,9 @@ use super::{set_worldgen_status, Block, BlockType, PLANET_BUILD};
 use crate::planet::{
     planet_idx, REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH,
 };
-use bracket_noise::prelude::*;
 use crate::utils::sphere_vertex;
 use bracket_geometry::prelude::Degrees;
+use bracket_noise::prelude::*;
 
 pub(crate) fn zero_fill() {
     set_worldgen_status("Building initial ball of mud");

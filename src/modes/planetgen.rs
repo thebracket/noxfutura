@@ -17,7 +17,7 @@ impl PlanetGen {
                 plains_level: 3,
                 starting_settlers: 6,
                 strict_beamdown: true,
-                extra_noise: true
+                extra_noise: true,
             },
         }
     }
@@ -44,10 +44,7 @@ impl PlanetGen {
                 im_str!("Require Teleport Beacon"),
                 &mut self.params.strict_beamdown,
             );
-            ui.checkbox(
-                im_str!("Extra Noise Level"),
-                &mut self.params.extra_noise,
-            );
+            ui.checkbox(im_str!("Extra Noise Level"), &mut self.params.extra_noise);
             if ui.button(im_str!("Build Planet"), [400.0, 50.0]) {
                 crate::planet::start_building_planet(self.params.clone());
                 result = super::ProgramMode::PlanetGen2;

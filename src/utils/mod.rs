@@ -1,6 +1,6 @@
 use bracket_geometry::prelude::Radians;
 
-pub fn sphere_vertex<A:Into<Radians>>(altitude: f32, lat: A, lon: A) -> (f32, f32, f32) {
+pub fn sphere_vertex<A: Into<Radians>>(altitude: f32, lat: A, lon: A) -> (f32, f32, f32) {
     let rlat = lat.into();
     let rlon = lon.into();
     let sinlat = f32::sin(rlat.0);

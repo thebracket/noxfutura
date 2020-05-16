@@ -1,11 +1,8 @@
-use super::{set_worldgen_status, PLANET_BUILD, WORLDGEN_RENDER};
-use crate::planet::{
-    planet_idx, Biome, BlockType, Planet, River, RiverStep, WORLD_HEIGHT, WORLD_TILES_COUNT,
-    WORLD_WIDTH,
-};
+use super::{set_worldgen_status, PLANET_BUILD};
+use crate::planet::{planet_idx, BlockType, Planet, River, RiverStep, WORLD_HEIGHT, WORLD_WIDTH};
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 pub fn run_rivers() {
     set_worldgen_status("Running Rivers");

@@ -1,14 +1,19 @@
 use crate::planet::{REGION_HEIGHT, REGION_WIDTH};
+use crate::utils::sphere_vertex;
 use bracket_geometry::prelude::*;
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;
-use crate::utils::sphere_vertex;
 
 pub fn build_empty_heightmap() -> Vec<u8> {
-    vec![0u8 ; (REGION_WIDTH * REGION_HEIGHT) as usize]
+    vec![0u8; (REGION_WIDTH * REGION_HEIGHT) as usize]
 }
 
-pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_seed : u64, variance: u8) {
+pub fn build_heightmap_from_noise(
+    hm: &mut Vec<u8>,
+    crash_site: Point,
+    perlin_seed: u64,
+    variance: u8,
+) {
     use crate::planet::noise_helper::*;
 
     let mut noise = FastNoise::seeded(perlin_seed);
@@ -53,8 +58,12 @@ pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_s
                 let cell_idx = ((y * REGION_WIDTH) + x) as usize;
                 let old_h = hm[cell_idx] as f32;
                 let mut new_h = old_h + (nh * v);
-                if new_h < 0.0 { new_h = 0.0 }
-                if new_h > 255.0 { new_h = 255.0 }
+                if new_h < 0.0 {
+                    new_h = 0.0
+                }
+                if new_h > 255.0 {
+                    new_h = 255.0
+                }
                 hm[cell_idx] = new_h as u8;
             }
         }
@@ -63,33 +72,28 @@ pub fn build_heightmap_from_noise(hm : &mut Vec<u8>, crash_site: Point, perlin_s
 
 pub fn create_subregions(
     rng: &mut RandomNumberGenerator,
-    variance : u8,
-    hm : &mut Vec<u8>,
+    variance: u8,
+    hm: &mut Vec<u8>,
     water: &mut Vec<u8>,
-    biome: &crate::planet::Biome
+    biome: &crate::planet::Biome,
 ) {
-    let center_point = Point::new(REGION_WIDTH/2, REGION_HEIGHT/2);
+    let center_point = Point::new(REGION_WIDTH / 2, REGION_HEIGHT / 2);
     let n_subregions = 64 + rng.roll_dice(1, 20) + (variance as i32 * 4);
 
     // Set each heightmap tile to be a member of a sub-region
-    let mut centroids : Vec<Point> = Vec::new();
+    let mut centroids: Vec<Point> = Vec::new();
     for _ in 0..n_subregions {
-        centroids.push(
-            Point::new(
-                rng.roll_dice(1, REGION_WIDTH)-1,
-                rng.roll_dice(1, REGION_HEIGHT)-1
-            )
-        )
+        centroids.push(Point::new(
+            rng.roll_dice(1, REGION_WIDTH) - 1,
+            rng.roll_dice(1, REGION_HEIGHT) - 1,
+        ))
     }
     let mut subregion_idx = vec![0usize; (REGION_WIDTH * REGION_HEIGHT) as usize];
-    for (idx,_) in hm.iter().enumerate() {
-        let tile_loc = Point::new(
-            idx % REGION_WIDTH as usize,
-            idx / REGION_WIDTH as usize
-        );
+    for (idx, _) in hm.iter().enumerate() {
+        let tile_loc = Point::new(idx % REGION_WIDTH as usize, idx / REGION_WIDTH as usize);
 
         let mut distance = std::f32::MAX;
-        let mut sub_idx : usize = 0;
+        let mut sub_idx: usize = 0;
         for (c, center) in centroids.iter().enumerate() {
             let distance_from_centroid = DistanceAlg::Pythagoras.distance2d(tile_loc, *center);
             if distance_from_centroid < distance {
@@ -103,8 +107,8 @@ pub fn create_subregions(
     // Sub-biomes
     let mut sb_variance = vec![0i32; n_subregions as usize];
     for sr in sb_variance.iter_mut() {
-        let up_variance = rng.roll_dice(1, 2)-1;
-        let down_variance = rng.roll_dice(1, 2)-1;
+        let up_variance = rng.roll_dice(1, 2) - 1;
+        let down_variance = rng.roll_dice(1, 2) - 1;
         let amount = up_variance - down_variance;
         *sr = amount;
 
@@ -120,19 +124,22 @@ pub fn create_subregions(
             let tile_idx = ((y * REGION_WIDTH) + x) as usize;
             let sub_idx = subregion_idx[tile_idx];
             let delta_z = sb_variance[sub_idx];
-            if DistanceAlg::Pythagoras.distance2d(Point::new(x,y), center_point) > 20.0 {
+            if DistanceAlg::Pythagoras.distance2d(Point::new(x, y), center_point) > 20.0 {
                 if delta_z == -10 {
                     let h = hm[tile_idx] as i32;
                     hm[tile_idx] = (h + delta_z) as u8;
-                    water[tile_idx] = h as u8-2;
+                    water[tile_idx] = h as u8 - 2;
                 } else {
                     let h = hm[tile_idx] as i32;
                     hm[tile_idx] = (h + delta_z) as u8;
                 }
             } else {
                 // Ensure the crash site is clear
-                hm[tile_idx] = hm[(( REGION_HEIGHT/2 * REGION_WIDTH) + ((REGION_WIDTH/2))) as usize];
-                if hm[tile_idx] < 7 { hm[tile_idx] = 7; }
+                hm[tile_idx] =
+                    hm[((REGION_HEIGHT / 2 * REGION_WIDTH) + (REGION_WIDTH / 2)) as usize];
+                if hm[tile_idx] < 7 {
+                    hm[tile_idx] = 7;
+                }
             }
         }
     }

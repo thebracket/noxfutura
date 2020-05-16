@@ -1,24 +1,35 @@
-use super::{Region, Planet};
-use crate::planet::{set_worldgen_status, planet_idx, REGION_HEIGHT, REGION_WIDTH};
+use super::{Planet, Region};
+use crate::planet::{planet_idx, set_worldgen_status, REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 mod heightmap;
 mod water_features;
 
-pub fn builder(region : &mut Region, planet: &Planet, crash_site : Point) {
+pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     crate::planet::set_flatmap_status(true);
     set_worldgen_status("Locating biome information");
-    let biome_info = crate::raws::RAWS.lock().biomes.areas[region.biome_raw_idx].clone();
+    //let biome_info = crate::raws::RAWS.lock().biomes.areas[region.biome_raw_idx].clone();
     let biome = planet.biomes[region.biome_info_idx].clone();
     let mut pooled_water = vec![0u8; REGION_WIDTH as usize * REGION_HEIGHT as usize];
     println!("{}", planet.water_height);
-    let mut rng = RandomNumberGenerator::seeded(planet.perlin_seed + planet_idx(crash_site.x, crash_site.y) as u64);
+    let mut rng = RandomNumberGenerator::seeded(
+        planet.perlin_seed + planet_idx(crash_site.x, crash_site.y) as u64,
+    );
 
     set_worldgen_status("Establishing ground altitude");
     let mut hm = heightmap::build_empty_heightmap();
-    crate::planet::WORLDGEN_RENDER.lock().region_heightmap(&hm, planet.water_height, &pooled_water);
-    heightmap::build_heightmap_from_noise(&mut hm, crash_site, planet.perlin_seed, planet.landblocks[planet_idx(crash_site.x, crash_site.y)].variance);
-    crate::planet::WORLDGEN_RENDER.lock().region_heightmap(&hm, planet.water_height, &pooled_water);
+    crate::planet::WORLDGEN_RENDER
+        .lock()
+        .region_heightmap(&hm, planet.water_height, &pooled_water);
+    heightmap::build_heightmap_from_noise(
+        &mut hm,
+        crash_site,
+        planet.perlin_seed,
+        planet.landblocks[planet_idx(crash_site.x, crash_site.y)].variance,
+    );
+    crate::planet::WORLDGEN_RENDER
+        .lock()
+        .region_heightmap(&hm, planet.water_height, &pooled_water);
 
     set_worldgen_status("Locating Sub-Biomes");
     heightmap::create_subregions(
@@ -26,13 +37,17 @@ pub fn builder(region : &mut Region, planet: &Planet, crash_site : Point) {
         planet.landblocks[planet_idx(crash_site.x, crash_site.y)].variance,
         &mut hm,
         &mut pooled_water,
-        &biome
+        &biome,
     );
-    crate::planet::WORLDGEN_RENDER.lock().region_heightmap(&hm, planet.water_height, &pooled_water);
+    crate::planet::WORLDGEN_RENDER
+        .lock()
+        .region_heightmap(&hm, planet.water_height, &pooled_water);
 
     set_worldgen_status("Adding water features");
     water_features::just_add_water(planet, region, &mut pooled_water, &mut hm, &mut rng);
-    crate::planet::WORLDGEN_RENDER.lock().region_heightmap(&hm, planet.water_height, &pooled_water);
+    crate::planet::WORLDGEN_RENDER
+        .lock()
+        .region_heightmap(&hm, planet.water_height, &pooled_water);
 
     set_worldgen_status("Stratifying");
     set_worldgen_status("Layer cake");

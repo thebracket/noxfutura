@@ -31,7 +31,10 @@ pub(crate) fn planet_type_allocation() {
     planet.water_height = planet_determine_proportion(&mut planet, &mut candidate, n_cells_water);
     planet.plains_height = planet_determine_proportion(&mut planet, &mut candidate, n_cells_plains);
     planet.hills_height = planet_determine_proportion(&mut planet, &mut candidate, n_cells_hills);
-    println!("{},{},{}", planet.water_height, planet.plains_height, planet.hills_height);
+    println!(
+        "{},{},{}",
+        planet.water_height, planet.plains_height, planet.hills_height
+    );
 
     for i in 0..planet.landblocks.len() {
         let mut block = &mut planet.landblocks[i];

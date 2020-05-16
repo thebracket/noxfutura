@@ -7,10 +7,10 @@ mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
 mod biomes;
 mod rivers;
+use crate::region::Region;
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 use std::fs::File;
-use crate::region::Region;
 
 #[derive(Clone)]
 pub struct PlanetParams {
@@ -19,7 +19,7 @@ pub struct PlanetParams {
     pub plains_level: i32,
     pub starting_settlers: i32,
     pub strict_beamdown: bool,
-    pub extra_noise: bool
+    pub extra_noise: bool,
 }
 
 pub struct PlanetBuilder {
@@ -27,7 +27,7 @@ pub struct PlanetBuilder {
     planet: Planet,
     done: bool,
     task: String,
-    flatmap: bool
+    flatmap: bool,
 }
 
 impl PlanetBuilder {
@@ -39,12 +39,12 @@ impl PlanetBuilder {
                 plains_level: 3,
                 starting_settlers: 6,
                 strict_beamdown: true,
-                extra_noise: true
+                extra_noise: true,
             },
             planet: Planet::new(),
             done: false,
             task: "Initializing".to_string(),
-            flatmap: false
+            flatmap: false,
         }
     }
 }
@@ -113,7 +113,10 @@ fn find_crash_site() -> Point {
         let pidx = super::planet_idx(result.x, result.y);
         let bt = PLANET_BUILD.lock().planet.landblocks[pidx].btype;
         let h = PLANET_BUILD.lock().planet.landblocks[pidx].height;
-        if bt != BlockType::Water && bt != BlockType::Marsh &&  h > PLANET_BUILD.lock().planet.water_height {
+        if bt != BlockType::Water
+            && bt != BlockType::Marsh
+            && h > PLANET_BUILD.lock().planet.water_height
+        {
             println!("{:?}", bt);
             break;
         }

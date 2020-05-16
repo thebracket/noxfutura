@@ -25,7 +25,7 @@ pub(crate) fn lon_to_x(lon: f32) -> i32 {
 pub(crate) fn noise_lon(world_x: i32, region_x: i32) -> f32 {
     let x_extent = world_x as f32 / WORLD_WIDTH as f32;
     let sub_x = region_x as f32 / REGION_WIDTH as f32;
-    let longitude = (x_extent * 360.0) + (sub_x-0.5) - 180.0;
+    let longitude = (x_extent * 360.0) + (sub_x - 0.5) - 180.0;
     longitude
 
     //let big_x = ((world_x * WORLD_WIDTH as i32) + region_x) as f32;
@@ -35,7 +35,7 @@ pub(crate) fn noise_lon(world_x: i32, region_x: i32) -> f32 {
 pub(crate) fn noise_lat(world_y: i32, region_y: i32) -> f32 {
     let y_extent = world_y as f32 / WORLD_HEIGHT as f32;
     let sub_y = region_y as f32 / REGION_HEIGHT as f32;
-    let latitude = (y_extent * 180.0) + (sub_y-0.5) - 90.0;
+    let latitude = (y_extent * 180.0) + (sub_y - 0.5) - 90.0;
     latitude
 
     //let big_y = ((world_y * WORLD_HEIGHT as i32) + region_y) as f32;
