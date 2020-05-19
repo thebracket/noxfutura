@@ -26,8 +26,8 @@ impl Chunk {
     pub fn iter(&self) -> ChunkIter {
         ChunkIter{
             base : self.base,
-            current : self.base,
-            max : (self.base.0 + CHUNK_SIZE, self.base.1 + CHUNK_SIZE, self.base.2 + CHUNK_SIZE)
+            current : (0,0,0),
+            done: false
         }
     }
 
@@ -43,7 +43,22 @@ impl Chunk {
                 _ => {}
             }
         });
+        /*
+        println!("Base chunk at {:?}", self.base);
+        println!("X Range: {}..{}",
+            self.iter().map(|(x,_,_)| x).min().unwrap(),
+            self.iter().map(|(x,_,_)| x).max().unwrap()
+        );
+        println!("Y Range: {}..{}",
+            self.iter().map(|(_,x,_)| x).min().unwrap(),
+            self.iter().map(|(_,x,_)| x).max().unwrap()
+        );
+        println!("Z Range: {}..{}",
+            self.iter().map(|(_,_,x)| x).min().unwrap(),
+            self.iter().map(|(_,_,x)| x).max().unwrap()
+        );
         println!("Total: {}, Empty: {}, Solid: {}", len, count_empty, count_solid);
+        */
         if count_empty == len {
             self.t = ChunkType::Empty;
         } else if count_solid == len {
@@ -55,21 +70,7 @@ impl Chunk {
 
     pub fn geometry(&self, region: &Region) -> Option<Vec<Primitive>> {
         match self.t {
-            ChunkType::Empty => None,
-            ChunkType::Solid => Some(
-                vec![
-                    Primitive::Cube{
-                        x: self.base.0,
-                        y: self.base.1,
-                        z: self.base.2,
-                        w: CHUNK_SIZE,
-                        h: CHUNK_SIZE,
-                        d: CHUNK_SIZE }
-                    ; 1
-                ]
-            ),
-            //ChunkType::Partial => None,
-            ChunkType::Partial => {
+            ChunkType::Partial | ChunkType::Solid => {
                 let mut p = Vec::new();
                 let mut cubes = Vec::new();
                 self.iter().for_each(|pos| {
@@ -85,6 +86,7 @@ impl Chunk {
                 p.append(&mut super::greedy::greedy_cubes(cubes));
                 Some(p)
             },
+            _ => None
         }
     }
 }
@@ -92,25 +94,37 @@ impl Chunk {
 pub struct ChunkIter {
     base : (usize, usize, usize),
     current: (usize, usize, usize),
-    max: (usize, usize, usize)
+    done: bool
 }
 
 impl Iterator for ChunkIter {
     type Item = (usize, usize, usize);
 
     fn next(&mut self) -> Option<(usize, usize, usize)> {
+        if self.done {
+            return None;
+        }
+        let result = (
+            self.current.0 + self.base.0,
+            self.current.1 + self.base.1,
+            self.current.2 + self.base.2,
+        );
+
         self.current.0 += 1;
-        if !(self.current.0 < self.max.0) {
-            self.current.0 = self.base.0;
+        if self.current.0 == CHUNK_SIZE {
+            self.current.0 = 0;
+
             self.current.1 += 1;
-            if !(self.current.1 < self.max.1) {
-                self.current.1 = self.base.1;
+            if self.current.1 == CHUNK_SIZE {
+                self.current.1 = 0;
+
                 self.current.2 += 1;
-                if !(self.current.2 < self.max.2) {
-                    return None;
+                if self.current.2 == CHUNK_SIZE {
+                    self.done = true;
                 }
             }
         }
-        Some(self.current)
+
+        Some(result)
     }
 }

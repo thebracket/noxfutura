@@ -14,7 +14,7 @@ pub fn build_biomes() {
     let mut planet = PLANET_BUILD.lock().planet.clone();
     let seed = PLANET_BUILD.lock().planet.rng_seed;
     let mut rng = RandomNumberGenerator::seeded(seed);
-    let n_biomes = WORLD_TILES_COUNT / 64 + rng.roll_dice(1, 32) as u16;
+    let n_biomes = WORLD_TILES_COUNT / 64 + rng.roll_dice(1, 32) as usize;
 
     let mut centroids: Vec<(i32, i32)> = Vec::new();
     for _ in 0..n_biomes {
@@ -41,7 +41,7 @@ pub fn build_biomes() {
                 }
             }
 
-            let pidx = planet_idx(x as i32, y as i32);
+            let pidx = planet_idx(x, y);
             planet.landblocks[pidx].biome_idx = closest_index as usize;
         }
     }

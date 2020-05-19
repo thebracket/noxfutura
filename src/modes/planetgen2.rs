@@ -199,8 +199,9 @@ impl Camera {
     }
 
     pub fn down_cam(&mut self) {
-        self.eye = (0.0, 2.0, 2.0).into();
-        self.target = (0.0, 0.0, 0.0).into();
+        self.eye = (1.0, 0.5, 0.75).into();
+        self.target = (-0.5, 0.0, 0.0).into();
+        self.up = Vec3::unit_z();
     }
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {

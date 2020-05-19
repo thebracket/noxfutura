@@ -25,9 +25,9 @@ pub fn build_heightmap_from_noise(
     noise.set_frequency(0.01);
 
     for y in 0..REGION_HEIGHT {
-        let lat = noise_lat(crash_site.y, y);
+        let lat = noise_lat(crash_site.y as usize, y);
         for x in 0..REGION_WIDTH {
-            let lon = noise_lon(crash_site.x, x);
+            let lon = noise_lon(crash_site.x as usize, x);
             let sphere_coords = sphere_vertex(100.0, Degrees::new(lat), Degrees::new(lon));
             let nh = noise.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
             let altitude = noise_to_planet_height(nh);
@@ -49,9 +49,9 @@ pub fn build_heightmap_from_noise(
         let v = (variance as f32) * 2.0;
         println!("Variance: {}", variance);
         for y in 0..REGION_HEIGHT {
-            let lat = noise_lat(crash_site.y, y);
+            let lat = noise_lat(crash_site.y as usize, y);
             for x in 0..REGION_WIDTH {
-                let lon = noise_lon(crash_site.x, x);
+                let lon = noise_lon(crash_site.x as usize, x);
                 let sphere_coords = sphere_vertex(100.0, Degrees::new(lat), Degrees::new(lon));
                 let nh = noise2.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
                 //println!("{}", nh);
@@ -84,8 +84,8 @@ pub fn create_subregions(
     let mut centroids: Vec<Point> = Vec::new();
     for _ in 0..n_subregions {
         centroids.push(Point::new(
-            rng.roll_dice(1, REGION_WIDTH) - 1,
-            rng.roll_dice(1, REGION_HEIGHT) - 1,
+            rng.roll_dice(1, REGION_WIDTH as i32) - 1,
+            rng.roll_dice(1, REGION_HEIGHT as i32) - 1,
         ))
     }
     let mut subregion_idx = vec![0usize; (REGION_WIDTH * REGION_HEIGHT) as usize];

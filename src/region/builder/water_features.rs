@@ -83,8 +83,8 @@ pub fn just_add_water(
     let mut midpoint = Point::zero();
     while !mid_ok {
         midpoint = Point::new(
-            rng.roll_dice(1, REGION_WIDTH / 2) + REGION_WIDTH / 4,
-            rng.roll_dice(1, REGION_HEIGHT / 2) + REGION_HEIGHT / 4,
+            rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4,
+            rng.roll_dice(1, REGION_HEIGHT as i32 / 2) + REGION_HEIGHT as i32 / 4,
         );
         let d = DistanceAlg::Pythagoras.distance2d(center_point, midpoint);
         if d > 15.0 {
@@ -98,7 +98,7 @@ pub fn just_add_water(
     for _ in 0..river_entry[0] {
         let start = Point::new(
             0,
-            rng.roll_dice(1, REGION_HEIGHT / 2) + REGION_HEIGHT / 4 - 1,
+            rng.roll_dice(1, REGION_HEIGHT as i32 / 2) + REGION_HEIGHT as i32 / 4 - 1,
         );
         for point in line2d_vector(start, midpoint) {
             add_dig_target(point, 2, &mut dig_targets);
@@ -106,23 +106,23 @@ pub fn just_add_water(
     }
     for _ in 0..river_entry[1] {
         let start = Point::new(
-            REGION_WIDTH - 1,
-            rng.roll_dice(1, REGION_HEIGHT / 2) + REGION_HEIGHT / 4 - 1,
+            REGION_WIDTH as i32 - 1,
+            rng.roll_dice(1, REGION_HEIGHT as i32 / 2) + REGION_HEIGHT as i32 / 4 - 1,
         );
         for point in line2d_vector(start, midpoint) {
             add_dig_target(point, 2, &mut dig_targets);
         }
     }
     for _ in 0..river_entry[2] {
-        let start = Point::new(rng.roll_dice(1, REGION_WIDTH / 2) + REGION_WIDTH / 4 - 1, 0);
+        let start = Point::new(rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1, 0);
         for point in line2d_vector(start, midpoint) {
             add_dig_target(point, 2, &mut dig_targets);
         }
     }
     for _ in 0..river_entry[3] {
         let start = Point::new(
-            rng.roll_dice(1, REGION_WIDTH / 2) + REGION_WIDTH / 4 - 1,
-            REGION_HEIGHT - 2,
+            rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1,
+            REGION_HEIGHT as i32 - 2,
         );
         for point in line2d_vector(start, midpoint) {
             add_dig_target(point, 2, &mut dig_targets);
@@ -133,16 +133,16 @@ pub fn just_add_water(
         let end = match river_exit {
             1 => Point::new(
                 0,
-                rng.roll_dice(1, REGION_HEIGHT / 2) + REGION_HEIGHT / 4 - 1,
+                rng.roll_dice(1, REGION_HEIGHT as i32 / 2) + REGION_HEIGHT as i32 / 4 - 1,
             ),
             2 => Point::new(
-                REGION_WIDTH - 1,
-                rng.roll_dice(1, REGION_HEIGHT / 2) + REGION_HEIGHT / 4 - 1,
+                REGION_WIDTH as i32 - 1,
+                rng.roll_dice(1, REGION_HEIGHT as i32 / 2) + REGION_HEIGHT as i32 / 4 - 1,
             ),
-            3 => Point::new(rng.roll_dice(1, REGION_WIDTH / 2) + REGION_WIDTH / 4 - 1, 0),
+            3 => Point::new(rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1, 0),
             _ => Point::new(
-                rng.roll_dice(1, REGION_WIDTH / 2) + REGION_WIDTH / 4 - 1,
-                REGION_HEIGHT - 1,
+                rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1,
+                REGION_HEIGHT as i32 - 1,
             ),
         };
         for point in line2d_vector(midpoint, end) {
@@ -158,7 +158,7 @@ pub fn just_add_water(
         for off_y in -2..2 {
             for off_x in -2..=2 {
                 let pt = Point::new(off_x, off_y) + dig_at;
-                let pt_alt = orig_height[((pt.y * REGION_WIDTH) + pt.x) as usize];
+                let pt_alt = orig_height[((pt.y * REGION_WIDTH as i32) + pt.x) as usize];
                 if pt_alt < min_altitude {
                     min_altitude = pt_alt;
                 }
@@ -175,8 +175,8 @@ fn add_dig_target(pt: Point, radius: i32, dig_targets: &mut HashSet<usize>) {
     for y in 0 - radius..radius {
         for x in 0 - radius..radius {
             let apt = Point::new(x, y) + pt;
-            if apt.x > 0 && apt.x < REGION_WIDTH - 1 && apt.y > 0 && apt.y < REGION_HEIGHT - 1 {
-                let idx = (apt.y * REGION_WIDTH) + apt.x;
+            if apt.x > 0 && apt.x < REGION_WIDTH as i32 - 1 && apt.y > 0 && apt.y < REGION_HEIGHT as i32 - 1 {
+                let idx = (apt.y * REGION_WIDTH as i32) + apt.x;
                 dig_targets.insert(idx as usize);
             }
         }

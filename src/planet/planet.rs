@@ -42,6 +42,10 @@ impl Planet {
     }
 }
 
-pub fn planet_idx(x: i32, y: i32) -> usize {
-    (super::WORLD_WIDTH as usize * y as usize) + x as usize
+pub fn planet_idx<N: Into<usize>>(x: N, y: N) -> usize {
+    use super::{WORLD_HEIGHT, WORLD_WIDTH};
+    let xc = x.into();
+    let yc = y.into();
+    debug_assert!(xc < WORLD_WIDTH && yc < WORLD_HEIGHT);
+    (super::WORLD_WIDTH * yc) + xc
 }

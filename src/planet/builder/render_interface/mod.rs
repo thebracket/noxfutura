@@ -71,9 +71,9 @@ impl WorldGenPlanetRender {
         let mut lon;
         const ALTITUDE_DIVISOR: f32 = 8192.0;
 
-        while lat < 90.0 {
+        while lat < 90.0-LAT_STEP {
             lon = -180.0;
-            while lon < 180.0 {
+            while lon < 180.0-LON_STEP {
                 self.add_point(
                     lat,
                     lon,
@@ -178,9 +178,9 @@ impl WorldGenPlanetRender {
         let mut lon;
         const ALTITUDE_DIVISOR: f32 = 8192.0;
 
-        while lat < 90.0 {
+        while lat < 90.0 - LAT_STEP {
             lon = -180.0;
-            while lon < 180.0 {
+            while lon < 180.0 - LON_STEP {
                 self.add_point(
                     lat,
                     lon,
@@ -286,9 +286,9 @@ impl WorldGenPlanetRender {
         let mut lon;
         const ALTITUDE_DIVISOR: f32 = 8192.0;
 
-        while lat < 90.0 {
+        while lat < 90.0 - LAT_STEP {
             lon = -180.0;
-            while lon < 180.0 {
+            while lon < 180.0 - LON_STEP {
                 let bcolor = self.biome_to_color(planet_idx(lon_to_x(lon), lat_to_y(lat)), &planet);
                 self.add_point(
                     lat,
@@ -445,7 +445,7 @@ impl WorldGenPlanetRender {
         const HRW : f32 = crate::planet::REGION_WIDTH as f32 / 2.0;
         const HRH : f32 = crate::planet::REGION_HEIGHT as f32 / 2.0;
         const HRD : f32 = crate::planet::REGION_DEPTH as f32 / 2.0;
-        const SCALE : f32 = 0.01;
+        const SCALE : f32 = 0.005;
         let xf = x as f32 - HRW;
         let yf = y as f32 - HRH;
         let zf = z as f32 - HRD;
@@ -456,9 +456,9 @@ impl WorldGenPlanetRender {
                 ((cz*d as f32) + zf) * SCALE,
             );
             self.vertex_buffer.add4(
-                0.0, 
+                x as f32 / crate::planet::REGION_WIDTH as f32, 
                 z as f32 / crate::planet::REGION_DEPTH as f32, 
-                0.0, 
+                y as f32 / crate::planet::REGION_HEIGHT as f32, 
                 1.0
             );
         }

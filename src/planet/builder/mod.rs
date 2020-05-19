@@ -79,7 +79,7 @@ fn threaded_builder() {
 
     // Find crash site
     let crash = find_crash_site();
-    let crash_idx = super::planet_idx(crash.x, crash.y);
+    let crash_idx = super::planet_idx(crash.x as usize, crash.y as usize);
 
     // Materialize region
     set_worldgen_status("Erasing the crash site");
@@ -110,7 +110,7 @@ fn find_crash_site() -> Point {
             rng.roll_dice(1, WORLD_WIDTH as i32 - 1),
             rng.roll_dice(1, WORLD_HEIGHT as i32 - 1),
         );
-        let pidx = super::planet_idx(result.x, result.y);
+        let pidx = super::planet_idx(result.x as usize, result.y as usize);
         let bt = PLANET_BUILD.lock().planet.landblocks[pidx].btype;
         let h = PLANET_BUILD.lock().planet.landblocks[pidx].height;
         if bt != BlockType::Water

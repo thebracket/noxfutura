@@ -11,10 +11,10 @@ pub use planet::*;
 mod builder;
 pub use builder::*;
 
-pub const WORLD_HEIGHT: u16 = 90;
-pub const WORLD_WIDTH: u16 = 180;
-pub const WORLD_TILES_COUNT: u16 = WORLD_HEIGHT * WORLD_WIDTH;
-pub const REGION_WIDTH: i32 = 255;
-pub const REGION_HEIGHT: i32 = 255;
-pub const REGION_DEPTH: i32 = 255;
+pub const WORLD_HEIGHT: usize = 90;
+pub const WORLD_WIDTH: usize = 180;
+pub const WORLD_TILES_COUNT: usize = WORLD_HEIGHT * WORLD_WIDTH;
+pub const REGION_WIDTH: usize = 256;
+pub const REGION_HEIGHT: usize = 256;
+pub const REGION_DEPTH: usize = 256;
 pub const REGION_TILES_COUNT: usize = (REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH) as usize;

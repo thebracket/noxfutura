@@ -83,8 +83,8 @@ pub(crate) fn planet_coastlines() {
     let mut planet = PLANET_BUILD.lock().planet.clone();
     let mut n = 0;
 
-    for y in 1..WORLD_HEIGHT as i32 - 1 {
-        for x in 1..WORLD_WIDTH as i32 - 1 {
+    for y in 1..WORLD_HEIGHT - 1 {
+        for x in 1..WORLD_WIDTH - 1 {
             let base_idx = planet_idx(x, y);
             if planet.landblocks[base_idx].btype != BlockType::Water {
                 if planet.landblocks[base_idx - 1].btype == BlockType::Water
@@ -109,9 +109,9 @@ pub(crate) fn planet_coastlines() {
 pub(crate) fn planet_rainfall() {
     set_worldgen_status("And then it rained a lot");
     let mut planet = PLANET_BUILD.lock().planet.clone();
-    for y in 0..WORLD_HEIGHT as i32 {
+    for y in 0..WORLD_HEIGHT {
         let mut rain_amount = 10;
-        for x in 0..WORLD_WIDTH as i32 {
+        for x in 0..WORLD_WIDTH {
             let pidx = planet_idx(x, y);
             if planet.landblocks[pidx].btype == BlockType::Mountains {
                 rain_amount -= 20;

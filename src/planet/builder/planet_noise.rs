@@ -30,13 +30,13 @@ pub(crate) fn planetary_noise() {
     let min_temperature = -55.2;
     let temperature_range = max_temperature - min_temperature;
     let half_planet_height = WORLD_HEIGHT as f32 / 2.0;
-    const REGION_FRACTION_TO_CONSIDER: i32 = 64;
+    const REGION_FRACTION_TO_CONSIDER: usize = 64;
 
-    for y in 0..WORLD_HEIGHT as i32 {
-        let distance_from_equator = i32::abs((WORLD_HEIGHT as i32 / 2) - y);
+    for y in 0..WORLD_HEIGHT {
+        let distance_from_equator = i32::abs((WORLD_HEIGHT as i32 / 2i32) - y as i32);
         let temp_range_percent = 1.0 - distance_from_equator as f32 / half_planet_height;
         let base_temp_by_latitude = (temp_range_percent * temperature_range) + min_temperature;
-        for x in 0..WORLD_WIDTH as i32 {
+        for x in 0..WORLD_WIDTH {
             let mut total_height = 0u32;
 
             let mut max = 0;

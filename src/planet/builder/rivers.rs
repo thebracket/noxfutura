@@ -24,7 +24,7 @@ pub fn run_rivers() {
                 rng.roll_dice(1, WORLD_WIDTH as i32 - 1),
                 rng.roll_dice(1, WORLD_HEIGHT as i32 - 1),
             );
-            let pidx = planet_idx(river.start.x, river.start.y);
+            let pidx = planet_idx(river.start.x as usize, river.start.y as usize);
             if (planet.landblocks[pidx].btype == BlockType::Mountains
                 || planet.landblocks[pidx].btype == BlockType::Hills)
                 && !used_starts.contains(&pidx)
@@ -32,7 +32,7 @@ pub fn run_rivers() {
                 start_ok = true;
             }
         }
-        used_starts.insert(planet_idx(river.start.x, river.start.y));
+        used_starts.insert(planet_idx(river.start.x as usize, river.start.y as usize));
 
         let mut done = false;
         let mut x = river.start.x;
@@ -102,7 +102,7 @@ fn candidate(
     if x < 0 || x > WORLD_WIDTH as i32 - 1 || y < 0 || y > WORLD_HEIGHT as i32 - 1 {
         return;
     }
-    let pidx = planet_idx(x, y);
+    let pidx = planet_idx(x as usize, y as usize);
     if used_starts.contains(&pidx) {
         return;
     }
