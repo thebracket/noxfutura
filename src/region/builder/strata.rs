@@ -7,12 +7,13 @@ pub fn layer_cake(hm: &[u8], region: &mut Region) {
     region.tile_types.iter_mut().for_each(|tt| *tt = TileType::Empty);
 
     // Build layered tiles
+    //let x = 4;
     for x in 0..REGION_WIDTH {
         for y in 0..REGION_HEIGHT {
             let altitude = hm[(y * REGION_WIDTH) + x] as usize;
-            for z in 0..altitude {
-                region.tile_types[mapidx(x, y, z)] = TileType::Solid;
-            }
+            //for z in altitude..altitude+5 {
+                region.tile_types[mapidx(x, y, altitude)] = TileType::Solid;
+            //}
         }
     }
 }
