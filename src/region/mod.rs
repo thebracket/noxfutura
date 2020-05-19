@@ -2,7 +2,7 @@ pub use crate::planet::{Planet, REGION_DEPTH, REGION_HEIGHT, REGION_TILES_COUNT,
 mod tiletype;
 pub use tiletype::TileType;
 mod builder;
-pub use builder::builder;
+pub use builder::{builder, chunks::Primitive};
 
 #[derive(Clone)]
 pub struct Region {

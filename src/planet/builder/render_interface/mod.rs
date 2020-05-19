@@ -402,84 +402,77 @@ impl WorldGenPlanetRender {
     }
 
     const CUBE : [(f32, f32, f32); 36] = [
-        (0.0,0.0,0.0),
-        (0.0,0.0, 1.0),
-        (0.0, 1.0, 1.0),
-        (1.0, 1.0,0.0),
-        (0.0,0.0,0.0),
-        (0.0, 1.0,0.0),
-        (1.0,0.0, 1.0),
-        (0.0,0.0,0.0),
-        (1.0,0.0,0.0),
-        (1.0, 1.0,0.0),
-        (1.0,0.0,0.0),
-        (0.0,0.0,0.0),
-        (0.0,0.0,0.0),
-        (0.0, 1.0, 1.0),
-        (0.0, 1.0,0.0),
-        (1.0,0.0, 1.0),
-        (0.0,0.0, 1.0),
-        (0.0,0.0,0.0),
-        (0.0, 1.0, 1.0),
-        (0.0,0.0, 1.0),
-        (1.0,0.0, 1.0),
-        (1.0, 1.0, 1.0),
-        (1.0,0.0,0.0),
-        (1.0, 1.0,0.0),
-        (1.0,0.0,0.0),
-        (1.0, 1.0, 1.0),
-        (1.0,0.0, 1.0),
-        (1.0, 1.0, 1.0),
-        (1.0, 1.0,0.0),
-        (0.0, 1.0,0.0),
-        (1.0, 1.0, 1.0),
-        (0.0, 1.0,0.0),
-        (0.0, 1.0, 1.0),
-        (1.0, 1.0, 1.0),
-        (0.0, 1.0, 1.0),
-        (1.0,0.0, 1.0)
+        (-0.5,-0.5,-0.5),
+        (-0.5,-0.5, 0.5),
+        (-0.5, 0.5, 0.5),
+        (0.5, 0.5,-0.5),
+        (-0.5,-0.5,-0.5),
+        (-0.5, 0.5,-0.5),
+        (0.5,-0.5, 0.5),
+        (-0.5,-0.5,-0.5),
+        (0.5,-0.5,-0.5),
+        (0.5, 0.5,-0.5),
+        (0.5,-0.5,-0.5),
+        (-0.5,-0.5,-0.5),
+        (-0.5,-0.5,-0.5),
+        (-0.5, 0.5, 0.5),
+        (-0.5, 0.5,-0.5),
+        (0.5,-0.5, 0.5),
+        (-0.5,-0.5, 0.5),
+        (-0.5,-0.5,-0.5),
+        (-0.5, 0.5, 0.5),
+        (-0.5,-0.5, 0.5),
+        (0.5,-0.5, 0.5),
+        (0.5, 0.5, 0.5),
+        (0.5,-0.5,-0.5),
+        (0.5, 0.5,-0.5),
+        (0.5,-0.5,-0.5),
+        (0.5, 0.5, 0.5),
+        (0.5,-0.5, 0.5),
+        (0.5, 0.5, 0.5),
+        (0.5, 0.5,-0.5),
+        (-0.5, 0.5,-0.5),
+        (0.5, 0.5, 0.5),
+        (-0.5, 0.5,-0.5),
+        (-0.5, 0.5, 0.5),
+        (0.5, 0.5, 0.5),
+        (-0.5, 0.5, 0.5),
+        (0.5,-0.5, 0.5)
     ];
 
-    fn add_cube(&mut self, x: usize, y:usize, z: usize) {
+    fn add_cube(&mut self, x: usize, y:usize, z: usize, w: usize, h: usize, d: usize) {
+        //println!("{},{},{} -> {},{},{}", x, y, z, w, h, d);
         const HRW : f32 = crate::planet::REGION_WIDTH as f32 / 2.0;
         const HRH : f32 = crate::planet::REGION_HEIGHT as f32 / 2.0;
-        const HRD : f32 = (crate::planet::REGION_DEPTH as f32 / 2.0) - 32.0;
-        const SCALE : f32 = 0.007;
+        const HRD : f32 = crate::planet::REGION_DEPTH as f32 / 2.0;
+        const SCALE : f32 = 0.01;
         let xf = x as f32 - HRW;
         let yf = y as f32 - HRH;
         let zf = z as f32 - HRD;
         for (cx,cy,cz) in WorldGenPlanetRender::CUBE.iter() {
             self.vertex_buffer.add3(
-                (cx + xf) * SCALE,
-                (cy + yf) * SCALE,
-                0.0 - ((cz + zf) * SCALE),
+                ((cx*w as f32) + xf) * SCALE,
+                ((cy*h as f32) + yf) * SCALE,
+                ((cz*d as f32) + zf) * SCALE,
             );
             self.vertex_buffer.add4(
                 0.0, 
-                1.0 - (z as f32 / crate::planet::REGION_DEPTH as f32), 
+                z as f32 / crate::planet::REGION_DEPTH as f32, 
                 0.0, 
                 1.0
             );
         }
     }
 
-    pub fn region_display(&mut self, region: crate::region::Region) {
-        let mut n_cubes = 0;
-        use crate::utils::idxmap;
-        use crate::region::TileType;
+    pub fn region_display_primitives(&mut self, primitives: Vec<crate::region::Primitive>) {
         self.vertex_buffer.clear();
-        for (idx, tt) in region.tile_types.iter().enumerate() {
-            let (x,y,z) = idxmap(idx);
-            //if n_cubes < 1000000 {
-                match tt {
-                    TileType::Solid => {
-                        self.add_cube(x, y, z);
-                        n_cubes += 1;
-                    }
-                    _ => {}
+        primitives.iter().for_each(|p| {
+            match *p {
+                crate::region::Primitive::Cube{x, y, z, w, h, d} => {
+                    self.add_cube(x, y, z, w, h, d);
                 }
-            //}
-        }
+            }
+        });
         self.needs_update = true;
     }
 }

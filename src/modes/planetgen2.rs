@@ -188,19 +188,19 @@ pub struct Camera {
 impl Camera {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
-            eye: (0.0, 1.0, 1.0).into(),
+            eye: (0.0, 2.0, 2.0).into(),
             target: (0.0, 0.0, 0.0).into(),
             up: Vec3::unit_y(),
             aspect: width as f32 / height as f32,
             fovy: 45.0,
-            znear: 0.1,
+            znear: 0.01,
             zfar: 100.0,
         }
     }
 
     pub fn down_cam(&mut self) {
-        self.eye = (0.0, -0.5, 1.2).into();
-        self.target = (0.0, 0.5, 0.0).into();
+        self.eye = (0.0, 2.0, 2.0).into();
+        self.target = (0.0, 0.0, 0.0).into();
     }
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {

@@ -15,18 +15,20 @@ pub fn layer_cake(hm: &[u8], region: &mut Region) {
         // SMR at the very bottom
         region.tile_types[mapidx(x, y, 0)] = TileType::SemiMoltenRock;
 
-        let mut z : usize = 1;
-        while z < altitude {
+        let mut z : usize = 0;
+        /*while z < altitude {
             if x==0 || x==REGION_WIDTH as usize-1 || y==0 || y==REGION_HEIGHT as usize-1 {
-                region.tile_types[mapidx(x,y,z)] = TileType::SemiMoltenRock;
+                //region.tile_types[mapidx(x,y,z)] = TileType::SemiMoltenRock;
+                region.tile_types[mapidx(x,y,z)] = TileType::Solid;
             } else {
                 region.tile_types[mapidx(x,y,z)] = TileType::Empty;
+                region.tile_types[mapidx(x,y,z)] = TileType::Solid;
             }
             z += 1;
-        }
+        }*/
 
         // Next up is rock until the soil layer
-        while z < usize::min(altitude + 64, REGION_DEPTH as usize-20) {
+        while z < usize::min(altitude, REGION_DEPTH as usize-20) {
             region.tile_types[mapidx(x,y,z)] = TileType::Solid;
             z += 1;
         }

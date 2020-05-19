@@ -19,15 +19,36 @@ pub fn mapidx<N: Into<usize>>(x:N, y:N, z:N) -> usize {
     (z.into() * REGION_HEIGHT as usize * REGION_WIDTH as usize) + (y.into() * REGION_WIDTH as usize) + x.into()
 }
 
-pub fn idxmap(idx: usize) -> (usize, usize, usize) {
+pub fn idxmap(mut idx: usize) -> (usize, usize, usize) {
     use crate::planet::{REGION_HEIGHT, REGION_WIDTH};
     const LAYER_SIZE : usize = REGION_WIDTH as usize * REGION_HEIGHT as usize;
     let z = idx / LAYER_SIZE;
-    let mut tidx = idx - (z * LAYER_SIZE);
+    idx -= z * LAYER_SIZE;
 
-    let y = tidx / REGION_WIDTH as usize;
-    tidx -= y * REGION_WIDTH as usize;
+    let y = idx / REGION_WIDTH as usize;
+    idx -= y * REGION_WIDTH as usize;
 
-    let x = tidx;
+    let x = idx;
     (x, y, z)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mapidx_idxmap() {
+        let (x,y,z) = (12, 19, 11);
+        let idx = mapidx(x, y, z);
+        let (nx, ny, nz) = idxmap(idx);
+        assert_eq!(x, nx);
+        assert_eq!(y, ny);
+        assert_eq!(z, nz);
+    }
+
+    #[test]
+    fn test_mapidx() {
+        assert_eq!(mapidx(1usize, 0usize, 0usize), 1usize);
+        assert_eq!(mapidx(2usize, 0usize, 0usize), 2usize);
+    }
 }

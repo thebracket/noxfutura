@@ -29,6 +29,7 @@ impl<'a> RenderPipelineBuilder<'a> {
                 depth_bias_slope_scale: 0.0,
                 depth_bias_clamp: 0.0,
             },
+            //primitive_topology: wgpu::PrimitiveTopology::LineList,
             primitive_topology: wgpu::PrimitiveTopology::TriangleList,
             color_states: vec![wgpu::ColorStateDescriptor {
                 format: swapchain_format,
@@ -40,7 +41,7 @@ impl<'a> RenderPipelineBuilder<'a> {
             vertex_state: None,
             sample_count: 1,
             sample_mask: !0,
-            alpha_to_coverage_enabled: false,
+            alpha_to_coverage_enabled: false
         }
     }
 
