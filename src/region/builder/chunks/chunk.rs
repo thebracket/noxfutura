@@ -1,17 +1,14 @@
-use super::{ChunkType, chunk_idx, CHUNK_SIZE};
+use super::{ChunkType, chunk_idx, CHUNK_SIZE, Primitive};
 use crate::region::{Region, TileType};
 use crate::utils::mapidx;
-
-#[derive(Clone)]
-pub enum Primitive {
-    Cube {x: usize, y: usize, z: usize, w: usize, h: usize, d: usize}
-}
+use std::collections::HashSet;
 
 #[derive(Clone)]
 pub struct Chunk {
     pub t : ChunkType,
     pub idx : usize,
-    pub base : (usize, usize, usize)
+    pub base : (usize, usize, usize),
+    geometry : Option<Vec<Primitive>>
 }
 
 impl Chunk {
@@ -19,7 +16,8 @@ impl Chunk {
         Self{
             t : ChunkType::Empty,
             idx : chunk_idx(x, y, z),
-            base : ( x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE )
+            base : ( x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE ),
+            geometry : None
         }
     }
 
@@ -43,22 +41,6 @@ impl Chunk {
                 _ => {}
             }
         });
-        /*
-        println!("Base chunk at {:?}", self.base);
-        println!("X Range: {}..{}",
-            self.iter().map(|(x,_,_)| x).min().unwrap(),
-            self.iter().map(|(x,_,_)| x).max().unwrap()
-        );
-        println!("Y Range: {}..{}",
-            self.iter().map(|(_,x,_)| x).min().unwrap(),
-            self.iter().map(|(_,x,_)| x).max().unwrap()
-        );
-        println!("Z Range: {}..{}",
-            self.iter().map(|(_,_,x)| x).min().unwrap(),
-            self.iter().map(|(_,_,x)| x).max().unwrap()
-        );
-        println!("Total: {}, Empty: {}, Solid: {}", len, count_empty, count_solid);
-        */
         if count_empty == len {
             self.t = ChunkType::Empty;
         } else if count_solid == len {
@@ -66,19 +48,39 @@ impl Chunk {
         } else {
             self.t = ChunkType::Partial;
         }
+
+        self.geometry = self.build_geometry(region);
     }
 
-    pub fn geometry(&self, region: &Region) -> Option<Vec<Primitive>> {
+    pub fn geometry(&mut self) -> Option<Vec<Primitive>> {
+        self.geometry.clone()
+    }
+
+    fn build_geometry(&self, region: &Region) -> Option<Vec<Primitive>> {
         match self.t {
-            ChunkType::Partial | ChunkType::Solid => {
+            ChunkType::Solid => {
+                Some(
+                    vec![
+                    Primitive::Cube{
+                        x:self.base.0,
+                        y: self.base.1,
+                        z: self.base.2,
+                        w: CHUNK_SIZE,
+                        d: CHUNK_SIZE,
+                        h: CHUNK_SIZE
+                    }
+                    ; 1]
+                )
+            }
+            ChunkType::Partial => {
                 let mut p = Vec::new();
-                let mut cubes = Vec::new();
+                let mut cubes = HashSet::new();
                 self.iter().for_each(|pos| {
                     let idx = mapidx(pos.0, pos.1, pos.2);
                     match region.tile_types[idx] {
                         TileType::Solid => {
                             //println!("{},{},{} = {}", pos.0, pos.1, pos.2, idx);
-                            cubes.push(idx);
+                            cubes.insert(idx);
                         },
                         _ => {}
                     }

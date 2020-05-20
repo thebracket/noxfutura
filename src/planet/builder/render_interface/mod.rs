@@ -469,6 +469,7 @@ impl WorldGenPlanetRender {
         primitives.iter().for_each(|p| {
             match *p {
                 crate::region::Primitive::Cube{x, y, z, w, h, d} => {
+                    //println!("{},{},{} .. {},{},{}", x, y, z, w, h, d);
                     self.add_cube(x, y, z, w, h, d);
                 }
             }

@@ -24,12 +24,11 @@ impl Chunks {
         self.chunks.iter_mut().for_each(|c| c.rebuild(region));
     }
 
-    pub fn all_geometry(&self, region: &Region) -> Vec<Primitive> {
+    pub fn all_geometry(&mut self) -> Vec<Primitive> {
         let mut result = Vec::new();
-        self.chunks.iter().for_each(|c| {
-            if let Some(mut geometry) = c.geometry(region) {
+        self.chunks.iter_mut().for_each(|c| {
+            if let Some(mut geometry) = c.geometry() {
                 result.append(&mut geometry);
-                //result = geometry;
             }
         });
         result

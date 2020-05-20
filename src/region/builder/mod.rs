@@ -6,6 +6,8 @@ mod heightmap;
 mod water_features;
 mod strata;
 pub mod chunks;
+mod primitive;
+pub use primitive::Primitive;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     crate::planet::set_flatmap_status(true);
@@ -56,7 +58,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     strata::layer_cake(&hm, region);
     let mut display_chunks = chunks::Chunks::empty();
     display_chunks.rebuild_all(region);
-    let primitives = display_chunks.all_geometry(region);
+    let primitives = display_chunks.all_geometry();
     println!("Primitives: {}", primitives.len());
     /*crate::planet::WORLDGEN_RENDER
         .lock()

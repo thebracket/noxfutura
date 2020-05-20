@@ -75,7 +75,7 @@ fn threaded_builder() {
     rivers::run_rivers();
     // History
     // Save
-    save_world();
+    //save_world();
 
     // Find crash site
     let crash = find_crash_site();

@@ -11,9 +11,9 @@ pub fn layer_cake(hm: &[u8], region: &mut Region) {
     for x in 0..REGION_WIDTH {
         for y in 0..REGION_HEIGHT {
             let altitude = hm[(y * REGION_WIDTH) + x] as usize;
-            //for z in altitude..altitude+5 {
-                region.tile_types[mapidx(x, y, altitude)] = TileType::Solid;
-            //}
+            for z in 0..altitude {
+                region.tile_types[mapidx(x, y, z)] = TileType::Solid;
+            }
         }
     }
 }
