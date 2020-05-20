@@ -97,7 +97,11 @@ impl PlanetGen2 {
 
         std::mem::drop(renderlock);
 
-        super::ProgramMode::PlanetGen2
+        if crate::planet::is_done() {
+            super::ProgramMode::MainMenu
+        } else {
+            super::ProgramMode::PlanetGen2
+        }
     }
 }
 

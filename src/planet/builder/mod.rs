@@ -140,3 +140,7 @@ pub fn get_flatmap_status() -> bool {
 pub fn set_flatmap_status(status: bool) {
     PLANET_BUILD.lock().flatmap = status;
 }
+
+pub fn is_done() -> bool {
+    PLANET_BUILD.lock().done
+}

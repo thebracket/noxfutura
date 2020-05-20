@@ -1,10 +1,9 @@
-use crate::utils::{idxmap, mapidx};
-use super::{Primitive, CHUNK_SIZE};
+use crate::utils::idxmap;
+use super::{Primitive};
 use std::collections::HashSet;
-use crate::region::{REGION_WIDTH, REGION_HEIGHT, REGION_DEPTH};
+use crate::region::{REGION_WIDTH, REGION_HEIGHT};
 
 pub fn greedy_cubes(mut cube_index: HashSet<usize>) -> Vec<Primitive> {
-    let original_size = cube_index.len();
     let mut p = Vec::new();
 
     loop {
@@ -29,8 +28,6 @@ pub fn greedy_cubes(mut cube_index: HashSet<usize>) -> Vec<Primitive> {
             );
         }
     }
-
-    println!("Compressed {} cubes into {} primitives", original_size, p.len());
     p
 }
 
