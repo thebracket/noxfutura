@@ -1,5 +1,4 @@
 use super::noise_helper::{lat_to_y, lon_to_x};
-use crate::engine::VertexBuffer;
 use crate::planet::{
     planet_idx, Block, BlockType, Planet, REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_WIDTH,
 };
@@ -13,27 +12,28 @@ lazy_static! {
 }
 
 pub struct WorldGenPlanetRender {
-    pub vertex_buffer: VertexBuffer<f32>,
+    pub vertex_buffer: Vec<f32>,
     pub needs_update: bool,
 }
 
 impl WorldGenPlanetRender {
     fn new() -> Self {
-        let mut wgpr = Self {
-            vertex_buffer: VertexBuffer::new(&[3, 4]),
+        let wgpr = Self {
+            vertex_buffer: Vec::new(),
             needs_update: false,
         };
-        wgpr.build_blank_planet();
         wgpr
     }
 
     fn add_point(&mut self, lat: f32, lon: f32, altitude: f32, color: &[f32; 4]) {
         let sphere_coords = sphere_vertex(0.5 + altitude, Degrees::new(lat), Degrees::new(lon));
-        self.vertex_buffer
-            .add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
-
-        self.vertex_buffer
-            .add4(color[0], color[1], color[2], color[3]);
+        self.vertex_buffer.push(sphere_coords.0);
+        self.vertex_buffer.push(sphere_coords.1);
+        self.vertex_buffer.push(sphere_coords.2);
+        self.vertex_buffer.push(color[0]);
+        self.vertex_buffer.push(color[1]);
+        self.vertex_buffer.push(color[2]);
+        self.vertex_buffer.push(color[3]);
     }
 
     pub fn build_blank_planet(&mut self) {
@@ -385,18 +385,48 @@ impl WorldGenPlanetRender {
             let y1 = (y as f32 / SCALE) - HRH;
             let y2 = ((y + 1) as f32 / SCALE) - HRH;
 
-            self.vertex_buffer.add3(x1, y2, z01);
-            self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x1, y1, z00);
-            self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x2, y1, z10);
-            self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x1, y2, z01);
-            self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x2, y1, z10);
-            self.vertex_buffer.add4(r, g, b, 1.0);
-            self.vertex_buffer.add3(x2, y2, z11);
-            self.vertex_buffer.add4(r, g, b, 1.0);
+            self.vertex_buffer.push(x1);
+            self.vertex_buffer.push(y2);
+            self.vertex_buffer.push(z01);
+            self.vertex_buffer.push(r);
+            self.vertex_buffer.push(g);
+            self.vertex_buffer.push(b);
+            self.vertex_buffer.push(1.0);
+            self.vertex_buffer.push(x1);
+            self.vertex_buffer.push(y1);
+            self.vertex_buffer.push(z00);
+            self.vertex_buffer.push(r);
+            self.vertex_buffer.push(g);
+            self.vertex_buffer.push(b);
+            self.vertex_buffer.push(1.0);
+            self.vertex_buffer.push(x2);
+            self.vertex_buffer.push(y1);
+            self.vertex_buffer.push(z10);
+            self.vertex_buffer.push(r);
+            self.vertex_buffer.push(g);
+            self.vertex_buffer.push(b);
+            self.vertex_buffer.push(1.0);
+            self.vertex_buffer.push(x1);
+            self.vertex_buffer.push(y2);
+            self.vertex_buffer.push(z01);
+            self.vertex_buffer.push(r);
+            self.vertex_buffer.push(g);
+            self.vertex_buffer.push(b);
+            self.vertex_buffer.push(1.0);
+            self.vertex_buffer.push(x2);
+            self.vertex_buffer.push(y1);
+            self.vertex_buffer.push(z10);
+            self.vertex_buffer.push(r);
+            self.vertex_buffer.push(g);
+            self.vertex_buffer.push(b);
+            self.vertex_buffer.push(1.0);
+            self.vertex_buffer.push(x2);
+            self.vertex_buffer.push(y2);
+            self.vertex_buffer.push(z11);
+            self.vertex_buffer.push(r);
+            self.vertex_buffer.push(g);
+            self.vertex_buffer.push(b);
+            self.vertex_buffer.push(1.0);
         }
         self.needs_update = true;
     }
@@ -450,17 +480,13 @@ impl WorldGenPlanetRender {
         let yf = y as f32 - HRH;
         let zf = z as f32 - HRD;
         for (cx,cy,cz) in WorldGenPlanetRender::CUBE.iter() {
-            self.vertex_buffer.add3(
-                ((cx*w as f32) + xf) * SCALE,
-                ((cy*h as f32) + yf) * SCALE,
-                ((cz*d as f32) + zf) * SCALE,
-            );
-            self.vertex_buffer.add4(
-                x as f32 / crate::planet::REGION_WIDTH as f32, 
-                z as f32 / crate::planet::REGION_DEPTH as f32, 
-                y as f32 / crate::planet::REGION_HEIGHT as f32, 
-                1.0
-            );
+            self.vertex_buffer.push(((cx*w as f32) + xf) * SCALE);
+            self.vertex_buffer.push(((cy*h as f32) + yf) * SCALE);
+            self.vertex_buffer.push(((cz*d as f32) + zf) * SCALE);
+            self.vertex_buffer.push(x as f32 / crate::planet::REGION_WIDTH as f32);
+            self.vertex_buffer.push(z as f32 / crate::planet::REGION_DEPTH as f32);
+            self.vertex_buffer.push(y as f32 / crate::planet::REGION_HEIGHT as f32);
+            self.vertex_buffer.push(1.0);
         }
     }
 

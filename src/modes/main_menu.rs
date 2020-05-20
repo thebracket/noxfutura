@@ -1,6 +1,7 @@
 use super::resources::SharedResources;
 use bracket_random::prelude::*;
 use imgui::*;
+use crate::opengl::*;
 
 pub struct MainMenu {
     tagline: String,
@@ -66,19 +67,18 @@ impl MainMenu {
 
     pub fn tick(
         &mut self,
+        gl: &Gl,
         resources: &SharedResources,
-        frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
         ui: &imgui::Ui,
     ) -> super::ProgramMode {
         let mut result = super::ProgramMode::MainMenu;
 
-        super::helpers::render_menu_background(context, frame, resources);
+        super::helpers::render_menu_background(gl, resources);
 
         let thanks = imgui::Window::new(im_str!("Thanks to our supporters"));
         thanks
             .position(
-                [context.size.width as f32 - 300.0, 125.0],
+                [800.0 - 300.0, 125.0],
                 Condition::Always,
             )
             .size([400.0, 400.0], Condition::FirstUseEver)
@@ -90,7 +90,7 @@ impl MainMenu {
 
         let copyright = imgui::Window::new(im_str!("Copyright"));
         copyright
-            .position([10.0, context.size.height as f32 - 50.0], Condition::Always)
+            .position([10.0, 600.0 - 50.0], Condition::Always)
             .size([400.0, 400.0], Condition::FirstUseEver)
             .always_auto_resize(true)
             .collapsible(false)
@@ -104,12 +104,12 @@ impl MainMenu {
         let tagline_size = ui.calc_text_size(&ImString::new(&self.tagline), false, 500.0);
         let kylah_size = ui.calc_text_size(&ImString::new(MainMenu::DEDICATION), false, 500.0);
         let width = f32::max(tagline_size[0], kylah_size[0]);
-        let hpos = (context.size.width as f32 / 2.0) - (width / 2.0);
+        let hpos = (800.0 as f32 / 2.0) - (width / 2.0);
 
         let mainmenu = imgui::Window::new(im_str!("Main Menu"));
         mainmenu
             .position(
-                [hpos, (context.size.height as f32 / 2.0) - 100.0],
+                [hpos, (600.0 / 2.0) - 100.0],
                 Condition::Always,
             )
             .always_auto_resize(true)

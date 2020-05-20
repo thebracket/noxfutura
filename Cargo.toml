@@ -3,9 +3,10 @@ name = "noxfutura"
 version = "0.1.0"
 authors = ["Herbert Wolverson <herberticus@gmail.com>"]
 edition = "2018"
+build = "build.rs"
 
 [dependencies]
-wgpu = { version = "0.5.0" }
+glutin = "0.23.0"
 winit = { version = "0.21.0", features = ["web-sys"] }
 futures = "0.3"
 glsl-to-spirv = "0.1.7"
@@ -20,10 +21,13 @@ bracket-random = "0.8.0"
 bracket-noise = "0.8.1"
 bracket-geometry = { version = "0.8.1", features = ["serde"] }
 lazy_static = "1.4.0"
-parking_lot = "0.10.0"
+parking_lot = "0.10.2"
 serde = { version = "1.0.106" }
 ron = "0.5.1"
 serde_cbor = "0.11.1"
 
 [profile.dev]
 opt-level = 1
+
+[build-dependencies]
+gl_generator = "0.14.0"

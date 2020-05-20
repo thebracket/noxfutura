@@ -1,15 +1,12 @@
-mod resources;
-use resources::SharedResources;
+use crate::opengl::*;
 mod loader;
-use loader::Loader;
-mod main_menu;
-use main_menu::MainMenu;
+mod resources;
 mod helpers;
+mod main_menu;
 mod planetgen;
-use planetgen::PlanetGen;
 mod planetgen2;
-use planetgen2::PlanetGen2;
 
+#[derive(Copy, Clone)]
 pub enum ProgramMode {
     Loader,
     MainMenu,
@@ -20,54 +17,42 @@ pub enum ProgramMode {
 
 pub struct Program {
     mode: ProgramMode,
-    resources: SharedResources,
-    loader: Loader,
-    main_menu: MainMenu,
-    planet_gen: PlanetGen,
-    planet_gen2: PlanetGen2,
+    resources: resources::SharedResources,
+    loader : loader::Loader,
+    mainmenu : main_menu::MainMenu,
+    planetgen : planetgen::PlanetGen,
+    planetgen2 : planetgen2::PlanetGen2
 }
 
 impl Program {
     pub fn new() -> Self {
         Self {
             mode: ProgramMode::Loader,
-            resources: SharedResources::new(),
-            loader: Loader::new(),
-            main_menu: MainMenu::new(),
-            planet_gen: PlanetGen::new(),
-            planet_gen2: PlanetGen2::new(),
+            resources: resources::SharedResources::new(),
+            loader: loader::Loader::new(),
+            mainmenu : main_menu::MainMenu::new(),
+            planetgen: planetgen::PlanetGen::new(),
+            planetgen2 : planetgen2::PlanetGen2::new()
         }
     }
 
-    pub fn init(&mut self, context: &mut crate::engine::Context) {
-        self.resources.init(context);
-        self.planet_gen2.setup(context);
+    pub fn init(&mut self, gl: &Gl) {
+        self.resources.init(gl);
+        self.planetgen2.init(gl);
     }
 
     pub fn tick(
         &mut self,
-        context: &mut crate::engine::Context,
-        frame: &wgpu::SwapChainOutput,
-        depth_id: usize,
-        imgui: &imgui::Ui,
+        ui: &imgui::Ui,
+        gl: &Gl
     ) -> bool {
-        match self.mode {
-            ProgramMode::Loader => {
-                self.mode = self.loader.tick(&self.resources, frame, context, imgui)
-            }
-            ProgramMode::MainMenu => {
-                self.mode = self.main_menu.tick(&self.resources, frame, context, imgui)
-            }
-            ProgramMode::PlanetGen => {
-                self.mode = self.planet_gen.tick(&self.resources, frame, context, imgui)
-            }
-            ProgramMode::PlanetGen2 => {
-                self.mode = self
-                    .planet_gen2
-                    .tick(&self.resources, frame, context, imgui, depth_id)
-            }
-            ProgramMode::Quit => return false,
-        }
+        self.mode = match self.mode {
+            ProgramMode::Loader => self.loader.tick(ui, gl, &self.resources),
+            ProgramMode::MainMenu => self.mainmenu.tick(gl, &self.resources, ui),
+            ProgramMode::PlanetGen => self.planetgen.tick(gl, &self.resources, ui),
+            ProgramMode::PlanetGen2 => self.planetgen2.tick(gl, &self.resources, ui),
+            _ => self.mode
+        };
         true
     }
 }

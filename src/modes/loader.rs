@@ -1,5 +1,5 @@
-use super::resources::SharedResources;
-use imgui::*;
+use crate::opengl::*;
+use super::helpers::render_menu_background;
 
 pub struct Loader {
     counter: i32,
@@ -12,12 +12,12 @@ impl Loader {
 
     pub fn tick(
         &mut self,
-        resources: &SharedResources,
-        frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
         ui: &imgui::Ui,
+        gl: &super::Gl,
+        resources: &super::resources::SharedResources
     ) -> super::ProgramMode {
-        super::helpers::render_menu_background(context, frame, resources);
+        //super::helpers::render_menu_background(context, frame, resources);
+        render_menu_background(gl, resources);
 
         let window = imgui::Window::new(im_str!("Nox Futura is Loading"));
         window

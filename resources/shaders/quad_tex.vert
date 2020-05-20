@@ -1,11 +1,15 @@
-#version 450
+#version 430 core
 
-layout(location=0) in vec2 a_position;
-layout(location=1) in vec2 a_tex_coords;
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoords;
 
-layout(location=0) out vec2 v_tex_coords;
+out VS_OUT {
+    out vec2 tex_coords;
+} vs_out;
 
-void main() {
-    v_tex_coords = a_tex_coords;
-    gl_Position = vec4(a_position, 1.0, 1.0);
+
+void main() 
+{
+    vs_out.tex_coords = aTexCoords;
+    gl_Position = vec4(aPos, 1.0, 1.0);
 }

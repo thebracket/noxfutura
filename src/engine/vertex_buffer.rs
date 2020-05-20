@@ -1,101 +1,128 @@
-#![allow(dead_code)]
-pub struct VertexBuffer<T>
-where
-    T: bytemuck::Pod,
-{
-    data: Vec<T>,
-    attributes: Vec<wgpu::VertexAttributeDescriptor>,
-    total_size: wgpu::BufferAddress,
-    row_len: usize,
-    pub buffer: Option<wgpu::Buffer>,
+use crate::opengl::*;
+use std::mem;
+use std::os::raw::c_void;
+
+#[derive(Debug)]
+pub struct VertexArray {
+    pub vertex_buffer: Vec<f32>,
+    vao: u32,
+    vbo: u32,
+    element_size: i32
 }
 
-impl<T> VertexBuffer<T>
-where
-    T: bytemuck::Pod,
-{
-    pub fn new(layout: &[usize]) -> Self {
-        let mut attributes = Vec::new();
+pub struct VertexArrayEntry {
+    pub index: u32,
+    pub size: i32,
+}
 
-        let mut cumulative_len = 0;
-        let mut cumulative_size = 0;
-        for (i, size) in layout.iter().enumerate() {
-            let attribute = wgpu::VertexAttributeDescriptor {
-                offset: cumulative_size,
-                shader_location: i as u32,
-                format: match size {
-                    1 => wgpu::VertexFormat::Float,
-                    2 => wgpu::VertexFormat::Float2,
-                    3 => wgpu::VertexFormat::Float3,
-                    4 => wgpu::VertexFormat::Float4,
-                    _ => {
-                        panic!("Vertices must be 1-4 floats");
-                    }
-                },
-            };
-            attributes.push(attribute);
-            cumulative_size += (std::mem::size_of::<T>() * size) as wgpu::BufferAddress;
-            cumulative_len += size;
+impl VertexArray {
+    pub fn float_builder(
+        gl: &Gl,
+        entries: &[VertexArrayEntry],
+        vertex_capacity: usize
+    ) -> Self {
+        let mut buffer = VertexArray {
+            vertex_buffer: Vec::with_capacity(vertex_capacity),
+            vao: 0,
+            vbo: 0,
+            element_size: entries.iter().map(|e| e.size).sum()
+        };
+
+        gl_error(gl);
+        unsafe {
+            gl.GenVertexArrays(1, &mut buffer.vao);
+
+            gl.GenBuffers(1, &mut buffer.vbo);
+
+            gl.BindVertexArray(buffer.vao);
+            gl.BindBuffer(ARRAY_BUFFER, buffer.vbo);
+            let stride: i32 =entries
+                .iter()
+                .map(|e| e.size)
+                .sum::<i32>() * mem::size_of::<f32>() as i32;
+
+            let mut cumulative_offset: i32 = 0;
+            for entry in entries.iter() {
+                gl.VertexAttribPointer(
+                    entry.index,
+                    entry.size,
+                    FLOAT,
+                    FALSE,
+                    stride,
+                    (cumulative_offset * mem::size_of::<f32>() as i32) as _,
+                );
+                gl.EnableVertexAttribArray(entry.index);
+                cumulative_offset += entry.size;
+            }
         }
+        gl_error(gl);
+        buffer
+    }
 
-        Self {
-            data: Vec::new(),
-            attributes,
-            total_size: cumulative_size,
-            row_len: cumulative_len,
-            buffer: None,
+    fn bind(&self, gl: &Gl) {
+        gl_error(gl);
+        unsafe {
+            gl.BindVertexArray(self.vao);
+            gl.BindBuffer(ARRAY_BUFFER, self.vbo);
         }
+        gl_error(gl);
     }
 
-    pub fn descriptor(&self) -> wgpu::VertexBufferDescriptor {
-        wgpu::VertexBufferDescriptor {
-            stride: self.total_size,
-            step_mode: wgpu::InputStepMode::Vertex,
-            attributes: &self.attributes,
+    pub fn upload_buffers(&self, gl: &Gl) {
+        gl_error(gl);
+        if self.vertex_buffer.is_empty() { return; }
+        unsafe {
+            self.bind(gl);
+            gl.BufferData(
+                ARRAY_BUFFER,
+                (self.vertex_buffer.len() * std::mem::size_of::<f32>()) as isize,
+                &self.vertex_buffer[0] as *const f32 as *const c_void,
+                STATIC_DRAW,
+            );
+            gl.BindVertexArray(0);
         }
+        gl_error(gl);
     }
 
-    pub fn build(&mut self, device: &wgpu::Device, usage: wgpu::BufferUsage) {
-        self.buffer = Some(device.create_buffer_with_data(bytemuck::cast_slice(&self.data), usage));
-    }
-
-    pub fn update_buffer(&mut self, context: &super::Context) {
-        self.build(&context.device, wgpu::BufferUsage::VERTEX);
-    }
-
-    pub fn len(&self) -> u32 {
-        (self.data.len() / self.row_len) as u32
-    }
-
-    pub fn clear(&mut self) {
-        self.data.clear()
-    }
-
-    pub fn add_slice(&mut self, slice: &[T]) {
-        for e in slice.iter() {
-            self.data.push(*e);
+    pub fn draw_elements(&self, gl: &Gl, shader: &Shader, texture: &Texture) {
+        gl_error(gl);
+        unsafe {
+            self.bind(gl);
+            shader.activate(gl);
+            texture.bind_texture(gl);
+            gl.Enable(BLEND);
+            gl.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+            gl.DrawArrays(TRIANGLES, 0, self.vertex_buffer.len() as i32 / self.element_size as i32);
+            gl.Disable(BLEND);
+            gl.BindVertexArray(0);
         }
+        gl_error(gl);
     }
 
-    pub fn add(&mut self, f: T) {
-        self.data.push(f);
+    pub fn draw_elements_no_texture(&self, gl: &Gl, shader: &Shader) {
+        gl_error(gl);
+        unsafe {
+            self.bind(gl);
+            shader.activate(gl);
+            gl.Enable(BLEND);
+            gl.BlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
+            gl.DrawArrays(TRIANGLES, 0, self.vertex_buffer.len() as i32 / self.element_size as i32);
+            gl.Disable(BLEND);
+            gl.BindVertexArray(0);
+        }
+        gl_error(gl);
     }
 
-    pub fn add2(&mut self, f: T, f1: T) {
-        self.data.push(f);
-        self.data.push(f1);
+    pub fn add3(&mut self, a: f32, b:f32, c:f32) {
+        self.vertex_buffer.push(a);
+        self.vertex_buffer.push(b);
+        self.vertex_buffer.push(c);
     }
 
-    pub fn add3(&mut self, f: T, f1: T, f2: T) {
-        self.data.push(f);
-        self.data.push(f1);
-        self.data.push(f2);
-    }
-
-    pub fn add4(&mut self, f: T, f1: T, f2: T, f3: T) {
-        self.data.push(f);
-        self.data.push(f1);
-        self.data.push(f2);
-        self.data.push(f3);
+    pub fn add4(&mut self, a: f32, b:f32, c:f32, d:f32) {
+        self.vertex_buffer.push(a);
+        self.vertex_buffer.push(b);
+        self.vertex_buffer.push(c);
+        self.vertex_buffer.push(d);
     }
 }

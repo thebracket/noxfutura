@@ -1,82 +1,50 @@
+use crate::opengl::*;
 use super::resources::SharedResources;
-use crate::engine::uniforms::UniformBlock;
 use crate::planet::WORLDGEN_RENDER;
 use imgui::*;
 use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},
 };
+use std::ffi::CString;
 
 pub struct PlanetGen2 {
-    planet_shader: usize,
-    planet_pipeline: Option<wgpu::RenderPipeline>,
-    uniform_bind_group: Option<wgpu::BindGroup>,
-    uniforms: Option<Uniforms>,
+    shader: Option<Shader>,
     camera: Option<Camera>,
-    uniform_buffer: Option<wgpu::Buffer>,
+    uniforms: Option<Uniforms>,
+    vertex_buffer: Option<VertexArray>
 }
 
 impl PlanetGen2 {
     pub fn new() -> Self {
         Self {
-            planet_shader: 0,
-            planet_pipeline: None,
-            uniform_bind_group: None,
-            uniforms: None,
+            shader: None,
             camera: None,
-            uniform_buffer: None,
+            uniforms: None,
+            vertex_buffer: None
         }
     }
 
-    pub fn setup(&mut self, context: &mut crate::engine::Context) {
-        use crate::engine::*;
+    pub fn init(&mut self, gl: &Gl) {
 
-        let mut renderlock = WORLDGEN_RENDER.lock();
-        renderlock
-            .vertex_buffer
-            .build(&context.device, wgpu::BufferUsage::VERTEX);
-        self.planet_shader = context.register_shader(
-            "resources/shaders/planetgen.vert",
-            "resources/shaders/planetgen.frag",
-        );
+        self.shader = Some(Shader::new(
+            gl,
+            include_str!("../../resources/shaders/planetgen.vert"),
+            include_str!("../../resources/shaders/planetgen.frag")
+        ));
 
         // Uniforms and camera etc.
-        self.camera = Some(Camera::new(context.size.width, context.size.height));
+        self.camera = Some(Camera::new(800, 600));
         self.uniforms = Some(Uniforms::new());
-        self.uniforms
-            .as_mut()
-            .unwrap()
-            .update_view_proj(self.camera.as_ref().unwrap());
-        let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) = self
-            .uniforms
-            .as_mut()
-            .unwrap()
-            .create_buffer_layout_and_group(&context, 0, "some_uniforms");
-        self.uniform_bind_group = Some(uniform_bind_group);
-        self.uniform_buffer = Some(uniform_buffer);
-
-        // Pipeline
-        let pipeline_layout = context.create_pipeline_layout(&[&uniform_bind_group_layout]);
-        let render_pipeline = pipelines::RenderPipelineBuilder::new(context.swapchain_format)
-            .layout(&pipeline_layout)
-            .vf_shader(&context, self.planet_shader)
-            .depth_buffer()
-            .vertex_state(
-                wgpu::IndexFormat::Uint16,
-                &[renderlock.vertex_buffer.descriptor()],
-            )
-            .build(&context.device);
-        self.planet_pipeline = Some(render_pipeline);
     }
 
     fn background_and_status(
         &mut self,
         resources: &SharedResources,
-        frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
+        gl: &Gl,
         ui: &imgui::Ui,
     ) {
-        super::helpers::render_menu_background(context, frame, resources);
+        super::helpers::render_menu_background(gl, resources);
 
         imgui::Window::new(im_str!("Status"))
             .position([10.0, 10.0], Condition::Always)
@@ -89,53 +57,42 @@ impl PlanetGen2 {
 
     pub fn tick(
         &mut self,
+        gl: &Gl,
         resources: &SharedResources,
-        frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
         ui: &imgui::Ui,
-        depth_id: usize,
     ) -> super::ProgramMode {
-        use crate::engine::renderpass;
-        self.background_and_status(resources, frame, context, ui);
+        self.background_and_status(resources, gl, ui);
 
         if let Some(uniforms) = self.uniforms.as_mut() {
             if !crate::planet::get_flatmap_status() {
                 uniforms.update_view_proj(self.camera.as_ref().unwrap());
-                uniforms.update_buffer(context, self.uniform_buffer.as_ref().unwrap());
             } else {
                 uniforms.update_view_proj_flat(self.camera.as_mut().unwrap());
-                uniforms.update_buffer(context, self.uniform_buffer.as_ref().unwrap());
             }
+            uniforms.update_uniforms(gl, self.shader.as_ref().unwrap());
+        }
+
+
+        if self.vertex_buffer.is_none() {
+            self.vertex_buffer = Some(
+                VertexArray::float_builder(gl, &[VertexArrayEntry{index: 0, size: 3}, VertexArrayEntry{index:1, size: 4}], 2000)
+            );
         }
 
         let mut renderlock = WORLDGEN_RENDER.lock();
         if renderlock.needs_update {
-            renderlock.vertex_buffer.update_buffer(&context);
-            renderlock.needs_update = false;
+            if let Some(vb) = &mut self.vertex_buffer {
+                vb.vertex_buffer.clear();
+                for v in &renderlock.vertex_buffer {
+                    vb.vertex_buffer.push(*v);
+                }
+                vb.upload_buffers(gl);
+                renderlock.needs_update = false;
+            }
         }
 
-        if renderlock.vertex_buffer.len() > 0 {
-            let mut encoder = renderpass::get_encoder(&context);
-            {
-                let mut rpass = renderpass::get_render_pass_with_depth(
-                    context,
-                    &mut encoder,
-                    frame,
-                    depth_id,
-                    wgpu::LoadOp::Load,
-                );
-                rpass.set_pipeline(self.planet_pipeline.as_ref().unwrap());
-                rpass.set_bind_group(0, self.uniform_bind_group.as_ref().unwrap(), &[]);
-                rpass.set_vertex_buffer(
-                    0,
-                    &renderlock.vertex_buffer.buffer.as_ref().unwrap(),
-                    0,
-                    0,
-                );
-                rpass.draw(0..renderlock.vertex_buffer.len(), 0..1);
-                //rpass.draw(0..1, 0..1);
-            }
-            context.queue.submit(&[encoder.finish()]);
+        if self.vertex_buffer.as_ref().unwrap().vertex_buffer.len() > 0 {
+            self.vertex_buffer.as_ref().unwrap().draw_elements_no_texture(gl, &self.shader.as_ref().unwrap());
         }
 
         std::mem::drop(renderlock);
@@ -144,16 +101,11 @@ impl PlanetGen2 {
     }
 }
 
-#[repr(C)]
 #[derive(Debug, Copy, Clone)]
 struct Uniforms {
     view_proj: ultraviolet::mat::Mat4,
     rot_angle: f32,
 }
-
-unsafe impl bytemuck::Pod for Uniforms {}
-unsafe impl bytemuck::Zeroable for Uniforms {}
-impl UniformBlock for Uniforms {}
 
 impl Uniforms {
     fn new() -> Self {
@@ -172,6 +124,16 @@ impl Uniforms {
         camera.down_cam();
         self.rot_angle = 0.0;
         self.view_proj = camera.build_view_projection_matrix();
+    }
+
+    fn update_uniforms(&self, gl: &Gl, shader: &Shader) {
+        shader.activate(gl);
+        unsafe {
+            let matloc = gl.GetUniformLocation(shader.0, CString::new("u_view_proj").unwrap().as_ptr());
+            let rotloc = gl.GetUniformLocation(shader.0, CString::new("rot_angle").unwrap().as_ptr());
+            gl.UniformMatrix4fv(matloc, 1, 0, self.view_proj.as_ptr());
+            gl.Uniform1f(rotloc, self.rot_angle);
+        }
     }
 }
 
