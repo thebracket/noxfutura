@@ -70,7 +70,10 @@ impl MainMenu {
         gl: &Gl,
         resources: &SharedResources,
         ui: &imgui::Ui,
+        ctx: &EngineContext
     ) -> super::ProgramMode {
+        let screen_w = ctx.screen_size.x as f32;
+        let screen_h = ctx.screen_size.y as f32;
         let mut result = super::ProgramMode::MainMenu;
 
         super::helpers::render_menu_background(gl, resources);
@@ -78,7 +81,7 @@ impl MainMenu {
         let thanks = imgui::Window::new(im_str!("Thanks to our supporters"));
         thanks
             .position(
-                [800.0 - 300.0, 125.0],
+                [screen_w - 300.0, 125.0],
                 Condition::Always,
             )
             .size([400.0, 400.0], Condition::FirstUseEver)
@@ -90,7 +93,7 @@ impl MainMenu {
 
         let copyright = imgui::Window::new(im_str!("Copyright"));
         copyright
-            .position([10.0, 600.0 - 50.0], Condition::Always)
+            .position([10.0, screen_h - 50.0], Condition::Always)
             .size([400.0, 400.0], Condition::FirstUseEver)
             .always_auto_resize(true)
             .collapsible(false)
@@ -104,12 +107,12 @@ impl MainMenu {
         let tagline_size = ui.calc_text_size(&ImString::new(&self.tagline), false, 500.0);
         let kylah_size = ui.calc_text_size(&ImString::new(MainMenu::DEDICATION), false, 500.0);
         let width = f32::max(tagline_size[0], kylah_size[0]);
-        let hpos = (800.0 as f32 / 2.0) - (width / 2.0);
+        let hpos = (screen_w as f32 / 2.0) - (width / 2.0);
 
         let mainmenu = imgui::Window::new(im_str!("Main Menu"));
         mainmenu
             .position(
-                [hpos, (600.0 / 2.0) - 100.0],
+                [hpos, (screen_h / 2.0) - 100.0],
                 Condition::Always,
             )
             .always_auto_resize(true)

@@ -7,6 +7,8 @@ mod texture;
 pub use texture::Texture;
 pub mod glerror;
 pub mod vertex_buffer;
+mod context;
+pub use context::EngineContext;
 
 use glutin::event::{Event, WindowEvent};
 use glutin::event_loop::{ControlFlow, EventLoop};
@@ -34,6 +36,8 @@ impl Backend {
 }
 
 pub fn main_loop() {
+    let mut engine_context = EngineContext::new();
+
     let el = EventLoop::new();
     let wb = WindowBuilder::new()
         .with_title("Nox Futura - One Day, I Can Dream.");
@@ -91,11 +95,14 @@ pub fn main_loop() {
 
     imgui.io_mut().font_global_scale = (1.0 / hidpi_factor) as f32;
     let renderer = imgui_glutin::Renderer::new(&mut imgui);
+    let size = windowed_context.window().inner_size();
+    engine_context.screen_size.x = size.width as i32;
+    engine_context.screen_size.y = size.height as i32;
     // END IMGUI
 
     // Program Setup
     let mut game = Program::new();
-    game.init(GL.lock().gl.as_ref().unwrap());
+    game.init(GL.lock().gl.as_ref().unwrap(), &engine_context);
 
     let mut last_frame = Instant::now();
 
@@ -117,7 +124,7 @@ pub fn main_loop() {
                 //gl.draw_frame([1.0, 0.5, 0.7, 1.0]);
 
                 let ui = imgui.frame();
-                render(&mut game, &ui);
+                render(&mut game, &ui, &engine_context);
 
                 platform.prepare_render(&ui, windowed_context.window());
 
@@ -125,6 +132,21 @@ pub fn main_loop() {
                     .render(ui);
 
                 windowed_context.swap_buffers().unwrap();
+            }
+            Event::WindowEvent {
+                event: WindowEvent::Resized(size),
+                ..
+            } => {
+                engine_context.screen_size.x = size.width as i32;
+                    engine_context.screen_size.y = size.height as i32;
+                    let glock = GL.lock();
+                    let gl = glock.gl.as_ref().unwrap();
+                    unsafe {
+                        gl.Viewport(0, 0, size.width as _, size.height as _);
+                    }
+                    game.on_resize(gl, engine_context.screen_size);
+                    std::mem::drop(glock);
+                    platform.handle_event(imgui.io_mut(), windowed_context.window(), &event);
             }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
@@ -137,7 +159,7 @@ pub fn main_loop() {
     });
 }
 
-fn render(game: &mut Program, imgui: &imgui::Ui) {
+fn render(game: &mut Program, imgui: &imgui::Ui, ctx: &EngineContext) {
     let glock = GL.lock();
     let gl = glock.gl.as_ref().unwrap();
     unsafe {
@@ -146,6 +168,6 @@ fn render(game: &mut Program, imgui: &imgui::Ui) {
         gl.Clear(support::gl::COLOR_BUFFER_BIT);
     }
     gl_error(gl);
-    game.tick(imgui, gl);
+    game.tick(imgui, gl, ctx);
     gl_error(gl);
 }

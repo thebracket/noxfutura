@@ -19,6 +19,7 @@ mod opengl {
     pub use crate::engine::Shader;
     pub use crate::engine::vertex_buffer::{VertexArray, VertexArrayEntry};
     pub use imgui::*;
+    pub use crate::engine::EngineContext;
 }
 
 fn main() {

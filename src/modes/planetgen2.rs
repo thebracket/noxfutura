@@ -25,7 +25,7 @@ impl PlanetGen2 {
         }
     }
 
-    pub fn init(&mut self, gl: &Gl) {
+    pub fn init(&mut self, gl: &Gl, ctx: &EngineContext) {
 
         self.shader = Some(Shader::new(
             gl,
@@ -34,7 +34,7 @@ impl PlanetGen2 {
         ));
 
         // Uniforms and camera etc.
-        self.camera = Some(Camera::new(800, 600));
+        self.camera = Some(Camera::new(ctx.screen_size.x as _, ctx.screen_size.y as _));
         self.uniforms = Some(Uniforms::new());
     }
 
@@ -60,14 +60,15 @@ impl PlanetGen2 {
         gl: &Gl,
         resources: &SharedResources,
         ui: &imgui::Ui,
+        ctx: &EngineContext
     ) -> super::ProgramMode {
         self.background_and_status(resources, gl, ui);
 
         if let Some(uniforms) = self.uniforms.as_mut() {
             if !crate::planet::get_flatmap_status() {
-                uniforms.update_view_proj(self.camera.as_ref().unwrap());
+                uniforms.update_view_proj(self.camera.as_mut().unwrap(), ctx);
             } else {
-                uniforms.update_view_proj_flat(self.camera.as_mut().unwrap());
+                uniforms.update_view_proj_flat(self.camera.as_mut().unwrap(), ctx);
             }
             uniforms.update_uniforms(gl, self.shader.as_ref().unwrap());
         }
@@ -98,7 +99,7 @@ impl PlanetGen2 {
         std::mem::drop(renderlock);
 
         if crate::planet::is_done() {
-            super::ProgramMode::MainMenu
+            super::ProgramMode::PlayGame
         } else {
             super::ProgramMode::PlanetGen2
         }
@@ -119,15 +120,15 @@ impl Uniforms {
         }
     }
 
-    fn update_view_proj(&mut self, camera: &Camera) {
-        self.view_proj = camera.build_view_projection_matrix();
+    fn update_view_proj(&mut self, camera: &mut Camera, ctx: &EngineContext) {
+        self.view_proj = camera.build_view_projection_matrix(ctx);
         self.rot_angle += 0.001;
     }
 
-    fn update_view_proj_flat(&mut self, camera: &mut Camera) {
+    fn update_view_proj_flat(&mut self, camera: &mut Camera, ctx: &EngineContext) {
         camera.down_cam();
         self.rot_angle = 0.0;
-        self.view_proj = camera.build_view_projection_matrix();
+        self.view_proj = camera.build_view_projection_matrix(ctx);
     }
 
     fn update_uniforms(&self, gl: &Gl, shader: &Shader) {
@@ -170,18 +171,11 @@ impl Camera {
         self.up = Vec3::unit_z();
     }
 
-    pub fn build_view_projection_matrix(&self) -> Mat4 {
-        #[cfg_attr(rustfmt, rustfmt_skip)]
-        let opengl_to_wgpu_matrix : Mat4 = Mat4::new(
-            Vec4::new(1.0, 0.0, 0.0, 0.0),
-            Vec4::new(0.0, 1.0, 0.0, 0.0),
-            Vec4::new(0.0, 0.0, 0.5, 0.0),
-            Vec4::new(0.0, 0.0, 0.5, 1.0),
-        );
-
+    pub fn build_view_projection_matrix(&mut self, ctx: &EngineContext) -> Mat4 {
+        self.aspect = ctx.screen_size.x as f32 / ctx.screen_size.y as f32;
         let view = Mat4::look_at(self.eye, self.target, self.up);
         let proj =
             ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
-        opengl_to_wgpu_matrix * proj * view
+        proj * view
     }
 }
