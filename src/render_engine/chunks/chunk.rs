@@ -58,20 +58,20 @@ impl Chunk {
 
     fn build_geometry(&self, region: &Region) -> Option<Vec<Primitive>> {
         match self.t {
-            ChunkType::Solid => {
+            /*ChunkType::Solid => {
                 Some(
                     vec![
                     Primitive::Cube{
-                        x:self.base.0,
-                        y: self.base.1,
-                        z: self.base.2,
-                        w: CHUNK_SIZE,
-                        d: CHUNK_SIZE,
-                        h: CHUNK_SIZE
+                        x:self.base.0 as f32,
+                        y: self.base.1 as f32,
+                        z: self.base.2 as f32,
+                        w: CHUNK_SIZE as f32,
+                        d: CHUNK_SIZE as f32,
+                        h: CHUNK_SIZE as f32
                     }
                     ; 1]
                 )
-            }
+            }*/
             ChunkType::Partial => {
                 let mut p = Vec::new();
                 let mut cubes = HashSet::new();

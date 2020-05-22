@@ -1,10 +1,9 @@
 use crate::opengl::*;
 use super::resources::SharedResources;
-use crate::planet::WORLDGEN_RENDER;
 use imgui::*;
 use ultraviolet::{
     mat::Mat4,
-    vec::{Vec3, Vec4},
+    vec::Vec3,
 };
 use std::ffi::CString;
 
@@ -64,7 +63,7 @@ impl PlanetGen2 {
     ) -> super::ProgramMode {
         self.background_and_status(resources, gl, ui);
 
-        if let Some(uniforms) = self.uniforms.as_mut() {
+        /*if let Some(uniforms) = self.uniforms.as_mut() {
             if !crate::planet::get_flatmap_status() {
                 uniforms.update_view_proj(self.camera.as_mut().unwrap(), ctx);
             } else {
@@ -96,10 +95,10 @@ impl PlanetGen2 {
             self.vertex_buffer.as_ref().unwrap().draw_elements_no_texture(gl, &self.shader.as_ref().unwrap());
         }
 
-        std::mem::drop(renderlock);
+        std::mem::drop(renderlock);*/
 
         if crate::planet::is_done() {
-            super::ProgramMode::PlayGame
+            super::ProgramMode::MainMenu
         } else {
             super::ProgramMode::PlanetGen2
         }

@@ -1,4 +1,4 @@
-use super::{set_worldgen_status, PLANET_BUILD, WORLDGEN_RENDER};
+use super::{set_worldgen_status, PLANET_BUILD};
 use crate::planet::{planet_idx, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 
 pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
@@ -68,12 +68,12 @@ pub(crate) fn planet_type_allocation() {
             }
         }
         if i % ((WORLD_WIDTH as usize) * 1000) == 0 {
-            WORLDGEN_RENDER.lock().planet_with_category(&planet);
+            //WORLDGEN_RENDER.lock().planet_with_category(&planet);
             let percent = ((i as f32 / planet.landblocks.len() as f32) * 100.0) as i32;
             set_worldgen_status(format!("Dividing the waters from the earth - {}%", percent));
         }
     }
-    WORLDGEN_RENDER.lock().planet_with_category(&planet);
+    //WORLDGEN_RENDER.lock().planet_with_category(&planet);
 
     PLANET_BUILD.lock().planet = planet;
 }
@@ -96,7 +96,7 @@ pub(crate) fn planet_coastlines() {
                     planet.landblocks[base_idx].rainfall = 20;
                     n += 1;
                     if n % 1000 == 0 {
-                        WORLDGEN_RENDER.lock().planet_with_category(&planet);
+                        //WORLDGEN_RENDER.lock().planet_with_category(&planet);
                     }
                 }
             }
@@ -137,6 +137,6 @@ pub(crate) fn planet_rainfall() {
             }
         }
     }
-    WORLDGEN_RENDER.lock().planet_with_category(&planet);
+    //WORLDGEN_RENDER.lock().planet_with_category(&planet);
     PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
 }

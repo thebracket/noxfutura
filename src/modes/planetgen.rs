@@ -13,12 +13,13 @@ impl PlanetGen {
         let mut rng = RandomNumberGenerator::new();
         Self {
             params: PlanetParams {
-                world_seed: rng.range(-2147483648, 2147483647),
+                //world_seed: rng.range(-2147483648, 2147483647),
+                world_seed: 1,
                 water_level: 3,
                 plains_level: 3,
                 starting_settlers: 6,
                 strict_beamdown: true,
-                extra_noise: true,
+                extra_noise: false,
             },
         }
     }

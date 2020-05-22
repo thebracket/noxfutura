@@ -1,4 +1,4 @@
-use super::{set_worldgen_status, PLANET_BUILD, WORLDGEN_RENDER};
+use super::{set_worldgen_status, PLANET_BUILD};
 use crate::planet::{
     planet_idx, Biome, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH,
 };
@@ -62,7 +62,7 @@ pub fn build_biomes() {
         count += 1;
     }
 
-    WORLDGEN_RENDER.lock().planet_with_biome(&planet);
+    //WORLDGEN_RENDER.lock().planet_with_biome(&planet);
     PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
     PLANET_BUILD.lock().planet.biomes = planet.biomes;
 

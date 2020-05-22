@@ -5,9 +5,6 @@ use bracket_random::prelude::RandomNumberGenerator;
 mod heightmap;
 mod water_features;
 mod strata;
-pub mod chunks;
-mod primitive;
-pub use primitive::Primitive;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     crate::planet::set_flatmap_status(true);
@@ -22,18 +19,18 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
 
     set_worldgen_status("Establishing ground altitude");
     let mut hm = heightmap::build_empty_heightmap();
-    crate::planet::WORLDGEN_RENDER
+    /*crate::planet::WORLDGEN_RENDER
         .lock()
-        .region_heightmap(&hm, planet.water_height, &pooled_water);
+        .region_heightmap(&hm, planet.water_height, &pooled_water);*/
     heightmap::build_heightmap_from_noise(
         &mut hm,
         crash_site,
         planet.perlin_seed,
         planet.landblocks[planet_idx(crash_site.x as usize, crash_site.y as usize)].variance,
     );
-    crate::planet::WORLDGEN_RENDER
+    /*crate::planet::WORLDGEN_RENDER
         .lock()
-        .region_heightmap(&hm, planet.water_height, &pooled_water);
+        .region_heightmap(&hm, planet.water_height, &pooled_water);*/
 
     set_worldgen_status("Locating Sub-Biomes");
     heightmap::create_subregions(
@@ -43,29 +40,29 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
         &mut pooled_water,
         &biome,
     );
-    crate::planet::WORLDGEN_RENDER
+    /*crate::planet::WORLDGEN_RENDER
         .lock()
-        .region_heightmap(&hm, planet.water_height, &pooled_water);
+        .region_heightmap(&hm, planet.water_height, &pooled_water);*/
 
     set_worldgen_status("Adding water features");
     water_features::just_add_water(planet, region, &mut pooled_water, &mut hm, &mut rng);
-    crate::planet::WORLDGEN_RENDER
+    /*crate::planet::WORLDGEN_RENDER
         .lock()
-        .region_heightmap(&hm, planet.water_height, &pooled_water);
+        .region_heightmap(&hm, planet.water_height, &pooled_water);*/
 
     set_worldgen_status("Stratifying");
     set_worldgen_status("Layer cake is yummy");
     strata::layer_cake(&hm, region);
-    let mut display_chunks = chunks::Chunks::empty();
-    display_chunks.rebuild_all(region);
-    let primitives = display_chunks.all_geometry();
-    println!("Primitives: {}", primitives.len());
+    //let mut display_chunks = chunks::Chunks::empty();
+    //display_chunks.rebuild_all(region);
+    //let primitives = display_chunks.all_geometry();
+    //println!("Primitives: {}", primitives.len());
     /*crate::planet::WORLDGEN_RENDER
         .lock()
         .region_display(region.clone());*/
-    crate::planet::WORLDGEN_RENDER
-        .lock()
-        .region_display_primitives(primitives);
+    //crate::planet::WORLDGEN_RENDER
+    //    .lock()
+    //    .region_display_primitives(primitives);
 
     set_worldgen_status("Ramping");
     set_worldgen_status("Beaches");

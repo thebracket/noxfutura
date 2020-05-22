@@ -120,8 +120,13 @@ impl MainMenu {
             .no_decoration()
             .build(ui, || {
                 ui.text_colored([1.0, 1.0, 0.0, 1.0], &self.tagline);
-                if ui.button(im_str!("New Game"), [100.0, 20.0]) {
+                if ui.button(im_str!("Create Game"), [100.0, 20.0]) {
                     result = super::ProgramMode::PlanetGen;
+                }
+                if std::path::Path::new("world.dat").exists() {
+                    if ui.button(im_str!("Play/Continue Game"), [100.0, 20.0]) {
+                        result = super::ProgramMode::Resume;
+                    }
                 }
                 if ui.button(im_str!("Quit"), [100.0, 20.0]) {
                     result = super::ProgramMode::Quit;

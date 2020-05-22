@@ -3,8 +3,6 @@ use parking_lot::Mutex;
 pub mod noise_helper;
 mod planet_categories;
 mod planet_noise;
-mod render_interface;
-pub use render_interface::WORLDGEN_RENDER;
 mod biomes;
 mod rivers;
 use crate::region::Region;
@@ -28,10 +26,15 @@ pub struct PlanetBuilder {
     done: bool,
     task: String,
     flatmap: bool,
+    region: Option<Region>,
+    universe: legion::prelude::Universe,
+    ecs: legion::prelude::World
 }
 
 impl PlanetBuilder {
     fn new() -> Self {
+        let universe = legion::prelude::Universe::new();
+        let ecs = universe.create_world();
         Self {
             params: PlanetParams {
                 world_seed: 0,
@@ -45,6 +48,9 @@ impl PlanetBuilder {
             done: false,
             task: "Initializing".to_string(),
             flatmap: false,
+            region: None,
+            universe,
+            ecs
         }
     }
 }
@@ -74,8 +80,6 @@ fn threaded_builder() {
     biomes::build_biomes();
     rivers::run_rivers();
     // History
-    // Save
-    //save_world();
 
     // Find crash site
     let crash = find_crash_site();
@@ -86,17 +90,39 @@ fn threaded_builder() {
     let clone_planet = &PLANET_BUILD.lock().planet.clone();
     let mut region = Region::zeroed(crash_idx, &clone_planet);
     crate::region::builder(&mut region, &clone_planet, crash);
+    {
+    PLANET_BUILD.lock().region = Some(region);
+    }
+
+    // Save
+    save_world();
 
     // It's all done
     set_worldgen_status("Done");
+    {
     PLANET_BUILD.lock().done = true;
+    }
 }
 
 fn save_world() {
+    use std::io::Write;
     set_worldgen_status("Saving the world. To disk, sadly.");
-    let world_file = File::create("world.dat").unwrap();
-    let clone_planet = &PLANET_BUILD.lock().planet.clone();
-    serde_cbor::to_writer(world_file, &clone_planet).unwrap();
+    let plock = PLANET_BUILD.lock();
+    let savegame = super::SavedGame{
+        planet: plock.planet.clone(),
+        current_region: plock.region.as_ref().unwrap().clone()
+    };
+    let mut world_file = File::create("world.dat").unwrap();
+    let tmp = ron::to_string(&savegame).unwrap();
+    let mem_vec = tmp.as_bytes();
+    let mut e = flate2::write::ZlibEncoder::new(Vec::new(), flate2::Compression::default());
+    e.write_all(&mem_vec).expect("Compression fail");
+    let compressed_bytes = e.finish().unwrap();
+    let mut pos = 0;
+    while pos < compressed_bytes.len() {
+        let bytes_written = world_file.write(&compressed_bytes[pos..]).unwrap();
+        pos += bytes_written;
+    }
 }
 
 fn find_crash_site() -> Point {

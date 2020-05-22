@@ -14,6 +14,7 @@ pub enum ProgramMode {
     MainMenu,
     PlanetGen,
     PlanetGen2,
+    Resume,
     PlayGame,
     Quit,
 }
@@ -57,18 +58,39 @@ impl Program {
             ProgramMode::MainMenu => self.mainmenu.tick(gl, &self.resources, ui, ctx),
             ProgramMode::PlanetGen => self.planetgen.tick(gl, &self.resources, ui),
             ProgramMode::PlanetGen2 => self.planetgen2.tick(gl, &self.resources, ui, ctx),
-            ProgramMode::PlayGame => {
+            ProgramMode::Resume => {
                 if self.play.is_none() {
-                    self.play = Some(play::PlayGame::new());
+                    self.play = Some(play::PlayGame::new(self.load_game(), gl, ctx));
                 }
-                self.play.as_mut().unwrap().tick(gl, ui)
+                ProgramMode::PlayGame
+            }
+            ProgramMode::PlayGame => {
+                self.play.as_mut().unwrap().tick(gl, ui, ctx)
             }
             _ => self.mode
         };
         true
     }
 
-    pub fn on_resize(&mut self, gl: &Gl, new_size: Point) {
+    pub fn on_resize(&mut self, _gl: &Gl, _new_size: Point) {
 
+    }
+
+    fn load_game(&self) -> crate::planet::SavedGame {
+        use std::path::Path;
+        use std::fs::File;
+        use std::io::Read;
+        let savepath = Path::new("world.dat");
+        if !savepath.exists() {
+            panic!("Saved game doesn't exist");
+        }
+
+        let f = File::open(&savepath).expect("Unable to open file");
+        let mut d = flate2::read::ZlibDecoder::new(f);
+        let mut s = String::new();
+        d.read_to_string(&mut s).unwrap();
+
+        let saved : crate::planet::SavedGame = ron::from_str(&s).unwrap();
+        saved
     }
 }

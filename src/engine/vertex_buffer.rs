@@ -125,4 +125,8 @@ impl VertexArray {
         self.vertex_buffer.push(c);
         self.vertex_buffer.push(d);
     }
+
+    pub fn add_slice(&mut self, s: &[f32]) {
+        self.vertex_buffer.extend_from_slice(s);
+    }
 }
