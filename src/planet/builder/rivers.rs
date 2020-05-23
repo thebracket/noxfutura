@@ -3,6 +3,7 @@ use crate::planet::{planet_idx, BlockType, Planet, River, RiverStep, WORLD_HEIGH
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
 use std::collections::HashSet;
+use crate::region::HeightType;
 
 pub fn run_rivers() {
     set_worldgen_status("Running Rivers");
@@ -39,7 +40,7 @@ pub fn run_rivers() {
         let mut y = river.start.y;
 
         while !done {
-            let mut candidates: Vec<(u8, usize)> = Vec::new();
+            let mut candidates: Vec<(HeightType, usize)> = Vec::new();
             candidate(
                 &used_starts,
                 &used_steps,
@@ -97,7 +98,7 @@ fn candidate(
     x: i32,
     y: i32,
     planet: &Planet,
-    candidates: &mut Vec<(u8, usize)>,
+    candidates: &mut Vec<(HeightType, usize)>,
 ) {
     if x < 0 || x > WORLD_WIDTH as i32 - 1 || y < 0 || y > WORLD_HEIGHT as i32 - 1 {
         return;

@@ -1,5 +1,6 @@
 use super::{Biome, Block, River};
 use serde::{Deserialize, Serialize};
+use crate::region::HeightType;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Planet {
@@ -12,9 +13,9 @@ pub struct Planet {
     pub starting_settlers: i32,
     pub strict_beamdown: bool,
 
-    pub water_height: u8,
-    pub plains_height: u8,
-    pub hills_height: u8,
+    pub water_height: HeightType,
+    pub plains_height: HeightType,
+    pub hills_height: HeightType,
 
     pub landblocks: Vec<Block>,
     pub biomes: Vec<Biome>,

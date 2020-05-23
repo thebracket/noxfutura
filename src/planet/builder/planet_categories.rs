@@ -1,16 +1,17 @@
 use super::{set_worldgen_status, PLANET_BUILD};
 use crate::planet::{planet_idx, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
+use crate::region::HeightType;
 
-pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
+pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> HeightType {
     let mut count = 0usize;
     while count < target as usize {
         count = planet
             .landblocks
             .iter()
-            .filter(|b| b.height <= *candidate as u8)
+            .filter(|b| b.height <= *candidate as HeightType)
             .count();
         if count >= target as usize {
-            return *candidate as u8;
+            return *candidate as HeightType;
         } else {
             *candidate += 1;
         }

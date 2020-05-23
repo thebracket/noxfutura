@@ -4,15 +4,18 @@ use bracket_geometry::prelude::*;
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;
 
-pub fn build_empty_heightmap() -> Vec<u8> {
-    vec![0u8; (REGION_WIDTH * REGION_HEIGHT) as usize]
+pub type HeightType = u16;
+pub type HeightMap = Vec<HeightType>;
+
+pub fn build_empty_heightmap() -> HeightMap {
+    vec![0 as HeightType; (REGION_WIDTH * REGION_HEIGHT) as usize]
 }
 
 pub fn build_heightmap_from_noise(
-    hm: &mut Vec<u8>,
+    hm: &mut HeightMap,
     crash_site: Point,
     perlin_seed: u64,
-    variance: u8,
+    variance: HeightType,
 ) {
     use crate::planet::noise_helper::*;
 
@@ -46,7 +49,7 @@ pub fn build_heightmap_from_noise(
         noise2.set_fractal_lacunarity(2.0);
         noise2.set_frequency(0.05);
 
-        let v = (variance as f32) * 2.0;
+        let v = variance as f32;
         println!("Variance: {}", variance);
         for y in 0..REGION_HEIGHT {
             let lat = noise_lat(crash_site.y as usize, y);
@@ -57,14 +60,8 @@ pub fn build_heightmap_from_noise(
                 //println!("{}", nh);
                 let cell_idx = ((y * REGION_WIDTH) + x) as usize;
                 let old_h = hm[cell_idx] as f32;
-                let mut new_h = old_h + (nh * v);
-                if new_h < 0.0 {
-                    new_h = 0.0
-                }
-                if new_h > 255.0 {
-                    new_h = 255.0
-                }
-                hm[cell_idx] = new_h as u8;
+                let new_h = old_h + (nh * v);
+                hm[cell_idx] = new_h as HeightType;
             }
         }
     }
@@ -72,9 +69,9 @@ pub fn build_heightmap_from_noise(
 
 pub fn create_subregions(
     rng: &mut RandomNumberGenerator,
-    variance: u8,
-    hm: &mut Vec<u8>,
-    water: &mut Vec<u8>,
+    variance: HeightType,
+    hm: &mut HeightMap,
+    water: &mut HeightMap,
     biome: &crate::planet::Biome,
 ) {
     let center_point = Point::new(REGION_WIDTH / 2, REGION_HEIGHT / 2);
@@ -127,11 +124,11 @@ pub fn create_subregions(
             if DistanceAlg::Pythagoras.distance2d(Point::new(x, y), center_point) > 20.0 {
                 if delta_z == -10 {
                     let h = hm[tile_idx] as i32;
-                    hm[tile_idx] = (h + delta_z) as u8;
-                    water[tile_idx] = h as u8 - 2;
+                    hm[tile_idx] = (h + delta_z) as HeightType;
+                    water[tile_idx] = h as HeightType - 2;
                 } else {
                     let h = hm[tile_idx] as i32;
-                    hm[tile_idx] = (h + delta_z) as u8;
+                    hm[tile_idx] = (h + delta_z) as HeightType;
                 }
             } else {
                 // Ensure the crash site is clear

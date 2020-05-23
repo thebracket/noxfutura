@@ -1,10 +1,11 @@
 use super::BlockType;
 use serde::{Deserialize, Serialize};
+use crate::region::HeightType;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Block {
-    pub height: u8,
-    pub variance: u8,
+    pub height: HeightType,
+    pub variance: HeightType,
     pub btype: BlockType,
     pub temperature: i8,
     pub rainfall: i8,

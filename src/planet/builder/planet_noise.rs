@@ -6,6 +6,7 @@ use crate::planet::{
 use crate::utils::sphere_vertex;
 use bracket_geometry::prelude::Degrees;
 use bracket_noise::prelude::*;
+use crate::region::HeightType;
 
 pub(crate) fn zero_fill() {
     set_worldgen_status("Building initial ball of mud");
@@ -40,7 +41,7 @@ pub(crate) fn planetary_noise() {
             let mut total_height = 0u32;
 
             let mut max = 0;
-            let mut min = std::u8::MAX;
+            let mut min = HeightType::MAX;
             let mut n_tiles = 0;
             for y1 in 0..REGION_HEIGHT / REGION_FRACTION_TO_CONSIDER {
                 for x1 in 0..REGION_WIDTH / REGION_FRACTION_TO_CONSIDER {
@@ -66,7 +67,7 @@ pub(crate) fn planetary_noise() {
 
             let pidx = planet_idx(x, y);
             let mut planet = PLANET_BUILD.lock();
-            planet.planet.landblocks[pidx].height = (total_height / n_tiles as u32) as u8;
+            planet.planet.landblocks[pidx].height = (total_height / n_tiles as u32) as HeightType;
             //println!("{}", planet.planet.landblocks[pidx].height);
             planet.planet.landblocks[pidx].btype = BlockType::None;
             planet.planet.landblocks[pidx].variance = max - min;
@@ -89,12 +90,5 @@ pub(crate) fn planetary_noise() {
             "Dividing heavens from the earth: {}%",
             (percent * 100.0) as u8
         ));
-
-        /*if y % 10 == 0 {
-            let planet_copy = PLANET_BUILD.lock().planet.clone();
-            super::WORLDGEN_RENDER
-                .lock()
-                .planet_with_altitude(planet_copy);
-        }*/
     }
 }

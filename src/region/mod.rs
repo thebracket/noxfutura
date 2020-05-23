@@ -2,7 +2,7 @@ pub use crate::planet::{Planet, REGION_DEPTH, REGION_HEIGHT, REGION_TILES_COUNT,
 mod tiletype;
 pub use tiletype::TileType;
 mod builder;
-pub use builder::builder;
+pub use builder::{builder, HeightType, HeightMap};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]

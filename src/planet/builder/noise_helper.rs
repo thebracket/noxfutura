@@ -1,4 +1,5 @@
 use crate::planet::{REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_WIDTH};
+use crate::region::HeightType;
 
 pub(crate) fn lat_to_y(lat: f32) -> usize {
     let mut y = (((lat + 90.0) / 180.0) * WORLD_HEIGHT as f32) as usize;
@@ -33,6 +34,9 @@ pub(crate) fn noise_lat(world_y: usize, region_y: usize) -> f32 {
     //(big_y / WORLD_HEIGHT as f32 * REGION_HEIGHT as f32) * NOISE_SIZE
 }
 
-pub(crate) fn noise_to_planet_height(n: f32) -> u8 {
-    ((n + 1.0) * 150.0) as u8
+const ALTITUDE_SCALE : f32 = 80.0;
+
+pub(crate) fn noise_to_planet_height(n: f32) -> HeightType {
+    let altitude = (n + 1.0) * ALTITUDE_SCALE;
+    altitude as _
 }
