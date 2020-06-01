@@ -3,28 +3,8 @@ name = "noxfutura"
 version = "0.1.0"
 authors = ["Herbert Wolverson <herberticus@gmail.com>"]
 edition = "2018"
-build = "build.rs"
 
 [dependencies]
-glutin = "0.23.0"
-winit = { version = "0.21.0", features = ["web-sys"] }
-imgui = "0.3.0"
-imgui-winit-support = { version = "0.3", default-features = false, features = [ "winit-20" ] }
-bytemuck = "1.2.0"
-image = "0.23.4"
-ultraviolet = "0.4.6"
-bracket-random = "~0.8.0"
-bracket-noise = "~0.8.1"
-bracket-geometry = { version = "~0.8.1", features = ["serde"] }
-lazy_static = "1.4.0"
-parking_lot = "0.10.2"
-serde = { version = "1.0.110" }
-ron = "0.6.0"
-legion = "0.2.1"
-flate2 = "1.0.14"
 
 [profile.dev]
 opt-level = 1
-
-[build-dependencies]
-gl_generator = "0.14.0"
