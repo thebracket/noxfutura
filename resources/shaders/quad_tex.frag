@@ -1,13 +1,11 @@
-#version 430 core
+#version 450
 
-in VS_OUT {
-    in vec2 tex_coords;
-} fs_in;
+layout(location=0) in vec2 v_tex_coords;
+layout(location=0) out vec4 f_color;
 
-out vec4 FragColor;
-
-uniform sampler2D QuadTex;
+layout(set = 0, binding = 0) uniform texture2D t_diffuse;
+layout(set = 0, binding = 1) uniform sampler s_diffuse;
 
 void main() {
-    FragColor = texture(QuadTex, fs_in.tex_coords);
+    f_color = texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords);
 }

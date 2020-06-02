@@ -5,8 +5,11 @@ layout(location=1) in vec4 a_color;
 
 layout(location=0) out vec4 v_color;
 
-uniform mat4 u_view_proj;
-uniform float rot_angle;
+layout(set=0, binding=0) 
+uniform Uniforms {
+    mat4 u_view_proj;
+    float rot_angle;
+};
 
 mat4 rotation3d(vec3 axis, float angle) {
   axis = normalize(axis);
