@@ -66,7 +66,7 @@ pub fn add_point(
     altitude: f32,
     color: &[f32; 4],
 ) {
-    let sphere_coords = sphere_vertex(0.5 + altitude, Degrees::new(lat), Degrees::new(lon));
+    let sphere_coords = sphere_vertex(0.75 + altitude, Degrees::new(lat), Degrees::new(lon));
     vertex_buffer.add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
     let mut normals = ultraviolet::Vec3::from(sphere_coords);
     normals.normalize();

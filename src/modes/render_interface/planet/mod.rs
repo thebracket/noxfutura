@@ -4,7 +4,7 @@ use parking_lot::Mutex;
 mod planet_render;
 use planet_render::*;
 
-const ALTITUDE_DIVISOR: f32 = 4096.0;
+const ALTITUDE_DIVISOR: f32 = 8192.0;
 
 lazy_static! {
     pub static ref WORLDGEN_RENDER: Mutex<WorldGenPlanetRender> =

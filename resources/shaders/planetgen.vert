@@ -6,6 +6,7 @@ layout(location=2) in vec4 a_color;
 
 layout(location=0) out vec4 v_color;
 layout(location=1) out vec3 v_normal;
+layout(location=2) out vec3 v_frag_pos;
 
 layout(set=0, binding=0) 
 uniform Uniforms {
@@ -30,4 +31,6 @@ mat4 rotation3d(vec3 axis, float angle) {
 void main() {
     gl_Position = u_view_proj * rotation3d(vec3(0.0, 1.0, 0.0), rot_angle) * vec4(a_position, 1.0);
     v_color = a_color;
+    v_frag_pos  = a_position;
+    v_normal = a_normal;
 }
