@@ -1,13 +1,24 @@
 use super::resources::SharedResources;
 use crate::engine::uniforms::UniformBlock;
-use crate::modes::WORLDGEN_RENDER;
 use imgui::*;
 use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},
 };
-use crate::planet::{Planet, Region};
+use crate::planet::{Planet, Region, SavedGame};
 use crate::engine::*;
+use parking_lot::Mutex;
+
+#[derive(Clone)]
+pub enum LoadState {
+    Idle,
+    Loading,
+    Loaded{game : SavedGame}
+}
+
+lazy_static! {
+    pub static ref LOAD_STATE: Mutex<LoadState> = Mutex::new(LoadState::Idle);
+}
 
 pub struct PlayGame {
     pub planet : Option<Planet>,
@@ -25,6 +36,7 @@ pub struct PlayGame {
 
 impl PlayGame {
     pub fn new() -> Self {
+        *LOAD_STATE.lock() = LoadState::Idle;
         Self {
             planet: None,
             current_region : None,
@@ -34,16 +46,31 @@ impl PlayGame {
             uniforms: None,
             camera: None,
             uniform_buffer: None,
-            vb: VertexBuffer::new(&[3, 4])
+            vb: VertexBuffer::new(&[3, 4]),
         }
     }
 
     pub fn load(&mut self) {
-        println!("Loading game");
-        let lg = crate::planet::load_game();
-        self.planet = Some(lg.planet);
-        self.current_region = Some(lg.current_region);
-        println!("Loaded game");
+        *LOAD_STATE.lock() = LoadState::Loading;
+        std::thread::spawn(|| {
+            println!("Loading");
+            let lg = crate::planet::load_game();
+            *LOAD_STATE.lock() = LoadState::Loaded{game: lg};
+            println!("Loaded");
+        });
+    }
+
+    pub fn finish_loading(&mut self) {
+        println!("Finishing load");
+        let locker = LOAD_STATE.lock().clone();
+        match locker {
+            LoadState::Loaded{game} => {
+                self.planet = Some(game.planet);
+                self.current_region = Some(game.current_region);
+            }
+            _ => panic!("Not meant to go here.")
+        }
+        *LOAD_STATE.lock() = LoadState::Idle;
     }
 
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
@@ -87,15 +114,25 @@ impl PlayGame {
 
     pub fn tick(
         &mut self,
-        _resources: &SharedResources,
+        resources: &SharedResources,
         frame: &wgpu::SwapChainOutput,
         context: &mut crate::engine::Context,
-        _ui: &imgui::Ui,
+        imgui: &imgui::Ui,
         depth_id: usize,
     ) -> super::ProgramMode {
+        super::helpers::render_menu_background(context, frame, resources);
+
         self.uniforms.as_mut().unwrap().update_view_proj(&self.camera.as_ref().unwrap());
         self.uniforms.as_ref().unwrap().update_buffer(context, &self.uniform_buffer.as_ref().unwrap());
         self.vb.update_buffer(context);
+
+        let window = imgui::Window::new(im_str!("Playing"));
+        window
+            .size([300.0, 100.0], Condition::FirstUseEver)
+            .build(imgui, || {
+                imgui.text(im_str!("Test"));
+            }
+        );
 
         if self.vb.len() > 0 {
             let mut encoder = renderpass::get_encoder(&context);

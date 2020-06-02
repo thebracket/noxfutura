@@ -12,7 +12,7 @@ use planetgen2::PlanetGen2;
 mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
 mod playgame;
-use playgame::PlayGame;
+use playgame::{PlayGame, LOAD_STATE, LoadState};
 
 pub enum ProgramMode {
     Loader,
@@ -76,11 +76,28 @@ impl Program {
                     .tick(&self.resources, frame, context, imgui, depth_id)
             }
             ProgramMode::Resume => {
-                self.play.load();
-                self.mode = ProgramMode::PlayGame;
+                helpers::render_menu_background(context, frame, &self.resources);
+                use imgui::*;
+                let ls = LOAD_STATE.lock().clone();
+                match ls {
+                    LoadState::Idle => self.play.load(),
+                    LoadState::Loading => {
+                        let window = imgui::Window::new(im_str!("Loading game"));
+                        window
+                            .size([300.0, 100.0], Condition::FirstUseEver)
+                            .build(imgui, || {
+                                imgui.text(im_str!("Please wait..."));
+                            }
+                        );
+                    }
+                    LoadState::Loaded{..} => {
+                        self.play.finish_loading();
+                        self.mode = ProgramMode::PlayGame;
+                    }
+                }
             }
             ProgramMode::PlayGame => {
-                self.play.tick(&self.resources, frame, context, imgui, depth_id);
+                self.mode = self.play.tick(&self.resources, frame, context, imgui, depth_id);
             }
             ProgramMode::Quit => return false,
         }
