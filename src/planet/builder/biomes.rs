@@ -1,7 +1,8 @@
-use super::{set_worldgen_status, PLANET_BUILD, WORLDGEN_RENDER};
+use super::{set_worldgen_status, PLANET_BUILD};
 use crate::planet::{
     planet_idx, Biome, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH,
 };
+use crate::modes::WORLDGEN_RENDER;
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
 use std::collections::HashMap;

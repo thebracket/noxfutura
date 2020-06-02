@@ -1,7 +1,7 @@
-use super::noise_helper::{lat_to_y, lon_to_x};
 use crate::engine::VertexBuffer;
 use crate::planet::{
     planet_idx, Block, BlockType, Planet, REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_WIDTH,
+    noise_helper::{lat_to_y, lon_to_x}
 };
 use crate::utils::sphere_vertex;
 use bracket_geometry::prelude::Degrees;

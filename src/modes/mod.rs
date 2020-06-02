@@ -9,6 +9,8 @@ mod planetgen;
 use planetgen::PlanetGen;
 mod planetgen2;
 use planetgen2::PlanetGen2;
+mod render_interface;
+pub use render_interface::WORLDGEN_RENDER;
 
 pub enum ProgramMode {
     Loader,

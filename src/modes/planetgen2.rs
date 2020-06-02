@@ -1,6 +1,6 @@
 use super::resources::SharedResources;
 use crate::engine::uniforms::UniformBlock;
-use crate::planet::WORLDGEN_RENDER;
+use crate::modes::WORLDGEN_RENDER;
 use imgui::*;
 use ultraviolet::{
     mat::Mat4,

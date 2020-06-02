@@ -92,7 +92,7 @@ pub(crate) fn planetary_noise() {
 
         if y % 10 == 0 {
             let planet_copy = PLANET_BUILD.lock().planet.clone();
-            super::WORLDGEN_RENDER
+            use crate::modes::WORLDGEN_RENDER;WORLDGEN_RENDER
                 .lock()
                 .planet_with_altitude(planet_copy);
         }

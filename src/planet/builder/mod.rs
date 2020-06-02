@@ -3,8 +3,6 @@ use parking_lot::Mutex;
 pub mod noise_helper;
 mod planet_categories;
 mod planet_noise;
-mod render_interface;
-pub use render_interface::WORLDGEN_RENDER;
 mod biomes;
 mod rivers;
 use crate::region::Region;

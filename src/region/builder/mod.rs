@@ -8,6 +8,7 @@ mod strata;
 pub mod chunks;
 mod primitive;
 pub use primitive::Primitive;
+use crate::modes::WORLDGEN_RENDER;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     crate::planet::set_flatmap_status(true);
@@ -22,7 +23,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
 
     set_worldgen_status("Establishing ground altitude");
     let mut hm = heightmap::build_empty_heightmap();
-    crate::planet::WORLDGEN_RENDER
+    WORLDGEN_RENDER
         .lock()
         .region_heightmap(&hm, planet.water_height, &pooled_water);
     heightmap::build_heightmap_from_noise(
@@ -31,7 +32,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
         planet.perlin_seed,
         planet.landblocks[planet_idx(crash_site.x as usize, crash_site.y as usize)].variance,
     );
-    crate::planet::WORLDGEN_RENDER
+    WORLDGEN_RENDER
         .lock()
         .region_heightmap(&hm, planet.water_height, &pooled_water);
 
@@ -43,13 +44,13 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
         &mut pooled_water,
         &biome,
     );
-    crate::planet::WORLDGEN_RENDER
+    WORLDGEN_RENDER
         .lock()
         .region_heightmap(&hm, planet.water_height, &pooled_water);
 
     set_worldgen_status("Adding water features");
     water_features::just_add_water(planet, region, &mut pooled_water, &mut hm, &mut rng);
-    crate::planet::WORLDGEN_RENDER
+    WORLDGEN_RENDER
         .lock()
         .region_heightmap(&hm, planet.water_height, &pooled_water);
 
@@ -63,7 +64,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     /*crate::planet::WORLDGEN_RENDER
         .lock()
         .region_display(region.clone());*/
-    crate::planet::WORLDGEN_RENDER
+    WORLDGEN_RENDER
         .lock()
         .region_display_primitives(primitives);
 
