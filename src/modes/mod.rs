@@ -11,12 +11,16 @@ mod planetgen2;
 use planetgen2::PlanetGen2;
 mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
+mod playgame;
+use playgame::PlayGame;
 
 pub enum ProgramMode {
     Loader,
     MainMenu,
     PlanetGen,
     PlanetGen2,
+    Resume,
+    PlayGame,
     Quit,
 }
 
@@ -27,6 +31,7 @@ pub struct Program {
     main_menu: MainMenu,
     planet_gen: PlanetGen,
     planet_gen2: PlanetGen2,
+    play: PlayGame
 }
 
 impl Program {
@@ -38,12 +43,14 @@ impl Program {
             main_menu: MainMenu::new(),
             planet_gen: PlanetGen::new(),
             planet_gen2: PlanetGen2::new(),
+            play: PlayGame::new()
         }
     }
 
     pub fn init(&mut self, context: &mut crate::engine::Context) {
         self.resources.init(context);
         self.planet_gen2.setup(context);
+        self.play.setup(context);
     }
 
     pub fn tick(
@@ -67,6 +74,13 @@ impl Program {
                 self.mode = self
                     .planet_gen2
                     .tick(&self.resources, frame, context, imgui, depth_id)
+            }
+            ProgramMode::Resume => {
+                self.play.load();
+                self.mode = ProgramMode::PlayGame;
+            }
+            ProgramMode::PlayGame => {
+                self.play.tick(&self.resources, frame, context, imgui, depth_id);
             }
             ProgramMode::Quit => return false,
         }

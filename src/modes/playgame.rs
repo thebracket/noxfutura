@@ -6,38 +6,54 @@ use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},
 };
+use crate::planet::{Planet, Region};
+use crate::engine::*;
 
-pub struct PlanetGen2 {
+pub struct PlayGame {
+    pub planet : Option<Planet>,
+    pub current_region : Option<Region>,
+
+    // Internals
     planet_shader: usize,
     planet_pipeline: Option<wgpu::RenderPipeline>,
     uniform_bind_group: Option<wgpu::BindGroup>,
     uniforms: Option<Uniforms>,
     camera: Option<Camera>,
     uniform_buffer: Option<wgpu::Buffer>,
+    vb : VertexBuffer<f32>
 }
 
-impl PlanetGen2 {
+impl PlayGame {
     pub fn new() -> Self {
         Self {
-            planet_shader: 0,
+            planet: None,
+            current_region : None,
+            planet_shader : 0,
             planet_pipeline: None,
             uniform_bind_group: None,
             uniforms: None,
             camera: None,
             uniform_buffer: None,
+            vb: VertexBuffer::new(&[3, 4])
         }
     }
 
-    pub fn setup(&mut self, context: &mut crate::engine::Context) {
-        use crate::engine::*;
+    pub fn load(&mut self) {
+        println!("Loading game");
+        let lg = crate::planet::load_game();
+        self.planet = Some(lg.planet);
+        self.current_region = Some(lg.current_region);
+        println!("Loaded game");
+    }
 
-        let mut renderlock = WORLDGEN_RENDER.lock();
-        renderlock
-            .vertex_buffer
-            .build(&context.device, wgpu::BufferUsage::VERTEX);
+    pub fn setup(&mut self, context: &mut crate::engine::Context) {
+
+        crate::utils::add_cube_geometry(&mut self.vb, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        self.vb.build(&context.device, wgpu::BufferUsage::VERTEX);
+
         self.planet_shader = context.register_shader(
-            "resources/shaders/planetgen.vert",
-            "resources/shaders/planetgen.frag",
+            "resources/shaders/regionblocks.vert",
+            "resources/shaders/regionblocks.frag",
         );
 
         // Uniforms and camera etc.
@@ -63,53 +79,25 @@ impl PlanetGen2 {
             .depth_buffer()
             .vertex_state(
                 wgpu::IndexFormat::Uint16,
-                &[renderlock.vertex_buffer.descriptor()],
+                &[self.vb.descriptor()],
             )
             .build(&context.device);
         self.planet_pipeline = Some(render_pipeline);
     }
 
-    fn background_and_status(
-        &mut self,
-        resources: &SharedResources,
-        frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
-        ui: &imgui::Ui,
-    ) {
-        super::helpers::render_menu_background(context, frame, resources);
-
-        imgui::Window::new(im_str!("Status"))
-            .position([10.0, 10.0], Condition::Always)
-            .always_auto_resize(true)
-            .collapsible(false)
-            .build(ui, || {
-                ui.text(ImString::new(crate::planet::get_worldgen_status()));
-            });
-    }
-
     pub fn tick(
         &mut self,
-        resources: &SharedResources,
+        _resources: &SharedResources,
         frame: &wgpu::SwapChainOutput,
         context: &mut crate::engine::Context,
-        ui: &imgui::Ui,
+        _ui: &imgui::Ui,
         depth_id: usize,
     ) -> super::ProgramMode {
-        use crate::engine::renderpass;
-        self.background_and_status(resources, frame, context, ui);
+        self.uniforms.as_mut().unwrap().update_view_proj(&self.camera.as_ref().unwrap());
+        self.uniforms.as_ref().unwrap().update_buffer(context, &self.uniform_buffer.as_ref().unwrap());
+        self.vb.update_buffer(context);
 
-        if let Some(uniforms) = self.uniforms.as_mut() {
-            uniforms.update_view_proj(self.camera.as_ref().unwrap());
-            uniforms.update_buffer(context, self.uniform_buffer.as_ref().unwrap());
-        }
-
-        let mut renderlock = WORLDGEN_RENDER.lock();
-        if renderlock.needs_update {
-            renderlock.vertex_buffer.update_buffer(&context);
-            renderlock.needs_update = false;
-        }
-
-        if renderlock.vertex_buffer.len() > 0 {
+        if self.vb.len() > 0 {
             let mut encoder = renderpass::get_encoder(&context);
             {
                 let mut rpass = renderpass::get_render_pass_with_depth(
@@ -119,27 +107,21 @@ impl PlanetGen2 {
                     depth_id,
                     wgpu::LoadOp::Load,
                 );
-                rpass.set_pipeline(self.planet_pipeline.as_ref().unwrap());
-                rpass.set_bind_group(0, self.uniform_bind_group.as_ref().unwrap(), &[]);
+                rpass.set_pipeline(&self.planet_pipeline.as_ref().unwrap());
+                rpass.set_bind_group(0, &self.uniform_bind_group.as_ref().unwrap(), &[]);
                 rpass.set_vertex_buffer(
                     0,
-                    &renderlock.vertex_buffer.buffer.as_ref().unwrap(),
+                    &self.vb.buffer.as_ref().unwrap(),
                     0,
                     0,
                 );
-                rpass.draw(0..renderlock.vertex_buffer.len(), 0..1);
+                rpass.draw(0..self.vb.len(), 0..1);
                 //rpass.draw(0..1, 0..1);
             }
             context.queue.submit(&[encoder.finish()]);
         }
 
-        if crate::planet::PLANET_BUILD.lock().done {
-            return super::ProgramMode::MainMenu;
-        }
-
-        std::mem::drop(renderlock);
-
-        super::ProgramMode::PlanetGen2
+        super::ProgramMode::PlayGame
     }
 }
 

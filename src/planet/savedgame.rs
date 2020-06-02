@@ -23,3 +23,20 @@ pub fn save_world(state : SavedGame) {
         pos += bytes_written;
     }
 }
+
+pub fn load_game() -> crate::planet::SavedGame {
+    use std::path::Path;
+    use std::io::Read;
+    let savepath = Path::new("world.dat");
+    if !savepath.exists() {
+        panic!("Saved game doesn't exist");
+    }
+
+    let f = File::open(&savepath).expect("Unable to open file");
+    let mut d = flate2::read::ZlibDecoder::new(f);
+    let mut s = String::new();
+    d.read_to_string(&mut s).unwrap();
+
+    let saved : crate::planet::SavedGame = ron::from_str(&s).unwrap();
+    saved
+}
