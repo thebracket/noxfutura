@@ -19,7 +19,7 @@ pub struct WorldGenPlanetRender {
 impl WorldGenPlanetRender {
     fn new() -> Self {
         let mut wgpr = Self {
-            vertex_buffer: VertexBuffer::new(&[3, 4]),
+            vertex_buffer: VertexBuffer::new(&[3, 3, 4]),
             needs_update: false,
         };
         build_blank_planet(&mut wgpr.vertex_buffer);

@@ -68,7 +68,9 @@ pub fn add_point(
 ) {
     let sphere_coords = sphere_vertex(0.5 + altitude, Degrees::new(lat), Degrees::new(lon));
     vertex_buffer.add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
-
+    let mut normals = ultraviolet::Vec3::from(sphere_coords);
+    normals.normalize();
+    vertex_buffer.add3(normals.x, normals.y, normals.z);
     vertex_buffer.add4(color[0], color[1], color[2], color[3]);
 }
 
