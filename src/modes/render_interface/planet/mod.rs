@@ -1,13 +1,12 @@
 use crate::engine::VertexBuffer;
 use crate::planet::{
-    planet_idx, Planet, REGION_HEIGHT, REGION_WIDTH,
-    noise_helper::{lat_to_y, lon_to_x}
+    Planet, REGION_HEIGHT, REGION_WIDTH,
 };
 use parking_lot::Mutex;
 mod planet_render;
 use planet_render::*;
 
-const ALTITUDE_DIVISOR: f32 = 8192.0;
+const ALTITUDE_DIVISOR: f32 = 4096.0;
 
 lazy_static! {
     pub static ref WORLDGEN_RENDER: Mutex<WorldGenPlanetRender> =
