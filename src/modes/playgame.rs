@@ -1,19 +1,19 @@
 use super::resources::SharedResources;
 use crate::engine::uniforms::UniformBlock;
+use crate::engine::*;
+use crate::planet::{Planet, Region, SavedGame};
 use imgui::*;
+use parking_lot::Mutex;
 use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},
 };
-use crate::planet::{Planet, Region, SavedGame};
-use crate::engine::*;
-use parking_lot::Mutex;
 
 #[derive(Clone)]
 pub enum LoadState {
     Idle,
     Loading,
-    Loaded{game : SavedGame}
+    Loaded { game: SavedGame },
 }
 
 lazy_static! {
@@ -21,8 +21,8 @@ lazy_static! {
 }
 
 pub struct PlayGame {
-    pub planet : Option<Planet>,
-    pub current_region : Option<Region>,
+    pub planet: Option<Planet>,
+    pub current_region: Option<Region>,
 
     // Internals
     planet_shader: usize,
@@ -31,7 +31,8 @@ pub struct PlayGame {
     uniforms: Option<Uniforms>,
     camera: Option<Camera>,
     uniform_buffer: Option<wgpu::Buffer>,
-    vb : VertexBuffer<f32>
+    vb: VertexBuffer<f32>,
+    rebuild_geometry: bool,
 }
 
 impl PlayGame {
@@ -39,14 +40,15 @@ impl PlayGame {
         *LOAD_STATE.lock() = LoadState::Idle;
         Self {
             planet: None,
-            current_region : None,
-            planet_shader : 0,
+            current_region: None,
+            planet_shader: 0,
             planet_pipeline: None,
             uniform_bind_group: None,
             uniforms: None,
             camera: None,
             uniform_buffer: None,
             vb: VertexBuffer::new(&[3, 4]),
+            rebuild_geometry: true,
         }
     }
 
@@ -55,7 +57,7 @@ impl PlayGame {
         std::thread::spawn(|| {
             println!("Loading");
             let lg = crate::planet::load_game();
-            *LOAD_STATE.lock() = LoadState::Loaded{game: lg};
+            *LOAD_STATE.lock() = LoadState::Loaded { game: lg };
             println!("Loaded");
         });
     }
@@ -64,17 +66,16 @@ impl PlayGame {
         println!("Finishing load");
         let locker = LOAD_STATE.lock().clone();
         match locker {
-            LoadState::Loaded{game} => {
+            LoadState::Loaded { game } => {
                 self.planet = Some(game.planet);
                 self.current_region = Some(game.current_region);
             }
-            _ => panic!("Not meant to go here.")
+            _ => panic!("Not meant to go here."),
         }
         *LOAD_STATE.lock() = LoadState::Idle;
     }
 
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
-
         crate::utils::add_cube_geometry(&mut self.vb, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         self.vb.build(&context.device, wgpu::BufferUsage::VERTEX);
 
@@ -104,10 +105,7 @@ impl PlayGame {
             .layout(&pipeline_layout)
             .vf_shader(&context, self.planet_shader)
             .depth_buffer()
-            .vertex_state(
-                wgpu::IndexFormat::Uint16,
-                &[self.vb.descriptor()],
-            )
+            .vertex_state(wgpu::IndexFormat::Uint16, &[self.vb.descriptor()])
             .build(&context.device);
         self.planet_pipeline = Some(render_pipeline);
     }
@@ -120,10 +118,41 @@ impl PlayGame {
         imgui: &imgui::Ui,
         depth_id: usize,
     ) -> super::ProgramMode {
+        use crate::planet::Primitive;
         super::helpers::render_menu_background(context, frame, resources);
 
-        self.uniforms.as_mut().unwrap().update_view_proj(&self.camera.as_ref().unwrap());
-        self.uniforms.as_ref().unwrap().update_buffer(context, &self.uniform_buffer.as_ref().unwrap());
+        if self.rebuild_geometry {
+            if let Some(region) = &self.current_region {
+                self.vb.clear();
+                let mut chunks = crate::planet::chunks::Chunks::empty();
+                chunks.rebuild_all(region);
+                for p in chunks.all_geometry().iter() {
+                    match *p {
+                        Primitive::Cube { x, y, z, w, d, h } => {
+                            crate::utils::add_cube_geometry(
+                                &mut self.vb,
+                                x as f32,
+                                y as f32,
+                                z as f32,
+                                w as f32,
+                                h as f32,
+                                d as f32,
+                            );
+                        }
+                    }
+                }
+            }
+            self.rebuild_geometry = false;
+        }
+
+        self.uniforms
+            .as_mut()
+            .unwrap()
+            .update_view_proj(&self.camera.as_ref().unwrap());
+        self.uniforms
+            .as_ref()
+            .unwrap()
+            .update_buffer(context, &self.uniform_buffer.as_ref().unwrap());
         self.vb.update_buffer(context);
 
         let window = imgui::Window::new(im_str!("Playing"));
@@ -131,8 +160,7 @@ impl PlayGame {
             .size([300.0, 100.0], Condition::FirstUseEver)
             .build(imgui, || {
                 imgui.text(im_str!("Test"));
-            }
-        );
+            });
 
         if self.vb.len() > 0 {
             let mut encoder = renderpass::get_encoder(&context);
@@ -146,12 +174,7 @@ impl PlayGame {
                 );
                 rpass.set_pipeline(&self.planet_pipeline.as_ref().unwrap());
                 rpass.set_bind_group(0, &self.uniform_bind_group.as_ref().unwrap(), &[]);
-                rpass.set_vertex_buffer(
-                    0,
-                    &self.vb.buffer.as_ref().unwrap(),
-                    0,
-                    0,
-                );
+                rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
                 rpass.draw(0..self.vb.len(), 0..1);
                 //rpass.draw(0..1, 0..1);
             }
@@ -200,7 +223,7 @@ pub struct Camera {
 impl Camera {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
-            eye: (0.0, 2.0, 2.0).into(),
+            eye: (0.0, 200.0, 200.0).into(),
             target: (0.0, 0.0, 0.0).into(),
             up: Vec3::unit_y(),
             aspect: width as f32 / height as f32,

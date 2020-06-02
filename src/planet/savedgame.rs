@@ -1,15 +1,15 @@
-use serde::{Deserialize, Serialize};
 use super::Planet;
 use super::Region;
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct SavedGame {
-    pub planet : Planet,
-    pub current_region : Region
+    pub planet: Planet,
+    pub current_region: Region,
 }
 
-pub fn save_world(state : SavedGame) {
+pub fn save_world(state: SavedGame) {
     use std::io::Write;
     let mut world_file = File::create("world.dat").unwrap();
     let tmp = ron::to_string(&state).unwrap();
@@ -25,8 +25,8 @@ pub fn save_world(state : SavedGame) {
 }
 
 pub fn load_game() -> crate::planet::SavedGame {
-    use std::path::Path;
     use std::io::Read;
+    use std::path::Path;
     let savepath = Path::new("world.dat");
     if !savepath.exists() {
         panic!("Saved game doesn't exist");
@@ -37,6 +37,6 @@ pub fn load_game() -> crate::planet::SavedGame {
     let mut s = String::new();
     d.read_to_string(&mut s).unwrap();
 
-    let saved : crate::planet::SavedGame = ron::from_str(&s).unwrap();
+    let saved: crate::planet::SavedGame = ron::from_str(&s).unwrap();
     saved
 }

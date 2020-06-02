@@ -30,11 +30,11 @@ pub fn greedy_cubes(mut cube_index: HashSet<usize>) -> Vec<Primitive> {
         }
     }
 
-    println!(
+    /*println!(
         "Compressed {} cubes into {} primitives",
         original_size,
         p.len()
-    );
+    );*/
     p
 }
 

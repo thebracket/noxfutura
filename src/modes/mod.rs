@@ -12,7 +12,7 @@ use planetgen2::PlanetGen2;
 mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
 mod playgame;
-use playgame::{PlayGame, LOAD_STATE, LoadState};
+use playgame::{LoadState, PlayGame, LOAD_STATE};
 
 pub enum ProgramMode {
     Loader,
@@ -31,7 +31,7 @@ pub struct Program {
     main_menu: MainMenu,
     planet_gen: PlanetGen,
     planet_gen2: PlanetGen2,
-    play: PlayGame
+    play: PlayGame,
 }
 
 impl Program {
@@ -43,7 +43,7 @@ impl Program {
             main_menu: MainMenu::new(),
             planet_gen: PlanetGen::new(),
             planet_gen2: PlanetGen2::new(),
-            play: PlayGame::new()
+            play: PlayGame::new(),
         }
     }
 
@@ -87,17 +87,18 @@ impl Program {
                             .size([300.0, 100.0], Condition::FirstUseEver)
                             .build(imgui, || {
                                 imgui.text(im_str!("Please wait..."));
-                            }
-                        );
+                            });
                     }
-                    LoadState::Loaded{..} => {
+                    LoadState::Loaded { .. } => {
                         self.play.finish_loading();
                         self.mode = ProgramMode::PlayGame;
                     }
                 }
             }
             ProgramMode::PlayGame => {
-                self.mode = self.play.tick(&self.resources, frame, context, imgui, depth_id);
+                self.mode = self
+                    .play
+                    .tick(&self.resources, frame, context, imgui, depth_id);
             }
             ProgramMode::Quit => return false,
         }

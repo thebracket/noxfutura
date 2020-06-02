@@ -68,7 +68,7 @@ fn threaded_builder() {
     planet_categories::planet_rainfall();
     biomes::build_biomes();
     rivers::run_rivers();
-    // History    
+    // History
 
     // Find crash site
     let crash = find_crash_site();
@@ -92,12 +92,10 @@ fn save_world(region: Region) {
     use super::{save_world, SavedGame};
     set_worldgen_status("Saving the world. To disk, sadly.");
     let pclone = PLANET_BUILD.lock().planet.clone();
-    save_world(
-        SavedGame{
-            planet: pclone,
-            current_region: region
-        }
-    );
+    save_world(SavedGame {
+        planet: pclone,
+        current_region: region,
+    });
 }
 
 fn find_crash_site() -> Point {
@@ -133,4 +131,3 @@ pub fn set_worldgen_status<S: ToString>(status: S) {
 pub fn get_worldgen_status() -> String {
     PLANET_BUILD.lock().task.clone()
 }
-

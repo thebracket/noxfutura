@@ -7,7 +7,6 @@ mod heightmap;
 mod primitive;
 mod strata;
 mod water_features;
-use crate::modes::WORLDGEN_RENDER;
 pub use primitive::Primitive;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {

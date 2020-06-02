@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
 pub use crate::planet::{Planet, REGION_DEPTH, REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH};
+use serde::{Deserialize, Serialize};
 mod tiletype;
 pub use tiletype::TileType;
 mod builder;
-pub use builder::{builder, chunks::Primitive};
+pub use builder::*;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Region {
