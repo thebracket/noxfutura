@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use super::Planet;
-use crate::region::Region;
+use super::Region;
 use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize)]

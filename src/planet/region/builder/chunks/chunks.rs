@@ -1,5 +1,5 @@
 use super::{Chunk, Primitive, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_WIDTH};
-use crate::region::Region;
+use crate::planet::Region;
 
 pub struct Chunks {
     chunks: Vec<Chunk>,

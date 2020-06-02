@@ -1,5 +1,5 @@
 use super::{chunk_idx, ChunkType, Primitive, CHUNK_SIZE};
-use crate::region::{Region, TileType};
+use crate::planet::{Region, TileType};
 use crate::utils::mapidx;
 use std::collections::HashSet;
 

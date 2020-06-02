@@ -1,5 +1,5 @@
 use super::{Primitive, CHUNK_SIZE};
-use crate::region::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use crate::planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use crate::utils::{idxmap, mapidx};
 use std::collections::HashSet;
 

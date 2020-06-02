@@ -5,10 +5,9 @@ pub mod noise_helper;
 mod planet_categories;
 mod planet_noise;
 mod rivers;
-use crate::region::Region;
+use super::Region;
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
-use std::fs::File;
 
 #[derive(Clone)]
 pub struct PlanetParams {
@@ -79,7 +78,7 @@ fn threaded_builder() {
     set_worldgen_status("Erasing the crash site");
     let clone_planet = &PLANET_BUILD.lock().planet.clone();
     let mut region = Region::zeroed(crash_idx, &clone_planet);
-    crate::region::builder(&mut region, &clone_planet, crash);
+    super::region::builder(&mut region, &clone_planet, crash);
 
     // Save
     save_world(region);

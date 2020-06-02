@@ -12,6 +12,8 @@ mod builder;
 pub use builder::*;
 mod savedgame;
 pub use savedgame::*;
+mod region;
+pub use region::*;
 
 pub const WORLD_HEIGHT: usize = 90;
 pub const WORLD_WIDTH: usize = 180;
