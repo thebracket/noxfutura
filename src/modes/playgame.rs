@@ -223,13 +223,13 @@ pub struct Camera {
 impl Camera {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
-            eye: (0.0, 200.0, 200.0).into(),
+            eye: (200.0, 200.0, 200.0).into(),
             target: (0.0, 0.0, 0.0).into(),
             up: Vec3::unit_y(),
             aspect: width as f32 / height as f32,
             fovy: 0.785398,
             znear: 0.01,
-            zfar: 500.0,
+            zfar: 1000.0,
         }
     }
 

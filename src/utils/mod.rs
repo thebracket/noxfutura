@@ -59,24 +59,52 @@ pub fn add_cube_geometry(
     let z1 = z0 + h - (REGION_DEPTH as f32 / 2.0);
 
     let green = z / 256.0;
-    let red = x / 256.0;
+    let red = 0.0;
     //println!("{}", green);
 
+    #[rustfmt::skip]
     let cube_geometry = [
-        x0, y0, z0, red, green, 0.0, 1.0, x1, y1, z0, red, green, 0.0, 1.0, x1, y0, z0, red, green,
-        0.0, 1.0, x1, y1, z0, red, green, 0.0, 1.0, x0, y0, z0, red, green, 0.0, 1.0, x0, y1, z0,
-        red, green, 0.0, 1.0, x0, y0, z1, red, green, 0.0, 1.0, x1, y0, z1, red, green, 0.0, 1.0,
-        x1, y1, z1, red, green, 0.0, 1.0, x1, y1, z1, red, green, 0.0, 1.0, x0, y1, z1, red, green,
-        0.0, 1.0, x0, y0, z1, red, green, 0.0, 1.0, x0, y1, z1, red, green, 0.0, 1.0, x0, y1, z0,
-        red, green, 0.0, 1.0, x0, y0, z0, red, green, 0.0, 1.0, x0, y0, z0, red, green, 0.0, 1.0,
-        x0, y0, z1, red, green, 0.0, 1.0, x0, y1, z1, red, green, 0.0, 1.0, x1, y1, z1, red, green,
-        0.0, 1.0, x1, y0, z0, red, green, 0.0, 1.0, x1, y1, z0, red, green, 0.0, 1.0, x1, y0, z0,
-        red, green, 0.0, 1.0, x1, y1, z1, red, green, 0.0, 1.0, x1, y0, z1, red, green, 0.0, 1.0,
-        x0, y0, z0, red, green, 0.0, 1.0, x1, y0, z0, red, green, 0.0, 1.0, x1, y0, z1, red, green,
-        0.0, 1.0, x1, y0, z1, red, green, 0.0, 1.0, x0, y0, z1, red, green, 0.0, 1.0, x0, y0, z0,
-        red, green, 0.0, 1.0, x1, y1, z1, red, green, 0.0, 1.0, x1, y1, z0, red, green, 0.0, 1.0,
-        x0, y1, z0, red, green, 0.0, 1.0, x0, y1, z0, red, green, 0.0, 1.0, x0, y1, z1, red, green,
-        0.0, 1.0, x1, y1, z1, red, green, 0.0, 1.0,
+        x0, y0, z0, red, green, 0.0, 1.0, 
+        x1, y1, z0, red, green, 0.0, 1.0, 
+        x1, y0, z0, red, green, 0.0, 1.0, 
+        x1, y1, z0, red, green, 0.0, 1.0, 
+        x0, y0, z0, red, green, 0.0, 1.0, 
+        x0, y1, z0, red, green, 0.0, 1.0, 
+
+        x0, y0, z1, red, green, 0.0, 1.0, 
+        x1, y0, z1, red, green, 0.0, 1.0,
+        x1, y1, z1, red, green, 0.0, 1.0, 
+        x1, y1, z1, red, green, 0.0, 1.0, 
+        x0, y1, z1, red, green, 0.0, 1.0, 
+        x0, y0, z1, red, green, 0.0, 1.0, 
+
+        x0, y1, z1, red, green, 0.0, 1.0, 
+        x0, y1, z0, red, green, 0.0, 1.0, 
+        x0, y0, z0, red, green, 0.0, 1.0, 
+        x0, y0, z0, red, green, 0.0, 1.0,
+        x0, y0, z1, red, green, 0.0, 1.0, 
+        x0, y1, z1, red, green, 0.0, 1.0, 
+
+        x1, y1, z1, red, green, 0.0, 1.0, 
+        x1, y0, z0, red, green, 0.0, 1.0, 
+        x1, y1, z0, red, green, 0.0, 1.0, 
+        x1, y0, z0, red, green, 0.0, 1.0, 
+        x1, y1, z1, red, green, 0.0, 1.0, 
+        x1, y0, z1, red, green, 0.0, 1.0,
+
+        x0, y0, z0, red, green, 0.0, 1.0, 
+        x1, y0, z0, red, green, 0.0, 1.0, 
+        x1, y0, z1, red, green, 0.0, 1.0, 
+        x1, y0, z1, red, green, 0.0, 1.0, 
+        x0, y0, z1, red, green, 0.0, 1.0, 
+        x0, y0, z0, red, green, 0.0, 1.0, 
+        
+        x1, y1, z1, red, green, 0.0, 1.0, 
+        x1, y1, z0, red, green, 0.0, 1.0,
+        x0, y1, z0, red, green, 0.0, 1.0, 
+        x0, y1, z0, red, green, 0.0, 1.0, 
+        x0, y1, z1, red, green, 0.0, 1.0, 
+        x1, y1, z1, red, green, 0.0, 1.0,
     ];
     vb.add_slice(&cube_geometry);
 }
