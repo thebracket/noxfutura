@@ -1,15 +1,13 @@
-use super::{CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_DEPTH, Chunk, Primitive};
+use super::{Chunk, Primitive, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_WIDTH};
 use crate::region::Region;
 
 pub struct Chunks {
-    chunks : Vec<Chunk>
+    chunks: Vec<Chunk>,
 }
 
 impl Chunks {
     pub fn empty() -> Self {
-        let mut result = Self {
-            chunks: Vec::new()
-        };
+        let mut result = Self { chunks: Vec::new() };
         for z in 0..CHUNK_DEPTH {
             for y in 0..CHUNK_HEIGHT {
                 for x in 0..CHUNK_WIDTH {
@@ -20,7 +18,7 @@ impl Chunks {
         result
     }
 
-    pub fn rebuild_all(&mut self, region : &Region) {
+    pub fn rebuild_all(&mut self, region: &Region) {
         self.chunks.iter_mut().for_each(|c| c.rebuild(region));
     }
 

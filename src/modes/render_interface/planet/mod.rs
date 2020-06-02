@@ -1,7 +1,5 @@
 use crate::engine::VertexBuffer;
-use crate::planet::{
-    Planet, REGION_HEIGHT, REGION_WIDTH,
-};
+use crate::planet::{Planet, REGION_HEIGHT, REGION_WIDTH};
 use parking_lot::Mutex;
 mod planet_render;
 use planet_render::*;
@@ -36,7 +34,7 @@ impl WorldGenPlanetRender {
                 l.0,
                 l.1,
                 planet.landblocks[l.2].height as f32 / ALTITUDE_DIVISOR,
-                &altitude_to_color(planet.landblocks[l.2].height)
+                &altitude_to_color(planet.landblocks[l.2].height),
             );
         });
         self.needs_update = true;
@@ -50,11 +48,8 @@ impl WorldGenPlanetRender {
                 &mut self.vertex_buffer,
                 l.0,
                 l.1,
-                planet.landblocks[l.2].height as f32
-                    / ALTITUDE_DIVISOR,
-                &landblock_to_color(
-                    &planet.landblocks[l.2],
-                ),
+                planet.landblocks[l.2].height as f32 / ALTITUDE_DIVISOR,
+                &landblock_to_color(&planet.landblocks[l.2]),
             );
         });
         self.needs_update = true;
@@ -68,9 +63,8 @@ impl WorldGenPlanetRender {
                 &mut self.vertex_buffer,
                 l.0,
                 l.1,
-                planet.landblocks[l.2].height as f32
-                    / ALTITUDE_DIVISOR,
-                &biome_to_color(l.2, &planet)
+                planet.landblocks[l.2].height as f32 / ALTITUDE_DIVISOR,
+                &biome_to_color(l.2, &planet),
             );
         });
         self.needs_update = true;
@@ -133,10 +127,18 @@ impl WorldGenPlanetRender {
         self.vertex_buffer.clear();
         primitives.iter().for_each(|p| {
             match *p {
-                crate::region::Primitive::Cube{x, y, z, w, h, d} => {
+                crate::region::Primitive::Cube { x, y, z, w, h, d } => {
                     //println!("{},{},{} .. {},{},{}", x, y, z, w, h, d);
                     //self.add_cube(x, y, z, w, h, d);
-                    crate::utils::add_cube_geometry(&mut self.vertex_buffer, x as f32, y as f32, z as f32, w as f32, h as f32, d as f32);
+                    crate::utils::add_cube_geometry(
+                        &mut self.vertex_buffer,
+                        x as f32,
+                        y as f32,
+                        z as f32,
+                        w as f32,
+                        h as f32,
+                        d as f32,
+                    );
                 }
             }
         });

@@ -1,35 +1,55 @@
 use crate::engine::VertexBuffer;
-use bracket_geometry::prelude::Degrees;
+use crate::planet::{
+    noise_helper::{lat_to_y, lon_to_x},
+    planet_idx, Block, BlockType, Planet, WORLD_HEIGHT, WORLD_WIDTH,
+};
 use crate::utils::sphere_vertex;
-use crate::planet::{Block, BlockType, WORLD_HEIGHT, WORLD_WIDTH, planet_idx, 
-    noise_helper::{lon_to_x, lat_to_y}, Planet};
+use bracket_geometry::prelude::Degrees;
 
 pub type LatLonIdx = (f32, f32, usize);
 pub type LatLonQuad = [LatLonIdx; 6];
 
-pub fn planet_quad_coords(lat: f32, lon: f32, lat_step: f32, lon_step:f32) 
--> LatLonQuad
-{
+pub fn planet_quad_coords(lat: f32, lon: f32, lat_step: f32, lon_step: f32) -> LatLonQuad {
     [
         (lat, lon, planet_idx(lon_to_x(lon), lat_to_y(lat))),
-        (lat, lon + lon_step, planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat))),
-        (lat + lat_step, lon, planet_idx(lon_to_x(lon), lat_to_y(lat + lat_step))),
-        (lat, lon + lon_step, planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat))),
-        (lat + lat_step, lon, planet_idx(lon_to_x(lon), lat_to_y(lat + lat_step))),
-        (lat + lat_step, lon + lon_step, planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat + lat_step))),
+        (
+            lat,
+            lon + lon_step,
+            planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat)),
+        ),
+        (
+            lat + lat_step,
+            lon,
+            planet_idx(lon_to_x(lon), lat_to_y(lat + lat_step)),
+        ),
+        (
+            lat,
+            lon + lon_step,
+            planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat)),
+        ),
+        (
+            lat + lat_step,
+            lon,
+            planet_idx(lon_to_x(lon), lat_to_y(lat + lat_step)),
+        ),
+        (
+            lat + lat_step,
+            lon + lon_step,
+            planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat + lat_step)),
+        ),
     ]
 }
 
-pub fn all_planet_points<F: FnMut(&LatLonIdx)>(mut point_maker : F) {
+pub fn all_planet_points<F: FnMut(&LatLonIdx)>(mut point_maker: F) {
     const LAT_STEP: f32 = 1.0;
     const LON_STEP: f32 = 1.0;
 
     let mut lat = -90.0;
     let mut lon;
 
-    while lat < 90.0-LAT_STEP {
+    while lat < 90.0 - LAT_STEP {
         lon = -180.0;
-        while lon < 180.0-LON_STEP {
+        while lon < 180.0 - LON_STEP {
             planet_quad_coords(lat, lon, LAT_STEP, LON_STEP)
                 .iter()
                 .for_each(|l| point_maker(l));
@@ -39,13 +59,17 @@ pub fn all_planet_points<F: FnMut(&LatLonIdx)>(mut point_maker : F) {
     }
 }
 
-pub fn add_point(vertex_buffer: &mut VertexBuffer<f32>, lat: f32, lon: f32, altitude: f32, color: &[f32; 4]) {
+pub fn add_point(
+    vertex_buffer: &mut VertexBuffer<f32>,
+    lat: f32,
+    lon: f32,
+    altitude: f32,
+    color: &[f32; 4],
+) {
     let sphere_coords = sphere_vertex(0.5 + altitude, Degrees::new(lat), Degrees::new(lon));
-    vertex_buffer
-        .add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
+    vertex_buffer.add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
 
-    vertex_buffer
-        .add4(color[0], color[1], color[2], color[3]);
+    vertex_buffer.add4(color[0], color[1], color[2], color[3]);
 }
 
 pub fn altitude_to_color(altitude: u8) -> [f32; 4] {

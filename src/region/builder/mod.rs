@@ -2,13 +2,13 @@ use super::{Planet, Region};
 use crate::planet::{planet_idx, set_worldgen_status, REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
-mod heightmap;
-mod water_features;
-mod strata;
 pub mod chunks;
+mod heightmap;
 mod primitive;
-pub use primitive::Primitive;
+mod strata;
+mod water_features;
 use crate::modes::WORLDGEN_RENDER;
+pub use primitive::Primitive;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     crate::planet::set_flatmap_status(true);
@@ -62,11 +62,9 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     let primitives = display_chunks.all_geometry();
     println!("Primitives: {}", primitives.len());
     /*crate::planet::WORLDGEN_RENDER
-        .lock()
-        .region_display(region.clone());*/
-    WORLDGEN_RENDER
-        .lock()
-        .region_display_primitives(primitives);
+    .lock()
+    .region_display(region.clone());*/
+    WORLDGEN_RENDER.lock().region_display_primitives(primitives);
 
     set_worldgen_status("Ramping");
     set_worldgen_status("Beaches");

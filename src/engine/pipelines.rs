@@ -41,7 +41,7 @@ impl<'a> RenderPipelineBuilder<'a> {
             vertex_state: None,
             sample_count: 1,
             sample_mask: !0,
-            alpha_to_coverage_enabled: false
+            alpha_to_coverage_enabled: false,
         }
     }
 

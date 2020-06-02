@@ -114,7 +114,10 @@ pub fn just_add_water(
         }
     }
     for _ in 0..river_entry[2] {
-        let start = Point::new(rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1, 0);
+        let start = Point::new(
+            rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1,
+            0,
+        );
         for point in line2d_vector(start, midpoint) {
             add_dig_target(point, 2, &mut dig_targets);
         }
@@ -139,7 +142,10 @@ pub fn just_add_water(
                 REGION_WIDTH as i32 - 1,
                 rng.roll_dice(1, REGION_HEIGHT as i32 / 2) + REGION_HEIGHT as i32 / 4 - 1,
             ),
-            3 => Point::new(rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1, 0),
+            3 => Point::new(
+                rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1,
+                0,
+            ),
             _ => Point::new(
                 rng.roll_dice(1, REGION_WIDTH as i32 / 2) + REGION_WIDTH as i32 / 4 - 1,
                 REGION_HEIGHT as i32 - 1,
@@ -175,7 +181,11 @@ fn add_dig_target(pt: Point, radius: i32, dig_targets: &mut HashSet<usize>) {
     for y in 0 - radius..radius {
         for x in 0 - radius..radius {
             let apt = Point::new(x, y) + pt;
-            if apt.x > 0 && apt.x < REGION_WIDTH as i32 - 1 && apt.y > 0 && apt.y < REGION_HEIGHT as i32 - 1 {
+            if apt.x > 0
+                && apt.x < REGION_WIDTH as i32 - 1
+                && apt.y > 0
+                && apt.y < REGION_HEIGHT as i32 - 1
+            {
                 let idx = (apt.y * REGION_WIDTH as i32) + apt.x;
                 dig_targets.insert(idx as usize);
             }

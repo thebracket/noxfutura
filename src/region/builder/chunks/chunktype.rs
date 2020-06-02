@@ -2,5 +2,5 @@
 pub enum ChunkType {
     Empty,
     Solid,
-    Partial
+    Partial,
 }

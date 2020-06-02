@@ -1,31 +1,31 @@
-use super::{ChunkType, chunk_idx, CHUNK_SIZE, Primitive};
+use super::{chunk_idx, ChunkType, Primitive, CHUNK_SIZE};
 use crate::region::{Region, TileType};
 use crate::utils::mapidx;
 use std::collections::HashSet;
 
 #[derive(Clone)]
 pub struct Chunk {
-    pub t : ChunkType,
-    pub idx : usize,
-    pub base : (usize, usize, usize),
-    geometry : Option<Vec<Primitive>>
+    pub t: ChunkType,
+    pub idx: usize,
+    pub base: (usize, usize, usize),
+    geometry: Option<Vec<Primitive>>,
 }
 
 impl Chunk {
     pub fn new(x: usize, y: usize, z: usize) -> Self {
-        Self{
-            t : ChunkType::Empty,
-            idx : chunk_idx(x, y, z),
-            base : ( x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE ),
-            geometry : None
+        Self {
+            t: ChunkType::Empty,
+            idx: chunk_idx(x, y, z),
+            base: (x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
+            geometry: None,
         }
     }
 
     pub fn iter(&self) -> ChunkIter {
-        ChunkIter{
-            base : self.base,
-            current : (0,0,0),
-            done: false
+        ChunkIter {
+            base: self.base,
+            current: (0, 0, 0),
+            done: false,
         }
     }
 
@@ -58,20 +58,17 @@ impl Chunk {
 
     fn build_geometry(&self, region: &Region) -> Option<Vec<Primitive>> {
         match self.t {
-            ChunkType::Solid => {
-                Some(
-                    vec![
-                    Primitive::Cube{
-                        x:self.base.0,
-                        y: self.base.1,
-                        z: self.base.2,
-                        w: CHUNK_SIZE,
-                        d: CHUNK_SIZE,
-                        h: CHUNK_SIZE
-                    }
-                    ; 1]
-                )
-            }
+            ChunkType::Solid => Some(vec![
+                Primitive::Cube {
+                    x: self.base.0,
+                    y: self.base.1,
+                    z: self.base.2,
+                    w: CHUNK_SIZE,
+                    d: CHUNK_SIZE,
+                    h: CHUNK_SIZE
+                };
+                1
+            ]),
             ChunkType::Partial => {
                 let mut p = Vec::new();
                 let mut cubes = HashSet::new();
@@ -81,22 +78,22 @@ impl Chunk {
                         TileType::Solid => {
                             //println!("{},{},{} = {}", pos.0, pos.1, pos.2, idx);
                             cubes.insert(idx);
-                        },
+                        }
                         _ => {}
                     }
                 });
                 p.append(&mut super::greedy::greedy_cubes(cubes));
                 Some(p)
-            },
-            _ => None
+            }
+            _ => None,
         }
     }
 }
 
 pub struct ChunkIter {
-    base : (usize, usize, usize),
+    base: (usize, usize, usize),
     current: (usize, usize, usize),
-    done: bool
+    done: bool,
 }
 
 impl Iterator for ChunkIter {

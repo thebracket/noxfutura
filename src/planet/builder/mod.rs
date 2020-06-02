@@ -1,9 +1,9 @@
 use super::{Block, BlockType, Planet};
 use parking_lot::Mutex;
+mod biomes;
 pub mod noise_helper;
 mod planet_categories;
 mod planet_noise;
-mod biomes;
 mod rivers;
 use crate::region::Region;
 use bracket_geometry::prelude::Point;
