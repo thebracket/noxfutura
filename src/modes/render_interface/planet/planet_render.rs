@@ -1,7 +1,43 @@
 use crate::engine::VertexBuffer;
 use bracket_geometry::prelude::Degrees;
 use crate::utils::sphere_vertex;
-use crate::planet::{Block, BlockType, WORLD_HEIGHT, WORLD_WIDTH};
+use crate::planet::{Block, BlockType, WORLD_HEIGHT, WORLD_WIDTH, planet_idx, 
+    noise_helper::{lon_to_x, lat_to_y}, Planet};
+
+pub type LatLonIdx = (f32, f32, usize);
+pub type LatLonQuad = [LatLonIdx; 6];
+
+pub fn planet_quad_coords(lat: f32, lon: f32, lat_step: f32, lon_step:f32) 
+-> LatLonQuad
+{
+    [
+        (lat, lon, planet_idx(lon_to_x(lon), lat_to_y(lat))),
+        (lat, lon + lon_step, planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat))),
+        (lat + lat_step, lon, planet_idx(lon_to_x(lon), lat_to_y(lat + lat_step))),
+        (lat, lon + lon_step, planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat))),
+        (lat + lat_step, lon, planet_idx(lon_to_x(lon), lat_to_y(lat + lat_step))),
+        (lat + lat_step, lon + lon_step, planet_idx(lon_to_x(lon + lon_step), lat_to_y(lat + lat_step))),
+    ]
+}
+
+pub fn all_planet_points<F: FnMut(&LatLonIdx)>(mut point_maker : F) {
+    const LAT_STEP: f32 = 1.0;
+    const LON_STEP: f32 = 1.0;
+
+    let mut lat = -90.0;
+    let mut lon;
+
+    while lat < 90.0-LAT_STEP {
+        lon = -180.0;
+        while lon < 180.0-LON_STEP {
+            planet_quad_coords(lat, lon, LAT_STEP, LON_STEP)
+                .iter()
+                .for_each(|l| point_maker(l));
+            lon += LON_STEP;
+        }
+        lat += LAT_STEP;
+    }
+}
 
 pub fn add_point(vertex_buffer: &mut VertexBuffer<f32>, lat: f32, lon: f32, altitude: f32, color: &[f32; 4]) {
     let sphere_coords = sphere_vertex(0.5 + altitude, Degrees::new(lat), Degrees::new(lon));
@@ -33,6 +69,29 @@ pub fn landblock_to_color(lb: &Block) -> [f32; 4] {
     let mag = lb.height as f32 / 255.0;
     color.iter_mut().for_each(|c| *c *= mag);
     color
+}
+
+pub fn biome_to_color(index: usize, planet: &Planet) -> [f32; 4] {
+    let biome_index = planet.landblocks[index].biome_idx;
+    if biome_index == std::usize::MAX {
+        landblock_to_color(&planet.landblocks[index])
+    } else {
+        let biome_type_idx = planet.biomes[biome_index].biome_type;
+        if biome_type_idx == std::usize::MAX {
+            landblock_to_color(&planet.landblocks[index])
+        } else {
+            let lb_color = landblock_to_color(&planet.landblocks[index]);
+            let base_color = crate::raws::RAWS.lock().biomes.areas[biome_type_idx]
+                .color
+                .clone();
+            [
+                (base_color[0] + lb_color[0]) / 2.0,
+                (base_color[1] + lb_color[1]) / 2.0,
+                (base_color[2] + lb_color[2]) / 2.0,
+                1.0,
+            ]
+        }
+    }
 }
 
 pub fn build_blank_planet(vertex_buffer: &mut VertexBuffer<f32>) {
