@@ -23,9 +23,8 @@ pub struct PlanetParams {
 pub struct PlanetBuilder {
     pub params: PlanetParams,
     planet: Planet,
-    done: bool,
+    pub done: bool,
     task: String,
-    flatmap: bool,
 }
 
 impl PlanetBuilder {
@@ -42,7 +41,6 @@ impl PlanetBuilder {
             planet: Planet::new(),
             done: false,
             task: "Initializing".to_string(),
-            flatmap: false,
         }
     }
 }
@@ -71,9 +69,7 @@ fn threaded_builder() {
     planet_categories::planet_rainfall();
     biomes::build_biomes();
     rivers::run_rivers();
-    // History
-    // Save
-    //save_world();
+    // History    
 
     // Find crash site
     let crash = find_crash_site();
@@ -85,16 +81,24 @@ fn threaded_builder() {
     let mut region = Region::zeroed(crash_idx, &clone_planet);
     crate::region::builder(&mut region, &clone_planet, crash);
 
+    // Save
+    save_world(region);
+
     // It's all done
     set_worldgen_status("Done");
     PLANET_BUILD.lock().done = true;
 }
 
-fn save_world() {
+fn save_world(region: Region) {
+    use super::{save_world, SavedGame};
     set_worldgen_status("Saving the world. To disk, sadly.");
-    let world_file = File::create("world.dat").unwrap();
-    let clone_planet = &PLANET_BUILD.lock().planet.clone();
-    serde_cbor::to_writer(world_file, &clone_planet).unwrap();
+    let pclone = PLANET_BUILD.lock().planet.clone();
+    save_world(
+        SavedGame{
+            planet: pclone,
+            current_region: region
+        }
+    );
 }
 
 fn find_crash_site() -> Point {
@@ -131,10 +135,3 @@ pub fn get_worldgen_status() -> String {
     PLANET_BUILD.lock().task.clone()
 }
 
-pub fn get_flatmap_status() -> bool {
-    PLANET_BUILD.lock().flatmap
-}
-
-pub fn set_flatmap_status(status: bool) {
-    PLANET_BUILD.lock().flatmap = status;
-}

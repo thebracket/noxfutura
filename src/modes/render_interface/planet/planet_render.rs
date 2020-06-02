@@ -97,29 +97,6 @@ pub fn landblock_to_color(lb: &Block) -> [f32; 4] {
     color
 }
 
-pub fn biome_to_color(index: usize, planet: &Planet) -> [f32; 4] {
-    let biome_index = planet.landblocks[index].biome_idx;
-    if biome_index == std::usize::MAX {
-        landblock_to_color(&planet.landblocks[index])
-    } else {
-        let biome_type_idx = planet.biomes[biome_index].biome_type;
-        if biome_type_idx == std::usize::MAX {
-            landblock_to_color(&planet.landblocks[index])
-        } else {
-            let lb_color = landblock_to_color(&planet.landblocks[index]);
-            let base_color = crate::raws::RAWS.lock().biomes.areas[biome_type_idx]
-                .color
-                .clone();
-            [
-                (base_color[0] + lb_color[0]) / 2.0,
-                (base_color[1] + lb_color[1]) / 2.0,
-                (base_color[2] + lb_color[2]) / 2.0,
-                1.0,
-            ]
-        }
-    }
-}
-
 pub fn build_blank_planet(vertex_buffer: &mut VertexBuffer<f32>) {
     const LAT_STEP: f32 = WORLD_HEIGHT as f32 / 180.0;
     const LON_STEP: f32 = WORLD_WIDTH as f32 / 360.0;

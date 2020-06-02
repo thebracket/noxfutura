@@ -1,4 +1,6 @@
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub enum TileType {
     Empty,
     Solid,
@@ -9,7 +11,7 @@ pub enum TileType {
     SemiMoltenRock,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub enum RampDirection {
     NorthSouth,
     SouthNorth,
@@ -17,7 +19,7 @@ pub enum RampDirection {
     WestEast,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub enum StairsType {
     Up,
     Down,

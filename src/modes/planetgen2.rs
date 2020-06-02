@@ -99,13 +99,8 @@ impl PlanetGen2 {
         self.background_and_status(resources, frame, context, ui);
 
         if let Some(uniforms) = self.uniforms.as_mut() {
-            if !crate::planet::get_flatmap_status() {
-                uniforms.update_view_proj(self.camera.as_ref().unwrap());
-                uniforms.update_buffer(context, self.uniform_buffer.as_ref().unwrap());
-            } else {
-                uniforms.update_view_proj_flat(self.camera.as_mut().unwrap());
-                uniforms.update_buffer(context, self.uniform_buffer.as_ref().unwrap());
-            }
+            uniforms.update_view_proj(self.camera.as_ref().unwrap());
+            uniforms.update_buffer(context, self.uniform_buffer.as_ref().unwrap());
         }
 
         let mut renderlock = WORLDGEN_RENDER.lock();
@@ -138,6 +133,10 @@ impl PlanetGen2 {
             context.queue.submit(&[encoder.finish()]);
         }
 
+        if crate::planet::PLANET_BUILD.lock().done {
+            return super::ProgramMode::MainMenu;
+        }
+
         std::mem::drop(renderlock);
 
         super::ProgramMode::PlanetGen2
@@ -167,12 +166,6 @@ impl Uniforms {
         self.view_proj = camera.build_view_projection_matrix();
         self.rot_angle += 0.001;
     }
-
-    fn update_view_proj_flat(&mut self, camera: &mut Camera) {
-        camera.down_cam();
-        self.rot_angle = 0.0;
-        self.view_proj = camera.build_view_projection_matrix();
-    }
 }
 
 pub struct Camera {
@@ -196,12 +189,6 @@ impl Camera {
             znear: 0.01,
             zfar: 500.0,
         }
-    }
-
-    pub fn down_cam(&mut self) {
-        self.eye = (0.1, 300.0, 0.1).into();
-        self.target = (0.0, 0.0, 0.0).into();
-        self.up = Vec3::unit_z();
     }
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {

@@ -9,8 +9,7 @@ pub(crate) fn lat_to_y(lat: f32) -> usize {
 }
 
 pub(crate) fn lon_to_x(lon: f32) -> usize {
-    let mut x = (((lon + 180.0) / 360.0) * WORLD_WIDTH as f32) as usize;
-    x
+    (((lon + 180.0) / 360.0) * WORLD_WIDTH as f32) as usize
 }
 
 pub(crate) fn noise_lon(world_x: usize, region_x: usize) -> f32 {

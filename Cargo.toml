@@ -22,8 +22,8 @@ bracket-geometry = { version = "0.8.1", features = ["serde"] }
 lazy_static = "1.4.0"
 parking_lot = "0.10.0"
 serde = { version = "1.0.106" }
-ron = "0.5.1"
-serde_cbor = "0.11.1"
+ron = "0.6.0"
+flate2 = "1.0.14"
 
 [profile.dev]
 opt-level = 1

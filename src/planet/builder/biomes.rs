@@ -63,7 +63,6 @@ pub fn build_biomes() {
         count += 1;
     }
 
-    WORLDGEN_RENDER.lock().planet_with_biome(&planet);
     PLANET_BUILD.lock().planet.landblocks = planet.landblocks;
     PLANET_BUILD.lock().planet.biomes = planet.biomes;
 

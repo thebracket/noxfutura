@@ -10,6 +10,8 @@ mod planet;
 pub use planet::*;
 mod builder;
 pub use builder::*;
+mod savedgame;
+pub use savedgame::*;
 
 pub const WORLD_HEIGHT: usize = 90;
 pub const WORLD_WIDTH: usize = 180;
