@@ -37,7 +37,7 @@ pub fn build_heightmap_from_noise(
     }
 
     // Consider adding a second noise layer
-    /*if crate::planet::PLANET_BUILD.lock().params.extra_noise {
+    if crate::planet::PLANET_BUILD.lock().params.extra_noise {
         let mut noise2 = FastNoise::seeded(perlin_seed);
         noise2.set_noise_type(NoiseType::SimplexFractal);
         noise2.set_fractal_type(FractalType::FBM);
@@ -67,7 +67,7 @@ pub fn build_heightmap_from_noise(
                 hm[cell_idx] = new_h as u8;
             }
         }
-    }*/
+    }
 }
 
 pub fn create_subregions(

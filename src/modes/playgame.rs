@@ -226,7 +226,6 @@ impl PlayGame {
 #[derive(Debug, Copy, Clone)]
 struct Uniforms {
     view_proj: ultraviolet::mat::Mat4,
-    rot_angle: f32,
 }
 
 unsafe impl bytemuck::Pod for Uniforms {}
@@ -237,13 +236,11 @@ impl Uniforms {
     fn new() -> Self {
         Self {
             view_proj: ultraviolet::mat::Mat4::identity(),
-            rot_angle: 0.0,
         }
     }
 
     fn update_view_proj(&mut self, camera: &Camera) {
         self.view_proj = camera.build_view_projection_matrix();
-        self.rot_angle += 0.001;
     }
 }
 

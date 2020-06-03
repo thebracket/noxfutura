@@ -11,12 +11,11 @@ layout(location=2) out vec3 v_frag_pos;
 layout(set=0, binding=0) 
 uniform Uniforms {
     mat4 u_view_proj;
-    float rot_angle;
 };
 
 void main() {
     gl_Position = u_view_proj * vec4(a_position, 1.0);
     v_color = a_color;
     v_normal = a_normal;
-    v_frag_pos  = a_position;
+    v_frag_pos  = gl_Position.xyz;
 }
