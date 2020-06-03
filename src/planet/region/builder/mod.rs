@@ -8,8 +8,9 @@ mod primitive;
 mod strata;
 mod water_features;
 pub use primitive::Primitive;
+use legion::prelude::*;
 
-pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
+pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");
     //let biome_info = crate::raws::RAWS.lock().biomes.areas[region.biome_raw_idx].clone();
     let biome = planet.biomes[region.biome_info_idx].clone();
@@ -54,5 +55,8 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) {
     set_worldgen_status("Settlers");
     set_worldgen_status("Features");
     set_worldgen_status("Looking for the map");
-    set_worldgen_status("Saving region");
+
+    let universe = Universe::new();
+    let world = universe.create_world();
+    world
 }

@@ -7,6 +7,7 @@ use std::fs::File;
 pub struct SavedGame {
     pub planet: Planet,
     pub current_region: Region,
+    pub ecs_text : String
 }
 
 pub fn save_world(state: SavedGame) {
@@ -24,7 +25,7 @@ pub fn save_world(state: SavedGame) {
     }
 }
 
-pub fn load_game() -> crate::planet::SavedGame {
+pub fn load_game() -> SavedGame {
     use std::io::Read;
     use std::path::Path;
     let savepath = Path::new("world.dat");

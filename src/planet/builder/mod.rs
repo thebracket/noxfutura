@@ -78,23 +78,24 @@ fn threaded_builder() {
     set_worldgen_status("Erasing the crash site");
     let clone_planet = &PLANET_BUILD.lock().planet.clone();
     let mut region = Region::zeroed(crash_idx, &clone_planet);
-    super::region::builder(&mut region, &clone_planet, crash);
+    let world = super::region::builder(&mut region, &clone_planet, crash);
 
     // Save
-    save_world(region);
+    save_world(region, world);
 
     // It's all done
     set_worldgen_status("Done");
     PLANET_BUILD.lock().done = true;
 }
 
-fn save_world(region: Region) {
+fn save_world(region: Region, world : legion::prelude::World) {
     use super::{save_world, SavedGame};
     set_worldgen_status("Saving the world. To disk, sadly.");
     let pclone = PLANET_BUILD.lock().planet.clone();
     save_world(SavedGame {
         planet: pclone,
         current_region: region,
+        ecs_text : crate::components::serialize_world(&world)
     });
 }
 
