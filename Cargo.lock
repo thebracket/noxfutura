@@ -106,6 +106,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "53d1ccbaf7d9ec9537465a97bf19edc1a4e158ecb49fc16178202238c569cc42"
 
 [[package]]
+name = "bincode"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5753e2a71534719bf3f4e57006c3a4f0d2c672a4b676eec84161f763eca87dbf"
+dependencies = [
+ "byteorder",
+ "serde",
+]
+
+[[package]]
 name = "bit-set"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1237,6 +1247,7 @@ dependencies = [
 name = "noxfutura"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "bracket-geometry",
  "bracket-noise",
  "bracket-random",
