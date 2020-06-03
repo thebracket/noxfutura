@@ -59,6 +59,7 @@ impl Program {
         frame: &wgpu::SwapChainOutput,
         depth_id: usize,
         imgui: &imgui::Ui,
+        keycode: Option<winit::event::VirtualKeyCode>
     ) -> bool {
         match self.mode {
             ProgramMode::Loader => {
@@ -98,7 +99,7 @@ impl Program {
             ProgramMode::PlayGame => {
                 self.mode = self
                     .play
-                    .tick(&self.resources, frame, context, imgui, depth_id);
+                    .tick(&self.resources, frame, context, imgui, depth_id, keycode);
             }
             ProgramMode::Quit => return false,
         }

@@ -93,6 +93,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let mut program = crate::modes::Program::new();
     program.init(&mut context);
 
+    let mut keycode : Option<winit::event::VirtualKeyCode> = None;
+
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
         match event {
@@ -123,7 +125,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                     .expect("Failed to prepare frame");
                 let ui = imgui.frame();
 
-                let should_continue = program.tick(&mut context, &frame, depth_id, &ui);
+                let should_continue = program.tick(&mut context, &frame, depth_id, &ui, keycode);
                 if !should_continue {
                     *control_flow = ControlFlow::Exit;
                 }
@@ -144,11 +146,25 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
                     context.queue.submit(&[encoder.finish()]);
                 }
+
+                keycode = None;
             }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
                 ..
             } => *control_flow = ControlFlow::Exit,
+            Event::WindowEvent {
+                event: WindowEvent::KeyboardInput {
+                    input: winit::event::KeyboardInput {
+                        virtual_keycode: Some(virtual_keycode),
+                        ..
+                    },
+                    ..
+                },
+                ..
+            } => {
+                keycode = Some(virtual_keycode);
+            }
             _ => {}
         }
         platform.handle_event(imgui.io_mut(), &window, &event);

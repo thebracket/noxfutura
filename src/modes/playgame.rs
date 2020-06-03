@@ -10,6 +10,7 @@ use ultraviolet::{
 };
 use legion::prelude::*;
 use crate::components::*;
+use winit::event::VirtualKeyCode;
 
 #[derive(Clone)]
 pub enum LoadState {
@@ -122,6 +123,7 @@ impl PlayGame {
         context: &mut crate::engine::Context,
         imgui: &imgui::Ui,
         depth_id: usize,
+        keycode: Option<VirtualKeyCode>
     ) -> super::ProgramMode {
         use crate::planet::Primitive;
         super::helpers::render_menu_background(context, frame, resources);
@@ -150,9 +152,23 @@ impl PlayGame {
             self.rebuild_geometry = false;
         }
 
-        let query = <(Read<Position>, Read<CameraOptions>)>::query();
-        for (pos, camopts) in query.iter(&mut self.ecs) {
-            self.camera.as_mut().unwrap().update(&*pos, &*camopts);
+        let query = <(Write<Position>, Write<CameraOptions>)>::query();
+        for (mut pos, mut camopts) in query.iter_mut(&mut self.ecs) {
+            let cam = self.camera.as_mut().unwrap();
+            if let Some(keycode) = keycode {
+                match keycode {
+                    VirtualKeyCode::Left => pos.x -= 1,
+                    VirtualKeyCode::Right => pos.x += 1,
+                    VirtualKeyCode::Up => pos.y -= 1,
+                    VirtualKeyCode::Down => pos.y += 1,
+                    VirtualKeyCode::Comma => pos.z -= 1,
+                    VirtualKeyCode::Period => pos.z += 1,
+                    VirtualKeyCode::Minus => camopts.zoom_level -=1,
+                    VirtualKeyCode::Add => camopts.zoom_level +=1,
+                    _ => {}
+                }
+            }
+            cam.update(&*pos, &*camopts);
         }
 
         self.uniforms
