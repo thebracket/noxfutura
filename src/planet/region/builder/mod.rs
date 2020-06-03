@@ -62,7 +62,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     world.insert(
         (Cordex{},),
         (0..1).map(|_| (
-            Position{x: 128, y: 128, z: 128},
+            Position{x: 128, y: 128, z: hm[(128 * REGION_WIDTH)+128] as _},
             CameraOptions{ zoom_level: 10 }
         ))
     );

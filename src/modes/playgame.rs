@@ -8,6 +8,8 @@ use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},
 };
+use legion::prelude::*;
+use crate::components::*;
 
 #[derive(Clone)]
 pub enum LoadState {
@@ -148,6 +150,11 @@ impl PlayGame {
             self.rebuild_geometry = false;
         }
 
+        let query = <(Read<Position>, Read<CameraOptions>)>::query();
+        for (pos, camopts) in query.iter(&mut self.ecs) {
+            self.camera.as_mut().unwrap().update(&*pos, &*camopts);
+        }
+
         self.uniforms
             .as_mut()
             .unwrap()
@@ -241,5 +248,10 @@ impl Camera {
         let view = Mat4::look_at(self.eye, self.target, self.up);
         let proj = ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
         proj * view
+    }
+
+    pub fn update(&mut self, pos: &Position, opts: &CameraOptions) {
+        self.eye = ( pos.x as f32, pos.z as f32 + opts.zoom_level as f32, pos.y as f32 + 0.1  ).into();
+        self.target = ( pos.x as f32, pos.z as f32, pos.y as f32  ).into();
     }
 }
