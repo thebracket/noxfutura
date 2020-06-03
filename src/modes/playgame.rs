@@ -226,6 +226,7 @@ impl PlayGame {
 #[derive(Debug, Copy, Clone)]
 struct Uniforms {
     view_proj: ultraviolet::mat::Mat4,
+    sun_pos: ultraviolet::Vec3
 }
 
 unsafe impl bytemuck::Pod for Uniforms {}
@@ -236,6 +237,7 @@ impl Uniforms {
     fn new() -> Self {
         Self {
             view_proj: ultraviolet::mat::Mat4::identity(),
+            sun_pos: (128.0, 256.0, 128.0).into()
         }
     }
 
