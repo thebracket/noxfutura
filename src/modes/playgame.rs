@@ -37,6 +37,9 @@ pub struct PlayGame {
     uniform_buffer: Option<wgpu::Buffer>,
     vb: VertexBuffer<f32>,
     rebuild_geometry: bool,
+
+    // Game stuff that doesn't belong here
+    counter: usize
 }
 
 impl PlayGame {
@@ -54,7 +57,8 @@ impl PlayGame {
             uniform_buffer: None,
             vb: VertexBuffer::new(&[3, 4, 3]),
             rebuild_geometry: true,
-            ecs: universe.create_world()
+            ecs: universe.create_world(),
+            counter: 0
         }
     }
 
@@ -96,7 +100,8 @@ impl PlayGame {
         self.uniforms
             .as_mut()
             .unwrap()
-            .update_view_proj(self.camera.as_ref().unwrap());
+            .update_view_proj(self.camera.as_ref().unwrap(), self.counter);
+        self.counter += 1;
         let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) = self
             .uniforms
             .as_mut()
@@ -184,12 +189,13 @@ impl PlayGame {
         self.uniforms
             .as_mut()
             .unwrap()
-            .update_view_proj(&self.camera.as_ref().unwrap());
+            .update_view_proj(&self.camera.as_ref().unwrap(), self.counter);
         self.uniforms
             .as_ref()
             .unwrap()
             .update_buffer(context, &self.uniform_buffer.as_ref().unwrap());
         self.vb.update_buffer(context);
+        self.counter += 1;
 
         let window = imgui::Window::new(im_str!("Playing"));
         window
@@ -241,7 +247,17 @@ impl Uniforms {
         }
     }
 
-    fn update_view_proj(&mut self, camera: &Camera) {
+    fn update_view_proj(&mut self, camera: &Camera, counter: usize) {
+        use bracket_geometry::prelude::*;
+        let angle = (counter % 360) as f32;
+        let p = project_angle(Point::new(0,0), 256.0, Degrees::new(angle));
+        self.sun_pos = (
+            p.x as f32,
+            p.y as f32,
+            128.0
+        ).into();
+        //println!("{:?}, {}", p, counter);
+
         self.view_proj = camera.build_view_projection_matrix();
     }
 }
