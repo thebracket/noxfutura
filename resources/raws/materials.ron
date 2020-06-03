@@ -18,6 +18,66 @@
             description: "An aluminium ore, that can be refined into useful metal.",
             texture: "rock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
             tint: (1.0, 0.5, 0.5)
-        )
+        ),
+
+        MaterialDef(
+            name: "Alunite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A hydrated aluminium potassium sulfate rock.",
+            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "slipperystone",
+            tint: (0.5, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Andesite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A common, extrusive igneous stone.",
+            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "slipperystone",
+            tint: (0.4, 0.4, 0.4)
+        ),
+
+        MaterialDef(
+            name: "Basalt",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A common, extrusive igneous stone.",
+            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "slipperystone",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Bauxite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Ore(name: "aluminium") ],
+            description: "An aluminium ore, that can be refined into useful metal.",
+            texture: "rock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            tint: (0.9, 0.2, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Bisminthine",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Ore(name: "bismuth") ],
+            description: "A crystalline rock, similar to ammonia. Refines into Bismuth, used in bronzeworking.",
+            texture: "limestone", constructed: "cobbles", floor: "cavefloor", floor_constructed: "slipperystone",
+            tint: (1.0, 0.8, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Bithumous Coal",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "coal") ],
+            description: "Sticky black rock from which one can extract coal and tar.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.1, 0.1)
+        ),
     ]
 )
