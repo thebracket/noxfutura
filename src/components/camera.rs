@@ -5,7 +5,10 @@ use super::prelude::*;
 pub enum CameraMode {
     TopDown,
     Front,
-    DiagonalNW
+    DiagonalNW,
+    DiagonalNE,
+    DiagonalSW,
+    DiagonalSE
 }
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]

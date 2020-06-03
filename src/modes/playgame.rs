@@ -169,7 +169,10 @@ impl PlayGame {
                         match camopts.mode {
                             CameraMode::TopDown => camopts.mode = CameraMode::Front,
                             CameraMode::Front => camopts.mode = CameraMode::DiagonalNW,
-                            CameraMode::DiagonalNW => camopts.mode = CameraMode::TopDown
+                            CameraMode::DiagonalNW => camopts.mode = CameraMode::DiagonalNE,
+                            CameraMode::DiagonalNE => camopts.mode = CameraMode::DiagonalSW,
+                            CameraMode::DiagonalSW => camopts.mode = CameraMode::DiagonalSE,
+                            CameraMode::DiagonalSE => camopts.mode = CameraMode::TopDown,
                         }
                     }
                     _ => {}
@@ -295,6 +298,27 @@ impl Camera {
                     pos.x as f32 + opts.zoom_level as f32,
                     pos.z as f32 + opts.zoom_level as f32,
                     pos.y as f32 + opts.zoom_level as f32
+                ).into();
+            }
+            CameraMode::DiagonalNE => {
+                self.eye = (
+                    pos.x as f32 - opts.zoom_level as f32,
+                    pos.z as f32 + opts.zoom_level as f32,
+                    pos.y as f32 + opts.zoom_level as f32
+                ).into();
+            }
+            CameraMode::DiagonalSW => {
+                self.eye = (
+                    pos.x as f32 + opts.zoom_level as f32,
+                    pos.z as f32 + opts.zoom_level as f32,
+                    pos.y as f32 - opts.zoom_level as f32
+                ).into();
+            }
+            CameraMode::DiagonalSE => {
+                self.eye = (
+                    pos.x as f32 - opts.zoom_level as f32,
+                    pos.z as f32 + opts.zoom_level as f32,
+                    pos.y as f32 - opts.zoom_level as f32
                 ).into();
             }
         }

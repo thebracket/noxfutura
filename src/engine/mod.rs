@@ -156,6 +156,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 event: WindowEvent::KeyboardInput {
                     input: winit::event::KeyboardInput {
                         virtual_keycode: Some(virtual_keycode),
+                        state: winit::event::ElementState::Pressed,
                         ..
                     },
                     ..
