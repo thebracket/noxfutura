@@ -371,11 +371,10 @@ use super::*;
 pub fn serialize_world(world: &World) -> String {
     let comp_registrations = [
         ComponentRegistration::of::<Position>(),
-        ComponentRegistration::of::<Camera>()
+        ComponentRegistration::of::<CameraOptions>()
     ];
     let tag_registrations = [
-        TagRegistration::of::<Position>(),
-        TagRegistration::of::<Camera>()
+        TagRegistration::of::<Cordex>()
     ];
 
     use std::iter::FromIterator;
@@ -391,11 +390,10 @@ pub fn serialize_world(world: &World) -> String {
 pub fn deserialize_world(raw: String) -> World {
     let comp_registrations = [
         ComponentRegistration::of::<Position>(),
-        ComponentRegistration::of::<Camera>()
+        ComponentRegistration::of::<CameraOptions>()
     ];
     let tag_registrations = [
-        TagRegistration::of::<Position>(),
-        TagRegistration::of::<Camera>()
+        TagRegistration::of::<Cordex>()
     ];
 
     use std::iter::FromIterator;

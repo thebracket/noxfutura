@@ -56,7 +56,15 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     set_worldgen_status("Features");
     set_worldgen_status("Looking for the map");
 
+    use crate::components::*;
     let universe = Universe::new();
-    let world = universe.create_world();
+    let mut world = universe.create_world();
+    world.insert(
+        (Cordex{},),
+        (0..1).map(|_| (
+            Position{x: 128, y: 128, z: 128},
+            CameraOptions{ zoom_level: 10 }
+        ))
+    );
     world
 }

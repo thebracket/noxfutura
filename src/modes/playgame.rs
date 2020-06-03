@@ -57,6 +57,7 @@ impl PlayGame {
         std::thread::spawn(|| {
             println!("Loading");
             let lg = crate::planet::load_game();
+            println!("{}", lg.ecs_text);
             *LOAD_STATE.lock() = LoadState::Loaded { game: lg };
             println!("Loaded");
         });
