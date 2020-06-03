@@ -2,6 +2,10 @@ use super::{super::TileType, Region};
 use crate::planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use crate::utils::mapidx;
 
+pub fn build_strata() {
+    
+}
+
 pub fn layer_cake(hm: &[u8], region: &mut Region) {
     // Clear it
     region

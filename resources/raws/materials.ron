@@ -1,0 +1,23 @@
+(
+    materials: [
+        MaterialDef(
+            name: "Alabaster",
+            layer: ClusterRock(parent: "Gypsum"),
+            hit_points: 110,
+            mines_to: [ Item(name: "alabaster_powder") ],
+            description: "A soft rock that can be ground into plaster, or easily carved.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Raw Aluminium",
+            layer: Igneous,
+            hit_points: 80,
+            mines_to: [ Ore(name: "aluminium") ],
+            description: "An aluminium ore, that can be refined into useful metal.",
+            texture: "rock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            tint: (1.0, 0.5, 0.5)
+        )
+    ]
+)
