@@ -521,18 +521,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e88a8acf291dafb59c2d96e8f59828f3838bb1a70398823ade51a84de6a6deed"
 
 [[package]]
-name = "flate2"
-version = "1.0.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cfff41391129e0a856d6d822600b8d71179d46879e310417eb9c762eb178b42"
-dependencies = [
- "cfg-if",
- "crc32fast",
- "libc",
- "miniz_oxide",
-]
-
-[[package]]
 name = "foreign-types"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1255,7 +1243,6 @@ dependencies = [
  "bytemuck",
  "erased-serde",
  "failure",
- "flate2",
  "futures",
  "glsl-to-spirv",
  "image",
@@ -1264,6 +1251,7 @@ dependencies = [
  "imgui-winit-support",
  "lazy_static",
  "legion",
+ "miniz_oxide",
  "parking_lot",
  "ron",
  "serde",

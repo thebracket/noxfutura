@@ -23,6 +23,7 @@ lazy_static! {
 pub struct PlayGame {
     pub planet: Option<Planet>,
     pub current_region: Option<Region>,
+    pub ecs: legion::prelude::World,
 
     // Internals
     planet_shader: usize,
@@ -38,6 +39,7 @@ pub struct PlayGame {
 impl PlayGame {
     pub fn new() -> Self {
         *LOAD_STATE.lock() = LoadState::Idle;
+        let universe = legion::prelude::Universe::new();
         Self {
             planet: None,
             current_region: None,
@@ -49,17 +51,15 @@ impl PlayGame {
             uniform_buffer: None,
             vb: VertexBuffer::new(&[3, 4, 3]),
             rebuild_geometry: true,
+            ecs: universe.create_world()
         }
     }
 
     pub fn load(&mut self) {
         *LOAD_STATE.lock() = LoadState::Loading;
         std::thread::spawn(|| {
-            println!("Loading");
             let lg = crate::planet::load_game();
-            println!("{}", lg.ecs_text);
             *LOAD_STATE.lock() = LoadState::Loaded { game: lg };
-            println!("Loaded");
         });
     }
 
@@ -70,6 +70,7 @@ impl PlayGame {
             LoadState::Loaded { game } => {
                 self.planet = Some(game.planet);
                 self.current_region = Some(game.current_region);
+                self.ecs = crate::components::deserialize_world(game.ecs_text);
             }
             _ => panic!("Not meant to go here."),
         }

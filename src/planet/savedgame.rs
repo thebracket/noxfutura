@@ -15,14 +15,8 @@ pub fn save_world(state: SavedGame) {
     let mut world_file = File::create("world.dat").unwrap();
     let tmp = ron::to_string(&state).unwrap();
     let mem_vec = tmp.as_bytes();
-    let mut e = flate2::write::ZlibEncoder::new(Vec::new(), flate2::Compression::default());
-    e.write_all(&mem_vec).expect("Compression fail");
-    let compressed_bytes = e.finish().unwrap();
-    let mut pos = 0;
-    while pos < compressed_bytes.len() {
-        let bytes_written = world_file.write(&compressed_bytes[pos..]).unwrap();
-        pos += bytes_written;
-    }
+    let compressed_bytes = miniz_oxide::deflate::compress_to_vec(&mem_vec, 6);
+    world_file.write_all(&compressed_bytes).expect("Unable to write file data");
 }
 
 pub fn load_game() -> SavedGame {
@@ -33,11 +27,16 @@ pub fn load_game() -> SavedGame {
         panic!("Saved game doesn't exist");
     }
 
-    let f = File::open(&savepath).expect("Unable to open file");
-    let mut d = flate2::read::ZlibDecoder::new(f);
-    let mut s = String::new();
-    d.read_to_string(&mut s).unwrap();
+    println!("LOADFILE");
+    let mut f = File::open(&savepath).expect("Unable to open file");
+    let mut buffer = Vec::<u8>::new();
+    f.read_to_end(&mut buffer).expect("Unable to read file");
+    println!("DECOMPRESS");
+    let raw_bytes = miniz_oxide::inflate::decompress_to_vec(&buffer).expect("Unable to decompress file");
+    let s = std::str::from_utf8(&raw_bytes).unwrap().to_string();
+    println!("DESERIALIZE");
 
     let saved: crate::planet::SavedGame = ron::from_str(&s).unwrap();
+    println!("DONE");
     saved
 }
