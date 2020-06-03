@@ -161,10 +161,17 @@ impl PlayGame {
                     VirtualKeyCode::Right => pos.x += 1,
                     VirtualKeyCode::Up => pos.y -= 1,
                     VirtualKeyCode::Down => pos.y += 1,
-                    VirtualKeyCode::Comma => pos.z -= 1,
-                    VirtualKeyCode::Period => pos.z += 1,
+                    VirtualKeyCode::Comma => pos.z += 1,
+                    VirtualKeyCode::Period => pos.z -= 1,
                     VirtualKeyCode::Minus => camopts.zoom_level -=1,
                     VirtualKeyCode::Add => camopts.zoom_level +=1,
+                    VirtualKeyCode::Tab => {
+                        match camopts.mode {
+                            CameraMode::TopDown => camopts.mode = CameraMode::Front,
+                            CameraMode::Front => camopts.mode = CameraMode::DiagonalNW,
+                            CameraMode::DiagonalNW => camopts.mode = CameraMode::TopDown
+                        }
+                    }
                     _ => {}
                 }
             }
@@ -267,7 +274,29 @@ impl Camera {
     }
 
     pub fn update(&mut self, pos: &Position, opts: &CameraOptions) {
-        self.eye = ( pos.x as f32, pos.z as f32 + opts.zoom_level as f32, pos.y as f32 + 0.1  ).into();
         self.target = ( pos.x as f32, pos.z as f32, pos.y as f32  ).into();
+        match opts.mode {
+            CameraMode::TopDown => {
+                self.eye = (
+                    pos.x as f32,
+                    pos.z as f32 + opts.zoom_level as f32,
+                    pos.y as f32 + (opts.zoom_level as f32 / 3.0)
+                ).into();
+            }
+            CameraMode::Front => {
+                self.eye = (
+                    pos.x as f32,
+                    pos.z as f32 + opts.zoom_level as f32,
+                    pos.y as f32 + 0.1
+                ).into();
+            }
+            CameraMode::DiagonalNW => {
+                self.eye = (
+                    pos.x as f32 + opts.zoom_level as f32,
+                    pos.z as f32 + opts.zoom_level as f32,
+                    pos.y as f32 + opts.zoom_level as f32
+                ).into();
+            }
+        }
     }
 }

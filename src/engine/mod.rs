@@ -129,6 +129,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 if !should_continue {
                     *control_flow = ControlFlow::Exit;
                 }
+                keycode = None;
 
                 // ImGui
                 {
@@ -146,8 +147,6 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
                     context.queue.submit(&[encoder.finish()]);
                 }
-
-                keycode = None;
             }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,

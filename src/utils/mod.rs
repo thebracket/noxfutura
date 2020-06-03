@@ -56,7 +56,7 @@ pub fn add_cube_geometry(
     let z0 = 0.5 + y;
     let z1 = z0 + h;
 
-    let green = z / 256.0;
+    let green = 1.0;
     let red = 0.0;
     //println!("{}", green);
 

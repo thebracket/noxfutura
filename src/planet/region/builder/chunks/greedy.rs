@@ -17,7 +17,8 @@ pub fn greedy_cubes(mut cube_index: HashSet<usize>) -> Vec<Primitive> {
 
             let (x, y, z) = idxmap(idx);
             let width = grow_right(&mut cube_index, idx);
-            let height = grow_down(&mut cube_index, idx, width);
+            //let height = grow_down(&mut cube_index, idx, width);
+            let height = 1;
 
             p.push(Primitive::Cube {
                 x,
