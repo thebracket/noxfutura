@@ -3,7 +3,7 @@ pub struct VertexBuffer<T>
 where
     T: bytemuck::Pod,
 {
-    data: Vec<T>,
+    pub data: Vec<T>,
     attributes: Vec<wgpu::VertexAttributeDescriptor>,
     total_size: wgpu::BufferAddress,
     row_len: usize,
@@ -72,9 +72,7 @@ where
     }
 
     pub fn add_slice(&mut self, slice: &[T]) {
-        for e in slice.iter() {
-            self.data.push(*e);
-        }
+        self.data.extend_from_slice(slice);
     }
 
     pub fn add(&mut self, f: T) {

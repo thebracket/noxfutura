@@ -47,7 +47,7 @@ impl PlayGame {
             uniforms: None,
             camera: None,
             uniform_buffer: None,
-            vb: VertexBuffer::new(&[3, 4]),
+            vb: VertexBuffer::new(&[3, 4, 3]),
             rebuild_geometry: true,
         }
     }
@@ -76,6 +76,7 @@ impl PlayGame {
     }
 
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
+        self.vb.clear();
         crate::utils::add_cube_geometry(&mut self.vb, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         self.vb.build(&context.device, wgpu::BufferUsage::VERTEX);
 
@@ -128,7 +129,7 @@ impl PlayGame {
                 chunks.rebuild_all(region);
                 for p in chunks.all_geometry().iter() {
                     match *p {
-                        Primitive::Cube { x, y, z, w, d, h } => {
+                        Primitive::Cube { x, y, z, w, h, d } => {
                             crate::utils::add_cube_geometry(
                                 &mut self.vb,
                                 x as f32,
@@ -176,6 +177,7 @@ impl PlayGame {
                 rpass.set_bind_group(0, &self.uniform_bind_group.as_ref().unwrap(), &[]);
                 rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
                 rpass.draw(0..self.vb.len(), 0..1);
+                //println!("{}", self.vb.len());
                 //rpass.draw(0..1, 0..1);
             }
             context.queue.submit(&[encoder.finish()]);
@@ -223,8 +225,8 @@ pub struct Camera {
 impl Camera {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
-            eye: (200.0, 200.0, 200.0).into(),
-            target: (0.0, 0.0, 0.0).into(),
+            eye: (256.0, 256.0, 128.0).into(),
+            target: (128.0, 0.0, 128.0).into(),
             up: Vec3::unit_y(),
             aspect: width as f32 / height as f32,
             fovy: 0.785398,
@@ -234,17 +236,8 @@ impl Camera {
     }
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {
-        #[cfg_attr(rustfmt, rustfmt_skip)]
-        let opengl_to_wgpu_matrix : Mat4 = Mat4::new(
-            Vec4::new(1.0, 0.0, 0.0, 0.0),
-            Vec4::new(0.0, 1.0, 0.0, 0.0),
-            Vec4::new(0.0, 0.0, 0.5, 0.0),
-            Vec4::new(0.0, 0.0, 0.5, 1.0),
-        );
-
         let view = Mat4::look_at(self.eye, self.target, self.up);
-        let proj =
-            ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
-        opengl_to_wgpu_matrix * proj * view
+        let proj = ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
+        proj * view
     }
 }
