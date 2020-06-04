@@ -79,5 +79,555 @@
             texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.1, 0.1, 0.1)
         ),
+
+        MaterialDef(
+            name: "Brimstone",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "sulpher") ],
+            description: "A smelly, sulphorous rock.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Cassiterite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Ore(name: "tin") ],
+            description: "A dark crystalline rock.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Chalk",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A crumbly rock, commonly used for writing on walls.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Chert",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder"), Item(name: "flint") ],
+            description: "A microcrystalline quartz rock.",
+            texture: "slate", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.1, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Chromite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "chromium") ],
+            description: "A metamorphic rock containing chrome ore.",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Cinnabar",
+            layer: Igneous,
+            hit_points: 115,
+            mines_to: [ Ore(name: "mercury") ],
+            description: "A red, crystalline rock.",
+            texture: "rock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            tint: (1.0, 0.2, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Claystone",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A sedimentary rock formed largely from mud.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Cobaltite",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "Cobalt, arsenic and sulphur. Not tasty. Kobolds were named after this rock.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.1, 0.8)
+        ),
+
+        MaterialDef(
+            name: "Conglomerate",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A sedimentary rock formed largely from just about everything else.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Native Copper",
+            layer: Igneous,
+            hit_points: 75,
+            mines_to: [ Ore(name: "copper") ],
+            description: "Rock that contains streaks of copper.",
+            texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.8, 0.5, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Dacite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A hard rock containing lots of quartz and feltspar.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Diorite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A hard rock containing lots of quartz.",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Gabbro",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock, sometimes containing Olivine.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.3, 0.7, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Galena",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "lead"), Ore(name: "silver"), Item(name: "sulpher") ],
+            description: "A rock made up lead and sulphur. Sure to give you brain damage if consumed!",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.3, 0.7, 0.7)
+        ),
+
+        MaterialDef(
+            name: "Garnierite",
+            layer: ClusterRock(parent: "Gabbro"),
+            hit_points: 100,
+            mines_to: [ Ore(name: "lead"), Ore(name: "nickel") ],
+            description: "A nickel bearing green rock.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.3, 0.7, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Gneiss",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock, also the subject of numerous puns amongst geologists.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.3, 0.3, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Native Gold",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "gold") ],
+            description: "A dense rock, streaked with veins of gold. Dwarves love it.",
+            texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 0.7, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Granite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock with lots of quartz.",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.3, 0.3, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Graphite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A cyrstalline black rock that generally ends up in pencils.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Gypsum",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "gypsum_powder") ],
+            description: "A white rock frequently ground into plaster.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Igneous Hematite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron-bearing rock, reddish in hue from the rust.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Sedimentary Hematite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron-bearing rock, reddish in hue from the rust.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Hornblende",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A mixture of minerals clumped together.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Jet",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A hard, black rock.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Kaolinite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A white rock made up mostly of clay.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.9, 0.9, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Lignite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "coal") ],
+            description: "Sticky brown rock from which one can extract coal and tar.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Limestone",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A soft, light-colored rock.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.9, 0.9, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Limonite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron bearing rock, containing lots of sulphur.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.9, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Limonite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron bearing rock, containing lots of sulphur.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.9, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Magnetite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron-bearing rock, reddish in hue from the rust.",
+            texture: "pocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            tint: (0.9, 0.7, 0.7)
+        ),
+
+        MaterialDef(
+            name: "Malachite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "copper") ],
+            description: "A green rock, frequently found in stalagtites.",
+            texture: "pocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            tint: (0.3, 0.9, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Marble",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A soft, light-colored rock popular in architecture.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.8, 0.8, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Microcline",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A hard rock with a pleasant blue color.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Mudstone",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A sedimentary rock formed largely from just about everything else.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.4, 0.4)
+        ),
+
+        MaterialDef(
+            name: "Obsidian",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A sedimentary rock formed largely from just about everything else.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.05, 0.05, 0.05)
+        ),
+
+        MaterialDef(
+            name: "Olivine",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A green crystalline rock.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.9, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Orpiment",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder"), Item(name: "sulpher") ],
+            description: "An igneous rock, yellow from sulphur.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 1.0, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Orthoclase",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock with lots of quartz",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Phylite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock with lots of quartz",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Pitchblende",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "uranium") ],
+            description: "A green rock containing Uranium. People used to grind this up for paint.",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.7, 0.3, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Native Platinum",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "platinum") ],
+            description: "A dense rock, streaked with veins of platinum. Dwarves love it.",
+            texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.9, 0.9, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Pyrolusite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock with lots of quartz",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Quartzite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock with lots of quartz",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Realgar",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock with lots of quartz",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Rhyolite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A dense rock with lots of quartz",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Rock Salt",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "Salt crystals, crammed together into a rock.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Rutile",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "uranium"), Ore(name: "titanium") ],
+            description: "A hard, black rock made from titantium oxide.",
+            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.08, 0.08, 0.08)
+        ),
+
+        MaterialDef(
+            name: "Saltpeter",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A primary component of gunpowder.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Sandstone",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Item(name: "sand") ],
+            description: "A primary component of gunpowder.",
+            texture: "sandstone", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.8, 0.8)
+        ),
+
+        MaterialDef(
+            name: "Serpentine",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A green crystalline rock.",
+            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.2, 0.7, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Shale",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Item(name: "oil") ],
+            description: "A soft, light-colored rock often containing oil.",
+            texture: "sandstone", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.7, 0.7)
+        ),
+
+        MaterialDef(
+            name: "Siltstone",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Item(name: "oil") ],
+            description: "A soft, light-colored rock.",
+            texture: "sandstone", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.7, 0.7)
+        ),
+
+        MaterialDef(
+            name: "Sphalerite",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Ore(name: "zinc") ],
+            description: "A zinc-bearing rock.",
+            texture: "copper_rock", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.4, 0.4, 0.4)
+        ),
+
+        MaterialDef(
+            name: "Stibnite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "uranium"), Ore(name: "titanium") ],
+            description: "A crystalline rock.",
+            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Tetrahedrite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "copper"), Ore(name: "silver") ],
+            description: "A dense rock, streaked with veins of silver and copper. Rated 9/10 by most Dwarves.",
+            texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.5, 0.5)
+        ),
     ]
 )
