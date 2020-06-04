@@ -1,6 +1,6 @@
 mod formats;
 use formats::{load_biomes, load_materials};
-pub use formats::{Biomes, Materials};
+pub use formats::*;
 use parking_lot::Mutex;
 
 pub struct Raws {

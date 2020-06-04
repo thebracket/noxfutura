@@ -29,7 +29,7 @@ pub struct MaterialDef {
     pub tint: (f32, f32, f32)
 }
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub enum MaterialLayer {
     ClusterRock{parent: String},
     Igneous,

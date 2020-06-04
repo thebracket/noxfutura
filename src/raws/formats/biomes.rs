@@ -32,14 +32,14 @@ pub struct BiomeType {
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct SoilTypes {
-    soil: i8,
-    sand: i8,
+    pub soil: i32,
+    pub sand: i32,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct TreeType {
-    tree: String,
-    freq: f32,
+    pub tree: String,
+    pub freq: f32,
 }
 
 pub fn load_biomes() -> Biomes {

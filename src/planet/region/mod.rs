@@ -9,6 +9,7 @@ pub use builder::*;
 pub struct Region {
     pub world_idx: usize,
     pub tile_types: Vec<TileType>,
+    pub material_idx: Vec<usize>,
     pub biome_info_idx: usize,
     pub biome_raw_idx: usize,
 }
@@ -20,6 +21,7 @@ impl Region {
             tile_types: vec![TileType::Empty; REGION_TILES_COUNT],
             biome_info_idx: planet.landblocks[world_idx].biome_idx,
             biome_raw_idx: planet.biomes[planet.landblocks[world_idx].biome_idx].biome_type,
+            material_idx: vec![0; REGION_TILES_COUNT]
         }
     }
 }

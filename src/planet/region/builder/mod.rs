@@ -12,7 +12,7 @@ use legion::prelude::*;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");
-    //let biome_info = crate::raws::RAWS.lock().biomes.areas[region.biome_raw_idx].clone();
+    let biome_info = crate::raws::RAWS.lock().biomes.areas[region.biome_raw_idx].clone();
     let biome = planet.biomes[region.biome_info_idx].clone();
     let mut pooled_water = vec![0u8; REGION_WIDTH as usize * REGION_HEIGHT as usize];
     let mut rng = RandomNumberGenerator::seeded(
@@ -41,8 +41,10 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     water_features::just_add_water(planet, region, &mut pooled_water, &mut hm, &mut rng);
 
     set_worldgen_status("Stratifying");
+    let region_strata = strata::build_strata(&mut rng, &mut hm, &biome_info, planet.perlin_seed);
+
     set_worldgen_status("Layer cake is yummy");
-    strata::layer_cake(&hm, region);
+    strata::layer_cake(&hm, region, &region_strata);
 
     set_worldgen_status("Ramping");
     set_worldgen_status("Beaches");
