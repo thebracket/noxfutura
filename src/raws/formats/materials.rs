@@ -33,7 +33,9 @@ pub struct MaterialDef {
 pub enum MaterialLayer {
     ClusterRock{parent: String},
     Igneous,
-    Sedimentary
+    Sedimentary,
+    Soil,
+    Sand
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

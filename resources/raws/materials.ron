@@ -629,5 +629,167 @@
             texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.5, 0.5, 0.5)
         ),
+
+        // Soils
+
+        MaterialDef(
+            name: "Clay Soil",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil"), Item(name:"clay") ],
+            description: "Soil, rich in clay and poor for growing.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.52, 0.35, 0.25)
+        ),
+
+        MaterialDef(
+            name: "Clay Loam",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil"), Item(name:"clay") ],
+            description: "Soil, rich in clay and poor for growing.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.54, 0.39, 0.28)
+        ),
+
+        MaterialDef(
+            name: "Loam",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil") ],
+            description: "Rich, dark soil.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.4, 0.4, 0.4)
+        ),
+
+        MaterialDef(
+            name: "Loamy Sand",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil"), Item(name: "sand") ],
+            description: "Sandy soil.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.9, 0.6, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Peat",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil"), Item(name: "sand") ],
+            description: "Rich, dark soil.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.44, 0.38, 0.29)
+        ),
+
+        MaterialDef(
+            name: "Sandy Clay",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "sand"), Item(name: "clay") ],
+            description: "Poor, sandy clay soil.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.9, 0.6, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Sandy Clay Loam",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "sand"), Item(name: "clay"), Item(name: "topsoil") ],
+            description: "Rich soil with sand and clay.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.7, 0.5, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Silt",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil") ],
+            description: "Poor soil with lots of silt deposits.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.7, 0.5, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Silty Clay",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil"), Item(name: "clay") ],
+            description: "Poor soil with lots of silt and clay deposits.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.7, 0.5, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Silty Clay Loam",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil"), Item(name: "clay") ],
+            description: "Rich soil with lots of silt and clay deposits.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.7, 0.5, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Silt Loam",
+            layer: Soil,
+            hit_points: 20,
+            mines_to: [ Item(name: "topsoil") ],
+            description: "Rich soil with lots of silt deposits.",
+            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            tint: (0.7, 0.5, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Sand",
+            layer: Sand,
+            hit_points: 10,
+            mines_to: [ Item(name: "topsoil") ],
+            description: "Coarse yellow sand.",
+            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            tint: (0.76, 0.69, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Black Sand",
+            layer: Sand,
+            hit_points: 10,
+            mines_to: [ Item(name: "topsoil") ],
+            description: "Coarse dark sand.",
+            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            tint: (0.5, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Red Sand",
+            layer: Sand,
+            hit_points: 10,
+            mines_to: [ Item(name: "topsoil") ],
+            description: "Coarse red sand.",
+            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            tint: (0.81, 0.5, 0.3)
+        ),
+
+        MaterialDef(
+            name: "White Sand",
+            layer: Sand,
+            hit_points: 10,
+            mines_to: [ Item(name: "topsoil") ],
+            description: "Coarse white sand.",
+            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            tint: (0.81, 0.81, 0.8)
+        ),
+
+        MaterialDef(
+            name: "Yellow Sand",
+            layer: Sand,
+            hit_points: 10,
+            mines_to: [ Item(name: "topsoil") ],
+            description: "Coarse yellow sand.",
+            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            tint: (0.98, 0.75, 0.6)
+        ),
     ]
 )
