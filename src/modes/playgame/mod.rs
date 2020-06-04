@@ -12,6 +12,7 @@ use uniforms::*;
 mod camera;
 use camera::*;
 use crate::engine::uniforms::UniformBlock;
+mod render;
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
@@ -19,16 +20,10 @@ pub struct PlayGame {
     pub ecs: legion::prelude::World,
 
     // Internals
-    planet_shader: usize,
-    planet_pipeline: Option<wgpu::RenderPipeline>,
-    uniform_bind_group: Option<wgpu::BindGroup>,
-    uniforms: Option<Uniforms>,
-    camera: Option<Camera>,
-    uniform_buffer: Option<wgpu::Buffer>,
-    vb: VertexBuffer<f32>,
-    rebuild_geometry: bool,
+    rpass : Option<render::BlockRenderPass>,
 
     // Game stuff that doesn't belong here
+    rebuild_geometry: bool,
     counter: usize
 }
 
@@ -39,13 +34,7 @@ impl PlayGame {
         Self {
             planet: None,
             current_region: None,
-            planet_shader: 0,
-            planet_pipeline: None,
-            uniform_bind_group: None,
-            uniforms: None,
-            camera: None,
-            uniform_buffer: None,
-            vb: VertexBuffer::new(&[3, 4, 3]),
+            rpass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
             counter: 0
@@ -75,40 +64,7 @@ impl PlayGame {
     }
 
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
-        self.vb.clear();
-        crate::utils::add_cube_geometry(&mut self.vb, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-        self.vb.build(&context.device, wgpu::BufferUsage::VERTEX);
-
-        self.planet_shader = context.register_shader(
-            "resources/shaders/regionblocks.vert",
-            "resources/shaders/regionblocks.frag",
-        );
-
-        // Uniforms and camera etc.
-        self.camera = Some(Camera::new(context.size.width, context.size.height));
-        self.uniforms = Some(Uniforms::new());
-        self.uniforms
-            .as_mut()
-            .unwrap()
-            .update_view_proj(self.camera.as_ref().unwrap(), self.counter);
-        self.counter += 1;
-        let (uniform_buffer, uniform_bind_group_layout, uniform_bind_group) = self
-            .uniforms
-            .as_mut()
-            .unwrap()
-            .create_buffer_layout_and_group(&context, 0, "some_uniforms");
-        self.uniform_bind_group = Some(uniform_bind_group);
-        self.uniform_buffer = Some(uniform_buffer);
-
-        // Pipeline
-        let pipeline_layout = context.create_pipeline_layout(&[&uniform_bind_group_layout]);
-        let render_pipeline = pipelines::RenderPipelineBuilder::new(context.swapchain_format)
-            .layout(&pipeline_layout)
-            .vf_shader(&context, self.planet_shader)
-            .depth_buffer()
-            .vertex_state(wgpu::IndexFormat::Uint16, &[self.vb.descriptor()])
-            .build(&context.device);
-        self.planet_pipeline = Some(render_pipeline);
+        self.rpass = Some(render::BlockRenderPass::new(context));
     }
 
     pub fn tick(
@@ -121,17 +77,18 @@ impl PlayGame {
         keycode: Option<VirtualKeyCode>
     ) -> super::ProgramMode {
         super::helpers::render_menu_background(context, frame, resources);
+        let pass = self.rpass.as_mut().unwrap();
 
         if self.rebuild_geometry {
             if let Some(region) = &self.current_region {
-                self.vb.clear();
+                pass.vb.clear();
                 let mut chunks = crate::planet::chunks::Chunks::empty();
                 chunks.rebuild_all(region);
                 for p in chunks.all_geometry().iter() {
                     match *p {
                         Primitive::Cube { x, y, z, w, h, d } => {
                             crate::utils::add_cube_geometry(
-                                &mut self.vb,
+                                &mut pass.vb,
                                 x as f32,
                                 y as f32,
                                 z as f32,
@@ -148,7 +105,7 @@ impl PlayGame {
 
         let query = <(Write<Position>, Write<CameraOptions>)>::query();
         for (mut pos, mut camopts) in query.iter_mut(&mut self.ecs) {
-            let cam = self.camera.as_mut().unwrap();
+            let cam = &mut pass.camera;
             if let Some(keycode) = keycode {
                 match keycode {
                     VirtualKeyCode::Left => pos.x -= 1,
@@ -175,15 +132,9 @@ impl PlayGame {
             cam.update(&*pos, &*camopts);
         }
 
-        self.uniforms
-            .as_mut()
-            .unwrap()
-            .update_view_proj(&self.camera.as_ref().unwrap(), self.counter);
-        self.uniforms
-            .as_ref()
-            .unwrap()
-            .update_buffer(context, &self.uniform_buffer.as_ref().unwrap());
-        self.vb.update_buffer(context);
+        pass.uniforms.update_view_proj(&pass.camera, self.counter);
+        pass.uniforms.update_buffer(context, &pass.uniform_buf);
+        pass.vb.update_buffer(context);
         self.counter += 1;
 
         let window = imgui::Window::new(im_str!("Playing"));
@@ -193,24 +144,8 @@ impl PlayGame {
                 imgui.text(im_str!("Test"));
             });
 
-        if self.vb.len() > 0 {
-            let mut encoder = renderpass::get_encoder(&context);
-            {
-                let mut rpass = renderpass::get_render_pass_with_depth(
-                    context,
-                    &mut encoder,
-                    frame,
-                    depth_id,
-                    wgpu::LoadOp::Load,
-                );
-                rpass.set_pipeline(&self.planet_pipeline.as_ref().unwrap());
-                rpass.set_bind_group(0, &self.uniform_bind_group.as_ref().unwrap(), &[]);
-                rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
-                rpass.draw(0..self.vb.len(), 0..1);
-                //println!("{}", self.vb.len());
-                //rpass.draw(0..1, 0..1);
-            }
-            context.queue.submit(&[encoder.finish()]);
+        if pass.vb.len() > 0 {
+            pass.render(context, depth_id, frame);
         }
 
         super::ProgramMode::PlayGame
