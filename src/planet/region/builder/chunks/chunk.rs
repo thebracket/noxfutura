@@ -69,7 +69,7 @@ impl Chunk {
                 };
                 1
             ]),
-            ChunkType::Partial => {
+            ChunkType::Partial  => {
                 let mut p = Vec::new();
                 let mut cubes = HashSet::new();
                 self.iter().for_each(|pos| {

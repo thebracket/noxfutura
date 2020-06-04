@@ -17,8 +17,8 @@ pub fn greedy_cubes(mut cube_index: HashSet<usize>) -> Vec<Primitive> {
 
             let (x, y, z) = idxmap(idx);
             let width = grow_right(&mut cube_index, idx);
-            //let height = grow_down(&mut cube_index, idx, width);
-            let height = 1;
+            let height = grow_down(&mut cube_index, idx, width);
+            let depth = grow_in(&mut cube_index, idx, width, height);
 
             p.push(Primitive::Cube {
                 x,
@@ -26,16 +26,16 @@ pub fn greedy_cubes(mut cube_index: HashSet<usize>) -> Vec<Primitive> {
                 z,
                 w: width,
                 h: height,
-                d: 1,
+                d: depth,
             });
         }
     }
 
-    /*println!(
+    println!(
         "Compressed {} cubes into {} primitives",
         original_size,
         p.len()
-    );*/
+    );
     p
 }
 
@@ -53,21 +53,47 @@ fn grow_right(cube_index: &mut HashSet<usize>, idx: usize) -> usize {
 }
 
 fn grow_down(cube_index: &mut HashSet<usize>, idx: usize, width: usize) -> usize {
-    const REGION_LAYER_SIZE: usize = REGION_WIDTH * REGION_HEIGHT;
     let mut height = 1;
-    let mut candidate_idx = idx + REGION_LAYER_SIZE;
+    let mut candidate_idx = idx + REGION_WIDTH;
     'outer: loop {
-        for cidx in candidate_idx..candidate_idx + width {
+        for cidx in candidate_idx..=candidate_idx + width {
             if !cube_index.contains(&cidx) {
                 break 'outer;
             }
         }
 
-        for cidx in candidate_idx..candidate_idx + width {
+        for cidx in candidate_idx..=candidate_idx + width {
             cube_index.remove(&cidx);
         }
         height += 1;
-        candidate_idx += REGION_LAYER_SIZE;
+        candidate_idx += REGION_WIDTH;
     }
     height
+}
+
+fn grow_in(cube_index: &mut HashSet<usize>, idx: usize, width: usize, height: usize) -> usize {
+    const LAYER_SIZE : usize = REGION_WIDTH * REGION_HEIGHT;
+    let mut depth = 1;
+    let mut candidate_idx = idx + LAYER_SIZE;
+    'outer: loop {
+        for y in 0..=height {
+            for x in 0..=width {
+                let cidx = candidate_idx + (y * REGION_WIDTH) + x;
+                if !cube_index.contains(&cidx) {
+                    break 'outer;
+                }
+            }
+        }
+
+        for y in 0..=height {
+            for x in 0..=width {
+                let cidx = candidate_idx + (y * REGION_WIDTH) + x;
+                cube_index.remove(&cidx);
+            }
+        }
+
+        depth += 1;
+        candidate_idx += LAYER_SIZE;
+    }
+    depth
 }

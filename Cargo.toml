@@ -33,3 +33,6 @@ uuid = { version = "0.8", features = ["v4"] }
 
 [profile.dev]
 opt-level = 1
+
+[profile.release]
+lto = true
