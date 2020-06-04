@@ -14,7 +14,7 @@ pub struct BlockRenderPass {
 impl BlockRenderPass {
     pub fn new(context: &mut Context) -> Self {
         // Initialize the vertex buffer for cube geometry
-        let mut vb = VertexBuffer::<f32>::new(&[3, 4, 3]);
+        let mut vb = VertexBuffer::<f32>::new(&[3, 3]);
         crate::utils::add_cube_geometry(&mut vb, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         vb.build(&context.device, wgpu::BufferUsage::VERTEX);
 
