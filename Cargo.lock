@@ -1264,6 +1264,7 @@ dependencies = [
  "legion",
  "miniz_oxide",
  "parking_lot",
+ "rayon",
  "ron",
  "serde",
  "type-uuid",

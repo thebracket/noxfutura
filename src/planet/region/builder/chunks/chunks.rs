@@ -1,5 +1,6 @@
 use super::{Chunk, Primitive, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_WIDTH};
 use crate::planet::Region;
+use rayon::prelude::*;
 
 pub struct Chunks {
     chunks: Vec<Chunk>,
@@ -19,7 +20,7 @@ impl Chunks {
     }
 
     pub fn rebuild_all(&mut self, region: &Region) {
-        self.chunks.iter_mut().for_each(|c| c.rebuild(region));
+        self.chunks.par_iter_mut().for_each(|c| c.rebuild(region));
     }
 
     pub fn all_geometry(&mut self) -> Vec<Primitive> {
