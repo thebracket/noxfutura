@@ -24,6 +24,11 @@ impl SharedResources {
             "NF Background",
         );
 
+        /*context.register_texture(
+            include_bytes!("../../resources/avon-and-guards.png"),
+            "Kerr Avon",
+        );*/
+
         // Setup the helper quad VB
         self.quad_vb.add_slice(&[
             -1.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 0.0, 0.0,

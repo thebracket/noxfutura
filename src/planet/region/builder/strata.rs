@@ -46,7 +46,7 @@ pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeTyp
     biome_noise.set_noise_type(NoiseType::SimplexFractal);
     biome_noise.set_fractal_type(FractalType::FBM);
     biome_noise.set_fractal_octaves(10);
-    biome_noise.set_fractal_gain(0.4);
+    biome_noise.set_fractal_gain(0.1);
     biome_noise.set_fractal_lacunarity(2.0);
     biome_noise.set_frequency(0.01);
     for z in 0..REGION_DEPTH {

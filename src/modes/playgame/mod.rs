@@ -13,6 +13,7 @@ mod camera;
 use camera::*;
 use crate::engine::uniforms::UniformBlock;
 mod render;
+pub mod tex3d;
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
@@ -99,6 +100,16 @@ impl PlayGame {
                         }
                     }
                 }
+                let rlock = crate::raws::RAWS.lock();
+                let mut mat_info : Vec<u8> = Vec::with_capacity(REGION_TILES_COUNT * 4);
+                region.material_idx.iter().for_each(|midx| {
+                    let tint = rlock.materials.materials[*midx].tint;
+                    mat_info.push((tint.0 * 255.0) as u8);
+                    mat_info.push((tint.1 * 255.0) as u8);
+                    mat_info.push((tint.2 * 255.0) as u8);
+                    mat_info.push(*midx as u8);
+                });
+                pass.material_info.copy_slice_to_texture(context, &mat_info);
             }
             self.rebuild_geometry = false;
         }

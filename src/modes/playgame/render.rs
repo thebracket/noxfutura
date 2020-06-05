@@ -1,5 +1,5 @@
 use crate::engine::{Context, VertexBuffer};
-use super::{Uniforms, Camera};
+use super::{Uniforms, Camera, tex3d::Texture3D};
 
 pub struct BlockRenderPass {
     pub vb : VertexBuffer<f32>,
@@ -8,11 +8,22 @@ pub struct BlockRenderPass {
     pub shader_id : usize,
     pub uniform_bind_group : wgpu::BindGroup,
     pub render_pipeline : wgpu::RenderPipeline,
-    pub uniform_buf : wgpu::Buffer
+    pub uniform_buf : wgpu::Buffer,
+    pub material_info : Texture3D,
+    mat_info_bind_group : wgpu::BindGroup
 }
 
 impl BlockRenderPass {
     pub fn new(context: &mut Context) -> Self {
+        // Load the 3D texture
+        let material_info = Texture3D::blank(
+            context, 
+            None, 
+            crate::planet::REGION_WIDTH, 
+            crate::planet::REGION_HEIGHT, 
+            crate::planet::REGION_DEPTH
+        ).unwrap();
+
         // Initialize the vertex buffer for cube geometry
         let mut vb = VertexBuffer::<f32>::new(&[3, 3]);
         crate::utils::add_cube_geometry(&mut vb, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
@@ -54,8 +65,53 @@ impl BlockRenderPass {
             label: None,
         });
 
+        // Texture buffer descriptions
+        let matinfo_bind_group_layout =
+            context
+                .device
+                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                    bindings: &[
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 0,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::SampledTexture {
+                                multisampled: false,
+                                dimension: wgpu::TextureViewDimension::D3,
+                                component_type: wgpu::TextureComponentType::Uint,
+                            },
+                        },
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 1,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::Sampler { comparison: false },
+                        },
+                    ],
+                    label: Some("matinfo_bind_group_layout"),
+                });
+
+        let mat_info_bind_group = context
+            .device
+            .create_bind_group(&wgpu::BindGroupDescriptor {
+                layout: &matinfo_bind_group_layout,
+                bindings: &[
+                    wgpu::Binding {
+                        binding: 0,
+                        resource: wgpu::BindingResource::TextureView(
+                            &material_info.view,
+                        ),
+                    },
+                    wgpu::Binding {
+                        binding: 1,
+                        resource: wgpu::BindingResource::Sampler(
+                            &material_info.sampler,
+                        ),
+                    },
+                ],
+                label: Some("matinfo_bind_group"),
+            });
+
         let pipeline_layout = context.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            bind_group_layouts: &[&uniform_bind_group_layout],
+            bind_group_layouts: &[&uniform_bind_group_layout, &matinfo_bind_group_layout],
         });
         let render_pipeline = context.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             layout: &pipeline_layout,
@@ -107,7 +163,9 @@ impl BlockRenderPass {
             shader_id,
             uniform_bind_group,
             render_pipeline,
-            uniform_buf
+            uniform_buf,
+            material_info,
+            mat_info_bind_group
         };
         builder
     }
@@ -137,6 +195,7 @@ impl BlockRenderPass {
 
             rpass.set_pipeline(&self.render_pipeline);
             rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            rpass.set_bind_group(1, &self.mat_info_bind_group, &[]);
             rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
             rpass.draw(0..self.vb.len(), 0..1);
             //println!("{}", self.vb.len());
