@@ -4,6 +4,7 @@ use crate::utils::mapidx;
 use crate::raws::*;
 use bracket_random::prelude::*;
 use bracket_noise::prelude::*;
+use rayon::prelude::*;
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
     let mlock = crate::raws::RAWS.lock();
@@ -35,29 +36,42 @@ pub struct Strata {
 pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeType, perlin_seed: u64) -> Strata {
     const REGION_TILES_COUNT : usize = REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH;
     let (soils, sands, sedimentaries, igeneouses) = get_strata_materials();
-    let n_strata = (REGION_WIDTH * REGION_HEIGHT) * 4 + rng.roll_dice(1, 64) as usize;
+    let n_strata = 1000;
     let mut result = Strata {
         map : vec![1; REGION_TILES_COUNT],
         material_idx : vec![1; n_strata],
         counts: vec![(0,0,0,0); n_strata]
     };
 
-    let mut biome_noise = FastNoise::seeded(perlin_seed);
-    biome_noise.set_noise_type(NoiseType::SimplexFractal);
-    biome_noise.set_fractal_type(FractalType::FBM);
-    biome_noise.set_fractal_octaves(10);
-    biome_noise.set_fractal_gain(0.1);
-    biome_noise.set_fractal_lacunarity(2.0);
-    biome_noise.set_frequency(0.01);
+    use bracket_geometry::prelude::*;
+    let mut centroids = Vec::<Point3>::with_capacity(n_strata);
+    for _ in 0..n_strata {
+        centroids.push(
+            Point3::new(
+                rng.range(0, REGION_WIDTH),
+                rng.range(0, REGION_HEIGHT),
+                rng.range(0, REGION_DEPTH),
+            )
+        );
+    }
+
     for z in 0..REGION_DEPTH {
-        let nz = (z as f32) / REGION_DEPTH as f32;
+        let percent = z as f32 / REGION_DEPTH as f32;
+        crate::planet::set_worldgen_status(format!("Strata Hunting {}%", (percent * 100.0) as i32));
         for y in 0..REGION_WIDTH {
-            let ny = (y as f32) / REGION_HEIGHT as f32;
             for x in 0..REGION_WIDTH {
-                let nx = (x as f32) / REGION_WIDTH as f32;
-                let cell_noise = biome_noise.get_noise3d(nx, ny, nz);
-                let biome_ramp = (cell_noise + 1.0) / 2.0;
-                let biome_idx = (biome_ramp * n_strata as f32) as usize;
+
+                let mut min = std::f32::MAX;
+                let mut biome_idx = std::usize::MAX;
+                let my_coords = Point3::new(x, y, z);
+                centroids.iter().enumerate().for_each(|(i, pt)| {
+                    let dist = DistanceAlg::PythagorasSquared.distance3d(my_coords, *pt);
+                    if dist < min {
+                        min = dist;
+                        biome_idx = i;
+                    }
+                });
+
                 result.counts[biome_idx].0 += 1;
                 result.counts[biome_idx].1 += x;
                 result.counts[biome_idx].2 += y;

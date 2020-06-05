@@ -146,7 +146,7 @@ impl PlayGame {
         pass.uniforms.update_view_proj(&pass.camera, self.counter);
         pass.uniforms.update_buffer(context, &pass.uniform_buf);
         pass.vb.update_buffer(context);
-        self.counter += 1;
+        self.counter = 180;
 
         let window = imgui::Window::new(im_str!("Playing"));
         window
