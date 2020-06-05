@@ -16,7 +16,7 @@
             hit_points: 80,
             mines_to: [ Ore(name: "aluminium") ],
             description: "An aluminium ore, that can be refined into useful metal.",
-            texture: "rock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
             tint: (1.0, 0.5, 0.5)
         ),
 
@@ -56,7 +56,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "aluminium") ],
             description: "An aluminium ore, that can be refined into useful metal.",
-            texture: "rock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
             tint: (0.9, 0.2, 0.2)
         ),
 
@@ -76,7 +76,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "coal") ],
             description: "Sticky black rock from which one can extract coal and tar.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.1, 0.1, 0.1)
         ),
 
@@ -86,7 +86,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "sulpher") ],
             description: "A smelly, sulphorous rock.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.1, 1.0, 1.0)
         ),
 
@@ -96,7 +96,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "tin") ],
             description: "A dark crystalline rock.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.1, 0.1, 0.1)
         ),
 
@@ -136,7 +136,7 @@
             hit_points: 115,
             mines_to: [ Ore(name: "mercury") ],
             description: "A red, crystalline rock.",
-            texture: "rock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
             tint: (1.0, 0.2, 0.2)
         ),
 
@@ -146,7 +146,7 @@
             hit_points: 75,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A sedimentary rock formed largely from mud.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.6, 0.6, 0.6)
         ),
 
@@ -156,7 +156,7 @@
             hit_points: 75,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "Cobalt, arsenic and sulphur. Not tasty. Kobolds were named after this rock.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.1, 0.8)
         ),
 
@@ -166,7 +166,7 @@
             hit_points: 75,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A sedimentary rock formed largely from just about everything else.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.5, 0.5, 0.5)
         ),
 
@@ -176,7 +176,7 @@
             hit_points: 75,
             mines_to: [ Ore(name: "copper") ],
             description: "Rock that contains streaks of copper.",
-            texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "copperrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.8, 0.5, 0.2)
         ),
 
@@ -186,7 +186,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A hard rock containing lots of quartz and feltspar.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.5, 0.5, 0.5)
         ),
 
@@ -206,7 +206,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock, sometimes containing Olivine.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.3, 0.7, 0.3)
         ),
 
@@ -216,7 +216,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "lead"), Ore(name: "silver"), Item(name: "sulpher") ],
             description: "A rock made up lead and sulphur. Sure to give you brain damage if consumed!",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.3, 0.7, 0.7)
         ),
 
@@ -226,7 +226,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "lead"), Ore(name: "nickel") ],
             description: "A nickel bearing green rock.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.3, 0.7, 0.3)
         ),
 
@@ -236,7 +236,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock, also the subject of numerous puns amongst geologists.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.3, 0.3, 0.3)
         ),
 
@@ -246,7 +246,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "gold") ],
             description: "A dense rock, streaked with veins of gold. Dwarves love it.",
-            texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "copperrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (1.0, 0.7, 0.1)
         ),
 
@@ -266,7 +266,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A cyrstalline black rock that generally ends up in pencils.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.1, 0.1)
         ),
 
@@ -286,7 +286,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "iron") ],
             description: "An iron-bearing rock, reddish in hue from the rust.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (1.0, 0.5, 0.5)
         ),
 
@@ -296,7 +296,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "iron") ],
             description: "An iron-bearing rock, reddish in hue from the rust.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (1.0, 0.5, 0.5)
         ),
 
@@ -306,7 +306,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A mixture of minerals clumped together.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.1, 0.1)
         ),
 
@@ -316,7 +316,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A hard, black rock.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.1, 0.1)
         ),
 
@@ -336,7 +336,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "coal") ],
             description: "Sticky brown rock from which one can extract coal and tar.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.1, 0.1)
         ),
 
@@ -356,7 +356,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "iron") ],
             description: "An iron bearing rock, containing lots of sulphur.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.1, 0.9, 0.9)
         ),
 
@@ -366,7 +366,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "iron") ],
             description: "An iron bearing rock, containing lots of sulphur.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.1, 0.9, 0.9)
         ),
 
@@ -376,7 +376,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "iron") ],
             description: "An iron-bearing rock, reddish in hue from the rust.",
-            texture: "pocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
             tint: (0.9, 0.7, 0.7)
         ),
 
@@ -386,7 +386,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "copper") ],
             description: "A green rock, frequently found in stalagtites.",
-            texture: "pocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
             tint: (0.3, 0.9, 0.3)
         ),
 
@@ -406,7 +406,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A hard rock with a pleasant blue color.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 1.0, 1.0)
         ),
 
@@ -416,7 +416,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A sedimentary rock formed largely from just about everything else.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.5, 0.4, 0.4)
         ),
 
@@ -426,7 +426,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A sedimentary rock formed largely from just about everything else.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.05, 0.05, 0.05)
         ),
 
@@ -436,7 +436,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A green crystalline rock.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.9, 0.1)
         ),
 
@@ -446,7 +446,7 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder"), Item(name: "sulpher") ],
             description: "An igneous rock, yellow from sulphur.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (1.0, 1.0, 0.1)
         ),
 
@@ -486,7 +486,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "platinum") ],
             description: "A dense rock, streaked with veins of platinum. Dwarves love it.",
-            texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "copperrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.9, 0.9, 1.0)
         ),
 
@@ -546,7 +546,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "uranium"), Ore(name: "titanium") ],
             description: "A hard, black rock made from titantium oxide.",
-            texture: "rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.08, 0.08, 0.08)
         ),
 
@@ -606,7 +606,7 @@
             hit_points: 50,
             mines_to: [ Ore(name: "zinc") ],
             description: "A zinc-bearing rock.",
-            texture: "copper_rock", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
+            texture: "copperrock", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.4, 0.4, 0.4)
         ),
 
@@ -616,7 +616,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "uranium"), Ore(name: "titanium") ],
             description: "A crystalline rock.",
-            texture: "pocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.5, 0.5, 0.5)
         ),
 
@@ -626,7 +626,7 @@
             hit_points: 100,
             mines_to: [ Ore(name: "copper"), Ore(name: "silver") ],
             description: "A dense rock, streaked with veins of silver and copper. Rated 9/10 by most Dwarves.",
-            texture: "copper_rock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            texture: "copperrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.5, 0.5, 0.5)
         ),
 
@@ -638,7 +638,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name:"clay") ],
             description: "Soil, rich in clay and poor for growing.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.52, 0.35, 0.25)
         ),
 
@@ -648,7 +648,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name:"clay") ],
             description: "Soil, rich in clay and poor for growing.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.54, 0.39, 0.28)
         ),
 
@@ -658,7 +658,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil") ],
             description: "Rich, dark soil.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.4, 0.4, 0.4)
         ),
 
@@ -668,7 +668,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name: "sand") ],
             description: "Sandy soil.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.9, 0.6, 0.3)
         ),
 
@@ -678,7 +678,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name: "sand") ],
             description: "Rich, dark soil.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.44, 0.38, 0.29)
         ),
 
@@ -688,7 +688,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "sand"), Item(name: "clay") ],
             description: "Poor, sandy clay soil.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.9, 0.6, 0.3)
         ),
 
@@ -698,7 +698,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "sand"), Item(name: "clay"), Item(name: "topsoil") ],
             description: "Rich soil with sand and clay.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -708,7 +708,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil") ],
             description: "Poor soil with lots of silt deposits.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -718,7 +718,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name: "clay") ],
             description: "Poor soil with lots of silt and clay deposits.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -728,7 +728,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name: "clay") ],
             description: "Rich soil with lots of silt and clay deposits.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -738,7 +738,7 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil") ],
             description: "Rich soil with lots of silt deposits.",
-            texture: "dry_dirt", constructed: "dry_dirt", floor: "dry_dirt", floor_constructed: "cobbles",
+            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -748,7 +748,7 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse yellow sand.",
-            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.76, 0.69, 0.5)
         ),
 
@@ -758,7 +758,7 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse dark sand.",
-            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.5, 0.5, 0.5)
         ),
 
@@ -768,7 +768,7 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse red sand.",
-            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.81, 0.5, 0.3)
         ),
 
@@ -778,7 +778,7 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse white sand.",
-            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.81, 0.81, 0.8)
         ),
 
@@ -788,7 +788,7 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse yellow sand.",
-            texture: "sandy_soil", constructed: "sandy_soil", floor: "sandy_soil", floor_constructed: "cobbles",
+            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.98, 0.75, 0.6)
         ),
     ]

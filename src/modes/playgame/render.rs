@@ -12,11 +12,14 @@ pub struct BlockRenderPass {
     pub material_info : Texture3D,
     mat_info_bind_group : wgpu::BindGroup,
     slate_tex : usize,
-    slate_bind_group : wgpu::BindGroup
+    slate_bind_group : wgpu::BindGroup,
+    pub terrain_textures : super::texarray::TextureArray
 }
 
 impl BlockRenderPass {
     pub fn new(context: &mut Context) -> Self {
+        let terrain_textures = super::texarray::TextureArray::blank(context).unwrap();
+
         // Load the 3D texture
         let material_info = Texture3D::blank(
             context, 
@@ -221,7 +224,8 @@ impl BlockRenderPass {
             material_info,
             mat_info_bind_group,
             slate_tex,
-            slate_bind_group
+            slate_bind_group,
+            terrain_textures
         };
         builder
     }

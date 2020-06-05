@@ -49,11 +49,11 @@ pub fn add_cube_geometry(
     h: f32,
     d: f32,
 ) {
-    let x0 = -0.5 + x;
+    let x0 = x;
     let x1 = x0 + w;
-    let y0 = -0.5 + z;
+    let y0 = z;
     let y1 = y0 + d;
-    let z0 = 0.5 + y;
+    let z0 = y;
     let z1 = z0 + h;
 
     let t0 = 0.0f32;
