@@ -10,7 +10,9 @@ pub struct BlockRenderPass {
     pub render_pipeline : wgpu::RenderPipeline,
     pub uniform_buf : wgpu::Buffer,
     pub material_info : Texture3D,
-    mat_info_bind_group : wgpu::BindGroup
+    mat_info_bind_group : wgpu::BindGroup,
+    slate_tex : usize,
+    slate_bind_group : wgpu::BindGroup
 }
 
 impl BlockRenderPass {
@@ -24,8 +26,13 @@ impl BlockRenderPass {
             crate::planet::REGION_DEPTH
         ).unwrap();
 
+        let slate_tex = context.register_texture(
+            include_bytes!("../../../resources/terrain/slate-t.png"),
+            "Slate",
+        );
+
         // Initialize the vertex buffer for cube geometry
-        let mut vb = VertexBuffer::<f32>::new(&[3, 3]);
+        let mut vb = VertexBuffer::<f32>::new(&[3, 3, 2]);
         crate::utils::add_cube_geometry(&mut vb, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         vb.build(&context.device, wgpu::BufferUsage::VERTEX);
 
@@ -108,10 +115,57 @@ impl BlockRenderPass {
                     },
                 ],
                 label: Some("matinfo_bind_group"),
-            });
+            }
+        );
+
+        // Slate texture
+        let slate_bind_group_layout =
+            context
+                .device
+                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                    bindings: &[
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 0,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::SampledTexture {
+                                multisampled: false,
+                                dimension: wgpu::TextureViewDimension::D2,
+                                component_type: wgpu::TextureComponentType::Uint,
+                            },
+                        },
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 1,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::Sampler { comparison: false },
+                        },
+                    ],
+                    label: Some("texture_bind_group_layout"),
+                });
+
+        let slate_bind_group = context
+            .device
+            .create_bind_group(&wgpu::BindGroupDescriptor {
+                layout: &slate_bind_group_layout,
+                bindings: &[
+                    wgpu::Binding {
+                        binding: 0,
+                        resource: wgpu::BindingResource::TextureView(
+                            &context.textures[slate_tex].view,
+                        ),
+                    },
+                    wgpu::Binding {
+                        binding: 1,
+                        resource: wgpu::BindingResource::Sampler(
+                            &context.textures[slate_tex].sampler,
+                        ),
+                    },
+                ],
+                label: Some("diffuse_bind_group"),
+            }
+        );
 
         let pipeline_layout = context.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            bind_group_layouts: &[&uniform_bind_group_layout, &matinfo_bind_group_layout],
+            bind_group_layouts: &[&uniform_bind_group_layout, &matinfo_bind_group_layout, &slate_bind_group_layout],
         });
         let render_pipeline = context.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             layout: &pipeline_layout,
@@ -165,7 +219,9 @@ impl BlockRenderPass {
             render_pipeline,
             uniform_buf,
             material_info,
-            mat_info_bind_group
+            mat_info_bind_group,
+            slate_tex,
+            slate_bind_group
         };
         builder
     }
@@ -196,6 +252,7 @@ impl BlockRenderPass {
             rpass.set_pipeline(&self.render_pipeline);
             rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
             rpass.set_bind_group(1, &self.mat_info_bind_group, &[]);
+            rpass.set_bind_group(2, &self.slate_bind_group, &[]);
             rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
             rpass.draw(0..self.vb.len(), 0..1);
             //println!("{}", self.vb.len());

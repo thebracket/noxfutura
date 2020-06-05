@@ -2,11 +2,13 @@
 
 layout(location=0) in vec3 a_position;
 layout(location=1) in vec3 a_normal;
+layout(location=2) in vec2 a_uv;
 
 layout(location=0) out vec3 v_normal;
 layout(location=1) out vec3 v_frag_pos;
 layout(location=2) out vec3 v_sun_pos;
 layout(location=3) out vec3 v_world_pos;
+layout(location=4) out vec2 v_uv;
 
 layout(set=0, binding=0) 
 uniform Uniforms {
@@ -20,4 +22,5 @@ void main() {
     v_frag_pos  = gl_Position.xyz;
     v_sun_pos = u_sun_pos;
     v_world_pos = vec3(a_position.x / 256.0, a_position.z / 256.0, a_position.y / 256.0);
+    v_uv = a_uv;
 }
