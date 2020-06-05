@@ -36,7 +36,7 @@ pub struct Strata {
 pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeType, perlin_seed: u64) -> Strata {
     const REGION_TILES_COUNT : usize = REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH;
     let (soils, sands, sedimentaries, igeneouses) = get_strata_materials();
-    let n_strata = 1000;
+    let n_strata = 100;
     let mut result = Strata {
         map : vec![1; REGION_TILES_COUNT],
         material_idx : vec![1; n_strata],
@@ -65,7 +65,7 @@ pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeTyp
                 let mut biome_idx = std::usize::MAX;
                 let my_coords = Point3::new(x, y, z);
                 centroids.iter().enumerate().for_each(|(i, pt)| {
-                    let dist = DistanceAlg::PythagorasSquared.distance3d(my_coords, *pt);
+                    let dist = DistanceAlg::Manhattan.distance3d(my_coords, *pt);
                     if dist < min {
                         min = dist;
                         biome_idx = i;
