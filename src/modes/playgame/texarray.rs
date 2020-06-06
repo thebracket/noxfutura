@@ -58,7 +58,7 @@ impl TextureArray {
 
         for (i,filename) in texture_filenames.iter().enumerate() {
             println!("Loading {}", filename);
-            let img = image::open(&filename).unwrap();
+            let img = image::open(&filename).unwrap().resize_exact(256, 256, image::imageops::FilterType::Lanczos3);
             let rgba = img.into_rgba();
 
             let buffer = context.device.create_buffer_with_data(&rgba, wgpu::BufferUsage::COPY_SRC);

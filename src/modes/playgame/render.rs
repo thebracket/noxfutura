@@ -11,9 +11,8 @@ pub struct BlockRenderPass {
     pub uniform_buf : wgpu::Buffer,
     pub material_info : Texture3D,
     mat_info_bind_group : wgpu::BindGroup,
-    slate_tex : usize,
-    slate_bind_group : wgpu::BindGroup,
-    pub terrain_textures : super::texarray::TextureArray
+    pub terrain_textures : super::texarray::TextureArray,
+    terrain_bind_group : wgpu::BindGroup
 }
 
 impl BlockRenderPass {
@@ -22,17 +21,12 @@ impl BlockRenderPass {
 
         // Load the 3D texture
         let material_info = Texture3D::blank(
-            context, 
-            None, 
-            crate::planet::REGION_WIDTH, 
-            crate::planet::REGION_HEIGHT, 
+            context,
+            None,
+            crate::planet::REGION_WIDTH,
+            crate::planet::REGION_HEIGHT,
             crate::planet::REGION_DEPTH
         ).unwrap();
-
-        let slate_tex = context.register_texture(
-            include_bytes!("../../../resources/terrain/slate-t.png"),
-            "Slate",
-        );
 
         // Initialize the vertex buffer for cube geometry
         let mut vb = VertexBuffer::<f32>::new(&[3, 3, 2]);
@@ -121,8 +115,8 @@ impl BlockRenderPass {
             }
         );
 
-        // Slate texture
-        let slate_bind_group_layout =
+        // Terrain textures
+        let terrain_bind_group_layout =
             context
                 .device
                 .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -145,21 +139,21 @@ impl BlockRenderPass {
                     label: Some("texture_bind_group_layout"),
                 });
 
-        let slate_bind_group = context
+        let terrain_bind_group = context
             .device
             .create_bind_group(&wgpu::BindGroupDescriptor {
-                layout: &slate_bind_group_layout,
+                layout: &terrain_bind_group_layout,
                 bindings: &[
                     wgpu::Binding {
                         binding: 0,
                         resource: wgpu::BindingResource::TextureView(
-                            &context.textures[slate_tex].view,
+                            &terrain_textures.view
                         ),
                     },
                     wgpu::Binding {
                         binding: 1,
                         resource: wgpu::BindingResource::Sampler(
-                            &context.textures[slate_tex].sampler,
+                            &terrain_textures.sampler,
                         ),
                     },
                 ],
@@ -168,7 +162,7 @@ impl BlockRenderPass {
         );
 
         let pipeline_layout = context.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            bind_group_layouts: &[&uniform_bind_group_layout, &matinfo_bind_group_layout, &slate_bind_group_layout],
+            bind_group_layouts: &[&uniform_bind_group_layout, &matinfo_bind_group_layout, &terrain_bind_group_layout],
         });
         let render_pipeline = context.device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             layout: &pipeline_layout,
@@ -223,9 +217,8 @@ impl BlockRenderPass {
             uniform_buf,
             material_info,
             mat_info_bind_group,
-            slate_tex,
-            slate_bind_group,
-            terrain_textures
+            terrain_textures,
+            terrain_bind_group
         };
         builder
     }
@@ -256,7 +249,7 @@ impl BlockRenderPass {
             rpass.set_pipeline(&self.render_pipeline);
             rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
             rpass.set_bind_group(1, &self.mat_info_bind_group, &[]);
-            rpass.set_bind_group(2, &self.slate_bind_group, &[]);
+            rpass.set_bind_group(2, &self.terrain_bind_group, &[]);
             rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
             rpass.draw(0..self.vb.len(), 0..1);
             //println!("{}", self.vb.len());
