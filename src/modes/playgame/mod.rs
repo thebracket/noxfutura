@@ -71,14 +71,14 @@ impl PlayGame {
 
     pub fn tick(
         &mut self,
-        resources: &SharedResources,
+        _resources: &SharedResources,
         frame: &wgpu::SwapChainOutput,
         context: &mut crate::engine::Context,
         imgui: &imgui::Ui,
         depth_id: usize,
         keycode: Option<VirtualKeyCode>
     ) -> super::ProgramMode {
-        super::helpers::render_menu_background(context, frame, resources);
+        //super::helpers::render_menu_background(context, frame, resources);
         let pass = self.rpass.as_mut().unwrap();
 
         if self.rebuild_geometry {
