@@ -36,7 +36,7 @@ pub struct Strata {
 pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeType, perlin_seed: u64) -> Strata {
     const REGION_TILES_COUNT : usize = REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH;
     let (soils, sands, sedimentaries, igeneouses) = get_strata_materials();
-    let n_strata = 100;
+    let n_strata = 1000;
     let mut result = Strata {
         map : vec![1; REGION_TILES_COUNT],
         material_idx : vec![1; n_strata],
