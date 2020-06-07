@@ -29,7 +29,22 @@ impl Chunk {
         }
     }
 
-    pub fn rebuild(&mut self, region: &Region) {
+    fn active_z(&self, camera_z: i32) -> (usize, usize) {
+        (
+            camera_z as usize,
+            camera_z as usize + 20
+        )
+    }
+
+    pub fn rebuild(&mut self, region: &Region, camera_z: i32) {
+
+        let active_z = self.active_z(camera_z);
+
+        if self.base.2 > active_z.0 {
+            self.t = ChunkType::Empty;
+            return;
+        }
+
         let len = self.iter().count();
         let mut count_empty = 0;
         let mut count_solid = 0;

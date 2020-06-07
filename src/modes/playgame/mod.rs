@@ -26,7 +26,8 @@ pub struct PlayGame {
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
-    counter: usize
+    counter: usize,
+    chunks: chunks::Chunks
 }
 
 impl PlayGame {
@@ -39,7 +40,8 @@ impl PlayGame {
             rpass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
-            counter: 0
+            counter: 0,
+            chunks: chunks::Chunks::empty()
         }
     }
 
@@ -79,14 +81,15 @@ impl PlayGame {
         keycode: Option<VirtualKeyCode>
     ) -> super::ProgramMode {
         //super::helpers::render_menu_background(context, frame, resources);
+
+        let camera_z = self.camera_control(&keycode);
         let pass = self.rpass.as_mut().unwrap();
 
         if self.rebuild_geometry {
             if let Some(region) = &self.current_region {
                 pass.vb.clear();
-                let mut chunks = crate::planet::chunks::Chunks::empty();
-                chunks.rebuild_all(region);
-                for p in chunks.all_geometry().iter() {
+                self.chunks.rebuild_all(region, camera_z);
+                for p in self.chunks.all_geometry().iter() {
                     match *p {
                         Primitive::Cube { x, y, z, w, h, d } => {
                             crate::utils::add_cube_geometry(
@@ -121,35 +124,6 @@ impl PlayGame {
             self.rebuild_geometry = false;
         }
 
-        let query = <(Write<Position>, Write<CameraOptions>)>::query();
-        for (mut pos, mut camopts) in query.iter_mut(&mut self.ecs) {
-            let cam = &mut pass.camera;
-            if let Some(keycode) = keycode {
-                match keycode {
-                    VirtualKeyCode::Left => pos.x -= 1,
-                    VirtualKeyCode::Right => pos.x += 1,
-                    VirtualKeyCode::Up => pos.y -= 1,
-                    VirtualKeyCode::Down => pos.y += 1,
-                    VirtualKeyCode::Comma => pos.z += 1,
-                    VirtualKeyCode::Period => pos.z -= 1,
-                    VirtualKeyCode::Minus => camopts.zoom_level -=1,
-                    VirtualKeyCode::Add => camopts.zoom_level +=1,
-                    VirtualKeyCode::Tab => {
-                        match camopts.mode {
-                            CameraMode::TopDown => camopts.mode = CameraMode::Front,
-                            CameraMode::Front => camopts.mode = CameraMode::DiagonalNW,
-                            CameraMode::DiagonalNW => camopts.mode = CameraMode::DiagonalNE,
-                            CameraMode::DiagonalNE => camopts.mode = CameraMode::DiagonalSW,
-                            CameraMode::DiagonalSW => camopts.mode = CameraMode::DiagonalSE,
-                            CameraMode::DiagonalSE => camopts.mode = CameraMode::TopDown,
-                        }
-                    }
-                    _ => {}
-                }
-            }
-            cam.update(&*pos, &*camopts);
-        }
-
         pass.uniforms.update_view_proj(&pass.camera, self.counter);
         pass.uniforms.update_buffer(context, &pass.uniform_buf);
         pass.vb.update_buffer(context);
@@ -168,4 +142,40 @@ impl PlayGame {
 
         super::ProgramMode::PlayGame
     }
+
+    fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> i32 {
+        let mut result = 0;
+        let pass = self.rpass.as_mut().unwrap();
+        let query = <(Write<Position>, Write<CameraOptions>)>::query();
+        for (mut pos, mut camopts) in query.iter_mut(&mut self.ecs) {
+            let cam = &mut pass.camera;
+            if let Some(keycode) = keycode {
+                match keycode {
+                    VirtualKeyCode::Left => pos.x -= 1,
+                    VirtualKeyCode::Right => pos.x += 1,
+                    VirtualKeyCode::Up => pos.y -= 1,
+                    VirtualKeyCode::Down => pos.y += 1,
+                    VirtualKeyCode::Comma => { pos.z += 1; self.rebuild_geometry = true; }
+                    VirtualKeyCode::Period => { pos.z -= 1; self.rebuild_geometry = true; }
+                    VirtualKeyCode::Minus => camopts.zoom_level -=1,
+                    VirtualKeyCode::Add => camopts.zoom_level +=1,
+                    VirtualKeyCode::Tab => {
+                        match camopts.mode {
+                            CameraMode::TopDown => camopts.mode = CameraMode::Front,
+                            CameraMode::Front => camopts.mode = CameraMode::DiagonalNW,
+                            CameraMode::DiagonalNW => camopts.mode = CameraMode::DiagonalNE,
+                            CameraMode::DiagonalNE => camopts.mode = CameraMode::DiagonalSW,
+                            CameraMode::DiagonalSW => camopts.mode = CameraMode::DiagonalSE,
+                            CameraMode::DiagonalSE => camopts.mode = CameraMode::TopDown,
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            cam.update(&*pos, &*camopts);
+            result = pos.z;
+        }
+        result
+    }
 }
+

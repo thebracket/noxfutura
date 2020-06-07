@@ -19,8 +19,8 @@ impl Chunks {
         result
     }
 
-    pub fn rebuild_all(&mut self, region: &Region) {
-        self.chunks.par_iter_mut().for_each(|c| c.rebuild(region));
+    pub fn rebuild_all(&mut self, region: &Region, camera_z : i32) {
+        self.chunks.par_iter_mut().for_each(|c| c.rebuild(region, camera_z));
     }
 
     pub fn all_geometry(&mut self) -> Vec<Primitive> {
