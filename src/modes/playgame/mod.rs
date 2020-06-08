@@ -155,8 +155,8 @@ impl PlayGame {
                     VirtualKeyCode::Right => pos.x += 1,
                     VirtualKeyCode::Up => pos.y -= 1,
                     VirtualKeyCode::Down => pos.y += 1,
-                    VirtualKeyCode::Comma => { pos.z += 1; self.rebuild_geometry = true; }
-                    VirtualKeyCode::Period => { pos.z -= 1; self.rebuild_geometry = true; }
+                    VirtualKeyCode::Comma => { pos.z += 1; }
+                    VirtualKeyCode::Period => { pos.z -= 1; }
                     VirtualKeyCode::Minus => camopts.zoom_level -=1,
                     VirtualKeyCode::Add => camopts.zoom_level +=1,
                     VirtualKeyCode::Tab => {
