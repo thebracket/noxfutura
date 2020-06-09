@@ -1,21 +1,21 @@
 use super::resources::SharedResources;
+use crate::components::*;
 use crate::planet::*;
 use imgui::*;
 use legion::prelude::*;
-use crate::components::*;
 use winit::event::VirtualKeyCode;
 mod loadstate;
 pub use loadstate::*;
 mod uniforms;
 use uniforms::*;
 mod camera;
-use camera::*;
 use crate::engine::uniforms::UniformBlock;
+use camera::*;
+mod chunks;
+pub mod frustrum;
 mod render;
 pub mod tex3d;
 pub mod texarray;
-mod chunks;
-pub mod frustrum;
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
@@ -23,12 +23,12 @@ pub struct PlayGame {
     pub ecs: legion::prelude::World,
 
     // Internals
-    rpass : Option<render::BlockRenderPass>,
+    rpass: Option<render::BlockRenderPass>,
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
     counter: usize,
-    chunks: chunks::Chunks
+    chunks: chunks::Chunks,
 }
 
 impl PlayGame {
@@ -42,7 +42,7 @@ impl PlayGame {
             rebuild_geometry: true,
             ecs: universe.create_world(),
             counter: 0,
-            chunks: chunks::Chunks::empty()
+            chunks: chunks::Chunks::empty(),
         }
     }
 
@@ -79,7 +79,7 @@ impl PlayGame {
         context: &mut crate::engine::Context,
         imgui: &imgui::Ui,
         depth_id: usize,
-        keycode: Option<VirtualKeyCode>
+        keycode: Option<VirtualKeyCode>,
     ) -> super::ProgramMode {
         //super::helpers::render_menu_background(context, frame, resources);
 
@@ -95,11 +95,14 @@ impl PlayGame {
 
                 // Update the material texture
                 let rlock = crate::raws::RAWS.lock();
-                let mut mat_info : Vec<u8> = Vec::with_capacity(REGION_TILES_COUNT * 4);
+                let mut mat_info: Vec<u8> = Vec::with_capacity(REGION_TILES_COUNT * 4);
                 region.material_idx.iter().for_each(|midx| {
                     let tex_name = &rlock.materials.materials[*midx].texture;
                     if !pass.terrain_textures.tex_map.contains_key(tex_name) {
-                        println!("WARNING. Material {} has an invalid texture, {}.", &rlock.materials.materials[*midx].name ,tex_name);
+                        println!(
+                            "WARNING. Material {} has an invalid texture, {}.",
+                            &rlock.materials.materials[*midx].name, tex_name
+                        );
                     }
                     let tex_idx = *pass.terrain_textures.tex_map.get(tex_name).unwrap_or(&0);
 
@@ -125,7 +128,9 @@ impl PlayGame {
             self.rebuild_geometry = false;
         }
 
-        if pass.vb.len() > 0 { pass.vb.update_buffer(context); }
+        if pass.vb.len() > 0 {
+            pass.vb.update_buffer(context);
+        }
         self.counter = 180;
 
         let window = imgui::Window::new(im_str!("Playing"));
@@ -135,12 +140,22 @@ impl PlayGame {
                 imgui.text(im_str!("Test"));
             });
 
-        pass.render(context, depth_id, frame, &mut self.chunks, camera_z as usize);
+        pass.render(
+            context,
+            depth_id,
+            frame,
+            &mut self.chunks,
+            camera_z as usize,
+        );
 
         super::ProgramMode::PlayGame
     }
 
-    fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>, context: &crate::engine::Context) -> i32 {
+    fn camera_control(
+        &mut self,
+        keycode: &Option<VirtualKeyCode>,
+        context: &crate::engine::Context,
+    ) -> i32 {
         let mut result = 0;
         let pass = self.rpass.as_mut().unwrap();
         let query = <(Write<Position>, Write<CameraOptions>)>::query();
@@ -153,21 +168,23 @@ impl PlayGame {
                     VirtualKeyCode::Right => pos.x += 1,
                     VirtualKeyCode::Up => pos.y -= 1,
                     VirtualKeyCode::Down => pos.y += 1,
-                    VirtualKeyCode::Comma => { pos.z += 1; }
-                    VirtualKeyCode::Period => { pos.z -= 1; }
-                    VirtualKeyCode::Minus => camopts.zoom_level -=1,
-                    VirtualKeyCode::Add => camopts.zoom_level +=1,
-                    VirtualKeyCode::Tab => {
-                        match camopts.mode {
-                            CameraMode::TopDown => camopts.mode = CameraMode::Front,
-                            CameraMode::Front => camopts.mode = CameraMode::DiagonalNW,
-                            CameraMode::DiagonalNW => camopts.mode = CameraMode::DiagonalNE,
-                            CameraMode::DiagonalNE => camopts.mode = CameraMode::DiagonalSW,
-                            CameraMode::DiagonalSW => camopts.mode = CameraMode::DiagonalSE,
-                            CameraMode::DiagonalSE => camopts.mode = CameraMode::TopDown,
-                        }
+                    VirtualKeyCode::Comma => {
+                        pos.z += 1;
                     }
-                    _ => camera_changed = false
+                    VirtualKeyCode::Period => {
+                        pos.z -= 1;
+                    }
+                    VirtualKeyCode::Minus => camopts.zoom_level -= 1,
+                    VirtualKeyCode::Add => camopts.zoom_level += 1,
+                    VirtualKeyCode::Tab => match camopts.mode {
+                        CameraMode::TopDown => camopts.mode = CameraMode::Front,
+                        CameraMode::Front => camopts.mode = CameraMode::DiagonalNW,
+                        CameraMode::DiagonalNW => camopts.mode = CameraMode::DiagonalNE,
+                        CameraMode::DiagonalNE => camopts.mode = CameraMode::DiagonalSW,
+                        CameraMode::DiagonalSW => camopts.mode = CameraMode::DiagonalSE,
+                        CameraMode::DiagonalSE => camopts.mode = CameraMode::TopDown,
+                    },
+                    _ => camera_changed = false,
                 }
             }
             if camera_changed {
@@ -182,4 +199,3 @@ impl PlayGame {
         result
     }
 }
-

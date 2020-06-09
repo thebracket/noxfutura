@@ -2,8 +2,11 @@ use crate::planet::REGION_WIDTH;
 use crate::utils::idxmap;
 use std::collections::HashSet;
 
-pub fn greedy_cubes(cube_index: &mut HashSet<usize>, layer : &mut Vec<f32>, element_count : &mut u32) {
-
+pub fn greedy_cubes(
+    cube_index: &mut HashSet<usize>,
+    layer: &mut Vec<f32>,
+    element_count: &mut u32,
+) {
     loop {
         let min_iter = cube_index.iter().min();
         if min_iter.is_none() {
@@ -26,7 +29,7 @@ pub fn greedy_cubes(cube_index: &mut HashSet<usize>, layer : &mut Vec<f32>, elem
                 z as f32,
                 width as f32,
                 height as f32,
-                depth as f32
+                depth as f32,
             );
         }
     }

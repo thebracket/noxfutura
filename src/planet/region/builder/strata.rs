@@ -1,9 +1,9 @@
 use super::{super::TileType, Region};
 use crate::planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
-use crate::utils::mapidx;
 use crate::raws::*;
-use bracket_random::prelude::*;
+use crate::utils::mapidx;
 use bracket_noise::prelude::*;
+use bracket_random::prelude::*;
 use rayon::prelude::*;
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
@@ -13,7 +13,7 @@ fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
         .materials
         .iter()
         .enumerate()
-        .filter(|(_,m)| { m.layer == st })
+        .filter(|(_, m)| m.layer == st)
         .map(|(i, _)| i)
         .collect()
 }
@@ -28,31 +28,34 @@ fn get_strata_materials() -> (Vec<usize>, Vec<usize>, Vec<usize>, Vec<usize>) {
 }
 
 pub struct Strata {
-    pub map : Vec<usize>,
-    pub material_idx : Vec<usize>,
-    pub counts : Vec<(usize, usize, usize, usize)>
+    pub map: Vec<usize>,
+    pub material_idx: Vec<usize>,
+    pub counts: Vec<(usize, usize, usize, usize)>,
 }
 
-pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeType, perlin_seed: u64) -> Strata {
-    const REGION_TILES_COUNT : usize = REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH;
+pub fn build_strata(
+    rng: &mut RandomNumberGenerator,
+    hm: &[u8],
+    biome: &BiomeType,
+    perlin_seed: u64,
+) -> Strata {
+    const REGION_TILES_COUNT: usize = REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH;
     let (soils, sands, sedimentaries, igeneouses) = get_strata_materials();
     let n_strata = 1000;
     let mut result = Strata {
-        map : vec![1; REGION_TILES_COUNT],
-        material_idx : vec![1; n_strata],
-        counts: vec![(0,0,0,0); n_strata]
+        map: vec![1; REGION_TILES_COUNT],
+        material_idx: vec![1; n_strata],
+        counts: vec![(0, 0, 0, 0); n_strata],
     };
 
     use bracket_geometry::prelude::*;
     let mut centroids = Vec::<Point3>::with_capacity(n_strata);
     for _ in 0..n_strata {
-        centroids.push(
-            Point3::new(
-                rng.range(0, REGION_WIDTH),
-                rng.range(0, REGION_HEIGHT),
-                rng.range(0, REGION_DEPTH),
-            )
-        );
+        centroids.push(Point3::new(
+            rng.range(0, REGION_WIDTH),
+            rng.range(0, REGION_HEIGHT),
+            rng.range(0, REGION_DEPTH),
+        ));
     }
 
     for z in 0..REGION_DEPTH {
@@ -60,7 +63,6 @@ pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeTyp
         crate::planet::set_worldgen_status(format!("Strata Hunting {}%", (percent * 100.0) as i32));
         for y in 0..REGION_WIDTH {
             for x in 0..REGION_WIDTH {
-
                 let mut min = std::f32::MAX;
                 let mut biome_idx = std::usize::MAX;
                 let my_coords = Point3::new(x, y, z);
@@ -80,7 +82,7 @@ pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeTyp
                 result.map[map_idx] = biome_idx;
             }
         }
-    }    
+    }
 
     //let mut count_used = 0;
     for i in 0..n_strata {
@@ -91,7 +93,7 @@ pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeTyp
             result.counts[i].3 /= result.counts[i].0;
 
             let (_n, x, y, z) = result.counts[i];
-            let altitude_at_center = hm[(y * REGION_WIDTH) + x] + REGION_DEPTH as u8/2;
+            let altitude_at_center = hm[(y * REGION_WIDTH) + x] + REGION_DEPTH as u8 / 2;
             let mat_idx = if z as u8 > altitude_at_center - (1 + rng.roll_dice(1, 4) as u8) {
                 // Soil
                 let roll = rng.roll_dice(1, 100);
@@ -108,7 +110,6 @@ pub fn build_strata(rng: &mut RandomNumberGenerator, hm: &[u8], biome: &BiomeTyp
                 rng.random_slice_entry(&igeneouses)
             };
             result.material_idx[i] = *mat_idx.unwrap();
-
         } else {
             result.material_idx[i] = *rng.random_slice_entry(&igeneouses).unwrap();
         }
@@ -129,18 +130,22 @@ pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata) {
     for x in 0..REGION_WIDTH {
         for y in 0..REGION_HEIGHT {
             let mut altitude = hm[(y * REGION_WIDTH) + x] as usize;
-            if altitude > REGION_DEPTH-10 { altitude = REGION_DEPTH-1 };
+            if altitude > REGION_DEPTH - 10 {
+                altitude = REGION_DEPTH - 1
+            };
             let mut wet = false;
-            if altitude < 5 { wet = true; }
+            if altitude < 5 {
+                wet = true;
+            }
 
             // Bottom layer is always SMR
             region.tile_types[mapidx(x, y, 0)] = TileType::SemiMoltenRock;
 
             // Add lava above the bottom
             let mut z = 1;
-            while z < altitude/3 {
+            while z < altitude / 3 {
                 let cell_idx = mapidx(x, y, z);
-                if x == 0 || x == REGION_WIDTH-1 || y == 0 || y == REGION_HEIGHT-1 {
+                if x == 0 || x == REGION_WIDTH - 1 || y == 0 || y == REGION_HEIGHT - 1 {
                     region.tile_types[cell_idx] = TileType::SemiMoltenRock;
                 } else {
                     region.tile_types[cell_idx] = TileType::Empty;

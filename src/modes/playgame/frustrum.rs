@@ -1,27 +1,27 @@
-use ultraviolet::{Mat4, Vec4, Vec3};
+use ultraviolet::{Mat4, Vec3, Vec4};
 
-const LEFT : usize = 0;
-const RIGHT : usize = 1;
-const TOP : usize = 2;
-const BOTTOM : usize = 3;
-const BACK : usize = 4;
-const FRONT : usize = 5;
+const LEFT: usize = 0;
+const RIGHT: usize = 1;
+const TOP: usize = 2;
+const BOTTOM: usize = 3;
+const BACK: usize = 4;
+const FRONT: usize = 5;
 
 pub struct Frustrum {
-    planes : [Vec4; 6]
+    planes: [Vec4; 6],
 }
 
 impl Frustrum {
     pub fn new() -> Self {
         Frustrum {
-            planes : [
+            planes: [
                 (0.0, 0.0, 0.0, 0.0).into(),
                 (0.0, 0.0, 0.0, 0.0).into(),
                 (0.0, 0.0, 0.0, 0.0).into(),
                 (0.0, 0.0, 0.0, 0.0).into(),
                 (0.0, 0.0, 0.0, 0.0).into(),
                 (0.0, 0.0, 0.0, 0.0).into(),
-            ]
+            ],
         }
     }
 

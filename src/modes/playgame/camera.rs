@@ -1,6 +1,6 @@
-use ultraviolet::Vec3;
-use ultraviolet::Mat4;
 use crate::components::*;
+use ultraviolet::Mat4;
+use ultraviolet::Vec3;
 
 pub struct Camera {
     eye: Vec3,
@@ -27,54 +27,61 @@ impl Camera {
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {
         let view = Mat4::look_at(self.eye, self.target, self.up);
-        let proj = ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
+        let proj =
+            ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
         proj * view
     }
 
     pub fn update(&mut self, pos: &Position, opts: &CameraOptions) {
-        self.target = ( pos.x as f32, pos.z as f32, pos.y as f32  ).into();
+        self.target = (pos.x as f32, pos.z as f32, pos.y as f32).into();
         match opts.mode {
             CameraMode::TopDown => {
                 self.eye = (
                     pos.x as f32,
                     pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 + (opts.zoom_level as f32 / 3.0)
-                ).into();
+                    pos.y as f32 + (opts.zoom_level as f32 / 3.0),
+                )
+                    .into();
             }
             CameraMode::Front => {
                 self.eye = (
                     pos.x as f32,
                     pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 + 0.1
-                ).into();
+                    pos.y as f32 + 0.1,
+                )
+                    .into();
             }
             CameraMode::DiagonalNW => {
                 self.eye = (
                     pos.x as f32 + opts.zoom_level as f32,
                     pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 + opts.zoom_level as f32
-                ).into();
+                    pos.y as f32 + opts.zoom_level as f32,
+                )
+                    .into();
             }
             CameraMode::DiagonalNE => {
                 self.eye = (
                     pos.x as f32 - opts.zoom_level as f32,
                     pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 + opts.zoom_level as f32
-                ).into();
+                    pos.y as f32 + opts.zoom_level as f32,
+                )
+                    .into();
             }
             CameraMode::DiagonalSW => {
                 self.eye = (
                     pos.x as f32 + opts.zoom_level as f32,
                     pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 - opts.zoom_level as f32
-                ).into();
+                    pos.y as f32 - opts.zoom_level as f32,
+                )
+                    .into();
             }
             CameraMode::DiagonalSE => {
                 self.eye = (
                     pos.x as f32 - opts.zoom_level as f32,
                     pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 - opts.zoom_level as f32
-                ).into();
+                    pos.y as f32 - opts.zoom_level as f32,
+                )
+                    .into();
             }
         }
     }

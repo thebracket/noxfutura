@@ -2,7 +2,7 @@ pub struct Texture3D {
     pub texture: wgpu::Texture,
     pub view: wgpu::TextureView,
     pub sampler: wgpu::Sampler,
-    pub dimensions : (usize, usize, usize)
+    pub dimensions: (usize, usize, usize),
 }
 
 impl Texture3D {
@@ -11,9 +11,9 @@ impl Texture3D {
         label: Option<&str>,
         width: usize,
         height: usize,
-        depth: usize
+        depth: usize,
     ) -> Result<Self, failure::Error> {
-        let rgba = vec![255u8; width*height*depth*4];
+        let rgba = vec![255u8; width * height * depth * 4];
 
         let size = wgpu::Extent3d {
             width: width as u32,
@@ -31,11 +31,15 @@ impl Texture3D {
             usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::COPY_DST,
         });
 
-        let buffer = context.device.create_buffer_with_data(&rgba, wgpu::BufferUsage::COPY_SRC);
+        let buffer = context
+            .device
+            .create_buffer_with_data(&rgba, wgpu::BufferUsage::COPY_SRC);
 
-        let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("texture3_buffer_copy_encoder"),
-        });
+        let mut encoder = context
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("texture3_buffer_copy_encoder"),
+            });
 
         encoder.copy_buffer_to_texture(
             wgpu::BufferCopyView {
@@ -69,22 +73,24 @@ impl Texture3D {
             compare: wgpu::CompareFunction::Always,
         });
 
-        Ok(
-            Self {
-                texture,
-                view,
-                sampler,
-                dimensions : (width, height, depth)
-            }
-        )
+        Ok(Self {
+            texture,
+            view,
+            sampler,
+            dimensions: (width, height, depth),
+        })
     }
 
-    pub fn copy_slice_to_texture(&mut self, context: &crate::engine::Context, rgba : &[u8]) {
-        let buffer = context.device.create_buffer_with_data(&rgba, wgpu::BufferUsage::COPY_SRC);
+    pub fn copy_slice_to_texture(&mut self, context: &crate::engine::Context, rgba: &[u8]) {
+        let buffer = context
+            .device
+            .create_buffer_with_data(&rgba, wgpu::BufferUsage::COPY_SRC);
 
-        let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("texture3_buffer_copy_encoder"),
-        });
+        let mut encoder = context
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("texture3_buffer_copy_encoder"),
+            });
 
         let size = wgpu::Extent3d {
             width: self.dimensions.0 as u32,

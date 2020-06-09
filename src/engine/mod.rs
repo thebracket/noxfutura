@@ -93,7 +93,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let mut program = crate::modes::Program::new();
     program.init(&mut context);
 
-    let mut keycode : Option<winit::event::VirtualKeyCode> = None;
+    let mut keycode: Option<winit::event::VirtualKeyCode> = None;
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -153,14 +153,16 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 ..
             } => *control_flow = ControlFlow::Exit,
             Event::WindowEvent {
-                event: WindowEvent::KeyboardInput {
-                    input: winit::event::KeyboardInput {
-                        virtual_keycode: Some(virtual_keycode),
-                        state: winit::event::ElementState::Pressed,
+                event:
+                    WindowEvent::KeyboardInput {
+                        input:
+                            winit::event::KeyboardInput {
+                                virtual_keycode: Some(virtual_keycode),
+                                state: winit::event::ElementState::Pressed,
+                                ..
+                            },
                         ..
                     },
-                    ..
-                },
                 ..
             } => {
                 keycode = Some(virtual_keycode);

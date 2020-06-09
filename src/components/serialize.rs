@@ -158,7 +158,8 @@ pub struct ComponentRegistration {
 }
 
 impl ComponentRegistration {
-    pub fn of<T: TypeUuid + Serialize + for<'de> Deserialize<'de> + Send + Sync + 'static>() -> Self {
+    pub fn of<T: TypeUuid + Serialize + for<'de> Deserialize<'de> + Send + Sync + 'static>() -> Self
+    {
         Self {
             uuid: T::UUID,
             ty: TypeId::of::<T>(),
@@ -371,11 +372,9 @@ use super::*;
 pub fn serialize_world(world: &World) -> String {
     let comp_registrations = [
         ComponentRegistration::of::<Position>(),
-        ComponentRegistration::of::<CameraOptions>()
+        ComponentRegistration::of::<CameraOptions>(),
     ];
-    let tag_registrations = [
-        TagRegistration::of::<Cordex>()
-    ];
+    let tag_registrations = [TagRegistration::of::<Cordex>()];
 
     use std::iter::FromIterator;
     let ser_helper = SerializeImpl {
@@ -390,11 +389,9 @@ pub fn serialize_world(world: &World) -> String {
 pub fn deserialize_world(raw: String) -> World {
     let comp_registrations = [
         ComponentRegistration::of::<Position>(),
-        ComponentRegistration::of::<CameraOptions>()
+        ComponentRegistration::of::<CameraOptions>(),
     ];
-    let tag_registrations = [
-        TagRegistration::of::<Cordex>()
-    ];
+    let tag_registrations = [TagRegistration::of::<Cordex>()];
 
     use std::iter::FromIterator;
     let ser_helper = SerializeImpl {

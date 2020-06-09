@@ -1,18 +1,18 @@
 mod formats;
-use formats::{load_biomes, load_materials};
 pub use formats::*;
+use formats::{load_biomes, load_materials};
 use parking_lot::Mutex;
 
 pub struct Raws {
     pub biomes: Biomes,
-    pub materials: Materials
+    pub materials: Materials,
 }
 
 impl Raws {
     fn new() -> Self {
         Self {
             biomes: Biomes::new(),
-            materials: Materials::new()
+            materials: Materials::new(),
         }
     }
 

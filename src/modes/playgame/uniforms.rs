@@ -1,7 +1,7 @@
-use ultraviolet::Vec3;
-use ultraviolet::Mat4;
-use crate::engine::uniforms::UniformBlock;
 use super::Camera;
+use crate::engine::uniforms::UniformBlock;
+use ultraviolet::Mat4;
+use ultraviolet::Vec3;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -25,12 +25,8 @@ impl Uniforms {
     pub fn update_view_proj(&mut self, camera: &Camera, counter: usize) {
         use bracket_geometry::prelude::*;
         let angle = (counter % 360) as f32;
-        let p = project_angle(Point::new(0,0), 256.0, Degrees::new(angle));
-        self.sun_pos = (
-            p.x as f32,
-            p.y as f32,
-            128.0
-        ).into();
+        let p = project_angle(Point::new(0, 0), 256.0, Degrees::new(angle));
+        self.sun_pos = (p.x as f32, p.y as f32, 128.0).into();
         //println!("{:?}, {}", p, counter);
 
         self.view_proj = camera.build_view_projection_matrix();

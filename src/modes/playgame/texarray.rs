@@ -1,23 +1,21 @@
-use std::fs;
 use std::collections::HashMap;
+use std::fs;
 
-const TEXTURE_SIZE : usize = 256;
-const ATLAS_COLS : usize = 16;
-const ATLAS_W : u32 = (ATLAS_COLS * TEXTURE_SIZE) as u32;
-const ATLAS_H : u32 = (ATLAS_COLS * TEXTURE_SIZE) as u32;
+const TEXTURE_SIZE: usize = 256;
+const ATLAS_COLS: usize = 16;
+const ATLAS_W: u32 = (ATLAS_COLS * TEXTURE_SIZE) as u32;
+const ATLAS_H: u32 = (ATLAS_COLS * TEXTURE_SIZE) as u32;
 
 pub struct TextureArray {
     pub texture: wgpu::Texture,
     pub view: wgpu::TextureView,
     pub sampler: wgpu::Sampler,
-    pub dimensions : (usize, usize, usize),
-    pub tex_map : HashMap::<String, usize>
+    pub dimensions: (usize, usize, usize),
+    pub tex_map: HashMap<String, usize>,
 }
 
 impl TextureArray {
-    pub fn blank(
-        context: &crate::engine::Context,
-    ) -> Result<Self, failure::Error> {
+    pub fn blank(context: &crate::engine::Context) -> Result<Self, failure::Error> {
         let label = Some("terraintex");
 
         let paths = fs::read_dir("resources/terrain/").unwrap();
@@ -28,8 +26,9 @@ impl TextureArray {
         texture_filenames.sort();
 
         let mut tex_map = HashMap::<String, usize>::new();
-        for (i,t) in texture_filenames.iter().enumerate() {
-            let stubname = t.replace("resources/terrain/", "")
+        for (i, t) in texture_filenames.iter().enumerate() {
+            let stubname = t
+                .replace("resources/terrain/", "")
                 .replace("-ao.jpg", "")
                 .replace("-n.jpg", "")
                 .replace("-r.jpg", "")
@@ -46,13 +45,16 @@ impl TextureArray {
         println!("{} rows", atlas_rows);
         let mut atlas_data = image::DynamicImage::new_rgba8(ATLAS_W, ATLAS_H);
 
-        texture_filenames.iter().enumerate().for_each(|(i, image_filename)| {
-            println!("Loading {} for Atlas, image #{}", image_filename, i);
-            let img = image::open(&image_filename).unwrap().into_rgba();
-            let x = (i % ATLAS_COLS) * TEXTURE_SIZE;
-            let y = (i / ATLAS_COLS) * TEXTURE_SIZE;
-            image::imageops::overlay(&mut atlas_data, &img, x as u32, y as u32);
-        });
+        texture_filenames
+            .iter()
+            .enumerate()
+            .for_each(|(i, image_filename)| {
+                println!("Loading {} for Atlas, image #{}", image_filename, i);
+                let img = image::open(&image_filename).unwrap().into_rgba();
+                let x = (i % ATLAS_COLS) * TEXTURE_SIZE;
+                let y = (i / ATLAS_COLS) * TEXTURE_SIZE;
+                image::imageops::overlay(&mut atlas_data, &img, x as u32, y as u32);
+            });
         //image::save_buffer("atlas.png", &atlas_data.raw_pixels(), ATLAS_W, ATLAS_H, image::ColorType::RGBA(8));
 
         // Build the texture
@@ -72,11 +74,15 @@ impl TextureArray {
             usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::COPY_DST,
         });
 
-        let buffer = context.device.create_buffer_with_data(&atlas_data.raw_pixels(), wgpu::BufferUsage::COPY_SRC);
+        let buffer = context
+            .device
+            .create_buffer_with_data(&atlas_data.raw_pixels(), wgpu::BufferUsage::COPY_SRC);
 
-        let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("texture_buffer_copy_encoder"),
-        });
+        let mut encoder = context
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("texture_buffer_copy_encoder"),
+            });
 
         encoder.copy_buffer_to_texture(
             wgpu::BufferCopyView {
@@ -111,14 +117,12 @@ impl TextureArray {
         });
 
         // Return something useful
-        Ok(
-            Self {
-                texture,
-                view,
-                sampler,
-                dimensions : (ATLAS_W as usize, ATLAS_H as usize, 1),
-                tex_map
-            }
-        )
+        Ok(Self {
+            texture,
+            view,
+            sampler,
+            dimensions: (ATLAS_W as usize, ATLAS_H as usize, 1),
+            tex_map,
+        })
     }
 }
