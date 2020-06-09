@@ -1,5 +1,5 @@
-use crate::planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
-use crate::utils::{idxmap, mapidx};
+use crate::planet::REGION_WIDTH;
+use crate::utils::idxmap;
 use std::collections::HashSet;
 
 pub fn greedy_cubes(cube_index: &mut HashSet<usize>, layer : &mut Vec<f32>, element_count : &mut u32) {
@@ -62,31 +62,4 @@ fn grow_down(cube_index: &mut HashSet<usize>, idx: usize, width: usize) -> usize
         candidate_idx += REGION_WIDTH;
     }
     height
-}
-
-fn grow_in(cube_index: &mut HashSet<usize>, idx: usize, width: usize, height: usize) -> usize {
-    const LAYER_SIZE : usize = REGION_WIDTH * REGION_HEIGHT;
-    let mut depth = 1;
-    let mut candidate_idx = idx + LAYER_SIZE;
-    'outer: loop {
-        for y in 0..=height {
-            for x in 0..=width {
-                let cidx = candidate_idx + (y * REGION_WIDTH) + x;
-                if !cube_index.contains(&cidx) {
-                    break 'outer;
-                }
-            }
-        }
-
-        for y in 0..=height {
-            for x in 0..=width {
-                let cidx = candidate_idx + (y * REGION_WIDTH) + x;
-                cube_index.remove(&cidx);
-            }
-        }
-
-        depth += 1;
-        candidate_idx += LAYER_SIZE;
-    }
-    depth
 }

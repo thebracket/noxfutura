@@ -3,7 +3,6 @@ use std::collections::HashMap;
 
 const TEXTURE_SIZE : usize = 256;
 const ATLAS_COLS : usize = 16;
-const ATLAS_STRIDE : usize = TEXTURE_SIZE * ATLAS_COLS * 4;
 const ATLAS_W : u32 = (ATLAS_COLS * TEXTURE_SIZE) as u32;
 const ATLAS_H : u32 = (ATLAS_COLS * TEXTURE_SIZE) as u32;
 
@@ -20,8 +19,6 @@ impl TextureArray {
         context: &crate::engine::Context,
     ) -> Result<Self, failure::Error> {
         let label = Some("terraintex");
-        let width = 256;
-        let height = 256;
 
         let paths = fs::read_dir("resources/terrain/").unwrap();
         let mut texture_filenames = paths
