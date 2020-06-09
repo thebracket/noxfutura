@@ -1,9 +1,8 @@
-use super::{Primitive, CHUNK_SIZE};
 use crate::planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use crate::utils::{idxmap, mapidx};
 use std::collections::HashSet;
 
-pub fn greedy_cubes(cube_index: &mut HashSet<usize>, layer : &mut Vec<f32>) {
+pub fn greedy_cubes(cube_index: &mut HashSet<usize>, layer : &mut Vec<f32>, element_count : &mut u32) {
 
     loop {
         let min_iter = cube_index.iter().min();
@@ -19,7 +18,9 @@ pub fn greedy_cubes(cube_index: &mut HashSet<usize>, layer : &mut Vec<f32>) {
             //let depth = grow_in(&mut cube_index, idx, width, height);
             let depth = 1;
 
-            crate::utils::add_cube_geometry(layer,
+            crate::utils::add_cube_geometry(
+                layer,
+                element_count,
                 x as f32,
                 y as f32,
                 z as f32,

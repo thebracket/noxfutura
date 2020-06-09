@@ -38,10 +38,9 @@ pub fn idxmap(mut idx: usize) -> (usize, usize, usize) {
     (x, y, z)
 }
 
-use crate::engine::VertexBuffer;
-
 pub fn add_cube_geometry(
     vb: &mut Vec<f32>,
+    element_count: &mut u32,
     x: f32,
     y: f32,
     z: f32,
@@ -105,6 +104,7 @@ pub fn add_cube_geometry(
         x1, y1, z1,   0.0, 1.0, 0.0,    tw, th,
     ];
     vb.extend_from_slice(&cube_geometry);
+    *element_count += 12;
 }
 
 #[cfg(test)]

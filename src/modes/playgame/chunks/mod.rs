@@ -7,4 +7,3 @@ pub use chunk::Chunk;
 mod chunks;
 pub use chunks::*;
 mod greedy;
-pub use super::Primitive;

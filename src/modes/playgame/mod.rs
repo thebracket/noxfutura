@@ -15,6 +15,8 @@ use crate::engine::uniforms::UniformBlock;
 mod render;
 pub mod tex3d;
 pub mod texarray;
+mod chunks;
+pub mod frustrum;
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
@@ -88,8 +90,8 @@ impl PlayGame {
         if self.rebuild_geometry {
             if let Some(region) = &self.current_region {
                 pass.vb.clear();
-                self.chunks.rebuild_all(region);
-                self.chunks.all_geometry(camera_z as usize, &mut pass.vb.data);
+                self.chunks.rebuild_all(region, context);
+                //self.chunks.all_geometry(camera_z as usize, &mut pass.vb.data);
 
                 let rlock = crate::raws::RAWS.lock();
                 let mut mat_info : Vec<u8> = Vec::with_capacity(REGION_TILES_COUNT * 4);
@@ -113,7 +115,7 @@ impl PlayGame {
 
         pass.uniforms.update_view_proj(&pass.camera, self.counter);
         pass.uniforms.update_buffer(context, &pass.uniform_buf);
-        pass.vb.update_buffer(context);
+        if pass.vb.len() > 0 { pass.vb.update_buffer(context); }
         self.counter = 180;
 
         let window = imgui::Window::new(im_str!("Playing"));
@@ -123,9 +125,7 @@ impl PlayGame {
                 imgui.text(im_str!("Test"));
             });
 
-        if pass.vb.len() > 0 {
-            pass.render(context, depth_id, frame);
-        }
+        pass.render(context, depth_id, frame, &self.chunks, camera_z as usize);
 
         super::ProgramMode::PlayGame
     }
@@ -142,8 +142,8 @@ impl PlayGame {
                     VirtualKeyCode::Right => pos.x += 1,
                     VirtualKeyCode::Up => pos.y -= 1,
                     VirtualKeyCode::Down => pos.y += 1,
-                    VirtualKeyCode::Comma => { pos.z += 1; self.rebuild_geometry = true; }
-                    VirtualKeyCode::Period => { pos.z -= 1;  self.rebuild_geometry = true; }
+                    VirtualKeyCode::Comma => { pos.z += 1; }
+                    VirtualKeyCode::Period => { pos.z -= 1; }
                     VirtualKeyCode::Minus => camopts.zoom_level -=1,
                     VirtualKeyCode::Add => camopts.zoom_level +=1,
                     VirtualKeyCode::Tab => {

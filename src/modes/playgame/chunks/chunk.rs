@@ -1,17 +1,19 @@
-use super::{chunk_idx, ChunkType, Primitive, CHUNK_SIZE};
+use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::planet::{Region, TileType};
 use crate::utils::mapidx;
 use std::collections::HashSet;
+use crate::engine::VertexBuffer;
+use ultraviolet::Vec3;
 
-#[derive(Clone)]
 pub struct Chunk {
     pub t: ChunkType,
     pub idx: usize,
     pub base: (usize, usize, usize),
-    geometry: Option<Vec<Primitive>>,
     cells : Vec<usize>,
     dirty : bool,
-    layers : Vec<Vec<f32>>
+    vb : VertexBuffer<f32>,
+    element_count : [u32; CHUNK_SIZE],
+    pub center_pos: Vec3
 }
 
 impl Chunk {
@@ -29,14 +31,19 @@ impl Chunk {
             t: ChunkType::Empty,
             idx: chunk_idx(x, y, z),
             base: (x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
-            geometry: None,
             cells,
             dirty : true,
-            layers : vec![Vec::new(); CHUNK_SIZE]
+            vb : VertexBuffer::new(&[3,2,3]),
+            element_count : [0; CHUNK_SIZE],
+            center_pos: (
+                (x * CHUNK_SIZE) as f32 + (CHUNK_SIZE/2) as f32,
+                (y * CHUNK_SIZE) as f32 + (CHUNK_SIZE/2) as f32,
+                (z * CHUNK_SIZE) as f32 + (CHUNK_SIZE/2) as f32,
+            ).into()
         }
     }
 
-    pub fn rebuild(&mut self, region: &Region) {
+    pub fn rebuild(&mut self, region: &Region, context: &crate::engine::Context) {
 
         if !self.dirty {
             return;
@@ -64,12 +71,14 @@ impl Chunk {
 
         match self.t {
             ChunkType::Empty => {
-                self.layers.iter_mut().for_each(|v| v.clear());
+                self.vb.clear();
+                self.element_count.iter_mut().for_each(|n| *n = 0);
             }
             ChunkType::Solid => {
                 for z in 0..CHUNK_SIZE {
                     crate::utils::add_cube_geometry(
-                        &mut self.layers[z],
+                        &mut self.vb.data,
+                        &mut self.element_count[z],
                         self.base.0 as f32,
                         self.base.1 as f32,
                         self.base.2 as f32 + z as f32,
@@ -95,28 +104,33 @@ impl Chunk {
                         }
                     }
 
-                    super::greedy::greedy_cubes(&mut cubes, &mut self.layers[z]);
+                    super::greedy::greedy_cubes(&mut cubes, &mut self.vb.data, &mut self.element_count[z],);
                 }
             }
-            _ => {}
         }
 
         self.dirty = false;
+        if self.vb.len() > 0 { self.vb.update_buffer(context); }
     }
 
-    pub fn append_geometry(&self, camera_z : usize, slice: &mut Vec<f32>) {
-        /*if self.t == ChunkType::Empty {
-            return;
+    pub fn maybe_render_chunk(&self, camera_z : usize) -> Option<&VertexBuffer<f32>> {
+        if self.t == ChunkType::Empty {
+            return None;
         }
-        if camera_z < self.base.2 + CHUNK_SIZE {
-            return;
-        }*/
 
+        //let camera_ceiling = camera_z + 20;
+        let mut n_elements = 0;
         for z in 0..CHUNK_SIZE {
-            let lz = z + self.base.2;
-            if lz <= camera_z && lz > camera_z - 10 {
-                slice.extend_from_slice(&self.layers[z]);
+            let layer_z = z + self.base.2;
+            if layer_z <= camera_z && layer_z > camera_z-20 {
+                n_elements += self.element_count[z];
             }
+        }
+
+        if n_elements > 0 {
+            Some(&self.vb)
+        } else {
+            None
         }
     }
 }

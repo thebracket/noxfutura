@@ -30,7 +30,8 @@ impl BlockRenderPass {
 
         // Initialize the vertex buffer for cube geometry
         let mut vb = VertexBuffer::<f32>::new(&[3, 3, 2]);
-        crate::utils::add_cube_geometry(&mut vb.data, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        let mut tmp = 0;
+        crate::utils::add_cube_geometry(&mut vb.data, &mut tmp, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         vb.build(&context.device, wgpu::BufferUsage::VERTEX);
 
         // Initialize camera and uniforms
@@ -223,7 +224,7 @@ impl BlockRenderPass {
         builder
     }
 
-    pub fn render(&mut self, context: &mut Context, depth_id: usize, frame: &wgpu::SwapChainOutput) {
+    pub fn render(&mut self, context: &mut Context, depth_id: usize, frame: &wgpu::SwapChainOutput, chunks: &super::chunks::Chunks, camera_z : usize) {
         let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
 
         {
@@ -250,8 +251,19 @@ impl BlockRenderPass {
             rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
             rpass.set_bind_group(1, &self.mat_info_bind_group, &[]);
             rpass.set_bind_group(2, &self.terrain_bind_group, &[]);
-            rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
-            rpass.draw(0..self.vb.len(), 0..1);
+
+            if self.vb.len() > 0 {
+                rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
+                rpass.draw(0..self.vb.len(), 0..1);
+            }
+
+            for chunk in chunks.visible_chunks(&self.camera.build_view_projection_matrix()) {
+                let buffer = chunk.maybe_render_chunk(camera_z);
+                if let Some(buffer) = buffer {
+                    rpass.set_vertex_buffer(0, buffer.buffer.as_ref().unwrap(), 0, 0);
+                    rpass.draw(0..buffer.len(), 0..1);
+                }
+            }
         }
         context.queue.submit(&[encoder.finish()]);
     }

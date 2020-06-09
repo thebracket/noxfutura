@@ -2,7 +2,6 @@ use super::{Planet, Region};
 use crate::planet::{planet_idx, set_worldgen_status, REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
-pub mod chunks;
 mod heightmap;
 mod primitive;
 mod strata;
