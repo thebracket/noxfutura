@@ -84,15 +84,17 @@ impl PlayGame {
     ) -> super::ProgramMode {
         //super::helpers::render_menu_background(context, frame, resources);
 
-        let camera_z = self.camera_control(&keycode);
+        let camera_z = self.camera_control(&keycode, context);
         let pass = self.rpass.as_mut().unwrap();
 
         if self.rebuild_geometry {
+            println!("Rebuilding geometry");
             if let Some(region) = &self.current_region {
+                // Rebuild chunks that need it
                 pass.vb.clear();
                 self.chunks.rebuild_all(region, context);
-                //self.chunks.all_geometry(camera_z as usize, &mut pass.vb.data);
 
+                // Update the material texture
                 let rlock = crate::raws::RAWS.lock();
                 let mut mat_info : Vec<u8> = Vec::with_capacity(REGION_TILES_COUNT * 4);
                 region.material_idx.iter().for_each(|midx| {
@@ -110,11 +112,20 @@ impl PlayGame {
                 });
                 pass.material_info.copy_slice_to_texture(context, &mat_info);
             }
+
+            // Update the chunk frustrum system
+            let query = <(Read<Position>, Read<CameraOptions>)>::query();
+            for (pos, camopts) in query.iter(&self.ecs) {
+                pass.camera.update(&*pos, &*camopts);
+                let camera_matrix = pass.camera.build_view_projection_matrix();
+                self.chunks.on_camera_move(&camera_matrix, &*pos);
+                pass.uniforms.update_buffer(context, &pass.uniform_buf);
+            }
+
+            // Mark clean
             self.rebuild_geometry = false;
         }
 
-        pass.uniforms.update_view_proj(&pass.camera, self.counter);
-        pass.uniforms.update_buffer(context, &pass.uniform_buf);
         if pass.vb.len() > 0 { pass.vb.update_buffer(context); }
         self.counter = 180;
 
@@ -125,15 +136,16 @@ impl PlayGame {
                 imgui.text(im_str!("Test"));
             });
 
-        pass.render(context, depth_id, frame, &self.chunks, camera_z as usize);
+        pass.render(context, depth_id, frame, &mut self.chunks, camera_z as usize);
 
         super::ProgramMode::PlayGame
     }
 
-    fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> i32 {
+    fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>, context: &crate::engine::Context) -> i32 {
         let mut result = 0;
         let pass = self.rpass.as_mut().unwrap();
         let query = <(Write<Position>, Write<CameraOptions>)>::query();
+        let mut camera_changed = true;
         for (mut pos, mut camopts) in query.iter_mut(&mut self.ecs) {
             let cam = &mut pass.camera;
             if let Some(keycode) = keycode {
@@ -156,10 +168,16 @@ impl PlayGame {
                             CameraMode::DiagonalSE => camopts.mode = CameraMode::TopDown,
                         }
                     }
-                    _ => {}
+                    _ => camera_changed = false
                 }
             }
-            cam.update(&*pos, &*camopts);
+            if camera_changed {
+                cam.update(&*pos, &*camopts);
+                pass.uniforms.update_view_proj(&pass.camera, self.counter);
+                self.chunks.on_camera_move(&pass.uniforms.view_proj, &*pos);
+                pass.uniforms.update_buffer(context, &pass.uniform_buf);
+            }
+
             result = pos.z;
         }
         result

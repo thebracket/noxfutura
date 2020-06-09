@@ -257,7 +257,7 @@ impl BlockRenderPass {
                 rpass.draw(0..self.vb.len(), 0..1);
             }
 
-            for chunk in chunks.visible_chunks(&self.camera.build_view_projection_matrix()) {
+            for chunk in chunks.visible_chunks() {
                 let buffer = chunk.maybe_render_chunk(camera_z);
                 if let Some(buffer) = buffer {
                     rpass.set_vertex_buffer(0, buffer.buffer.as_ref().unwrap(), 0, 0);
