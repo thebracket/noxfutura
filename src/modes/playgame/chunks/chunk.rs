@@ -1,7 +1,7 @@
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::planet::{Region, TileType};
-use crate::utils::mapidx;
+use crate::utils::{mapidx, add_ramp_geometry};
 use std::collections::HashSet;
 use ultraviolet::Vec3;
 
@@ -105,6 +105,16 @@ impl Chunk {
                                 match region.tile_types[idx] {
                                     TileType::Solid => { cubes.insert(idx); }
                                     TileType::Floor => { floors.insert(idx); }
+                                    TileType::Ramp{direction} => {
+                                        add_ramp_geometry(
+                                            &mut self.vb.data,
+                                            &mut self.element_count[z],
+                                            direction,
+                                            x as f32 + self.base.0 as f32,
+                                            y as f32 + self.base.1 as f32,
+                                            z as f32 + self.base.2 as f32,
+                                        );
+                                    }
                                     _ => {}
                                 }
                             }
