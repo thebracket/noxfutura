@@ -4,6 +4,8 @@ mod indices;
 pub use indices::*;
 mod cube;
 pub use cube::*;
+mod floor;
+pub use floor::*;
 
 #[cfg(test)]
 mod tests {

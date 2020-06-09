@@ -97,21 +97,25 @@ impl Chunk {
             ChunkType::Partial => {
                 for z in 0..CHUNK_SIZE {
                     let mut cubes = HashSet::new();
+                    let mut floors = HashSet::new();
                     for y in 0..CHUNK_SIZE {
                         for x in 0..CHUNK_SIZE {
                             let idx = mapidx(x + self.base.0, y + self.base.1, z + self.base.2);
                             if region.revealed[idx] {
                                 match region.tile_types[idx] {
-                                    TileType::Solid => {
-                                        //println!("{},{},{} = {}", pos.0, pos.1, pos.2, idx);
-                                        cubes.insert(idx);
-                                    }
+                                    TileType::Solid => { cubes.insert(idx); }
+                                    TileType::Floor => { floors.insert(idx); }
                                     _ => {}
                                 }
                             }
                         }
                     }
 
+                    super::greedy::greedy_floors(
+                        &mut floors,
+                        &mut self.vb.data,
+                        &mut self.element_count[z],
+                    );
                     super::greedy::greedy_cubes(
                         &mut cubes,
                         &mut self.vb.data,

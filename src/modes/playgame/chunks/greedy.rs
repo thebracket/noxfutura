@@ -35,6 +35,36 @@ pub fn greedy_cubes(
     }
 }
 
+pub fn greedy_floors(
+    cube_index: &mut HashSet<usize>,
+    layer: &mut Vec<f32>,
+    element_count: &mut u32,
+) {
+    loop {
+        let min_iter = cube_index.iter().min();
+        if min_iter.is_none() {
+            break;
+        } else {
+            let idx = *min_iter.unwrap();
+            cube_index.remove(&idx);
+
+            let (x, y, z) = idxmap(idx);
+            let width = grow_right(cube_index, idx);
+            let height = grow_down(cube_index, idx, width);
+
+            crate::utils::add_floor_geometry(
+                layer,
+                element_count,
+                x as f32,
+                y as f32,
+                z as f32,
+                width as f32,
+                height as f32,
+            );
+        }
+    }
+}
+
 fn grow_right(cube_index: &mut HashSet<usize>, idx: usize) -> usize {
     let mut width = 1;
     let mut candidate_idx = idx + 1;
