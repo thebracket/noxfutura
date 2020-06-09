@@ -19,17 +19,13 @@ impl Chunks {
         result
     }
 
-    pub fn rebuild_all(&mut self, region: &Region, camera_z : i32) {
-        self.chunks.par_iter_mut().for_each(|c| c.rebuild(region, camera_z));
+    pub fn rebuild_all(&mut self, region: &Region) {
+        self.chunks.par_iter_mut().for_each(|c| c.rebuild(region));
     }
 
-    pub fn all_geometry(&mut self) -> Vec<Primitive> {
-        let mut result = Vec::new();
-        self.chunks.iter_mut().for_each(|c| {
-            if let Some(mut geometry) = c.geometry() {
-                result.append(&mut geometry);
-            }
+    pub fn all_geometry(&mut self, camera_z : usize, slice : &mut Vec<f32>) {
+        self.chunks.iter().for_each(|c| {
+            c.append_geometry(camera_z, slice);
         });
-        result
     }
 }

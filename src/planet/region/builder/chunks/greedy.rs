@@ -3,9 +3,7 @@ use crate::planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use crate::utils::{idxmap, mapidx};
 use std::collections::HashSet;
 
-pub fn greedy_cubes(mut cube_index: HashSet<usize>) -> Vec<Primitive> {
-    let original_size = cube_index.len();
-    let mut p = Vec::new();
+pub fn greedy_cubes(cube_index: &mut HashSet<usize>, layer : &mut Vec<f32>) {
 
     loop {
         let min_iter = cube_index.iter().min();
@@ -16,27 +14,21 @@ pub fn greedy_cubes(mut cube_index: HashSet<usize>) -> Vec<Primitive> {
             cube_index.remove(&idx);
 
             let (x, y, z) = idxmap(idx);
-            let width = grow_right(&mut cube_index, idx);
-            let height = grow_down(&mut cube_index, idx, width);
-            let depth = grow_in(&mut cube_index, idx, width, height);
+            let width = grow_right(cube_index, idx);
+            let height = grow_down(cube_index, idx, width);
+            //let depth = grow_in(&mut cube_index, idx, width, height);
+            let depth = 1;
 
-            p.push(Primitive::Cube {
-                x,
-                y,
-                z,
-                w: width,
-                h: height,
-                d: depth,
-            });
+            crate::utils::add_cube_geometry(layer,
+                x as f32,
+                y as f32,
+                z as f32,
+                width as f32,
+                height as f32,
+                depth as f32
+            );
         }
     }
-
-    /*println!(
-        "Compressed {} cubes into {} primitives",
-        original_size,
-        p.len()
-    );*/
-    p
 }
 
 fn grow_right(cube_index: &mut HashSet<usize>, idx: usize) -> usize {

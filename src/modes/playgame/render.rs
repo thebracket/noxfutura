@@ -30,7 +30,7 @@ impl BlockRenderPass {
 
         // Initialize the vertex buffer for cube geometry
         let mut vb = VertexBuffer::<f32>::new(&[3, 3, 2]);
-        crate::utils::add_cube_geometry(&mut vb, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        crate::utils::add_cube_geometry(&mut vb.data, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         vb.build(&context.device, wgpu::BufferUsage::VERTEX);
 
         // Initialize camera and uniforms
@@ -252,8 +252,6 @@ impl BlockRenderPass {
             rpass.set_bind_group(2, &self.terrain_bind_group, &[]);
             rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
             rpass.draw(0..self.vb.len(), 0..1);
-            //println!("{}", self.vb.len());
-            //rpass.draw(0..1, 0..1);
         }
         context.queue.submit(&[encoder.finish()]);
     }

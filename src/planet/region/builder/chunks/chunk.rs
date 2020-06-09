@@ -9,53 +9,51 @@ pub struct Chunk {
     pub idx: usize,
     pub base: (usize, usize, usize),
     geometry: Option<Vec<Primitive>>,
+    cells : Vec<usize>,
+    dirty : bool,
+    layers : Vec<Vec<f32>>
 }
 
 impl Chunk {
     pub fn new(x: usize, y: usize, z: usize) -> Self {
+        let mut cells = Vec::with_capacity(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
+        for cz in z * CHUNK_SIZE .. (z * CHUNK_SIZE) + CHUNK_SIZE {
+            for cy in y * CHUNK_SIZE .. (y * CHUNK_SIZE) + CHUNK_SIZE {
+                for cx in x * CHUNK_SIZE .. (x * CHUNK_SIZE) + CHUNK_SIZE {
+                    cells.push(mapidx(cx, cy, cz));
+                }
+            }
+        }
+
         Self {
             t: ChunkType::Empty,
             idx: chunk_idx(x, y, z),
             base: (x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
             geometry: None,
+            cells,
+            dirty : true,
+            layers : vec![Vec::new(); CHUNK_SIZE]
         }
     }
 
-    pub fn iter(&self) -> ChunkIter {
-        ChunkIter {
-            base: self.base,
-            current: (0, 0, 0),
-            done: false,
-        }
-    }
+    pub fn rebuild(&mut self, region: &Region) {
 
-    fn active_z(&self, camera_z: i32) -> (usize, usize) {
-        (
-            camera_z as usize,
-            camera_z as usize + 20
-        )
-    }
-
-    pub fn rebuild(&mut self, region: &Region, camera_z: i32) {
-
-        let active_z = self.active_z(camera_z);
-
-        if self.base.2 > active_z.0 {
-            self.t = ChunkType::Empty;
+        if !self.dirty {
             return;
         }
 
-        let len = self.iter().count();
         let mut count_empty = 0;
         let mut count_solid = 0;
-        self.iter().for_each(|idx| {
-            let idx = mapidx(idx.0, idx.1, idx.2);
-            match region.tile_types[idx] {
+        self.cells.iter().for_each(|idx| {
+            match region.tile_types[*idx] {
                 TileType::Solid => count_solid += 1,
                 TileType::Empty => count_empty += 1,
                 _ => {}
             }
         });
+
+        let len = self.cells.len();
+
         if count_empty == len {
             self.t = ChunkType::Empty;
         } else if count_solid == len {
@@ -64,81 +62,61 @@ impl Chunk {
             self.t = ChunkType::Partial;
         }
 
-        self.geometry = self.build_geometry(region);
-    }
-
-    pub fn geometry(&mut self) -> Option<Vec<Primitive>> {
-        self.geometry.clone()
-    }
-
-    fn build_geometry(&self, region: &Region) -> Option<Vec<Primitive>> {
         match self.t {
-            ChunkType::Solid => Some(vec![
-                Primitive::Cube {
-                    x: self.base.0,
-                    y: self.base.1,
-                    z: self.base.2,
-                    w: CHUNK_SIZE,
-                    d: CHUNK_SIZE,
-                    h: CHUNK_SIZE
-                };
-                1
-            ]),
-            ChunkType::Partial  => {
-                let mut p = Vec::new();
-                let mut cubes = HashSet::new();
-                self.iter().for_each(|pos| {
-                    let idx = mapidx(pos.0, pos.1, pos.2);
-                    match region.tile_types[idx] {
-                        TileType::Solid => {
-                            //println!("{},{},{} = {}", pos.0, pos.1, pos.2, idx);
-                            cubes.insert(idx);
-                        }
-                        _ => {}
-                    }
-                });
-                p.append(&mut super::greedy::greedy_cubes(cubes));
-                Some(p)
+            ChunkType::Empty => {
+                self.layers.iter_mut().for_each(|v| v.clear());
             }
-            _ => None,
-        }
-    }
-}
-
-pub struct ChunkIter {
-    base: (usize, usize, usize),
-    current: (usize, usize, usize),
-    done: bool,
-}
-
-impl Iterator for ChunkIter {
-    type Item = (usize, usize, usize);
-
-    fn next(&mut self) -> Option<(usize, usize, usize)> {
-        if self.done {
-            return None;
-        }
-        let result = (
-            self.current.0 + self.base.0,
-            self.current.1 + self.base.1,
-            self.current.2 + self.base.2,
-        );
-
-        self.current.0 += 1;
-        if self.current.0 == CHUNK_SIZE {
-            self.current.0 = 0;
-
-            self.current.1 += 1;
-            if self.current.1 == CHUNK_SIZE {
-                self.current.1 = 0;
-
-                self.current.2 += 1;
-                if self.current.2 == CHUNK_SIZE {
-                    self.done = true;
+            ChunkType::Solid => {
+                for z in 0..CHUNK_SIZE {
+                    crate::utils::add_cube_geometry(
+                        &mut self.layers[z],
+                        self.base.0 as f32,
+                        self.base.1 as f32,
+                        self.base.2 as f32 + z as f32,
+                        CHUNK_SIZE as f32,
+                        CHUNK_SIZE as f32,
+                        1.0
+                    );
                 }
             }
+            ChunkType::Partial => {
+                for z in 0..CHUNK_SIZE {
+                    let mut cubes = HashSet::new();
+                    for y in 0..CHUNK_SIZE {
+                        for x in 0..CHUNK_SIZE {
+                            let idx = mapidx(x + self.base.0, y + self.base.1, z + self.base.2);
+                            match region.tile_types[idx] {
+                                TileType::Solid => {
+                                    //println!("{},{},{} = {}", pos.0, pos.1, pos.2, idx);
+                                    cubes.insert(idx);
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+
+                    super::greedy::greedy_cubes(&mut cubes, &mut self.layers[z]);
+                }
+            }
+            _ => {}
         }
 
-        Some(result)
+        self.dirty = false;
+    }
+
+    pub fn append_geometry(&self, camera_z : usize, slice: &mut Vec<f32>) {
+        /*if self.t == ChunkType::Empty {
+            return;
+        }
+        if camera_z < self.base.2 + CHUNK_SIZE {
+            return;
+        }*/
+
+        for z in 0..CHUNK_SIZE {
+            let lz = z + self.base.2;
+            if lz <= camera_z && lz > camera_z - 10 {
+                slice.extend_from_slice(&self.layers[z]);
+            }
+        }
     }
 }

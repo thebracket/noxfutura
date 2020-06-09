@@ -88,22 +88,9 @@ impl PlayGame {
         if self.rebuild_geometry {
             if let Some(region) = &self.current_region {
                 pass.vb.clear();
-                self.chunks.rebuild_all(region, camera_z);
-                for p in self.chunks.all_geometry().iter() {
-                    match *p {
-                        Primitive::Cube { x, y, z, w, h, d } => {
-                            crate::utils::add_cube_geometry(
-                                &mut pass.vb,
-                                x as f32,
-                                y as f32,
-                                z as f32,
-                                w as f32,
-                                h as f32,
-                                d as f32,
-                            );
-                        }
-                    }
-                }
+                self.chunks.rebuild_all(region);
+                self.chunks.all_geometry(camera_z as usize, &mut pass.vb.data);
+
                 let rlock = crate::raws::RAWS.lock();
                 let mut mat_info : Vec<u8> = Vec::with_capacity(REGION_TILES_COUNT * 4);
                 region.material_idx.iter().for_each(|midx| {
@@ -155,8 +142,8 @@ impl PlayGame {
                     VirtualKeyCode::Right => pos.x += 1,
                     VirtualKeyCode::Up => pos.y -= 1,
                     VirtualKeyCode::Down => pos.y += 1,
-                    VirtualKeyCode::Comma => { pos.z += 1; }
-                    VirtualKeyCode::Period => { pos.z -= 1; }
+                    VirtualKeyCode::Comma => { pos.z += 1; self.rebuild_geometry = true; }
+                    VirtualKeyCode::Period => { pos.z -= 1;  self.rebuild_geometry = true; }
                     VirtualKeyCode::Minus => camopts.zoom_level -=1,
                     VirtualKeyCode::Add => camopts.zoom_level +=1,
                     VirtualKeyCode::Tab => {
