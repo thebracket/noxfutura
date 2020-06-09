@@ -26,7 +26,7 @@ fn north_south(
 ) {
     let w = 1.0;
     let h = 1.0;
-    let d = 0.5;
+    let d = 1.0;
 
     let x0 = x;
     let x1 = x0 + w;
@@ -48,27 +48,18 @@ fn north_south(
         x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
         x0, y1, z0,    0.0, 0.0, -1.0,  t0, th,
 
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0,
-        x1, y0, z1,    0.0, 0.0, 1.0,   tw, t0,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th,
-        x0, y1, z1,    0.0, 0.0, 1.0,   t0, th,
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0,
-
-        x0, y1, z1,    1.0, 0.0, 0.0,   tw, th,
+        // Left side
+        x0, y0, z0,    1.0, 0.0, 0.0,   tw, th,
         x0, y1, z0,    1.0, 0.0, 0.0,   tw, t0,
-        x0, y0, z0,    1.0, 0.0, 0.0,   t0, t0,
-        x0, y0, z0,    1.0, 0.0, 0.0,   t0, t0,
-        x0, y0, z1,    1.0, 0.0, 0.0,   t0, th,
-        x0, y1, z1,    1.0, 0.0, 0.0,   tw, th,
+        x0, y0, z1,    1.0, 0.0, 0.0,   t0, t0,
 
-        x1, y1, z1,    -1.0, 0.0, 0.0,  tw, th,
-        x1, y0, z0,    -1.0, 0.0, 0.0,  t0, t0,
-        x1, y1, z0,    -1.0, 0.0, 0.0,  tw, t0,
-        x1, y0, z0,    -1.0, 0.0, 0.0,  t0, t0,
-        x1, y1, z1,    -1.0, 0.0, 0.0,  tw, th,
-        x1, y0, z1,    -1.0, 0.0, 0.0,  t0, th,
 
+        // Right side
+        x1, y0, z0,    -1.0, 0.0, 0.0,   tw, th,
+        x1, y1, z0,    -1.0, 0.0, 0.0,   tw, t0,
+        x1, y0, z1,    -1.0, 0.0, 0.0,   t0, t0,
+
+        // Base - unchanged
         x0, y0, z0,   0.0, -1.0, 0.0,   tw, th,
         x1, y0, z0,   0.0, -1.0, 0.0,   tw, t0,
         x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0,
@@ -76,17 +67,19 @@ fn north_south(
         x0, y0, z1,   0.0, -1.0, 0.0,   t0, th,
         x0, y0, z0,   0.0, -1.0, 0.0,   tw, th,
 
-        x1, y1, z1,   0.0, 1.0, 0.0,    tw, th,
-        x1, y1, z0,   0.0, 1.0, 0.0,    tw, t0,
-        x0, y1, z0,   0.0, 1.0, 0.0,    t0, t0,
-        x0, y1, z0,   0.0, 1.0, 0.0,    t0, t0,
-        x0, y1, z1,   0.0, 1.0, 0.0,    t0, th,
-        x1, y1, z1,   0.0, 1.0, 0.0,    tw, th,
+        // Top - needs to slope
+        x1, y0, z1,   0.0, 1.0, 1.0,    tw, th,
+        x1, y1, z0,   0.0, 1.0, 1.0,    tw, t0,
+        x0, y1, z0,   0.0, 1.0, 1.0,    t0, t0,
+        x0, y1, z0,   0.0, 1.0, 1.0,    t0, t0,
+        x0, y0, z1,   0.0, 1.0, 1.0,    t0, th,
+        x1, y0, z1,   0.0, 1.0, 1.0,    tw, th,
     ];
     vb.extend_from_slice(&cube_geometry);
-    *element_count += 12;
+    *element_count += 8;
 }
 
+// still needs work
 fn south_north(
     vb: &mut Vec<f32>,
     element_count: &mut u32,
@@ -94,7 +87,58 @@ fn south_north(
     y: f32,
     z: f32
 ) {
+    let w = 1.0;
+    let h = 1.0;
+    let d = 1.0;
 
+    let x0 = x;
+    let x1 = x0 + w;
+    let y0 = z;
+    let y1 = y0 + d;
+    let z0 = y;
+    let z1 = z0 + h;
+
+    let t0 = 0.0f32;
+    let tw = w;
+    let th = h;
+
+    #[rustfmt::skip]
+    let cube_geometry = [
+        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
+        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th,
+        x1, y0, z0,    0.0, 0.0, -1.0,  tw, t0,
+        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th,
+        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
+        x0, y1, z0,    0.0, 0.0, -1.0,  t0, th,
+
+        // Left side
+        x0, y0, z0,    1.0, 0.0, 0.0,   tw, th,
+        x0, y1, z0,    1.0, 0.0, 0.0,   tw, t0,
+        x0, y0, z1,    1.0, 0.0, 0.0,   t0, t0,
+
+        // Right side
+        x1, y0, z0,    -1.0, 0.0, 0.0,   tw, th,
+        x1, y1, z0,    -1.0, 0.0, 0.0,   tw, t0,
+        x1, y0, z1,    -1.0, 0.0, 0.0,   t0, t0,
+
+        // Base - unchanged
+        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th,
+        x1, y0, z0,   0.0, -1.0, 0.0,   tw, t0,
+        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0,
+        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0,
+        x0, y0, z1,   0.0, -1.0, 0.0,   t0, th,
+        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th,
+
+        // Top - needs to slope
+        x1, y1, z1,   0.0, -1.0, 1.0,    tw, th,
+        x1, y0, z0,   0.0, -1.0, 1.0,    tw, t0,
+        x0, y0, z0,   0.0, -1.0, 1.0,    t0, t0,
+        x0, y0, z0,   0.0, -1.0, 1.0,    t0, t0,
+        x0, y1, z1,   0.0, -1.0, 1.0,    t0, th,
+        x1, y1, z1,   0.0, -1.0, 1.0,    tw, th,
+    ];
+    vb.extend_from_slice(&cube_geometry);
+    *element_count += 8;
 }
 
 fn east_west(
