@@ -141,13 +141,19 @@ pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata) {
             }
 
             // Next is rock until the soil layer
-            while z < altitude {
+            while z < altitude-1 {
                 let cell_idx = mapidx(x, y, z);
                 region.tile_types[cell_idx] = TileType::Solid;
                 let mat_idx = strata.map[cell_idx];
                 region.material_idx[cell_idx] = strata.material_idx[mat_idx];
                 z += 1;
             }
+
+            // Add a top floor
+            let cell_idx = mapidx(x, y, z);
+            region.tile_types[cell_idx] = TileType::Floor;
+            let mat_idx = strata.map[cell_idx];
+            region.material_idx[cell_idx] = strata.material_idx[mat_idx];
 
             // Temporary reveal code
             z -= 3;
