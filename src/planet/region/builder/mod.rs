@@ -6,6 +6,7 @@ mod heightmap;
 mod primitive;
 mod strata;
 mod water_features;
+mod ramping;
 use legion::prelude::*;
 pub use primitive::Primitive;
 
@@ -46,6 +47,8 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     strata::layer_cake(&hm, region, &region_strata);
 
     set_worldgen_status("Ramping");
+    ramping::build_ramps(region);
+
     set_worldgen_status("Beaches");
     set_worldgen_status("Crashing the ship");
     set_worldgen_status("Building an ECS");
