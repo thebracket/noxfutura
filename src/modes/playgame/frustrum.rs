@@ -64,7 +64,7 @@ impl Frustrum {
 
     pub fn check_sphere(&self, pos: &Vec3, radius: f32) -> bool {
         for p in self.planes.iter() {
-            if (p.x * pos.x) + (p.y * pos.y) + (p.z * pos.z) + p.w <= -radius {
+            if (p.x * pos.x) + (p.y * pos.z) + (p.z * pos.y) + p.w <= -radius {
                 return false;
             }
         }

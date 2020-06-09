@@ -163,6 +163,14 @@ pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata) {
                 region.material_idx[cell_idx] = strata.material_idx[mat_idx];
                 z += 1;
             }
+
+            // Temporary reveal code
+            z -= 3;
+            while z < REGION_DEPTH {
+                let cell_idx = mapidx(x, y, z);
+                region.revealed[cell_idx] = true;
+                z += 1;
+            }
         }
     }
 }

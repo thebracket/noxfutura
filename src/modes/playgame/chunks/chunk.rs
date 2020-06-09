@@ -53,10 +53,16 @@ impl Chunk {
         let mut count_solid = 0;
         self.cells
             .iter()
-            .for_each(|idx| match region.tile_types[*idx] {
-                TileType::Solid => count_solid += 1,
-                TileType::Empty => count_empty += 1,
-                _ => {}
+            .for_each(|idx| {
+                if !region.revealed[*idx] {
+                    count_empty += 1;
+                } else {
+                    match region.tile_types[*idx] {
+                        TileType::Solid => count_solid += 1,
+                        TileType::Empty => count_empty += 1,
+                        _ => {}
+                    }
+                }
             });
 
         let len = self.cells.len();
@@ -94,12 +100,14 @@ impl Chunk {
                     for y in 0..CHUNK_SIZE {
                         for x in 0..CHUNK_SIZE {
                             let idx = mapidx(x + self.base.0, y + self.base.1, z + self.base.2);
-                            match region.tile_types[idx] {
-                                TileType::Solid => {
-                                    //println!("{},{},{} = {}", pos.0, pos.1, pos.2, idx);
-                                    cubes.insert(idx);
+                            if region.revealed[idx] {
+                                match region.tile_types[idx] {
+                                    TileType::Solid => {
+                                        //println!("{},{},{} = {}", pos.0, pos.1, pos.2, idx);
+                                        cubes.insert(idx);
+                                    }
+                                    _ => {}
                                 }
-                                _ => {}
                             }
                         }
                     }
@@ -128,7 +136,7 @@ impl Chunk {
         let mut n_elements = 0;
         for z in 0..CHUNK_SIZE {
             let layer_z = z + self.base.2;
-            if layer_z <= camera_z && layer_z > camera_z - 20 {
+            if layer_z <= camera_z {
                 n_elements += self.element_count[z];
             }
         }
