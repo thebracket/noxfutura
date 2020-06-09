@@ -48,31 +48,16 @@ pub fn build_strata(
         counts: vec![(0, 0, 0, 0); n_strata],
     };
 
-    use bracket_geometry::prelude::*;
-    let mut centroids = Vec::<Point3>::with_capacity(n_strata);
-    for _ in 0..n_strata {
-        centroids.push(Point3::new(
-            rng.range(0, REGION_WIDTH),
-            rng.range(0, REGION_HEIGHT),
-            rng.range(0, REGION_DEPTH),
-        ));
-    }
-
+    let mut cell_noise = FastNoise::seeded(perlin_seed + 4);
+    cell_noise.set_cellular_return_type(CellularReturnType::CellValue);
+    cell_noise.set_noise_type(NoiseType::Cellular);
+    cell_noise.set_frequency(0.04);
+    cell_noise.set_cellular_distance_function(CellularDistanceFunction::Manhattan);
     for z in 0..REGION_DEPTH {
-        let percent = z as f32 / REGION_DEPTH as f32;
-        crate::planet::set_worldgen_status(format!("Strata Hunting {}%", (percent * 100.0) as i32));
-        for y in 0..REGION_WIDTH {
+        for y in 0..REGION_HEIGHT {
             for x in 0..REGION_WIDTH {
-                let mut min = std::f32::MAX;
-                let mut biome_idx = std::usize::MAX;
-                let my_coords = Point3::new(x, y, z);
-                centroids.iter().enumerate().for_each(|(i, pt)| {
-                    let dist = DistanceAlg::Manhattan.distance3d(my_coords, *pt);
-                    if dist < min {
-                        min = dist;
-                        biome_idx = i;
-                    }
-                });
+                let noise = cell_noise.get_noise3d(x as f32, y as f32, z as f32);
+                let biome_idx = (((noise + 1.0) / 2.0) * n_strata as f32) as usize;
 
                 result.counts[biome_idx].0 += 1;
                 result.counts[biome_idx].1 += x;
