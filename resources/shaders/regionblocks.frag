@@ -33,10 +33,10 @@ void main() {
     );
 
     vec4 terrain_color = texture(sampler2D(t_terrain, s_terrain), terrain_uv);
-
-    vec4 tinted = terrain_color * mat_tint;
+    vec4 terrain_color_frac = terrain_color / 2.0;
+    vec4 tinted = terrain_color_frac + (mat_tint * terrain_color_frac);
 
     vec3 lightDir = normalize(v_sun_pos - v_frag_pos);
-    float diff = max(dot(lightDir, v_normal), 0.05);
+    float diff = max(dot(lightDir, v_normal), 0.1);
     f_color = vec4(tinted.rgb * diff, 1.0);
 }
