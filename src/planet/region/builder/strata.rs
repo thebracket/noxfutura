@@ -169,6 +169,16 @@ pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata) {
             while z < REGION_DEPTH {
                 let cell_idx = mapidx(x, y, z);
                 region.revealed[cell_idx] = true;
+
+                if x > 1 && x < REGION_WIDTH-2 && y > 1 && y < REGION_HEIGHT-2 {
+                    for oy in -1..=1 {
+                        for ox in -1..=1 {
+                            let cell_idx = mapidx((x as i32+ox) as usize, (y as i32+oy) as usize, z);
+                            region.revealed[cell_idx] = true;
+                        }
+                    }
+                }
+
                 z += 1;
             }
         }
