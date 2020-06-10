@@ -1,8 +1,8 @@
-use crate::planet::{Region, REGION_DEPTH, TileType};
 use super::mapidx;
+use crate::planet::{Region, TileType, REGION_DEPTH};
 
 pub fn ground_z(region: &Region, x: usize, y: usize) -> usize {
-    let mut z = REGION_DEPTH-1;
+    let mut z = REGION_DEPTH - 1;
     let mut hit_ground = false;
     while !hit_ground {
         let idx = mapidx(x, y, z);

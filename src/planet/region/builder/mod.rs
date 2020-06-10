@@ -4,9 +4,9 @@ use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 mod heightmap;
 mod primitive;
+mod ramping;
 mod strata;
 mod water_features;
-mod ramping;
 use legion::prelude::*;
 pub use primitive::Primitive;
 

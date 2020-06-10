@@ -1,7 +1,7 @@
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::planet::{Region, TileType};
-use crate::utils::{mapidx, add_ramp_geometry};
+use crate::utils::{add_ramp_geometry, mapidx};
 use std::collections::HashSet;
 use ultraviolet::Vec3;
 
@@ -51,19 +51,17 @@ impl Chunk {
 
         let mut count_empty = 0;
         let mut count_solid = 0;
-        self.cells
-            .iter()
-            .for_each(|idx| {
-                if !region.revealed[*idx] {
-                    count_empty += 1;
-                } else {
-                    match region.tile_types[*idx] {
-                        TileType::Solid => count_solid += 1,
-                        TileType::Empty => count_empty += 1,
-                        _ => {}
-                    }
+        self.cells.iter().for_each(|idx| {
+            if !region.revealed[*idx] {
+                count_empty += 1;
+            } else {
+                match region.tile_types[*idx] {
+                    TileType::Solid => count_solid += 1,
+                    TileType::Empty => count_empty += 1,
+                    _ => {}
                 }
-            });
+            }
+        });
 
         let len = self.cells.len();
 
@@ -103,9 +101,13 @@ impl Chunk {
                             let idx = mapidx(x + self.base.0, y + self.base.1, z + self.base.2);
                             if region.revealed[idx] {
                                 match region.tile_types[idx] {
-                                    TileType::Solid => { cubes.insert(idx); }
-                                    TileType::Floor => { floors.insert(idx); }
-                                    TileType::Ramp{direction} => {
+                                    TileType::Solid => {
+                                        cubes.insert(idx);
+                                    }
+                                    TileType::Floor => {
+                                        floors.insert(idx);
+                                    }
+                                    TileType::Ramp { direction } => {
                                         add_ramp_geometry(
                                             &mut self.vb.data,
                                             &mut self.element_count[z],
