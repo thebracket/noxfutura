@@ -8,8 +8,10 @@ mod ramping;
 mod strata;
 mod water_features;
 mod beaches;
+mod buildings;
 use legion::prelude::*;
 pub use primitive::Primitive;
+use crate::components::*;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");
@@ -54,17 +56,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     set_worldgen_status("Beaches");
     beaches::build_beaches(region);
 
-    set_worldgen_status("Crashing the ship");
     set_worldgen_status("Building an ECS");
-    set_worldgen_status("Trees");
-    set_worldgen_status("Blight");
-    set_worldgen_status("Trail of debris");
-    set_worldgen_status("Escape pod");
-    set_worldgen_status("Settlers");
-    set_worldgen_status("Features");
-    set_worldgen_status("Looking for the map");
-
-    use crate::components::*;
     let universe = Universe::new();
     let mut world = universe.create_world();
     world.insert(
@@ -83,5 +75,18 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
             )
         }),
     );
+
+    set_worldgen_status("Crashing the ship");
+    let ship_loc = Point::new(128, 128);
+    buildings::build_escape_pod(region, &ship_loc);
+
+    set_worldgen_status("Trees");
+    set_worldgen_status("Blight");
+    set_worldgen_status("Trail of debris");
+    set_worldgen_status("Escape pod");
+    set_worldgen_status("Settlers");
+    set_worldgen_status("Features");
+    set_worldgen_status("Looking for the map");
+
     world
 }

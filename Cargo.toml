@@ -19,6 +19,7 @@ ultraviolet = "0.4.6"
 bracket-random = "0.8.0"
 bracket-noise = "0.8.1"
 bracket-geometry = { version = "0.8.1", features = ["serde"] }
+bracket-color = { version = "0.8.1", features = ["rex", "serde"] }
 lazy_static = "1.4.0"
 parking_lot = "0.10.0"
 serde = { version = "1.0.106" }
@@ -32,6 +33,8 @@ erased-serde = "0.3"
 uuid = { version = "0.8", features = ["v4"] }
 
 rayon = "1.3.0"
+flate2 = "1.0.14"
+byteorder = "1.3.4"
 
 [profile.dev]
 opt-level = 1

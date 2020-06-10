@@ -19,8 +19,8 @@ void main() {
     //int mat_base = 0;
     int diffuse_tex_index = mat_base + 4; // +4
     vec2 uv = vec2(
-        fract(v_uv.x) * 256.0,
-        fract(v_uv.y) * 256.0
+        clamp(fract(v_uv.x),0.1,0.9) * 256.0,
+        clamp(fract(v_uv.y),0.1,0.9) * 256.0
     );
     vec2 diffuse = vec2(
         (float(diffuse_tex_index % 16) * 256.0),

@@ -153,6 +153,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "bracket-color"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb4064968b35447f0c378010bbf5470ede41d07101bdf3b1fdf29dca5441f91b"
+dependencies = [
+ "byteorder",
+ "serde",
+]
+
+[[package]]
 name = "bracket-geometry"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -529,6 +539,18 @@ name = "fake-simd"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e88a8acf291dafb59c2d96e8f59828f3838bb1a70398823ade51a84de6a6deed"
+
+[[package]]
+name = "flate2"
+version = "1.0.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2cfff41391129e0a856d6d822600b8d71179d46879e310417eb9c762eb178b42"
+dependencies = [
+ "cfg-if",
+ "crc32fast",
+ "libc",
+ "miniz_oxide",
+]
 
 [[package]]
 name = "foreign-types"
@@ -1248,12 +1270,15 @@ name = "noxfutura"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "bracket-color",
  "bracket-geometry",
  "bracket-noise",
  "bracket-random",
  "bytemuck",
+ "byteorder",
  "erased-serde",
  "failure",
+ "flate2",
  "futures",
  "glsl-to-spirv",
  "image",

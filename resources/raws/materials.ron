@@ -791,5 +791,16 @@
             texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.98, 0.75, 0.6)
         ),
+
+        // Purely Synthetic - doesn't occur on its own
+        MaterialDef(
+            name: "Plasteel",
+            layer: Synthetic,
+            hit_points: 200,
+            mines_to: [ ],
+            description: "A nano-hybrid combining plastic and steel at a molecular level.",
+            texture: "plasteeltile", constructed: "plasteeltile", floor: "plasteeltile", floor_constructed: "plasteeltile",
+            tint: (1.0, 1.0, 1.0)
+        ),
     ]
 )

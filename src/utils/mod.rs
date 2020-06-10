@@ -10,6 +10,7 @@ mod region;
 pub use region::*;
 mod ramps;
 pub use ramps::*;
+pub mod rex;
 
 #[cfg(test)]
 mod tests {

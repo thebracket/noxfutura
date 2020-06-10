@@ -36,6 +36,7 @@ pub enum MaterialLayer {
     Sedimentary,
     Soil,
     Sand,
+    Synthetic
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

@@ -143,7 +143,7 @@ impl Chunk {
         }
     }
 
-    pub fn maybe_render_chunk(&self, camera_z: usize) -> Option<&VertexBuffer<f32>> {
+    pub fn maybe_render_chunk(&self, camera_z: usize) -> Option<(&VertexBuffer<f32>, u32)> {
         if self.t == ChunkType::Empty {
             return None;
         }
@@ -158,7 +158,7 @@ impl Chunk {
         }
 
         if n_elements > 0 {
-            Some(&self.vb)
+            Some((&self.vb, n_elements * 3))
         } else {
             None
         }

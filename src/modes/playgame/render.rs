@@ -275,8 +275,8 @@ impl BlockRenderPass {
             for chunk in chunks.visible_chunks() {
                 let buffer = chunk.maybe_render_chunk(camera_z);
                 if let Some(buffer) = buffer {
-                    rpass.set_vertex_buffer(0, buffer.buffer.as_ref().unwrap(), 0, 0);
-                    rpass.draw(0..buffer.len(), 0..1);
+                    rpass.set_vertex_buffer(0, buffer.0.buffer.as_ref().unwrap(), 0, 0);
+                    rpass.draw(0..buffer.1, 0..1);
                 }
             }
         }
