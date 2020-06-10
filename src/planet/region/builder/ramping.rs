@@ -11,9 +11,9 @@ pub fn build_ramps(region: &mut Region) {
                     region.tile_types[idx] = TileType::Ramp{direction: RampDirection::NorthSouth};
                 } else if region.tile_types[mapidx(x, y+1, z+1)] == TileType::Floor {
                     region.tile_types[idx] = TileType::Ramp{direction: RampDirection::SouthNorth};
-                } else if region.tile_types[mapidx(x-1, y, z+1)] == TileType::Floor {
-                    region.tile_types[idx] = TileType::Ramp{direction: RampDirection::EastWest};
                 } else if region.tile_types[mapidx(x+1, y, z+1)] == TileType::Floor {
+                    region.tile_types[idx] = TileType::Ramp{direction: RampDirection::EastWest};
+                } else if region.tile_types[mapidx(x-1, y, z+1)] == TileType::Floor {
                     region.tile_types[idx] = TileType::Ramp{direction: RampDirection::WestEast};
                 }
             }
