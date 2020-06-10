@@ -82,16 +82,18 @@ impl Chunk {
                     for y in 0..CHUNK_SIZE {
                         for x in 0..CHUNK_SIZE {
                             let idx = mapidx(x + self.base.0, y + self.base.1, z + self.base.2);
-                            let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).texture;
                             if region.revealed[idx] {
                                 match region.tile_types[idx] {
                                     TileType::Solid => {
+                                        let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).texture;
                                         cubes.insert(idx, mat);
                                     }
                                     TileType::Floor => {
+                                        let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).floor;
                                         floors.insert(idx, mat);
                                     }
                                     TileType::Ramp { direction } => {
+                                        let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).texture;
                                         add_ramp_geometry(
                                             &mut self.vb.data,
                                             &mut self.element_count[z],
