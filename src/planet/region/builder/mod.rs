@@ -9,6 +9,7 @@ mod strata;
 mod water_features;
 mod beaches;
 mod buildings;
+mod trees;
 use legion::prelude::*;
 pub use primitive::Primitive;
 use crate::components::*;
@@ -81,6 +82,8 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     buildings::build_escape_pod(region, &ship_loc);
 
     set_worldgen_status("Trees");
+    trees::plant_trees(region, &biome_info, &mut rng);
+
     set_worldgen_status("Blight");
     set_worldgen_status("Trail of debris");
     set_worldgen_status("Escape pod");
