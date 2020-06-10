@@ -2,10 +2,12 @@ mod formats;
 pub use formats::*;
 use formats::{load_biomes, load_materials};
 use parking_lot::RwLock;
+mod material_map;
 
 pub struct Raws {
     pub biomes: Biomes,
     pub materials: Materials,
+    pub matmap : material_map::MaterialMap
 }
 
 impl Raws {
@@ -13,6 +15,7 @@ impl Raws {
         Self {
             biomes: Biomes::new(),
             materials: Materials::new(),
+            matmap : material_map::MaterialMap::new()
         }
     }
 

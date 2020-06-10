@@ -38,18 +38,23 @@ impl TextureArray {
                 tex_map.insert(stubname, i);
             }
         }
-        println!("{:#?}", tex_map);
+        //println!("{:#?}", tex_map);
+        {
+            let mut rawlock = crate::raws::RAWS.write();
+            let mats = rawlock.materials.materials.clone();
+            rawlock.matmap.build(&tex_map, &mats);
+        }
 
         // Make an atlas
         let atlas_rows = 16;
-        println!("{} rows", atlas_rows);
+        //println!("{} rows", atlas_rows);
         let mut atlas_data = image::DynamicImage::new_rgba8(ATLAS_W, ATLAS_H);
 
         texture_filenames
             .iter()
             .enumerate()
             .for_each(|(i, image_filename)| {
-                println!("Loading {} for Atlas, image #{}", image_filename, i);
+                //println!("Loading {} for Atlas, image #{}", image_filename, i);
                 let img = image::open(&image_filename).unwrap().into_rgba();
                 let x = (i % ATLAS_COLS) * TEXTURE_SIZE;
                 let y = (i / ATLAS_COLS) * TEXTURE_SIZE;

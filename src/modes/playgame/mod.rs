@@ -69,6 +69,7 @@ impl PlayGame {
     }
 
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
+        crate::raws::load_raws();
         self.rpass = Some(render::BlockRenderPass::new(context));
     }
 

@@ -4,6 +4,7 @@ use crate::planet::{Region, TileType};
 use crate::utils::{add_ramp_geometry, mapidx};
 use std::collections::HashSet;
 use ultraviolet::Vec3;
+use super::greedy::*;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -33,7 +34,7 @@ impl Chunk {
             base: (x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
             cells,
             dirty: true,
-            vb: VertexBuffer::new(&[3, 2, 3]),
+            vb: VertexBuffer::new(&[3, 3, 2, 1]),
             element_count: [0; CHUNK_SIZE],
             center_pos: (
                 (x * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,
@@ -50,13 +51,11 @@ impl Chunk {
         }
 
         let mut count_empty = 0;
-        let mut count_solid = 0;
         self.cells.iter().for_each(|idx| {
             if !region.revealed[*idx] {
                 count_empty += 1;
             } else {
                 match region.tile_types[*idx] {
-                    TileType::Solid => count_solid += 1,
                     TileType::Empty => count_empty += 1,
                     _ => {}
                 }
@@ -67,8 +66,6 @@ impl Chunk {
 
         if count_empty == len {
             self.t = ChunkType::Empty;
-        } else if count_solid == len {
-            self.t = ChunkType::Solid;
         } else {
             self.t = ChunkType::Partial;
         }
@@ -78,34 +75,21 @@ impl Chunk {
                 self.vb.clear();
                 self.element_count.iter_mut().for_each(|n| *n = 0);
             }
-            ChunkType::Solid => {
-                for z in 0..CHUNK_SIZE {
-                    crate::utils::add_cube_geometry(
-                        &mut self.vb.data,
-                        &mut self.element_count[z],
-                        self.base.0 as f32,
-                        self.base.1 as f32,
-                        self.base.2 as f32 + z as f32,
-                        CHUNK_SIZE as f32,
-                        CHUNK_SIZE as f32,
-                        1.0,
-                    );
-                }
-            }
             ChunkType::Partial => {
                 for z in 0..CHUNK_SIZE {
-                    let mut cubes = HashSet::new();
-                    let mut floors = HashSet::new();
+                    let mut cubes = CubeMap::new();
+                    let mut floors = CubeMap::new();
                     for y in 0..CHUNK_SIZE {
                         for x in 0..CHUNK_SIZE {
                             let idx = mapidx(x + self.base.0, y + self.base.1, z + self.base.2);
+                            let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).texture;
                             if region.revealed[idx] {
                                 match region.tile_types[idx] {
                                     TileType::Solid => {
-                                        cubes.insert(idx);
+                                        cubes.insert(idx, mat);
                                     }
                                     TileType::Floor => {
-                                        floors.insert(idx);
+                                        floors.insert(idx, mat);
                                     }
                                     TileType::Ramp { direction } => {
                                         add_ramp_geometry(
@@ -115,6 +99,7 @@ impl Chunk {
                                             x as f32 + self.base.0 as f32,
                                             y as f32 + self.base.1 as f32,
                                             z as f32 + self.base.2 as f32,
+                                            mat
                                         );
                                     }
                                     _ => {}
