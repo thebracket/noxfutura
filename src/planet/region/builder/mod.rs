@@ -40,6 +40,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
 
     set_worldgen_status("Adding water features");
     water_features::just_add_water(planet, region, &mut pooled_water, &mut hm, &mut rng);
+    water_features::set_water_tiles(region, &pooled_water, planet.water_height as usize);
 
     set_worldgen_status("Stratifying");
     let region_strata = strata::build_strata(&mut rng, &mut hm, &biome_info, planet.perlin_seed);

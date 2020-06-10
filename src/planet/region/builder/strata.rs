@@ -4,7 +4,6 @@ use crate::raws::*;
 use crate::utils::mapidx;
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;
-use rayon::prelude::*;
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
     let mlock = crate::raws::RAWS.read();
@@ -118,10 +117,6 @@ pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata) {
             if altitude > REGION_DEPTH - 10 {
                 altitude = REGION_DEPTH - 1
             };
-            let mut wet = false;
-            if altitude < 5 {
-                wet = true;
-            }
 
             // Bottom layer is always SMR
             region.tile_types[mapidx(x, y, 0)] = TileType::SemiMoltenRock;
