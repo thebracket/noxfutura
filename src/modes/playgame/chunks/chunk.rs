@@ -19,9 +19,9 @@ pub struct Chunk {
 impl Chunk {
     pub fn new(x: usize, y: usize, z: usize) -> Self {
         let mut cells = Vec::with_capacity(CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE);
-        for cz in z * CHUNK_SIZE..=(z * CHUNK_SIZE) + CHUNK_SIZE {
-            for cy in y * CHUNK_SIZE..=(y * CHUNK_SIZE) + CHUNK_SIZE {
-                for cx in x * CHUNK_SIZE..=(x * CHUNK_SIZE) + CHUNK_SIZE {
+        for cz in z * CHUNK_SIZE..(z * CHUNK_SIZE) + CHUNK_SIZE {
+            for cy in y * CHUNK_SIZE..(y * CHUNK_SIZE) + CHUNK_SIZE {
+                for cx in x * CHUNK_SIZE..(x * CHUNK_SIZE) + CHUNK_SIZE {
                     cells.push(mapidx(cx, cy, cz));
                 }
             }
