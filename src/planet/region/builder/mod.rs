@@ -12,7 +12,7 @@ pub use primitive::Primitive;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");
-    let biome_info = crate::raws::RAWS.lock().biomes.areas[region.biome_raw_idx].clone();
+    let biome_info = crate::raws::RAWS.read().biomes.areas[region.biome_raw_idx].clone();
     let biome = planet.biomes[region.biome_info_idx].clone();
     let mut pooled_water = vec![0u8; REGION_WIDTH as usize * REGION_HEIGHT as usize];
     let mut rng = RandomNumberGenerator::seeded(

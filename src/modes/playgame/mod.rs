@@ -94,7 +94,7 @@ impl PlayGame {
                 self.chunks.rebuild_all(region, context);
 
                 // Update the material texture
-                let rlock = crate::raws::RAWS.lock();
+                let rlock = crate::raws::RAWS.read();
                 let mut mat_info: Vec<u8> = Vec::with_capacity(REGION_TILES_COUNT * 4);
                 region.material_idx.iter().for_each(|midx| {
                     let tex_name = &rlock.materials.materials[*midx].texture;

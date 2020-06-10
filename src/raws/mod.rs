@@ -1,7 +1,7 @@
 mod formats;
 pub use formats::*;
 use formats::{load_biomes, load_materials};
-use parking_lot::Mutex;
+use parking_lot::RwLock;
 
 pub struct Raws {
     pub biomes: Biomes,
@@ -23,9 +23,9 @@ impl Raws {
 }
 
 lazy_static! {
-    pub static ref RAWS: Mutex<Raws> = Mutex::new(Raws::new());
+    pub static ref RAWS: RwLock<Raws> = RwLock::new(Raws::new());
 }
 
 pub fn load_raws() {
-    RAWS.lock().load();
+    RAWS.write().load();
 }

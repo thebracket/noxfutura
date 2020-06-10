@@ -139,7 +139,7 @@ fn biome_membership(planet: &mut Planet, idx: usize) -> BiomeCounts {
 fn find_possible_biomes(membership: &BiomeCounts, biome: &Biome) -> Vec<(usize, i32)> {
     let mut result: Vec<(usize, i32)> = Vec::new();
 
-    let raws = crate::raws::RAWS.lock();
+    let raws = crate::raws::RAWS.read();
     for (i, biome) in raws.biomes.areas.iter().enumerate().filter(|(_, b)| {
         biome.mean_temperature >= b.min_temp
             && biome.mean_temperature <= b.max_temp

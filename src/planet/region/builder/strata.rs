@@ -7,7 +7,7 @@ use bracket_random::prelude::*;
 use rayon::prelude::*;
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
-    let mlock = crate::raws::RAWS.lock();
+    let mlock = crate::raws::RAWS.read();
     mlock
         .materials
         .materials
