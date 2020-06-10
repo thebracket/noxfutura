@@ -7,6 +7,7 @@ mod primitive;
 mod ramping;
 mod strata;
 mod water_features;
+mod beaches;
 use legion::prelude::*;
 pub use primitive::Primitive;
 
@@ -50,6 +51,8 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     ramping::build_ramps(region);
 
     set_worldgen_status("Beaches");
+    beaches::build_beaches(region);
+
     set_worldgen_status("Crashing the ship");
     set_worldgen_status("Building an ECS");
     set_worldgen_status("Trees");

@@ -29,3 +29,16 @@ lazy_static! {
 pub fn load_raws() {
     RAWS.write().load();
 }
+
+pub fn get_material_by_tag(name: &str) -> Option<usize> {
+    let lock = RAWS.read();
+    let finder = lock.materials.materials
+        .iter()
+        .enumerate()
+        .find(|(_,m)| m.name == name);
+    if finder.is_some() {
+        Some(finder.unwrap().0)
+    } else {
+        None
+    }
+}
