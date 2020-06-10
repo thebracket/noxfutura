@@ -82,13 +82,13 @@ fn grow_down(cube_index: &mut HashSet<usize>, idx: usize, width: usize) -> usize
     let mut height = 1;
     let mut candidate_idx = idx + REGION_WIDTH;
     'outer: loop {
-        for cidx in candidate_idx..=candidate_idx + width {
+        for cidx in candidate_idx..candidate_idx + width {
             if !cube_index.contains(&cidx) {
                 break 'outer;
             }
         }
 
-        for cidx in candidate_idx..=candidate_idx + width {
+        for cidx in candidate_idx..candidate_idx + width {
             cube_index.remove(&cidx);
         }
         height += 1;
