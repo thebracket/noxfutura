@@ -30,7 +30,7 @@ impl Chunks {
 
     pub fn rebuild_all(&mut self, region: &Region, context: &crate::engine::Context) {
         self.chunks
-            .iter_mut()
+            .par_iter_mut()
             .for_each(|c| c.rebuild(region, context));
     }
 

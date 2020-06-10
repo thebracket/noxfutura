@@ -5,7 +5,7 @@
         "commandLine": "",
         "environment": [
         ],
-        "executable": "C:\\Users\\herbe\\Documents\\LearnRust\\noxfutura\\target\\debug\\noxfutura.exe",
+        "executable": "C:\\Users\\herbe\\Documents\\LearnRust\\noxfutura\\target\\release\\noxfutura.exe",
         "inject": false,
         "numQueuedFrames": 0,
         "options": {
