@@ -8,11 +8,8 @@ layout(location=4) in vec2 v_uv;
 layout(location=5) in float v_material;
 layout(location=0) out vec4 f_color;
 
-layout(set = 1, binding = 0) uniform texture3D t_matinfo;
-layout(set = 1, binding = 1) uniform sampler s_matinfo;
-
-layout(set = 2, binding = 0) uniform texture2D t_terrain;
-layout(set = 2, binding = 1) uniform sampler s_terrain;
+layout(set = 1, binding = 0) uniform texture2D t_terrain;
+layout(set = 1, binding = 1) uniform sampler s_terrain;
 
 void main() {
     int mat_base = int(v_material * 255.0);
