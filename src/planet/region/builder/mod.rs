@@ -10,6 +10,7 @@ mod water_features;
 mod beaches;
 mod buildings;
 mod trees;
+mod plants;
 use legion::prelude::*;
 pub use primitive::Primitive;
 use crate::components::*;
@@ -50,7 +51,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     let region_strata = strata::build_strata(&mut rng, &mut hm, &biome_info, planet.perlin_seed);
 
     set_worldgen_status("Layer cake is yummy");
-    strata::layer_cake(&hm, region, &region_strata);
+    strata::layer_cake(&hm, region, &region_strata, &mut rng);
 
     set_worldgen_status("Ramping");
     ramping::build_ramps(region);
@@ -77,6 +78,9 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
             )
         }),
     );
+
+    set_worldgen_status("Seeding the lawn");
+    plants::grow_plants(region, biome.mean_temperature, &mut rng);
 
     set_worldgen_status("Crashing the ship");
     let ship_loc = Point::new(128, 128);

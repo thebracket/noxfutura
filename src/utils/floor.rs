@@ -11,8 +11,8 @@ pub fn add_floor_geometry(
     let mi = material_index as f32 / 255.0;
     let x0 = x;
     let x1 = x0 + w;
-    let y0 = z - 1.0;
-    let y1 = y0 + 0.02;
+    let y0 = z - 0.1;
+    let y1 = y0 + 0.2;
     let z0 = y;
     let z1 = z0 + h;
 

@@ -5,7 +5,8 @@ pub struct MaterialMap {
     map : HashMap<usize, MappedMaterial>,
     pub bark_id : usize,
     pub leaf_id : usize,
-    pub water_id : usize
+    pub water_id : usize,
+    pub grass_id : usize
 }
 
 impl MaterialMap {
@@ -14,7 +15,8 @@ impl MaterialMap {
             map : HashMap::new(),
             bark_id : 0,
             leaf_id: 0,
-            water_id : 0
+            water_id : 0,
+            grass_id : 0
         }
     }
 
@@ -37,6 +39,7 @@ impl MaterialMap {
             if k == "bark" { self.bark_id = *v }
             if k == "leaf" { self.leaf_id = *v }
             if k == "water" { self.water_id = *v }
+            if k == "grass" { self.grass_id = *v }
         }
     }
 

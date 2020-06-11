@@ -99,7 +99,11 @@ impl Chunk {
                                         cubes.insert(idx, mat);
                                     }
                                     TileType::Floor => {
-                                        let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).floor;
+                                        let mat = if let Some(_plant_idx) = region.vegetation_type_id[idx] {
+                                            crate::raws::RAWS.read().matmap.grass_id
+                                        } else {
+                                            crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).floor
+                                        };
                                         floors.insert(idx, mat);
                                     }
                                     TileType::Ramp { direction } => {

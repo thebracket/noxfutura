@@ -7,7 +7,8 @@ mod material_map;
 pub struct Raws {
     pub biomes: Biomes,
     pub materials: Materials,
-    pub matmap : material_map::MaterialMap
+    pub matmap : material_map::MaterialMap,
+    pub plants : Plants
 }
 
 impl Raws {
@@ -15,13 +16,15 @@ impl Raws {
         Self {
             biomes: Biomes::new(),
             materials: Materials::new(),
-            matmap : material_map::MaterialMap::new()
+            matmap : material_map::MaterialMap::new(),
+            plants : Plants::new()
         }
     }
 
     fn load(&mut self) {
         self.biomes = load_biomes();
         self.materials = load_materials();
+        self.plants = load_plants();
     }
 }
 

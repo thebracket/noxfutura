@@ -94,7 +94,7 @@ pub fn build_strata(
             result.counts[i].3 /= result.counts[i].0;
 
             let (_n, x, y, z) = result.counts[i];
-            let altitude_at_point = hm[(y * REGION_WIDTH) + x] - 10;
+            let altitude_at_point = hm[(y * REGION_WIDTH) + x];
             let mat_idx = if z as u8 > altitude_at_point - (1 + rng.roll_dice(1, 4) as u8) {
                 // Soil
                 let roll = rng.roll_dice(1, 100);
@@ -119,12 +119,14 @@ pub fn build_strata(
     result
 }
 
-pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata) {
+pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata, rng: &mut RandomNumberGenerator) {
     // Clear it
     region
         .tile_types
         .iter_mut()
         .for_each(|tt| *tt = TileType::Empty);
+
+    let soils = get_soil_indices();
 
     // Build layered tiles
     //let x = 4;
@@ -165,7 +167,7 @@ pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata) {
             let cell_idx = mapidx(x, y, z);
             region.tile_types[cell_idx] = TileType::Floor;
             let mat_idx = strata.map[cell_idx];
-            region.material_idx[cell_idx] = strata.material_idx[mat_idx];
+            region.material_idx[cell_idx] = *rng.random_slice_entry(&soils).unwrap_or(&strata.material_idx[mat_idx]);
 
             // Temporary reveal code
             z -= 3;
