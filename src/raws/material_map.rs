@@ -2,13 +2,19 @@ use std::collections::HashMap;
 use super::formats::MaterialDef;
 
 pub struct MaterialMap {
-    map : HashMap<usize, MappedMaterial>
+    map : HashMap<usize, MappedMaterial>,
+    pub bark_id : usize,
+    pub leaf_id : usize,
+    pub water_id : usize
 }
 
 impl MaterialMap {
     pub fn new() -> Self {
         Self {
-            map : HashMap::new()
+            map : HashMap::new(),
+            bark_id : 0,
+            leaf_id: 0,
+            water_id : 0
         }
     }
 
@@ -25,7 +31,13 @@ impl MaterialMap {
                 }
             );
         }
-        println!("Mapped materials: {:#?}", self.map);
+
+        // Map static materials
+        for (k,v) in matmap.iter() {
+            if k == "bark" { self.bark_id = *v }
+            if k == "leaf" { self.leaf_id = *v }
+            if k == "water" { self.water_id = *v }
+        }
     }
 
     pub fn get(&self, idx: usize) -> &MappedMaterial {

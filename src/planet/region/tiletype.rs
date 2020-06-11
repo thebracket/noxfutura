@@ -9,6 +9,8 @@ pub enum TileType {
     Ramp { direction: RampDirection },
     Stairs { direction: StairsType },
     SemiMoltenRock,
+    TreeTrunk,
+    TreeFoliage,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]

@@ -13,7 +13,8 @@ pub struct Region {
     pub biome_info_idx: usize,
     pub biome_raw_idx: usize,
     pub revealed: Vec<bool>,
-    pub water_level: Vec<u8>
+    pub water_level: Vec<u8>,
+    pub tree_id: Vec<usize>
 }
 
 impl Region {
@@ -25,7 +26,8 @@ impl Region {
             biome_raw_idx: planet.biomes[planet.landblocks[world_idx].biome_idx].biome_type,
             material_idx: vec![0; REGION_TILES_COUNT],
             revealed: vec![false; REGION_TILES_COUNT],
-            water_level: vec![0; REGION_TILES_COUNT]
+            water_level: vec![0; REGION_TILES_COUNT],
+            tree_id: vec![0; REGION_TILES_COUNT]
         }
     }
 }

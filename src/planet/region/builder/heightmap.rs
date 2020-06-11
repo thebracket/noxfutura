@@ -76,6 +76,7 @@ pub fn create_subregions(
     hm: &mut Vec<u8>,
     water: &mut Vec<u8>,
     biome: &crate::planet::Biome,
+    water_level : u8
 ) {
     let center_point = Point::new(REGION_WIDTH / 2, REGION_HEIGHT / 2);
     let n_subregions = 8 + rng.roll_dice(1, 40) + (variance as i32 * 4);
@@ -139,6 +140,9 @@ pub fn create_subregions(
                     hm[((REGION_HEIGHT / 2 * REGION_WIDTH) + (REGION_WIDTH / 2)) as usize];
                 if hm[tile_idx] < 7 {
                     hm[tile_idx] = 7;
+                }
+                if hm[tile_idx] <= water_level+2 {
+                    hm[tile_idx] = water_level+3;
                 }
             }
         }

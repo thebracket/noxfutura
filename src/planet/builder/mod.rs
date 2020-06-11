@@ -115,7 +115,7 @@ fn find_crash_site() -> Point {
         let h = PLANET_BUILD.lock().planet.landblocks[pidx].height;
         if bt != BlockType::Water
             && bt != BlockType::Marsh
-            && bt == BlockType::Coastal
+            && bt != BlockType::Coastal
             && h > PLANET_BUILD.lock().planet.water_height
         {
             println!("{:?}", bt);

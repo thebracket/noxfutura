@@ -18,7 +18,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     set_worldgen_status("Locating biome information");
     let biome_info = crate::raws::RAWS.read().biomes.areas[region.biome_raw_idx].clone();
     let biome = planet.biomes[region.biome_info_idx].clone();
-    let mut pooled_water = vec![0u8; REGION_WIDTH as usize * REGION_HEIGHT as usize];
+    let mut pooled_water = vec![planet.water_height; REGION_WIDTH as usize * REGION_HEIGHT as usize];
     let mut rng = RandomNumberGenerator::seeded(
         planet.perlin_seed + planet_idx(crash_site.x as usize, crash_site.y as usize) as u64,
     );
@@ -39,6 +39,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
         &mut hm,
         &mut pooled_water,
         &biome,
+        planet.water_height
     );
 
     set_worldgen_status("Adding water features");

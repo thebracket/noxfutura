@@ -1,7 +1,7 @@
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::planet::{Region, TileType};
-use crate::utils::{add_ramp_geometry, mapidx};
+use crate::utils::{add_ramp_geometry, mapidx, add_floor_geometry};
 use std::collections::HashSet;
 use ultraviolet::Vec3;
 use super::greedy::*;
@@ -88,6 +88,16 @@ impl Chunk {
                                         let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).texture;
                                         cubes.insert(idx, mat);
                                     }
+                                    TileType::TreeTrunk => {
+                                        // bark
+                                        let mat = crate::raws::RAWS.read().matmap.bark_id;
+                                        cubes.insert(idx, mat);
+                                    }
+                                    TileType::TreeFoliage => {
+                                        // leaf
+                                        let mat = crate::raws::RAWS.read().matmap.leaf_id;
+                                        cubes.insert(idx, mat);
+                                    }
                                     TileType::Floor => {
                                         let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).floor;
                                         floors.insert(idx, mat);
@@ -105,6 +115,20 @@ impl Chunk {
                                         );
                                     }
                                     _ => {}
+                                }
+
+                                // Add water - temporarily here, it'll have to move
+                                let wl = region.water_level[idx];
+                                if wl > 0 {
+                                    let mat = crate::raws::RAWS.read().matmap.water_id;
+                                    add_floor_geometry(
+                                        &mut self.vb.data,
+                                        &mut self.element_count[z],
+                                        x as f32 + self.base.0 as f32,
+                                        y as f32 + self.base.1 as f32,
+                                        z as f32 + self.base.2 as f32 + (wl as f32 / 10.0),
+                                        1.0, 1.0, mat
+                                    )
                                 }
                             }
                         }
