@@ -98,6 +98,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
         match event {
+            Event::NewEvents(_) => last_frame = imgui.io_mut().update_delta_time(last_frame),
             Event::MainEventsCleared => window.request_redraw(),
             Event::WindowEvent {
                 event: WindowEvent::ScaleFactorChanged { scale_factor, .. },

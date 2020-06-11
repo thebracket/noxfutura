@@ -1,0 +1,21 @@
+(
+    plants : [
+        PlantDef(
+            name: "Grass",
+            harvest: [ "Hay" ],
+            min_hardiness: 1, max_hardiness: 13, soil_quality: 0
+        ),
+
+        PlantDef(
+            name: "Daisy",
+            harvest: [ ],
+            min_hardiness: 5, max_hardiness: 8, soil_quality: 2
+        ),
+
+        PlantDef(
+            name: "Heather",
+            harvest: [ ],
+            min_hardiness: 3, max_hardiness: 7, soil_quality: 2
+        ),
+    ]
+)

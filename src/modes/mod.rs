@@ -13,6 +13,7 @@ mod render_interface;
 pub use render_interface::WORLDGEN_RENDER;
 mod playgame;
 use playgame::{LoadState, PlayGame, LOAD_STATE};
+use std::time::Instant;
 
 pub enum ProgramMode {
     Loader,
@@ -32,6 +33,7 @@ pub struct Program {
     planet_gen: PlanetGen,
     planet_gen2: PlanetGen2,
     play: PlayGame,
+    last_frame : Instant
 }
 
 impl Program {
@@ -44,6 +46,7 @@ impl Program {
             planet_gen: PlanetGen::new(),
             planet_gen2: PlanetGen2::new(),
             play: PlayGame::new(),
+            last_frame : Instant::now()
         }
     }
 
@@ -99,10 +102,12 @@ impl Program {
             ProgramMode::PlayGame => {
                 self.mode =
                     self.play
-                        .tick(&self.resources, frame, context, imgui, depth_id, keycode);
+                        .tick(&self.resources, frame, context, imgui, depth_id, keycode, self.last_frame.elapsed().as_millis());
             }
             ProgramMode::Quit => return false,
         }
+
+        self.last_frame = Instant::now();
         true
     }
 }

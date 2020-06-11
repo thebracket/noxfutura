@@ -80,6 +80,7 @@ impl PlayGame {
         imgui: &imgui::Ui,
         depth_id: usize,
         keycode: Option<VirtualKeyCode>,
+        frame_time: u128
     ) -> super::ProgramMode {
         //super::helpers::render_menu_background(context, frame, resources);
 
@@ -112,11 +113,13 @@ impl PlayGame {
         }
         self.counter = 180;
 
-        let window = imgui::Window::new(im_str!("Playing"));
+        let title = format!("Playing. Frame time: {} ms. FPS: {}.", frame_time, imgui.io().framerate);
+        let title_tmp = ImString::new(title);
+        let window = imgui::Window::new(&title_tmp);
         window
+            .collapsed(true, Condition::FirstUseEver)
             .size([300.0, 100.0], Condition::FirstUseEver)
             .build(imgui, || {
-                imgui.text(im_str!("Test"));
             });
 
         pass.render(

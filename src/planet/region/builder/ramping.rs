@@ -17,11 +17,11 @@ pub fn build_ramps(region: &mut Region) {
                     };
                 } else if region.tile_types[mapidx(x + 1, y, z + 1)] == TileType::Floor {
                     region.tile_types[idx] = TileType::Ramp {
-                        direction: RampDirection::EastWest,
+                        direction: RampDirection::WestEast,
                     };
                 } else if region.tile_types[mapidx(x - 1, y, z + 1)] == TileType::Floor {
                     region.tile_types[idx] = TileType::Ramp {
-                        direction: RampDirection::WestEast,
+                        direction: RampDirection::EastWest,
                     };
                 }
             }
