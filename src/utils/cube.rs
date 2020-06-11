@@ -7,7 +7,7 @@ pub fn add_cube_geometry(
     w: f32,
     h: f32,
     d: f32,
-    material_index: usize
+    material_index: usize,
 ) {
     let mi = material_index as f32 / 255.0;
     let x0 = x;

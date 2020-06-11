@@ -36,7 +36,7 @@ pub enum MaterialLayer {
     Sedimentary,
     Soil { quality: u8 },
     Sand,
-    Synthetic
+    Synthetic,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

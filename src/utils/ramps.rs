@@ -7,13 +7,21 @@ pub fn add_ramp_geometry(
     x: f32,
     y: f32,
     z: f32,
-    material_index: usize
+    material_index: usize,
 ) {
     match direction {
-        RampDirection::NorthSouth => north_south(vb, element_count, x, y, z, material_index as f32 / 255.0),
-        RampDirection::SouthNorth => south_north(vb, element_count, x, y, z, material_index as f32 / 255.0),
-        RampDirection::EastWest => east_west(vb, element_count, x, y, z, material_index as f32 / 255.0),
-        RampDirection::WestEast => west_east(vb, element_count, x, y, z, material_index as f32 / 255.0),
+        RampDirection::NorthSouth => {
+            north_south(vb, element_count, x, y, z, material_index as f32 / 255.0)
+        }
+        RampDirection::SouthNorth => {
+            south_north(vb, element_count, x, y, z, material_index as f32 / 255.0)
+        }
+        RampDirection::EastWest => {
+            east_west(vb, element_count, x, y, z, material_index as f32 / 255.0)
+        }
+        RampDirection::WestEast => {
+            west_east(vb, element_count, x, y, z, material_index as f32 / 255.0)
+        }
         //_ => {}
     }
 }

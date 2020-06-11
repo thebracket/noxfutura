@@ -1,8 +1,8 @@
 use crate::planet::{Region, TileType};
-use crate::utils::{ground_z, rex::*, mapidx};
+use crate::raws::get_material_by_tag;
+use crate::utils::{ground_z, mapidx, rex::*};
 use bracket_geometry::prelude::*;
 use std::fs::File;
-use crate::raws::get_material_by_tag;
 
 fn load_ship() -> XpFile {
     let mut f = File::open("resources/rex/spaceship.xp").unwrap();
@@ -16,8 +16,8 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point) {
     for (i, layer) in ship.layers.iter().enumerate() {
         for y in 0..layer.height {
             for x in 0..layer.width {
-                let mx = x-5+crash_site.x as usize;
-                let my = y-11+crash_site.y as usize;
+                let mx = x - 5 + crash_site.x as usize;
+                let my = y - 11 + crash_site.y as usize;
                 let mz = z + i;
                 let tile_idx = mapidx(mx as usize, my as usize, mz);
 
@@ -29,7 +29,7 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point) {
                             219 => add_construction(region, mx, my, mz, "ship_wall", true),
                             87 => add_construction(region, mx, my, mz, "ship_window", true),
                             176 => add_construction(region, mx, my, mz, "ship_floor", true),
-                            _ => println!("No decoder for glyph {} in spaceship", glyph.ch)
+                            _ => println!("No decoder for glyph {} in spaceship", glyph.ch),
                         }
                     }
                 }
@@ -38,7 +38,7 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point) {
     }
 }
 
-fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &str, solid:bool) {
+fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &str, solid: bool) {
     let plasteel = get_material_by_tag("Plasteel").unwrap();
     let idx = mapidx(x, y, z);
     match name {

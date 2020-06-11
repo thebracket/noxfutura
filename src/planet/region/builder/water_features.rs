@@ -1,9 +1,9 @@
 use super::Region;
-use crate::planet::{Planet, REGION_HEIGHT, REGION_WIDTH, REGION_DEPTH, WORLD_WIDTH, TileType};
+use crate::planet::{Planet, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH};
+use crate::utils::mapidx;
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::RandomNumberGenerator;
 use std::collections::HashSet;
-use crate::utils::mapidx;
 
 pub fn just_add_water(
     planet: &Planet,
@@ -203,7 +203,7 @@ pub fn set_water_tiles(region: &mut Region, water: &Vec<u8>, planet_water_level:
                     || region.tile_types[idx] == TileType::Empty
                 {
                     let pool_idx = (y * REGION_WIDTH) + x;
-                    if z <= water[pool_idx] as usize || z<= planet_water_level {
+                    if z <= water[pool_idx] as usize || z <= planet_water_level {
                         region.water_level[idx] = 10;
                     }
                 }

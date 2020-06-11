@@ -62,8 +62,7 @@ impl BlockRenderPass {
                     },
                 }],
                 label: None,
-            }
-        );
+            });
 
         // Terrain textures
         let terrain_bind_group_layout =
@@ -110,10 +109,7 @@ impl BlockRenderPass {
             context
                 .device
                 .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-                    bind_group_layouts: &[
-                        &uniform_bind_group_layout,
-                        &terrain_bind_group_layout,
-                    ],
+                    bind_group_layouts: &[&uniform_bind_group_layout, &terrain_bind_group_layout],
                 });
         let render_pipeline =
             context

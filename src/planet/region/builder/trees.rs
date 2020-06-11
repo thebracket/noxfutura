@@ -1,4 +1,4 @@
-use crate::planet::{Region, REGION_WIDTH, REGION_HEIGHT, REGION_DEPTH, TileType};
+use crate::planet::{Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use crate::raws::*;
 use crate::utils::{ground_z, mapidx};
 use bracket_geometry::prelude::*;
@@ -23,21 +23,25 @@ pub fn plant_trees(region: &mut Region, biome: &BiomeType, rng: &mut RandomNumbe
     }
     println!("{}, {}, {}", d_chance, e_chance, biome.name);
 
-    for y in 10..REGION_HEIGHT-10 {
-        for x in 10..REGION_WIDTH-10 {
+    for y in 10..REGION_HEIGHT - 10 {
+        for x in 10..REGION_WIDTH - 10 {
             let z = ground_z(region, x, y);
             let crash_distance = DistanceAlg::Pythagoras.distance2d(
-                Point::new(REGION_WIDTH/2, REGION_HEIGHT/2), 
-                Point::new(x, y)
+                Point::new(REGION_WIDTH / 2, REGION_HEIGHT / 2),
+                Point::new(x, y),
             );
             let idx = mapidx(x, y, z);
-            if crash_distance > 20.0 && region.tile_types[idx] == TileType::Floor && region.water_level[idx]==0 && can_see_sky(region, x, y, z) {
+            if crash_distance > 20.0
+                && region.tile_types[idx] == TileType::Floor
+                && region.water_level[idx] == 0
+                && can_see_sky(region, x, y, z)
+            {
                 let mat_idx = region.material_idx[idx];
                 let floor_material = &RAWS.read().materials.materials[mat_idx];
                 let (can_plant, quality) = match floor_material.layer {
                     MaterialLayer::Sand => (true, 2.0),
-                    MaterialLayer::Soil{ quality } => (true, quality as f32),
-                    _ => (false, 0.0)
+                    MaterialLayer::Soil { quality } => (true, quality as f32),
+                    _ => (false, 0.0),
                 };
 
                 if can_plant {
@@ -69,20 +73,24 @@ fn can_see_sky(region: &Region, x: usize, y: usize, z: usize) -> bool {
     true
 }
 
-fn plant_deciduous(x: usize, y: usize, z: usize, rng: &mut RandomNumberGenerator, region: &mut Region) {
+fn plant_deciduous(
+    x: usize,
+    y: usize,
+    z: usize,
+    rng: &mut RandomNumberGenerator,
+    region: &mut Region,
+) {
     let tree_height = 1 + rng.roll_dice(2, 4) as usize;
     for i in 0..tree_height {
-        set_tree_trunk(x, y, z+i, next_tree_id(), region);
-        if i > tree_height/2 {
+        set_tree_trunk(x, y, z + i, next_tree_id(), region);
+        if i > tree_height / 2 {
             let radius = (tree_height - i) + 1;
-            for tx in x-radius .. x+radius {
-                for ty in y-radius .. y+radius {
-                    let distance = DistanceAlg::Pythagoras.distance2d(
-                        Point::new(x, y),
-                        Point::new(tx, ty)
-                    );
-                    if distance < radius as f32 && (tx != x || ty !=y) {
-                        set_tree_foliage(tx, ty, z+i, next_tree_id(), region);
+            for tx in x - radius..x + radius {
+                for ty in y - radius..y + radius {
+                    let distance =
+                        DistanceAlg::Pythagoras.distance2d(Point::new(x, y), Point::new(tx, ty));
+                    if distance < radius as f32 && (tx != x || ty != y) {
+                        set_tree_foliage(tx, ty, z + i, next_tree_id(), region);
                     }
                 }
             }
@@ -91,20 +99,24 @@ fn plant_deciduous(x: usize, y: usize, z: usize, rng: &mut RandomNumberGenerator
     inc_next_tree();
 }
 
-fn plant_evergreen(x: usize, y: usize, z: usize, rng: &mut RandomNumberGenerator, region: &mut Region) {
+fn plant_evergreen(
+    x: usize,
+    y: usize,
+    z: usize,
+    rng: &mut RandomNumberGenerator,
+    region: &mut Region,
+) {
     let tree_height = 1 + rng.roll_dice(2, 3) as usize;
     for i in 0..tree_height {
-        set_tree_trunk(x, y, z+i, next_tree_id(), region);
-        if i > tree_height/2 {
+        set_tree_trunk(x, y, z + i, next_tree_id(), region);
+        if i > tree_height / 2 {
             let radius = (tree_height - i) + 1;
-            for tx in x-radius .. x+radius {
-                for ty in y-radius .. y+radius {
-                    let distance = DistanceAlg::Pythagoras.distance2d(
-                        Point::new(x, y),
-                        Point::new(tx, ty)
-                    );
-                    if distance < radius as f32 && (tx != x || ty !=y) {
-                        set_tree_foliage(tx, ty, z+i, next_tree_id(), region);
+            for tx in x - radius..x + radius {
+                for ty in y - radius..y + radius {
+                    let distance =
+                        DistanceAlg::Pythagoras.distance2d(Point::new(x, y), Point::new(tx, ty));
+                    if distance < radius as f32 && (tx != x || ty != y) {
+                        set_tree_foliage(tx, ty, z + i, next_tree_id(), region);
                     }
                 }
             }
@@ -114,7 +126,13 @@ fn plant_evergreen(x: usize, y: usize, z: usize, rng: &mut RandomNumberGenerator
 }
 
 fn set_tree_trunk(x: usize, y: usize, z: usize, tree_id: usize, region: &mut Region) {
-    if x > 0 && y > 0 && z > 0 && x < REGION_WIDTH-1 && y < REGION_HEIGHT-1 && z < REGION_DEPTH-2 {
+    if x > 0
+        && y > 0
+        && z > 0
+        && x < REGION_WIDTH - 1
+        && y < REGION_HEIGHT - 1
+        && z < REGION_DEPTH - 2
+    {
         let idx = mapidx(x, y, z);
         region.tile_types[idx] = TileType::TreeTrunk;
         region.tree_id[idx] = tree_id;
@@ -122,9 +140,15 @@ fn set_tree_trunk(x: usize, y: usize, z: usize, tree_id: usize, region: &mut Reg
 }
 
 fn set_tree_foliage(x: usize, y: usize, z: usize, tree_id: usize, region: &mut Region) {
-    if x > 0 && y > 0 && z > 0 && x < REGION_WIDTH-1 && y < REGION_HEIGHT-1 && z < REGION_DEPTH-2 {
+    if x > 0
+        && y > 0
+        && z > 0
+        && x < REGION_WIDTH - 1
+        && y < REGION_HEIGHT - 1
+        && z < REGION_DEPTH - 2
+    {
         let idx = mapidx(x, y, z);
-        region.tile_types[mapidx(x,y,z)] = TileType::TreeFoliage;
+        region.tile_types[mapidx(x, y, z)] = TileType::TreeFoliage;
         region.tree_id[idx] = tree_id;
     }
 }

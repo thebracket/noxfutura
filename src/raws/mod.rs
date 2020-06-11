@@ -7,8 +7,8 @@ mod material_map;
 pub struct Raws {
     pub biomes: Biomes,
     pub materials: Materials,
-    pub matmap : material_map::MaterialMap,
-    pub plants : Plants
+    pub matmap: material_map::MaterialMap,
+    pub plants: Plants,
 }
 
 impl Raws {
@@ -16,8 +16,8 @@ impl Raws {
         Self {
             biomes: Biomes::new(),
             materials: Materials::new(),
-            matmap : material_map::MaterialMap::new(),
-            plants : Plants::new()
+            matmap: material_map::MaterialMap::new(),
+            plants: Plants::new(),
         }
     }
 
@@ -38,10 +38,12 @@ pub fn load_raws() {
 
 pub fn get_material_by_tag(name: &str) -> Option<usize> {
     let lock = RAWS.read();
-    let finder = lock.materials.materials
+    let finder = lock
+        .materials
+        .materials
         .iter()
         .enumerate()
-        .find(|(_,m)| m.name == name);
+        .find(|(_, m)| m.name == name);
     if finder.is_some() {
         Some(finder.unwrap().0)
     } else {

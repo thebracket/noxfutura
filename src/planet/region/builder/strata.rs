@@ -24,12 +24,10 @@ fn get_soil_indices() -> Vec<usize> {
         .materials
         .iter()
         .enumerate()
-        .filter(|(_, m)| 
-            match m.layer {
-                MaterialLayer::Soil{..} => true,
-                _ => false
-            }
-        )
+        .filter(|(_, m)| match m.layer {
+            MaterialLayer::Soil { .. } => true,
+            _ => false,
+        })
         .map(|(i, _)| i)
         .collect()
 }
@@ -119,7 +117,12 @@ pub fn build_strata(
     result
 }
 
-pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata, rng: &mut RandomNumberGenerator) {
+pub fn layer_cake(
+    hm: &[u8],
+    region: &mut Region,
+    strata: &Strata,
+    rng: &mut RandomNumberGenerator,
+) {
     // Clear it
     region
         .tile_types
@@ -167,7 +170,9 @@ pub fn layer_cake(hm: &[u8], region: &mut Region, strata: &Strata, rng: &mut Ran
             let cell_idx = mapidx(x, y, z);
             region.tile_types[cell_idx] = TileType::Floor;
             let mat_idx = strata.map[cell_idx];
-            region.material_idx[cell_idx] = *rng.random_slice_entry(&soils).unwrap_or(&strata.material_idx[mat_idx]);
+            region.material_idx[cell_idx] = *rng
+                .random_slice_entry(&soils)
+                .unwrap_or(&strata.material_idx[mat_idx]);
 
             // Temporary reveal code
             z -= 3;

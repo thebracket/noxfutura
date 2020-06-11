@@ -2,24 +2,25 @@ use super::{Planet, Region};
 use crate::planet::{planet_idx, set_worldgen_status, REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
+mod beaches;
+mod buildings;
 mod heightmap;
+mod plants;
 mod primitive;
 mod ramping;
 mod strata;
-mod water_features;
-mod beaches;
-mod buildings;
 mod trees;
-mod plants;
+mod water_features;
+use crate::components::*;
 use legion::prelude::*;
 pub use primitive::Primitive;
-use crate::components::*;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");
     let biome_info = crate::raws::RAWS.read().biomes.areas[region.biome_raw_idx].clone();
     let biome = planet.biomes[region.biome_info_idx].clone();
-    let mut pooled_water = vec![planet.water_height; REGION_WIDTH as usize * REGION_HEIGHT as usize];
+    let mut pooled_water =
+        vec![planet.water_height; REGION_WIDTH as usize * REGION_HEIGHT as usize];
     let mut rng = RandomNumberGenerator::seeded(
         planet.perlin_seed + planet_idx(crash_site.x as usize, crash_site.y as usize) as u64,
     );
@@ -40,7 +41,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
         &mut hm,
         &mut pooled_water,
         &biome,
-        planet.water_height
+        planet.water_height,
     );
 
     set_worldgen_status("Adding water features");

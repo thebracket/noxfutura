@@ -4,11 +4,7 @@ use std::collections::HashMap;
 
 pub type CubeMap = HashMap<usize, usize>;
 
-pub fn greedy_cubes(
-    cube_index: &mut CubeMap,
-    layer: &mut Vec<f32>,
-    element_count: &mut u32,
-) {
+pub fn greedy_cubes(cube_index: &mut CubeMap, layer: &mut Vec<f32>, element_count: &mut u32) {
     loop {
         let min_iter = cube_index.keys().min();
         if min_iter.is_none() {
@@ -32,17 +28,13 @@ pub fn greedy_cubes(
                 width as f32,
                 height as f32,
                 depth as f32,
-                mat_idx
+                mat_idx,
             );
         }
     }
 }
 
-pub fn greedy_floors(
-    cube_index: &mut CubeMap,
-    layer: &mut Vec<f32>,
-    element_count: &mut u32,
-) {
+pub fn greedy_floors(cube_index: &mut CubeMap, layer: &mut Vec<f32>, element_count: &mut u32) {
     loop {
         let min_iter = cube_index.keys().min();
         if min_iter.is_none() {
@@ -63,7 +55,7 @@ pub fn greedy_floors(
                 z as f32,
                 width as f32,
                 height as f32,
-                mat_idx
+                mat_idx,
             );
         }
     }
@@ -73,7 +65,7 @@ fn grow_right(cube_index: &mut CubeMap, idx: usize, mat: usize) -> usize {
     let mut width = 1;
     let mut candidate_idx = idx + 1;
 
-    while cube_index.contains_key(&candidate_idx) && cube_index[&candidate_idx]==mat {
+    while cube_index.contains_key(&candidate_idx) && cube_index[&candidate_idx] == mat {
         cube_index.remove(&candidate_idx);
         width += 1;
         candidate_idx += 1;

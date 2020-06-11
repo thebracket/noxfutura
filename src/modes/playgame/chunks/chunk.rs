@@ -1,10 +1,10 @@
+use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::planet::{Region, TileType};
-use crate::utils::{add_ramp_geometry, mapidx, add_floor_geometry};
+use crate::utils::{add_floor_geometry, add_ramp_geometry, mapidx};
 use std::collections::HashSet;
 use ultraviolet::Vec3;
-use super::greedy::*;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -85,7 +85,11 @@ impl Chunk {
                             if region.revealed[idx] {
                                 match region.tile_types[idx] {
                                     TileType::Solid => {
-                                        let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).texture;
+                                        let mat = crate::raws::RAWS
+                                            .read()
+                                            .matmap
+                                            .get(region.material_idx[idx])
+                                            .texture;
                                         cubes.insert(idx, mat);
                                     }
                                     TileType::TreeTrunk => {
@@ -99,15 +103,25 @@ impl Chunk {
                                         cubes.insert(idx, mat);
                                     }
                                     TileType::Floor => {
-                                        let mat = if let Some(_plant_idx) = region.vegetation_type_id[idx] {
+                                        let mat = if let Some(_plant_idx) =
+                                            region.vegetation_type_id[idx]
+                                        {
                                             crate::raws::RAWS.read().matmap.grass_id
                                         } else {
-                                            crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).floor
+                                            crate::raws::RAWS
+                                                .read()
+                                                .matmap
+                                                .get(region.material_idx[idx])
+                                                .floor
                                         };
                                         floors.insert(idx, mat);
                                     }
                                     TileType::Ramp { direction } => {
-                                        let mat = crate::raws::RAWS.read().matmap.get(region.material_idx[idx]).texture;
+                                        let mat = crate::raws::RAWS
+                                            .read()
+                                            .matmap
+                                            .get(region.material_idx[idx])
+                                            .texture;
                                         add_ramp_geometry(
                                             &mut self.vb.data,
                                             &mut self.element_count[z],
@@ -115,7 +129,7 @@ impl Chunk {
                                             x as f32 + self.base.0 as f32,
                                             y as f32 + self.base.1 as f32,
                                             z as f32 + self.base.2 as f32,
-                                            mat
+                                            mat,
                                         );
                                     }
                                     _ => {}
@@ -131,7 +145,9 @@ impl Chunk {
                                         x as f32 + self.base.0 as f32,
                                         y as f32 + self.base.1 as f32,
                                         z as f32 + self.base.2 as f32 + (wl as f32 / 10.0),
-                                        1.0, 1.0, mat
+                                        1.0,
+                                        1.0,
+                                        mat,
                                     )
                                 }
                             }
