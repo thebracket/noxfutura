@@ -16,9 +16,9 @@ pub fn plant_trees(region: &mut Region, biome: &BiomeType, rng: &mut RandomNumbe
     let mut e_chance = 0;
     for t in biome.trees.iter() {
         if t.tree.to_lowercase() == "d" {
-            d_chance = (t.freq * 10.0) as i32;
+            d_chance = t.freq as i32;
         } else if t.tree.to_lowercase() == "e" {
-            e_chance = (t.freq * 10.0) as i32;
+            e_chance = t.freq as i32;
         }
     }
     println!("{}, {}", d_chance, e_chance);

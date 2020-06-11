@@ -17,9 +17,26 @@ fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
         .collect()
 }
 
+fn get_soil_indices() -> Vec<usize> {
+    let mlock = crate::raws::RAWS.read();
+    mlock
+        .materials
+        .materials
+        .iter()
+        .enumerate()
+        .filter(|(_, m)| 
+            match m.layer {
+                MaterialLayer::Soil{..} => true,
+                _ => false
+            }
+        )
+        .map(|(i, _)| i)
+        .collect()
+}
+
 fn get_strata_materials() -> (Vec<usize>, Vec<usize>, Vec<usize>, Vec<usize>) {
     (
-        get_strata_indices(MaterialLayer::Soil),
+        get_soil_indices(),
         get_strata_indices(MaterialLayer::Sand),
         get_strata_indices(MaterialLayer::Sedimentary),
         get_strata_indices(MaterialLayer::Igneous),

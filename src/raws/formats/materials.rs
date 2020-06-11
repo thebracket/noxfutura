@@ -34,7 +34,7 @@ pub enum MaterialLayer {
     ClusterRock { parent: String },
     Igneous,
     Sedimentary,
-    Soil,
+    Soil { quality: u8 },
     Sand,
     Synthetic
 }
