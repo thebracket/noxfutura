@@ -67,7 +67,7 @@ pub fn build_strata(
     let mut cell_noise = FastNoise::seeded(perlin_seed + 4);
     cell_noise.set_cellular_return_type(CellularReturnType::CellValue);
     cell_noise.set_noise_type(NoiseType::Cellular);
-    cell_noise.set_frequency(0.04);
+    cell_noise.set_frequency(0.08);
     cell_noise.set_cellular_distance_function(CellularDistanceFunction::Manhattan);
     for z in 0..REGION_DEPTH {
         for y in 0..REGION_HEIGHT {
@@ -94,8 +94,8 @@ pub fn build_strata(
             result.counts[i].3 /= result.counts[i].0;
 
             let (_n, x, y, z) = result.counts[i];
-            let altitude_at_center = hm[(y * REGION_WIDTH) + x] + REGION_DEPTH as u8 / 2;
-            let mat_idx = if z as u8 > altitude_at_center - (1 + rng.roll_dice(1, 4) as u8) {
+            let altitude_at_point = hm[(y * REGION_WIDTH) + x] - 10;
+            let mat_idx = if z as u8 > altitude_at_point - (1 + rng.roll_dice(1, 4) as u8) {
                 // Soil
                 let roll = rng.roll_dice(1, 100);
                 if roll < biome.soils.soil {
@@ -103,7 +103,7 @@ pub fn build_strata(
                 } else {
                     rng.random_slice_entry(&sands)
                 }
-            } else if z as u8 > ((altitude_at_center - 10) / 2) {
+            } else if z as u8 > ((altitude_at_point - 10) / 2) {
                 // Sedimentary
                 rng.random_slice_entry(&sedimentaries)
             } else {

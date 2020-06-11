@@ -21,7 +21,7 @@ pub fn plant_trees(region: &mut Region, biome: &BiomeType, rng: &mut RandomNumbe
             e_chance = t.freq as i32;
         }
     }
-    println!("{}, {}", d_chance, e_chance);
+    println!("{}, {}, {}", d_chance, e_chance, biome.name);
 
     for y in 10..REGION_HEIGHT-10 {
         for x in 10..REGION_WIDTH-10 {
@@ -32,13 +32,25 @@ pub fn plant_trees(region: &mut Region, biome: &BiomeType, rng: &mut RandomNumbe
             );
             let idx = mapidx(x, y, z);
             if crash_distance > 20.0 && region.tile_types[idx] == TileType::Floor && region.water_level[idx]==0 && can_see_sky(region, x, y, z) {
-                let mut die_roll = rng.roll_dice(1, 1000);
-                if die_roll < d_chance {
-                    plant_deciduous(x, y, z, rng, region);
-                } else {
-                    die_roll = rng.roll_dice(1, 1000);
-                    if die_roll < e_chance {
-                        plant_evergreen(x, y, z, rng, region);
+                let mat_idx = region.material_idx[idx];
+                let floor_material = &RAWS.read().materials.materials[mat_idx];
+                let (can_plant, quality) = match floor_material.layer {
+                    MaterialLayer::Sand => (true, 2.0),
+                    MaterialLayer::Soil{ quality } => (true, quality as f32),
+                    _ => (false, 0.0)
+                };
+
+                if can_plant {
+                    if (rng.roll_dice(1, 10) as f32) <= quality {
+                        let mut die_roll = rng.roll_dice(1, 1000);
+                        if die_roll < d_chance {
+                            plant_deciduous(x, y, z, rng, region);
+                        } else {
+                            die_roll = rng.roll_dice(1, 1000);
+                            if die_roll < e_chance {
+                                plant_evergreen(x, y, z, rng, region);
+                            }
+                        }
                     }
                 }
             }

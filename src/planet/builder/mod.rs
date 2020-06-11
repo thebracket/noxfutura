@@ -107,8 +107,8 @@ fn find_crash_site() -> Point {
     let mut result;
     loop {
         result = Point::new(
-            rng.roll_dice(1, WORLD_WIDTH as i32 - 1),
-            rng.roll_dice(1, WORLD_HEIGHT as i32 - 1),
+            (WORLD_WIDTH / 2) - 32 + rng.roll_dice(1, 64) as usize,
+            (WORLD_HEIGHT / 2) - 32 + rng.roll_dice(1, 64) as usize,
         );
         let pidx = super::planet_idx(result.x as usize, result.y as usize);
         let bt = PLANET_BUILD.lock().planet.landblocks[pidx].btype;
