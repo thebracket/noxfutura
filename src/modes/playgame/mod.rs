@@ -81,6 +81,7 @@ impl PlayGame {
 
     pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
         self.rpass.as_mut().unwrap().on_resize(context);
+        self.gbuffer_pass = Some(GBufferTestPass::new(context, &self.rpass.as_ref().unwrap().gbuffer));
     }
 
     pub fn tick(
