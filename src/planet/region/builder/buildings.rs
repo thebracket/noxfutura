@@ -1,4 +1,4 @@
-use crate::planet::{Region, TileType};
+use crate::planet::{Region, TileType, StairsType};
 use crate::raws::get_material_by_tag;
 use crate::utils::{ground_z, mapidx, rex::*};
 use bracket_geometry::prelude::*;
@@ -29,6 +29,19 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point) {
                             219 => add_construction(region, mx, my, mz, "ship_wall", true),
                             87 => add_construction(region, mx, my, mz, "ship_window", true),
                             176 => add_construction(region, mx, my, mz, "ship_floor", true),
+                            88 => add_construction(region, mx, my, mz, "ship_updown", true),
+                            60 => add_construction(region, mx, my, mz, "ship_up", true),
+                            62 => add_construction(region, mx, my, mz, "ship_down", true),
+                            178 => add_construction(region, mx, my, mz, "solar_panel", true),
+                            241 => add_construction(region, mx, my, mz, "battery", true),
+                            48 => add_construction(region, mx, my, mz, "cryo_bed", true),
+                            236 => add_construction(region, mx, my, mz, "storage_locker", true),
+                            67 => add_construction(region, mx, my, mz, "cordex", true),
+                            243 => add_construction(region, mx, my, mz, "ship_defense_turret", true),
+                            251 => add_construction(region, mx, my, mz, "small_replicator", true),
+                            232 => add_construction(region, mx, my, mz, "rtg", true),
+                            197 => add_construction(region, mx, my, mz, "ship_door", true),
+                            76 => add_construction(region, mx, my, mz, "ship_lamp", true),
                             _ => println!("No decoder for glyph {} in spaceship", glyph.ch),
                         }
                     }
@@ -41,21 +54,37 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point) {
 fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &str, solid: bool) {
     let plasteel = get_material_by_tag("Plasteel").unwrap();
     let idx = mapidx(x, y, z);
+    region.tile_types[idx] = TileType::Floor;
+    region.material_idx[idx] = plasteel;
+    region.vegetation_type_id[idx] = None;
+
     match name {
         "ship_wall" => {
             region.tile_types[idx] = TileType::Solid;
-            region.material_idx[idx] = plasteel;
         }
         "ship_window" => {
-            region.tile_types[idx] = TileType::Solid;
-            region.material_idx[idx] = plasteel;
+            region.tile_types[idx] = TileType::Window;
         }
-        "ship_floor" => {
-            region.tile_types[idx] = TileType::Floor;
-            region.material_idx[idx] = plasteel;
-        }
+        "ship_floor" => {}
+        "ship_updown" => region.tile_types[idx] = TileType::Stairs{direction: StairsType::UpDown},
+        "ship_up" => region.tile_types[idx] = TileType::Stairs{direction: StairsType::Up},
+        "ship_down" => region.tile_types[idx] = TileType::Stairs{direction: StairsType::Down},
+        "solar_panel" => add_building(region, "solar_panel", x, y, z),
+        "battery" => add_building(region, "battery", x, y, z),
+        "cryo_bed" => add_building(region, "cryo_bed", x, y, z),
+        "storage_locker" => add_building(region, "storage_locker", x, y, z),
+        "cordex" => add_building(region, "cordex", x, y, z),
+        "ship_defense_turret" => add_building(region, "ship_defense_turret", x, y, z),
+        "small_replicator" => add_building(region, "small_replicator", x, y, z),
+        "rtg" => add_building(region, "rtg", x, y, z),
+        "ship_door" => add_building(region, "ship_door", x, y, z),
+        "ship_lamp" => add_building(region, "ship_lamp", x, y, z),
         _ => {
             println!("Warning: No decoder for {}", name);
         }
     }
+}
+
+fn add_building(region: &mut Region, tag: &str, x:usize, y:usize, z:usize) {
+
 }
