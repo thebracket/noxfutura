@@ -131,6 +131,20 @@ impl PlayGame {
             .build(imgui, || {
             });
 
+        // Show the menu
+        if let Some(menu_bar) = imgui.begin_main_menu_bar() {
+            if let Some(menu) = imgui.begin_menu(im_str!("Nox Futura"), true) {
+                menu.end(imgui);
+            }
+            if let Some(menu) = imgui.begin_menu(im_str!("Design"), true) {
+                menu.end(imgui);
+            }
+            if let Some(menu) = imgui.begin_menu(im_str!("Units"), true) {
+                menu.end(imgui);
+            }
+            menu_bar.end(imgui);
+        }
+
         pass.render(
             context,
             depth_id,
