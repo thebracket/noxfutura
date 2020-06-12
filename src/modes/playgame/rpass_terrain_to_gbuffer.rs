@@ -11,7 +11,7 @@ pub struct BlockRenderPass {
     pub uniform_buf: wgpu::Buffer,
     pub terrain_textures: super::texarray::TextureArray,
     terrain_bind_group: wgpu::BindGroup,
-    gbuffer : gbuffer::GBuffer
+    pub gbuffer : gbuffer::GBuffer
 }
 
 impl BlockRenderPass {
@@ -244,5 +244,6 @@ impl BlockRenderPass {
 
     pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
         self.gbuffer = gbuffer::GBuffer::new(context);
+        println!("Warning: a resize was just called.");
     }
 }

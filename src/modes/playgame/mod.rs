@@ -15,6 +15,8 @@ mod chunks;
 pub mod frustrum;
 mod rpass_terrain_to_gbuffer;
 use rpass_terrain_to_gbuffer::BlockRenderPass;
+mod rpass_gbuffer_tester;
+use rpass_gbuffer_tester::GBufferTestPass;
 pub mod texarray;
 pub mod gbuffer;
 
@@ -25,6 +27,7 @@ pub struct PlayGame {
 
     // Internals
     rpass: Option<BlockRenderPass>,
+    gbuffer_pass: Option<GBufferTestPass>,
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
@@ -40,6 +43,7 @@ impl PlayGame {
             planet: None,
             current_region: None,
             rpass: None,
+            gbuffer_pass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
             counter: 0,
@@ -72,6 +76,7 @@ impl PlayGame {
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
         crate::raws::load_raws();
         self.rpass = Some(BlockRenderPass::new(context));
+        self.gbuffer_pass = Some(GBufferTestPass::new(context, &self.rpass.as_ref().unwrap().gbuffer));
     }
 
     pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
@@ -135,6 +140,9 @@ impl PlayGame {
             &mut self.chunks,
             camera_z as usize,
         );
+
+        let pass2 = self.gbuffer_pass.as_mut().unwrap();
+        pass2.render(context, frame);
 
         super::ProgramMode::PlayGame
     }

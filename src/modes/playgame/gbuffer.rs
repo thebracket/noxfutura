@@ -4,16 +4,21 @@ pub struct GBuffer {
     pub albedo : GBufferTarget,
     pub normal : GBufferTarget,
     pub pbr : GBufferTarget,
-    pub coords : GBufferTarget
+    pub coords : GBufferTarget,
 }
 
 impl GBuffer {
     pub fn new(context: &Context) -> Self {
+        let albedo = GBufferTarget::make_texture(context, "Albedo");
+        let normal = GBufferTarget::make_texture(context, "Normal");
+        let pbr = GBufferTarget::make_texture(context, "PBR");
+        let coords = GBufferTarget::make_texture(context, "Coords");
+
         Self {
-            albedo : GBufferTarget::make_texture(context, "Albedo"),
-            normal : GBufferTarget::make_texture(context, "Normal"),
-            pbr : GBufferTarget::make_texture(context, "PBR"),
-            coords : GBufferTarget::make_texture(context, "Coords"),
+            albedo,
+            normal,
+            pbr,
+            coords,
         }
     }
 }
