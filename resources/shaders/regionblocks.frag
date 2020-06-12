@@ -2,10 +2,9 @@
 
 layout(location=0) in vec3 v_normal;
 layout(location=1) in vec3 v_frag_pos;
-layout(location=2) in vec3 v_sun_pos;
-layout(location=3) in vec3 v_world_pos;
-layout(location=4) in vec2 v_uv;
-layout(location=5) in float v_material;
+layout(location=2) in vec3 v_world_pos;
+layout(location=3) in vec2 v_uv;
+layout(location=4) in float v_material;
 
 layout(location=0) out vec4 f_color;
 layout(location=1) out vec4 f_normal;
