@@ -15,6 +15,7 @@ mod chunks;
 pub mod frustrum;
 mod render;
 pub mod texarray;
+pub mod gbuffer;
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
@@ -70,6 +71,10 @@ impl PlayGame {
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
         crate::raws::load_raws();
         self.rpass = Some(render::BlockRenderPass::new(context));
+    }
+
+    pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
+        self.rpass.as_mut().unwrap().on_resize(context);
     }
 
     pub fn tick(

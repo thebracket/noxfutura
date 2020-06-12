@@ -1,4 +1,4 @@
-use super::{Camera, Uniforms};
+use super::{Camera, Uniforms, gbuffer};
 use crate::engine::{Context, VertexBuffer};
 
 pub struct BlockRenderPass {
@@ -11,6 +11,7 @@ pub struct BlockRenderPass {
     pub uniform_buf: wgpu::Buffer,
     pub terrain_textures: super::texarray::TextureArray,
     terrain_bind_group: wgpu::BindGroup,
+    gbuffer : gbuffer::GBuffer
 }
 
 impl BlockRenderPass {
@@ -167,6 +168,7 @@ impl BlockRenderPass {
             uniform_buf,
             terrain_textures,
             terrain_bind_group,
+            gbuffer : gbuffer::GBuffer::new(context)
         };
         builder
     }
@@ -221,5 +223,9 @@ impl BlockRenderPass {
             }
         }
         context.queue.submit(&[encoder.finish()]);
+    }
+
+    pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
+        self.gbuffer = gbuffer::GBuffer::new(context);
     }
 }

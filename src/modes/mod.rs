@@ -56,6 +56,10 @@ impl Program {
         self.play.setup(context);
     }
 
+    pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
+        self.play.on_resize(context);
+    }
+
     pub fn tick(
         &mut self,
         context: &mut crate::engine::Context,
