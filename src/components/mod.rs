@@ -4,6 +4,10 @@ mod position;
 pub use position::*;
 mod tags;
 pub use tags::*;
+mod world_position;
+pub use world_position::*;
+mod calendar;
+pub use calendar::*;
 
 mod serialize;
 pub use serialize::{deserialize_world, serialize_world};

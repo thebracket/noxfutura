@@ -11,6 +11,7 @@ mod ramping;
 mod strata;
 mod trees;
 mod water_features;
+mod game_components;
 use crate::components::*;
 use legion::prelude::*;
 pub use primitive::Primitive;
@@ -63,22 +64,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     set_worldgen_status("Building an ECS");
     let universe = Universe::new();
     let mut world = universe.create_world();
-    world.insert(
-        (Cordex {},),
-        (0..1).map(|_| {
-            (
-                Position {
-                    x: 128,
-                    y: 128,
-                    z: hm[(128 * REGION_WIDTH) + 128] as _,
-                },
-                CameraOptions {
-                    zoom_level: 10,
-                    mode: CameraMode::TopDown,
-                },
-            )
-        }),
-    );
+    game_components::add_game_components(&mut world, &hm, crash_site);
 
     set_worldgen_status("Seeding the lawn");
     plants::grow_plants(region, biome.mean_temperature, &mut rng);
