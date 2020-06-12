@@ -71,7 +71,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
 
     set_worldgen_status("Crashing the ship");
     let ship_loc = Point::new(128, 128);
-    buildings::build_escape_pod(region, &ship_loc);
+    buildings::build_escape_pod(region, &ship_loc, &mut world);
 
     set_worldgen_status("Trees");
     trees::plant_trees(region, &biome_info, &mut rng);
