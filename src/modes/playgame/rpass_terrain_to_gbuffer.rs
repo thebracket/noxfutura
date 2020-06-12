@@ -201,7 +201,7 @@ impl BlockRenderPass {
                         resolve_target: None,
                         load_op: wgpu::LoadOp::Clear,
                         store_op: wgpu::StoreOp::Store,
-                        clear_color: wgpu::Color::BLACK,
+                        clear_color: wgpu::Color::BLUE,
                     },
                     wgpu::RenderPassColorAttachmentDescriptor {
                         attachment: &self.gbuffer.normal.view,

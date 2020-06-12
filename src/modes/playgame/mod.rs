@@ -13,7 +13,8 @@ use crate::engine::uniforms::UniformBlock;
 use camera::*;
 mod chunks;
 pub mod frustrum;
-mod render;
+mod rpass_terrain_to_gbuffer;
+use rpass_terrain_to_gbuffer::BlockRenderPass;
 pub mod texarray;
 pub mod gbuffer;
 
@@ -23,7 +24,7 @@ pub struct PlayGame {
     pub ecs: legion::prelude::World,
 
     // Internals
-    rpass: Option<render::BlockRenderPass>,
+    rpass: Option<BlockRenderPass>,
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
@@ -70,7 +71,7 @@ impl PlayGame {
 
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
         crate::raws::load_raws();
-        self.rpass = Some(render::BlockRenderPass::new(context));
+        self.rpass = Some(BlockRenderPass::new(context));
     }
 
     pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
