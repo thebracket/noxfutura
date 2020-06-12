@@ -127,7 +127,7 @@ impl BlockRenderPass {
                     }),
                     rasterization_state: Some(wgpu::RasterizationStateDescriptor {
                         front_face: wgpu::FrontFace::Ccw,
-                        cull_mode: wgpu::CullMode::None,
+                        cull_mode: wgpu::CullMode::Back,
                         depth_bias: 0,
                         depth_bias_slope_scale: 0.0,
                         depth_bias_clamp: 0.0,
@@ -188,7 +188,7 @@ impl BlockRenderPass {
         {
             let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 color_attachments: &[wgpu::RenderPassColorAttachmentDescriptor {
-                    attachment: &frame.view,
+                    attachment: &self.gbuffer.albedo.view,
                     resolve_target: None,
                     load_op: wgpu::LoadOp::Clear,
                     store_op: wgpu::StoreOp::Store,
