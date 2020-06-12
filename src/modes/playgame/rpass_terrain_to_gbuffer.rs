@@ -145,6 +145,18 @@ impl BlockRenderPass {
                             color_blend: wgpu::BlendDescriptor::REPLACE,
                             alpha_blend: wgpu::BlendDescriptor::REPLACE,
                             write_mask: wgpu::ColorWrite::ALL,
+                        },
+                        wgpu::ColorStateDescriptor {
+                            format: context.swapchain_format,
+                            color_blend: wgpu::BlendDescriptor::REPLACE,
+                            alpha_blend: wgpu::BlendDescriptor::REPLACE,
+                            write_mask: wgpu::ColorWrite::ALL,
+                        },
+                        wgpu::ColorStateDescriptor {
+                            format: context.swapchain_format,
+                            color_blend: wgpu::BlendDescriptor::REPLACE,
+                            alpha_blend: wgpu::BlendDescriptor::REPLACE,
+                            write_mask: wgpu::ColorWrite::ALL,
                         }
                     ],
                     depth_stencil_state: Some(wgpu::DepthStencilStateDescriptor {
@@ -205,6 +217,20 @@ impl BlockRenderPass {
                     },
                     wgpu::RenderPassColorAttachmentDescriptor {
                         attachment: &self.gbuffer.normal.view,
+                        resolve_target: None,
+                        load_op: wgpu::LoadOp::Clear,
+                        store_op: wgpu::StoreOp::Store,
+                        clear_color: wgpu::Color::RED,
+                    },
+                    wgpu::RenderPassColorAttachmentDescriptor {
+                        attachment: &self.gbuffer.pbr.view,
+                        resolve_target: None,
+                        load_op: wgpu::LoadOp::Clear,
+                        store_op: wgpu::StoreOp::Store,
+                        clear_color: wgpu::Color::RED,
+                    },
+                    wgpu::RenderPassColorAttachmentDescriptor {
+                        attachment: &self.gbuffer.coords.view,
                         resolve_target: None,
                         load_op: wgpu::LoadOp::Clear,
                         store_op: wgpu::StoreOp::Store,
