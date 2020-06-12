@@ -6,7 +6,9 @@ layout(location=2) in vec3 v_sun_pos;
 layout(location=3) in vec3 v_world_pos;
 layout(location=4) in vec2 v_uv;
 layout(location=5) in float v_material;
+
 layout(location=0) out vec4 f_color;
+layout(location=1) out vec4 f_normal;
 
 layout(set = 1, binding = 0) uniform texture2D t_terrain;
 layout(set = 1, binding = 1) uniform sampler s_terrain;
@@ -35,4 +37,5 @@ void main() {
     vec3 lightDir = normalize(v_sun_pos - v_frag_pos);
     float diff = max(dot(lightDir, v_normal), 0.1);
     f_color = vec4(tinted.rgb * diff, 1.0);
+    f_normal = vec4(v_normal, 1.0);
 }

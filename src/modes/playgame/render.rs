@@ -133,12 +133,20 @@ impl BlockRenderPass {
                         depth_bias_clamp: 0.0,
                     }),
                     primitive_topology: wgpu::PrimitiveTopology::TriangleList,
-                    color_states: &vec![wgpu::ColorStateDescriptor {
-                        format: context.swapchain_format,
-                        color_blend: wgpu::BlendDescriptor::REPLACE,
-                        alpha_blend: wgpu::BlendDescriptor::REPLACE,
-                        write_mask: wgpu::ColorWrite::ALL,
-                    }],
+                    color_states: &vec![
+                        wgpu::ColorStateDescriptor {
+                            format: context.swapchain_format,
+                            color_blend: wgpu::BlendDescriptor::REPLACE,
+                            alpha_blend: wgpu::BlendDescriptor::REPLACE,
+                            write_mask: wgpu::ColorWrite::ALL,
+                        },
+                        wgpu::ColorStateDescriptor {
+                            format: context.swapchain_format,
+                            color_blend: wgpu::BlendDescriptor::REPLACE,
+                            alpha_blend: wgpu::BlendDescriptor::REPLACE,
+                            write_mask: wgpu::ColorWrite::ALL,
+                        }
+                    ],
                     depth_stencil_state: Some(wgpu::DepthStencilStateDescriptor {
                         format: crate::engine::texture::Texture::DEPTH_FORMAT,
                         depth_write_enabled: true,
@@ -187,13 +195,22 @@ impl BlockRenderPass {
 
         {
             let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                color_attachments: &[wgpu::RenderPassColorAttachmentDescriptor {
-                    attachment: &self.gbuffer.albedo.view,
-                    resolve_target: None,
-                    load_op: wgpu::LoadOp::Clear,
-                    store_op: wgpu::StoreOp::Store,
-                    clear_color: wgpu::Color::BLACK,
-                }],
+                color_attachments: &[
+                    wgpu::RenderPassColorAttachmentDescriptor {
+                        attachment: &self.gbuffer.albedo.view,
+                        resolve_target: None,
+                        load_op: wgpu::LoadOp::Clear,
+                        store_op: wgpu::StoreOp::Store,
+                        clear_color: wgpu::Color::BLACK,
+                    },
+                    wgpu::RenderPassColorAttachmentDescriptor {
+                        attachment: &self.gbuffer.normal.view,
+                        resolve_target: None,
+                        load_op: wgpu::LoadOp::Clear,
+                        store_op: wgpu::StoreOp::Store,
+                        clear_color: wgpu::Color::RED,
+                    }
+                ],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: &context.textures[depth_id].view,
                     depth_load_op: wgpu::LoadOp::Clear,
