@@ -22,12 +22,12 @@ pub fn add_floor_geometry(
 
     #[rustfmt::skip]
     let cube_geometry = [
-        x1, y1, z1,   0.0, 1.0, 0.0,    tw, th, mi,
-        x1, y1, z0,   0.0, 1.0, 0.0,    tw, t0, mi,
-        x0, y1, z0,   0.0, 1.0, 0.0,    t0, t0, mi,
-        x0, y1, z0,   0.0, 1.0, 0.0,    t0, t0, mi,
-        x0, y1, z1,   0.0, 1.0, 0.0,    t0, th, mi,
-        x1, y1, z1,   0.0, 1.0, 0.0,    tw, th, mi,
+        x1, y1, z1,   0.0,     tw, th, mi,
+        x1, y1, z0,   0.0,     tw, t0, mi,
+        x0, y1, z0,   0.0,     t0, t0, mi,
+        x0, y1, z0,   0.0,     t0, t0, mi,
+        x0, y1, z1,   0.0,     t0, th, mi,
+        x1, y1, z1,   0.0,     tw, th, mi,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 2;

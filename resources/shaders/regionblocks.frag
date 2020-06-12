@@ -5,6 +5,7 @@ layout(location=1) in vec3 v_frag_pos;
 layout(location=2) in vec3 v_world_pos;
 layout(location=3) in vec2 v_uv;
 layout(location=4) in float v_material;
+layout(location=5) in mat3 v_tbn;
 
 layout(location=0) out vec4 f_color;
 layout(location=1) out vec4 f_normal;
@@ -35,9 +36,12 @@ void main() {
     );
 
     vec4 terrain_color = sample_material(diffuse_tex_index, uv);
+    vec3 tex_normal = sample_material(mat_base + 2, uv).rgb;
+    tex_normal = normalize(tex_normal * 2.0 - 1.0);
+    vec3 normal = normalize(v_tbn * tex_normal);
 
     f_color = terrain_color;
-    f_normal = vec4(v_normal, 1.0);
+    f_normal = vec4(normal, 1.0);
     f_pbr = vec4(1.0, 0.0, 1.0, 1.0);
     f_coords = vec4(v_world_pos, 1.0);
 }

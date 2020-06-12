@@ -19,9 +19,9 @@ impl BlockRenderPass {
         let terrain_textures = super::texarray::TextureArray::blank(context).unwrap();
 
         // Initialize the vertex buffer for cube geometry
-        let mut vb = VertexBuffer::<f32>::new(&[3, 3, 2, 1]);
+        let mut vb = VertexBuffer::<f32>::new(&[3, 1, 2, 1]);
         let mut tmp = 0;
-        crate::utils::add_cube_geometry(&mut vb.data, &mut tmp, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0);
+        crate::utils::add_floor_geometry(&mut vb.data, &mut tmp, 1.0, 1.0, 1.0, 1.0, 1.0, 0);
         vb.build(&context.device, wgpu::BufferUsage::VERTEX);
 
         // Initialize camera and uniforms

@@ -34,7 +34,7 @@ impl Chunk {
             base: (x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
             cells,
             dirty: true,
-            vb: VertexBuffer::new(&[3, 3, 2, 1]),
+            vb: VertexBuffer::new(&[3, 1, 2, 1]),
             element_count: [0; CHUNK_SIZE],
             center_pos: (
                 (x * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,
@@ -117,7 +117,7 @@ impl Chunk {
                                         floors.insert(idx, mat);
                                     }
                                     TileType::Ramp { direction } => {
-                                        let mat = crate::raws::RAWS
+                                        /*let mat = crate::raws::RAWS
                                             .read()
                                             .matmap
                                             .get(region.material_idx[idx])
@@ -130,7 +130,7 @@ impl Chunk {
                                             y as f32 + self.base.1 as f32,
                                             z as f32 + self.base.2 as f32,
                                             mat,
-                                        );
+                                        );*/
                                     }
                                     _ => {}
                                 }
