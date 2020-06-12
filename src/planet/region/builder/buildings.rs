@@ -88,5 +88,5 @@ fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &st
 }
 
 fn add_building(region: &mut Region, tag: &str, x:usize, y:usize, z:usize, ecs: &mut World) {
-
+    spawner::spawn_building(ecs, tag, x, y, z);
 }

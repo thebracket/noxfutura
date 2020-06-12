@@ -1,0 +1,11 @@
+(
+    buildings: [
+        BuildingDef(
+            tag : "cordex",
+            name : "Cordex",
+            components : [ BuildingComponent(item: "cordex_core", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 25) ],
+            vox : "cordex"
+        )
+    ]
+)
