@@ -42,6 +42,11 @@ void main() {
 
     f_color = terrain_color;
     f_normal = vec4(normal, 1.0);
-    f_pbr = vec4(1.0, 0.0, 1.0, 1.0);
+    f_pbr = vec4(
+        sample_material(mat_base +1, uv).r, // Metallic
+        sample_material(mat_base, uv).r, // Ambient Occlusion
+        sample_material(mat_base + 3, uv).r, // Roughness
+        0.0
+    );
     f_coords = vec4(v_world_pos, 1.0);
 }

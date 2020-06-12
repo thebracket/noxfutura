@@ -54,11 +54,11 @@ impl GBufferTestPass {
                 bindings: &[
                     wgpu::Binding {
                         binding: 0,
-                        resource: wgpu::BindingResource::TextureView(&gbuffer.normal.view),
+                        resource: wgpu::BindingResource::TextureView(&gbuffer.albedo.view),
                     },
                     wgpu::Binding {
                         binding: 1,
-                        resource: wgpu::BindingResource::Sampler(&gbuffer.normal.sampler),
+                        resource: wgpu::BindingResource::Sampler(&gbuffer.albedo.sampler),
                     },
                 ],
                 label: None,
