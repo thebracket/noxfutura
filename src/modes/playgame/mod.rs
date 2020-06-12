@@ -31,7 +31,6 @@ pub struct PlayGame {
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
-    counter: usize,
     chunks: chunks::Chunks,
 }
 
@@ -46,7 +45,6 @@ impl PlayGame {
             gbuffer_pass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
-            counter: 0,
             chunks: chunks::Chunks::empty(),
         }
     }
@@ -123,7 +121,6 @@ impl PlayGame {
         if pass.vb.len() > 0 {
             pass.vb.update_buffer(context);
         }
-        self.counter = 180;
 
         let title = format!("Playing. Frame time: {} ms. FPS: {}.", frame_time, imgui.io().framerate);
         let title_tmp = ImString::new(title);
@@ -186,7 +183,7 @@ impl PlayGame {
             }
             if camera_changed {
                 cam.update(&*pos, &*camopts);
-                pass.uniforms.update_view_proj(&pass.camera, self.counter);
+                pass.uniforms.update_view_proj(&pass.camera);
                 self.chunks.on_camera_move(&pass.uniforms.view_proj, &*pos);
                 pass.uniforms.update_buffer(context, &pass.uniform_buf);
             }

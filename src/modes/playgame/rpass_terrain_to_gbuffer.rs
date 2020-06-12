@@ -27,7 +27,7 @@ impl BlockRenderPass {
         // Initialize camera and uniforms
         let camera = Camera::new(context.size.width, context.size.height);
         let mut uniforms = Uniforms::new();
-        uniforms.update_view_proj(&camera, 0);
+        uniforms.update_view_proj(&camera);
 
         // Shader
         let shader_id = context.register_shader(

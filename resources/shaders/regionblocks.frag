@@ -31,8 +31,8 @@ void main() {
     int mat_base = int(v_material * 255.0);
     int diffuse_tex_index = mat_base + 4; // +4
     vec2 uv = vec2(
-        clamp(fract(v_uv.x),0.1,0.9) * 256.0,
-        clamp(fract(v_uv.y),0.1,0.9) * 256.0
+        fract(v_uv.x) * 256.0,
+        fract(v_uv.y) * 256.0
     );
 
     vec4 terrain_color = sample_material(diffuse_tex_index, uv);
