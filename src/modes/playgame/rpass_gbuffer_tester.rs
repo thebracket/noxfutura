@@ -43,6 +43,36 @@ impl GBufferTestPass {
                             visibility: wgpu::ShaderStage::FRAGMENT,
                             ty: wgpu::BindingType::Sampler { comparison: false },
                         },
+
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 2,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::SampledTexture {
+                                multisampled: false,
+                                dimension: wgpu::TextureViewDimension::D2,
+                                component_type: wgpu::TextureComponentType::Uint,
+                            },
+                        },
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 3,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::Sampler { comparison: false },
+                        },
+
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 4,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::SampledTexture {
+                                multisampled: false,
+                                dimension: wgpu::TextureViewDimension::D2,
+                                component_type: wgpu::TextureComponentType::Uint,
+                            },
+                        },
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 5,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::Sampler { comparison: false },
+                        },
                     ],
                     label: None,
                 }
@@ -59,6 +89,24 @@ impl GBufferTestPass {
                     wgpu::Binding {
                         binding: 1,
                         resource: wgpu::BindingResource::Sampler(&gbuffer.albedo.sampler),
+                    },
+
+                    wgpu::Binding {
+                        binding: 2,
+                        resource: wgpu::BindingResource::TextureView(&gbuffer.normal.view),
+                    },
+                    wgpu::Binding {
+                        binding: 3,
+                        resource: wgpu::BindingResource::Sampler(&gbuffer.normal.sampler),
+                    },
+
+                    wgpu::Binding {
+                        binding: 4,
+                        resource: wgpu::BindingResource::TextureView(&gbuffer.pbr.view),
+                    },
+                    wgpu::Binding {
+                        binding: 5,
+                        resource: wgpu::BindingResource::Sampler(&gbuffer.pbr.sampler),
                     },
                 ],
                 label: None,
