@@ -44,39 +44,39 @@ fn north_south(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
 
     #[rustfmt::skip]
     let cube_geometry = [
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0, mi,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th, mi,
-        x1, y0, z0,    0.0, 0.0, -1.0,  tw, t0, mi,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th, mi,
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0, mi,
-        x0, y1, z0,    0.0, 0.0, -1.0,  t0, th, mi,
+        x0, y0, z0,    1.0,  t0, t0, mi,
+        x1, y1, z0,    1.0,  tw, th, mi,
+        x1, y0, z0,    1.0,  tw, t0, mi,
+        x1, y1, z0,    1.0,  tw, th, mi,
+        x0, y0, z0,    1.0,  t0, t0, mi,
+        x0, y1, z0,    1.0,  t0, th, mi,
 
         // Left side
-        x0, y0, z0,    1.0, 0.0, 0.0,   tw, th, mi,
-        x0, y1, z0,    1.0, 0.0, 0.0,   tw, t0, mi,
-        x0, y0, z1,    1.0, 0.0, 0.0,   t0, t0, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
+        x0, y1, z0,   5.0,   tw, t0, mi,
+        x0, y0, z1,   5.0,   t0, t0, mi,
 
 
         // Right side
-        x1, y0, z0,    -1.0, 0.0, 0.0,   tw, th, mi,
-        x1, y1, z0,    -1.0, 0.0, 0.0,   tw, t0, mi,
-        x1, y0, z1,    -1.0, 0.0, 0.0,   t0, t0, mi,
+        x1, y0, z0,    3.0,   tw, th, mi,
+        x1, y1, z0,    3.0,   tw, t0, mi,
+        x1, y0, z1,    3.0,   t0, t0, mi,
 
         // Base - unchanged
-        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th, mi,
-        x1, y0, z0,   0.0, -1.0, 0.0,   tw, t0, mi,
-        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0, mi,
-        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0, mi,
-        x0, y0, z1,   0.0, -1.0, 0.0,   t0, th, mi,
-        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
+        x1, y0, z0,   5.0,   tw, t0, mi,
+        x1, y0, z1,   5.0,   t0, t0, mi,
+        x1, y0, z1,   5.0,   t0, t0, mi,
+        x0, y0, z1,   5.0,   t0, th, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
 
         // Top - needs to slope
-        x1, y0, z1,   0.0, 1.0, 1.0,    tw, th, mi,
-        x1, y1, z0,   0.0, 1.0, 1.0,    tw, t0, mi,
-        x0, y1, z0,   0.0, 1.0, 1.0,    t0, t0, mi,
-        x0, y1, z0,   0.0, 1.0, 1.0,    t0, t0, mi,
-        x0, y0, z1,   0.0, 1.0, 1.0,    t0, th, mi,
-        x1, y0, z1,   0.0, 1.0, 1.0,    tw, th, mi,
+        x1, y0, z1,   0.0,    tw, th, mi,
+        x1, y1, z0,   0.0,    tw, t0, mi,
+        x0, y1, z0,   0.0,    t0, t0, mi,
+        x0, y1, z0,   0.0,    t0, t0, mi,
+        x0, y0, z1,   0.0,    t0, th, mi,
+        x1, y0, z1,   0.0,    tw, th, mi,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 8;
@@ -102,59 +102,59 @@ fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
     #[rustfmt::skip]
     let cube_geometry = [
         /*
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th,
-        x1, y0, z0,    0.0, 0.0, -1.0,  tw, t0,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th,
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
-        x0, y1, z0,    0.0, 0.0, -1.0,  t0, th,*/
+        x0, y0, z0,    1.0,  t0, t0,
+        x1, y1, z0,    1.0,  tw, th,
+        x1, y0, z0,    1.0,  tw, t0,
+        x1, y1, z0,    1.0,  tw, th,
+        x0, y0, z0,    1.0,  t0, t0,
+        x0, y1, z0,    1.0,  t0, th,*/
 
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0, mi,
-        x1, y0, z1,    0.0, 0.0, 1.0,   tw, t0, mi,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th, mi,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th, mi,
-        x0, y1, z1,    0.0, 0.0, 1.0,   t0, th, mi,
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0, mi,
-
-        /*
-        x0, y1, z1,    1.0, 0.0, 0.0,   tw, th,
-        x0, y1, z0,    1.0, 0.0, 0.0,   tw, t0,
-        x0, y0, z0,    1.0, 0.0, 0.0,   t0, t0,
-        x0, y0, z0,    1.0, 0.0, 0.0,   t0, t0,
-        x0, y0, z1,    1.0, 0.0, 0.0,   t0, th,
-        x0, y1, z1,    1.0, 0.0, 0.0,   tw, th,
-        */
-        x0, y0, z0,    1.0, 0.0, 0.0,   tw, th, mi,
-        x0, y0, z1,    1.0, 0.0, 0.0,   tw, t0, mi,
-        x0, y1, z1,    1.0, 0.0, 0.0,   t0, t0, mi,
+        x0, y0, z1,    2.0,   t0, t0, mi,
+        x1, y0, z1,    2.0,   tw, t0, mi,
+        x1, y1, z1,    2.0,   tw, th, mi,
+        x1, y1, z1,    2.0,   tw, th, mi,
+        x0, y1, z1,    2.0,   t0, th, mi,
+        x0, y0, z1,    2.0,   t0, t0, mi,
 
         /*
-        x1, y1, z1,    -1.0, 0.0, 0.0,  tw, th,
-        x1, y0, z0,    -1.0, 0.0, 0.0,  t0, t0,
-        x1, y1, z0,    -1.0, 0.0, 0.0,  tw, t0,
-        x1, y0, z0,    -1.0, 0.0, 0.0,  t0, t0,
-        x1, y1, z1,    -1.0, 0.0, 0.0,  tw, th,
-        x1, y0, z1,    -1.0, 0.0, 0.0,  t0, th,
+        x0, y1, z1,   5.0,   tw, th,
+        x0, y1, z0,   5.0,   tw, t0,
+        x0, y0, z0,   5.0,   t0, t0,
+        x0, y0, z0,   5.0,   t0, t0,
+        x0, y0, z1,   5.0,   t0, th,
+        x0, y1, z1,   5.0,   tw, th,
         */
-        x1, y0, z0,    -1.0, 0.0, 0.0,  tw, th, mi,
-        x1, y1, z1,    -1.0, 0.0, 0.0,  t0, t0, mi,
-        x1, y0, z1,    -1.0, 0.0, 0.0,  tw, t0, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
+        x0, y0, z1,   5.0,   tw, t0, mi,
+        x0, y1, z1,   5.0,   t0, t0, mi,
+
+        /*
+        x1, y1, z1,    3.0,  tw, th,
+        x1, y0, z0,    3.0,  t0, t0,
+        x1, y1, z0,    3.0,  tw, t0,
+        x1, y0, z0,    3.0,  t0, t0,
+        x1, y1, z1,    3.0,  tw, th,
+        x1, y0, z1,    3.0,  t0, th,
+        */
+        x1, y0, z0,    3.0,  tw, th, mi,
+        x1, y1, z1,    3.0,  t0, t0, mi,
+        x1, y0, z1,    3.0,  tw, t0, mi,
 
         // Base
-        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th, mi,
-        x1, y0, z0,   0.0, -1.0, 0.0,   tw, t0, mi,
-        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0, mi,
-        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0, mi,
-        x0, y0, z1,   0.0, -1.0, 0.0,   t0, th, mi,
-        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
+        x1, y0, z0,   5.0,   tw, t0, mi,
+        x1, y0, z1,   5.0,   t0, t0, mi,
+        x1, y0, z1,   5.0,   t0, t0, mi,
+        x0, y0, z1,   5.0,   t0, th, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
 
         // Top
-        x1, y1, z1,   0.0, 1.0, -1.0,    tw, th, mi,
-        x1, y0, z0,   0.0, 1.0, -1.0,    tw, t0, mi,
-        x0, y0, z0,   0.0, 1.0, -1.0,    t0, t0, mi,
-        x0, y0, z0,   0.0, 1.0, -1.0,    t0, t0, mi,
-        x0, y1, z1,   0.0, 1.0, -1.0,    t0, th, mi,
-        x1, y1, z1,   0.0, 1.0, -1.0,    tw, th, mi,
+        x1, y1, z1,   0.0,    tw, th, mi,
+        x1, y0, z0,   0.0,    tw, t0, mi,
+        x0, y0, z0,   0.0,    t0, t0, mi,
+        x0, y0, z0,   0.0,    t0, t0, mi,
+        x0, y1, z1,   0.0,    t0, th, mi,
+        x1, y1, z1,   0.0,    tw, th, mi,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 8;
@@ -179,57 +179,57 @@ fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
     #[rustfmt::skip]
     let cube_geometry = [
         /*
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th,
-        x1, y0, z0,    0.0, 0.0, -1.0,  tw, t0,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th,
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
-        x0, y1, z0,    0.0, 0.0, -1.0,  t0, th,*/
-        x1, y0, z0,    0.0, 0.0, -1.0,  t0, t0, mi,
-        x0, y0, z0,    0.0, 0.0, -1.0,  tw, th, mi,
-        x0, y1, z0,    0.0, 0.0, -1.0,  tw, t0, mi,
+        x0, y0, z0,    1.0,  t0, t0,
+        x1, y1, z0,    1.0,  tw, th,
+        x1, y0, z0,    1.0,  tw, t0,
+        x1, y1, z0,    1.0,  tw, th,
+        x0, y0, z0,    1.0,  t0, t0,
+        x0, y1, z0,    1.0,  t0, th,*/
+        x1, y0, z0,    1.0,  t0, t0, mi,
+        x0, y0, z0,    1.0,  tw, th, mi,
+        x0, y1, z0,    1.0,  tw, t0, mi,
 
         /*
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0,
-        x1, y0, z1,    0.0, 0.0, 1.0,   tw, t0,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th,
-        x0, y1, z1,    0.0, 0.0, 1.0,   t0, th,
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0,
+        x0, y0, z1,    2.0,   t0, t0,
+        x1, y0, z1,    2.0,   tw, t0,
+        x1, y1, z1,    2.0,   tw, th,
+        x1, y1, z1,    2.0,   tw, th,
+        x0, y1, z1,    2.0,   t0, th,
+        x0, y0, z1,    2.0,   t0, t0,
         */
-        x1, y0, z1,    0.0, 0.0, 1.0,   t0, t0, mi,
-        x0, y0, z1,    0.0, 0.0, 1.0,   tw, t0, mi,
-        x0, y1, z1,    0.0, 0.0, 1.0,   tw, th, mi,
+        x1, y0, z1,    2.0,   t0, t0, mi,
+        x0, y0, z1,    2.0,   tw, t0, mi,
+        x0, y1, z1,    2.0,   tw, th, mi,
 
-        x0, y1, z1,    1.0, 0.0, 0.0,   tw, th, mi,
-        x0, y1, z0,    1.0, 0.0, 0.0,   tw, t0, mi,
-        x0, y0, z0,    1.0, 0.0, 0.0,   t0, t0, mi,
-        x0, y0, z0,    1.0, 0.0, 0.0,   t0, t0, mi,
-        x0, y0, z1,    1.0, 0.0, 0.0,   t0, th, mi,
-        x0, y1, z1,    1.0, 0.0, 0.0,   tw, th, mi,
+        x0, y1, z1,   5.0,   tw, th, mi,
+        x0, y1, z0,   5.0,   tw, t0, mi,
+        x0, y0, z0,   5.0,   t0, t0, mi,
+        x0, y0, z0,   5.0,   t0, t0, mi,
+        x0, y0, z1,   5.0,   t0, th, mi,
+        x0, y1, z1,   5.0,   tw, th, mi,
 
-        /*x1, y1, z1,    -1.0, 0.0, 0.0,  tw, th,
-        x1, y0, z0,    -1.0, 0.0, 0.0,  t0, t0,
-        x1, y1, z0,    -1.0, 0.0, 0.0,  tw, t0,
-        x1, y0, z0,    -1.0, 0.0, 0.0,  t0, t0,
-        x1, y1, z1,    -1.0, 0.0, 0.0,  tw, th,
-        x1, y0, z1,    -1.0, 0.0, 0.0,  t0, th,*/
+        /*x1, y1, z1,    3.0,  tw, th,
+        x1, y0, z0,    3.0,  t0, t0,
+        x1, y1, z0,    3.0,  tw, t0,
+        x1, y0, z0,    3.0,  t0, t0,
+        x1, y1, z1,    3.0,  tw, th,
+        x1, y0, z1,    3.0,  t0, th,*/
 
         // Base
-        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th, mi,
-        x1, y0, z0,   0.0, -1.0, 0.0,   tw, t0, mi,
-        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0, mi,
-        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0, mi,
-        x0, y0, z1,   0.0, -1.0, 0.0,   t0, th, mi,
-        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
+        x1, y0, z0,   5.0,   tw, t0, mi,
+        x1, y0, z1,   5.0,   t0, t0, mi,
+        x1, y0, z1,   5.0,   t0, t0, mi,
+        x0, y0, z1,   5.0,   t0, th, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
 
         // Top - slope me
-        x1, y0, z1,   -1.0, 1.0, 0.0,    tw, th, mi,
-        x1, y0, z0,   -1.0, 1.0, 0.0,    tw, t0, mi,
-        x0, y1, z0,   -1.0, 1.0, 0.0,    t0, t0, mi,
-        x0, y1, z0,   -1.0, 1.0, 0.0,    t0, t0, mi,
-        x0, y1, z1,   -1.0, 1.0, 0.0,    t0, th, mi,
-        x1, y0, z1,   -1.0, 1.0, 0.0,    tw, th, mi,
+        x1, y0, z1,   0.0,    tw, th, mi,
+        x1, y0, z0,   0.0,    tw, t0, mi,
+        x0, y1, z0,   0.0,    t0, t0, mi,
+        x0, y1, z0,   0.0,    t0, t0, mi,
+        x0, y1, z1,   0.0,    t0, th, mi,
+        x1, y0, z1,   0.0,    tw, th, mi,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 8;
@@ -254,51 +254,51 @@ fn west_east(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
     #[rustfmt::skip]
     let cube_geometry = [
         /*
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th,
-        x1, y0, z0,    0.0, 0.0, -1.0,  tw, t0,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th,
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0,
-        x0, y1, z0,    0.0, 0.0, -1.0,  t0, th,
+        x0, y0, z0,    1.0,  t0, t0,
+        x1, y1, z0,    1.0,  tw, th,
+        x1, y0, z0,    1.0,  tw, t0,
+        x1, y1, z0,    1.0,  tw, th,
+        x0, y0, z0,    1.0,  t0, t0,
+        x0, y1, z0,    1.0,  t0, th,
         */
-        x0, y0, z0,    0.0, 0.0, -1.0,  t0, t0, mi,
-        x1, y1, z0,    0.0, 0.0, -1.0,  tw, th, mi,
-        x1, y0, z0,    0.0, 0.0, -1.0,  tw, t0, mi,
+        x0, y0, z0,    1.0,  t0, t0, mi,
+        x1, y1, z0,    1.0,  tw, th, mi,
+        x1, y0, z0,    1.0,  tw, t0, mi,
 
         /*
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0,
-        x1, y0, z1,    0.0, 0.0, 1.0,   tw, t0,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th,
-        x0, y1, z1,    0.0, 0.0, 1.0,   t0, th,
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0,
+        x0, y0, z1,    2.0,   t0, t0,
+        x1, y0, z1,    2.0,   tw, t0,
+        x1, y1, z1,    2.0,   tw, th,
+        x1, y1, z1,    2.0,   tw, th,
+        x0, y1, z1,    2.0,   t0, th,
+        x0, y0, z1,    2.0,   t0, t0,
         */
-        x0, y0, z1,    0.0, 0.0, 1.0,   t0, t0, mi,
-        x1, y0, z1,    0.0, 0.0, 1.0,   tw, t0, mi,
-        x1, y1, z1,    0.0, 0.0, 1.0,   tw, th, mi,
+        x0, y0, z1,    2.0,   t0, t0, mi,
+        x1, y0, z1,    2.0,   tw, t0, mi,
+        x1, y1, z1,    2.0,   tw, th, mi,
 
-        x1, y1, z1,    -1.0, 0.0, 0.0,  tw, th, mi,
-        x1, y0, z0,    -1.0, 0.0, 0.0,  t0, t0, mi,
-        x1, y1, z0,    -1.0, 0.0, 0.0,  tw, t0, mi,
-        x1, y0, z0,    -1.0, 0.0, 0.0,  t0, t0, mi,
-        x1, y1, z1,    -1.0, 0.0, 0.0,  tw, th, mi,
-        x1, y0, z1,    -1.0, 0.0, 0.0,  t0, th, mi,
+        x1, y1, z1,    3.0,  tw, th, mi,
+        x1, y0, z0,    3.0,  t0, t0, mi,
+        x1, y1, z0,    3.0,  tw, t0, mi,
+        x1, y0, z0,    3.0,  t0, t0, mi,
+        x1, y1, z1,    3.0,  tw, th, mi,
+        x1, y0, z1,    3.0,  t0, th, mi,
 
         // Base - unchanged
-        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th, mi,
-        x1, y0, z0,   0.0, -1.0, 0.0,   tw, t0, mi,
-        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0, mi,
-        x1, y0, z1,   0.0, -1.0, 0.0,   t0, t0, mi,
-        x0, y0, z1,   0.0, -1.0, 0.0,   t0, th, mi,
-        x0, y0, z0,   0.0, -1.0, 0.0,   tw, th, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
+        x1, y0, z0,   5.0,   tw, t0, mi,
+        x1, y0, z1,   5.0,   t0, t0, mi,
+        x1, y0, z1,   5.0,   t0, t0, mi,
+        x0, y0, z1,   5.0,   t0, th, mi,
+        x0, y0, z0,   5.0,   tw, th, mi,
 
         // Top - needs to slope
-        x1, y1, z1,   1.0, 1.0, 0.0,    tw, th, mi,
-        x1, y1, z0,   1.0, 1.0, 0.0,    tw, t0, mi,
-        x0, y0, z0,   1.0, 1.0, 0.0,    t0, t0, mi,
-        x0, y0, z0,   1.0, 1.0, 0.0,    t0, t0, mi,
-        x0, y0, z1,   1.0, 1.0, 0.0,    t0, th, mi,
-        x1, y1, z1,   1.0, 1.0, 0.0,    tw, th, mi,
+        x1, y1, z1,   0.0,    tw, th, mi,
+        x1, y1, z0,   0.0,    tw, t0, mi,
+        x0, y0, z0,   0.0,    t0, t0, mi,
+        x0, y0, z0,   0.0,    t0, t0, mi,
+        x0, y0, z1,   0.0,    t0, th, mi,
+        x1, y1, z1,   0.0,    tw, th, mi,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 8;

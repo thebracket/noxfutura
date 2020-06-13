@@ -117,7 +117,7 @@ impl Chunk {
                                         floors.insert(idx, mat);
                                     }
                                     TileType::Ramp { direction } => {
-                                        /*let mat = crate::raws::RAWS
+                                        let mat = crate::raws::RAWS
                                             .read()
                                             .matmap
                                             .get(region.material_idx[idx])
@@ -130,7 +130,7 @@ impl Chunk {
                                             y as f32 + self.base.1 as f32,
                                             z as f32 + self.base.2 as f32,
                                             mat,
-                                        );*/
+                                        );
                                     }
                                     _ => {}
                                 }

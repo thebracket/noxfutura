@@ -9,6 +9,7 @@ pub struct Raws {
     pub materials: Materials,
     pub matmap: material_map::MaterialMap,
     pub plants: Plants,
+    pub buildings: Buildings
 }
 
 impl Raws {
@@ -18,6 +19,7 @@ impl Raws {
             materials: Materials::new(),
             matmap: material_map::MaterialMap::new(),
             plants: Plants::new(),
+            buildings: Buildings::new()
         }
     }
 
@@ -25,6 +27,7 @@ impl Raws {
         self.biomes = load_biomes();
         self.materials = load_materials();
         self.plants = load_plants();
+        self.buildings = load_buildings();
     }
 }
 

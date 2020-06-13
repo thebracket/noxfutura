@@ -4,3 +4,5 @@ mod materials;
 pub use materials::*;
 mod plants;
 pub use plants::*;
+mod buildings;
+pub use buildings::*;
