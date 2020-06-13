@@ -1,0 +1,5 @@
+(
+    vox: [
+        VoxelModel( tag: "cordex", file: "cordex.vox" ),
+    ]
+)

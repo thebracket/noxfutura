@@ -6,3 +6,5 @@ mod plants;
 pub use plants::*;
 mod buildings;
 pub use buildings::*;
+mod vox;
+pub use vox::*;
