@@ -2,13 +2,14 @@ use super::*;
 use legion::prelude::*;
 
 pub fn spawn_building(ecs: &mut World, tag: &str, x:usize, y:usize, z:usize) {
+    let rlock = crate::raws::RAWS.read();
     ecs.insert(
         (Building {},),
         (0..1).map(|_| {
             (
-                Position{x: 1, y: 1, z: 1},
+                Position{x, y, z},
                 Dimensions{width: 1, height: 1},
-                VoxelModel{index: 0}
+                VoxelModel{index: rlock.buildings.get_building_idx(tag) }
             )
         }),
     );

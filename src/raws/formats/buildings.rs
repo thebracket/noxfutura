@@ -13,6 +13,10 @@ impl Buildings {
             buildings: Vec::new(),
         }
     }
+
+    pub fn get_building_idx(&self, tag: &str) -> usize {
+        0
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

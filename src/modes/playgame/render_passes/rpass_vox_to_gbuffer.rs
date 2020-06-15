@@ -8,6 +8,7 @@ pub struct VoxRenderPass {
     pub vox_models: VoxBuffer,
     pub shader_id: usize,
     pub render_pipeline: wgpu::RenderPipeline,
+    instance_buffer: VertexBuffer<f32>
 }
 
 impl VoxRenderPass {
@@ -17,6 +18,14 @@ impl VoxRenderPass {
     ) -> Self {
         let mut vox_models = VoxBuffer::new();
         vox_models.load(context);
+
+        // Instance buffer
+        let mut instance_buffer = VertexBuffer::<f32>::new(&[3,3]);
+        instance_buffer.attributes[0].shader_location = 3;
+        instance_buffer.attributes[1].shader_location = 4;
+        instance_buffer.add3(128., 256., 128.);
+        instance_buffer.add3(128., 128., 128.);
+        instance_buffer.build(&context.device, wgpu::BufferUsage::VERTEX);
 
         // Initialize camera and uniforms
         let camera = Camera::new(context.size.width, context.size.height);
@@ -94,7 +103,7 @@ impl VoxRenderPass {
                     }),
                     vertex_state: wgpu::VertexStateDescriptor {
                         index_format: wgpu::IndexFormat::Uint16,
-                        vertex_buffers: &[vox_models.vertices.descriptor()],
+                        vertex_buffers: &[vox_models.vertices.descriptor(), instance_buffer.instance_descriptor()],
                     },
                     sample_count: 1,
                     sample_mask: !0,
@@ -106,6 +115,7 @@ impl VoxRenderPass {
             shader_id,
             render_pipeline,
             vox_models,
+            instance_buffer
         };
         builder
     }
@@ -122,13 +132,22 @@ impl VoxRenderPass {
     ) {
         // Instances builder
         use crate::components::*;
+        self.instance_buffer.clear();
         let mut vox_instances = Vec::new();
         let query = <(Read<Position>, Read<VoxelModel>)>::query();
+        let mut n = 0;
         for (pos, vm) in query.iter(&ecs) {
-            let first = self.vox_models.offsets[vm.index].0;
-            let last = self.vox_models.offsets[vm.index].1;
-            vox_instances.push((first, last-first));
+            if pos.z <= camera_z {
+                let first = self.vox_models.offsets[vm.index].0;
+                let last = self.vox_models.offsets[vm.index].1;
+                vox_instances.push((first, last-first, n));
+                n += 1;
+
+                self.instance_buffer.add3(pos.x as f32, pos.z as f32, pos.y as f32);
+                self.instance_buffer.add3(1.0, 1.0, 1.0);
+            }
         }
+        self.instance_buffer.update_buffer(context);
 
         // Render code
         let mut encoder = context
@@ -181,10 +200,11 @@ impl VoxRenderPass {
             rpass.set_pipeline(&self.render_pipeline);
             rpass.set_bind_group(0, &uniform_bg, &[]);
             rpass.set_vertex_buffer(0, &self.vox_models.vertices.buffer.as_ref().unwrap(), 0, 0);
+            rpass.set_vertex_buffer(1, &self.instance_buffer.buffer.as_ref().unwrap(), 0, 0);
 
             // Render
-            for i in vox_instances.iter() {
-                rpass.draw(i.0 .. i.1, 0..1);
+            for (count, i) in vox_instances.iter().enumerate() {
+                rpass.draw(i.0 .. i.1, count as u32..count as u32 +1);
             }
         }
         context.queue.submit(&[encoder.finish()]);

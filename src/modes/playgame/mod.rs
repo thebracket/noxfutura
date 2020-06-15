@@ -174,7 +174,7 @@ impl PlayGame {
         &mut self,
         keycode: &Option<VirtualKeyCode>,
         context: &crate::engine::Context,
-    ) -> i32 {
+    ) -> usize {
         let mut result = 0;
         let pass = self.rpass.as_mut().unwrap();
         let query = <(Write<Position>, Write<CameraOptions>)>::query();

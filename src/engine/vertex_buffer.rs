@@ -4,7 +4,7 @@ where
     T: bytemuck::Pod,
 {
     pub data: Vec<T>,
-    attributes: Vec<wgpu::VertexAttributeDescriptor>,
+    pub attributes: Vec<wgpu::VertexAttributeDescriptor>,
     total_size: wgpu::BufferAddress,
     row_len: usize,
     pub buffer: Option<wgpu::Buffer>,
@@ -51,6 +51,14 @@ where
         wgpu::VertexBufferDescriptor {
             stride: self.total_size,
             step_mode: wgpu::InputStepMode::Vertex,
+            attributes: &self.attributes,
+        }
+    }
+
+    pub fn instance_descriptor(&self) -> wgpu::VertexBufferDescriptor {
+        wgpu::VertexBufferDescriptor {
+            stride: self.total_size,
+            step_mode: wgpu::InputStepMode::Instance,
             attributes: &self.attributes,
         }
     }
