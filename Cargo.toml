@@ -36,6 +36,8 @@ rayon = "1.3.0"
 flate2 = "1.0.14"
 byteorder = "1.3.4"
 
+dot_vox = "4.1.0"
+
 [profile.dev]
 opt-level = 1
 

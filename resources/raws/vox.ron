@@ -1,6 +1,7 @@
 (
     vox: [
         VoxelModel( tag:"cordex", file:"cordex" ),
+        /*
         VoxelModel( tag:"floorlight", file:"floorlight" ),
         VoxelModel( tag:"rtg", file:"rtg" ),
         VoxelModel( tag:"cabinet", file:"cabinet" ),
@@ -153,6 +154,6 @@
         VoxelModel( tag:"gate_nand", file:"gate_nand" ),
         VoxelModel( tag:"gate_nor", file:"gate_nor" ),
         VoxelModel( tag:"gate_xor", file:"gate_xor" ),
-        VoxelModel( tag:"support", file:"support" ),
+        VoxelModel( tag:"support", file:"support" ),*/
     ]
 )

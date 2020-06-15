@@ -373,6 +373,10 @@ pub fn serialize_world(world: &World) -> String {
     let comp_registrations = [
         ComponentRegistration::of::<Position>(),
         ComponentRegistration::of::<CameraOptions>(),
+        ComponentRegistration::of::<Calendar>(),
+        ComponentRegistration::of::<Dimensions>(),
+        ComponentRegistration::of::<VoxelModel>(),
+        ComponentRegistration::of::<WorldPosition>(),
     ];
     let tag_registrations = [TagRegistration::of::<Cordex>()];
 
@@ -390,6 +394,10 @@ pub fn deserialize_world(raw: String) -> World {
     let comp_registrations = [
         ComponentRegistration::of::<Position>(),
         ComponentRegistration::of::<CameraOptions>(),
+        ComponentRegistration::of::<Calendar>(),
+        ComponentRegistration::of::<Dimensions>(),
+        ComponentRegistration::of::<VoxelModel>(),
+        ComponentRegistration::of::<WorldPosition>(),
     ];
     let tag_registrations = [TagRegistration::of::<Cordex>()];
 

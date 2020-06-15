@@ -12,4 +12,5 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x:usize, y:usize, z:usize) {
             )
         }),
     );
+    println!("Added building data");
 }

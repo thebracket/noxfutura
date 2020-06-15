@@ -6,19 +6,13 @@ use legion::prelude::*;
 use winit::event::VirtualKeyCode;
 mod loadstate;
 pub use loadstate::*;
-mod uniforms;
-use uniforms::*;
-mod camera;
 use crate::engine::uniforms::UniformBlock;
-use camera::*;
 mod chunks;
-pub mod frustrum;
-mod rpass_terrain_to_gbuffer;
-use rpass_terrain_to_gbuffer::BlockRenderPass;
-mod rpass_gbuffer_tester;
-use rpass_gbuffer_tester::GBufferTestPass;
-pub mod texarray;
-pub mod gbuffer;
+pub mod vox;
+use vox::VoxBuffer;
+mod render_passes;
+use render_passes::*;
+
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
@@ -28,6 +22,7 @@ pub struct PlayGame {
     // Internals
     rpass: Option<BlockRenderPass>,
     gbuffer_pass: Option<GBufferTestPass>,
+    vox_pass : Option<VoxRenderPass>,
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
@@ -46,6 +41,7 @@ impl PlayGame {
             rebuild_geometry: true,
             ecs: universe.create_world(),
             chunks: chunks::Chunks::empty(),
+            vox_pass : None
         }
     }
 
@@ -75,6 +71,12 @@ impl PlayGame {
         crate::raws::load_raws();
         self.rpass = Some(BlockRenderPass::new(context));
         self.gbuffer_pass = Some(GBufferTestPass::new(context, &self.rpass.as_ref().unwrap().gbuffer));
+        self.vox_pass = Some(
+            VoxRenderPass::new(
+                context, 
+                &self.rpass.as_ref().unwrap().uniform_bind_group_layout
+            )
+        );
     }
 
     pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
@@ -151,6 +153,15 @@ impl PlayGame {
             frame,
             &mut self.chunks,
             camera_z as usize,
+        );
+        self.vox_pass.as_mut().unwrap().render(
+            context,
+            depth_id,
+            frame,
+            &pass.gbuffer,
+            &pass.uniform_bind_group,
+            camera_z as usize,
+            &self.ecs,
         );
 
         let pass2 = self.gbuffer_pass.as_mut().unwrap();

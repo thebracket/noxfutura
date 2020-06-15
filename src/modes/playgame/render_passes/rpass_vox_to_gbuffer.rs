@@ -1,28 +1,22 @@
-use super::{Camera, Uniforms, gbuffer};
+use crate::modes::playgame::chunks::Chunks;
 use crate::engine::{Context, VertexBuffer};
+use super::{camera::Camera, uniforms::Uniforms, gbuffer::GBuffer, texarray::TextureArray};
+use super::super::VoxBuffer;
+use legion::prelude::*;
 
-pub struct BlockRenderPass {
-    pub vb: VertexBuffer<f32>,
-    pub camera: Camera,
-    pub uniforms: Uniforms,
+pub struct VoxRenderPass {
+    pub vox_models: VoxBuffer,
     pub shader_id: usize,
-    pub uniform_bind_group: wgpu::BindGroup,
     pub render_pipeline: wgpu::RenderPipeline,
-    pub uniform_buf: wgpu::Buffer,
-    pub terrain_textures: super::texarray::TextureArray,
-    terrain_bind_group: wgpu::BindGroup,
-    pub gbuffer : gbuffer::GBuffer
 }
 
-impl BlockRenderPass {
-    pub fn new(context: &mut Context) -> Self {
-        let terrain_textures = super::texarray::TextureArray::blank(context).unwrap();
-
-        // Initialize the vertex buffer for cube geometry
-        let mut vb = VertexBuffer::<f32>::new(&[3, 1, 2, 1]);
-        let mut tmp = 0;
-        crate::utils::add_floor_geometry(&mut vb.data, &mut tmp, 1.0, 1.0, 1.0, 1.0, 1.0, 0);
-        vb.build(&context.device, wgpu::BufferUsage::VERTEX);
+impl VoxRenderPass {
+    pub fn new(
+        context: &mut Context, 
+        uniform_bind_group_layout: &wgpu::BindGroupLayout
+    ) -> Self {
+        let mut vox_models = VoxBuffer::new();
+        vox_models.load(context);
 
         // Initialize camera and uniforms
         let camera = Camera::new(context.size.width, context.size.height);
@@ -31,86 +25,16 @@ impl BlockRenderPass {
 
         // Shader
         let shader_id = context.register_shader(
-            "resources/shaders/regionblocks.vert",
-            "resources/shaders/regionblocks.frag",
+            "resources/shaders/voxmod.vert",
+            "resources/shaders/voxmod.frag",
         );
 
         // WGPU Details
-        let uniform_buf = context.device.create_buffer_with_data(
-            bytemuck::cast_slice(&[uniforms]),
-            wgpu::BufferUsage::UNIFORM | wgpu::BufferUsage::COPY_DST,
-        );
-        let uniform_bind_group_layout =
-            context
-                .device
-                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                    bindings: &[wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStage::VERTEX,
-                        ty: wgpu::BindingType::UniformBuffer { dynamic: false },
-                    }],
-                    label: None,
-                });
-        let uniform_bind_group = context
-            .device
-            .create_bind_group(&wgpu::BindGroupDescriptor {
-                layout: &uniform_bind_group_layout,
-                bindings: &[wgpu::Binding {
-                    binding: 0,
-                    resource: wgpu::BindingResource::Buffer {
-                        buffer: &uniform_buf,
-                        range: 0..std::mem::size_of::<Uniforms>() as wgpu::BufferAddress,
-                    },
-                }],
-                label: None,
-            });
-
-        // Terrain textures
-        let terrain_bind_group_layout =
-            context
-                .device
-                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                    bindings: &[
-                        wgpu::BindGroupLayoutEntry {
-                            binding: 0,
-                            visibility: wgpu::ShaderStage::FRAGMENT,
-                            ty: wgpu::BindingType::SampledTexture {
-                                multisampled: false,
-                                dimension: wgpu::TextureViewDimension::D2,
-                                component_type: wgpu::TextureComponentType::Uint,
-                            },
-                        },
-                        wgpu::BindGroupLayoutEntry {
-                            binding: 1,
-                            visibility: wgpu::ShaderStage::FRAGMENT,
-                            ty: wgpu::BindingType::Sampler { comparison: false },
-                        },
-                    ],
-                    label: Some("texture_bind_group_layout"),
-                });
-
-        let terrain_bind_group = context
-            .device
-            .create_bind_group(&wgpu::BindGroupDescriptor {
-                layout: &terrain_bind_group_layout,
-                bindings: &[
-                    wgpu::Binding {
-                        binding: 0,
-                        resource: wgpu::BindingResource::TextureView(&terrain_textures.view),
-                    },
-                    wgpu::Binding {
-                        binding: 1,
-                        resource: wgpu::BindingResource::Sampler(&terrain_textures.sampler),
-                    },
-                ],
-                label: Some("diffuse_bind_group"),
-            });
-
         let pipeline_layout =
             context
                 .device
                 .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-                    bind_group_layouts: &[&uniform_bind_group_layout, &terrain_bind_group_layout],
+                    bind_group_layouts: &[&uniform_bind_group_layout],
                 });
         let render_pipeline =
             context
@@ -170,7 +94,7 @@ impl BlockRenderPass {
                     }),
                     vertex_state: wgpu::VertexStateDescriptor {
                         index_format: wgpu::IndexFormat::Uint16,
-                        vertex_buffers: &[vb.descriptor()],
+                        vertex_buffers: &[vox_models.vertices.descriptor()],
                     },
                     sample_count: 1,
                     sample_mask: !0,
@@ -179,16 +103,9 @@ impl BlockRenderPass {
 
         // Build the result
         let builder = Self {
-            vb,
-            camera,
-            uniforms,
             shader_id,
-            uniform_bind_group,
             render_pipeline,
-            uniform_buf,
-            terrain_textures,
-            terrain_bind_group,
-            gbuffer : gbuffer::GBuffer::new(context)
+            vox_models,
         };
         builder
     }
@@ -198,9 +115,22 @@ impl BlockRenderPass {
         context: &mut Context,
         depth_id: usize,
         frame: &wgpu::SwapChainOutput,
-        chunks: &super::chunks::Chunks,
+        gbuffer: &GBuffer,
+        uniform_bg: &wgpu::BindGroup,
         camera_z: usize,
+        ecs: &World
     ) {
+        // Instances builder
+        use crate::components::*;
+        let mut vox_instances = Vec::new();
+        let query = <(Read<Position>, Read<VoxelModel>)>::query();
+        for (pos, vm) in query.iter(&ecs) {
+            let first = self.vox_models.offsets[vm.index].0;
+            let last = self.vox_models.offsets[vm.index].1;
+            vox_instances.push((first, last-first));
+        }
+
+        // Render code
         let mut encoder = context
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
@@ -209,37 +139,37 @@ impl BlockRenderPass {
             let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 color_attachments: &[
                     wgpu::RenderPassColorAttachmentDescriptor {
-                        attachment: &self.gbuffer.albedo.view,
+                        attachment: &gbuffer.albedo.view,
                         resolve_target: None,
-                        load_op: wgpu::LoadOp::Clear,
+                        load_op: wgpu::LoadOp::Load,
                         store_op: wgpu::StoreOp::Store,
                         clear_color: wgpu::Color::BLUE,
                     },
                     wgpu::RenderPassColorAttachmentDescriptor {
-                        attachment: &self.gbuffer.normal.view,
+                        attachment: &gbuffer.normal.view,
                         resolve_target: None,
-                        load_op: wgpu::LoadOp::Clear,
+                        load_op: wgpu::LoadOp::Load,
                         store_op: wgpu::StoreOp::Store,
                         clear_color: wgpu::Color::RED,
                     },
                     wgpu::RenderPassColorAttachmentDescriptor {
-                        attachment: &self.gbuffer.pbr.view,
+                        attachment: &gbuffer.pbr.view,
                         resolve_target: None,
-                        load_op: wgpu::LoadOp::Clear,
+                        load_op: wgpu::LoadOp::Load,
                         store_op: wgpu::StoreOp::Store,
                         clear_color: wgpu::Color::RED,
                     },
                     wgpu::RenderPassColorAttachmentDescriptor {
-                        attachment: &self.gbuffer.coords.view,
+                        attachment: &gbuffer.coords.view,
                         resolve_target: None,
-                        load_op: wgpu::LoadOp::Clear,
+                        load_op: wgpu::LoadOp::Load,
                         store_op: wgpu::StoreOp::Store,
                         clear_color: wgpu::Color::RED,
                     }
                 ],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: &context.textures[depth_id].view,
-                    depth_load_op: wgpu::LoadOp::Clear,
+                    depth_load_op: wgpu::LoadOp::Load,
                     depth_store_op: wgpu::StoreOp::Store,
                     clear_depth: 1.0,
                     stencil_load_op: wgpu::LoadOp::Clear,
@@ -249,27 +179,14 @@ impl BlockRenderPass {
             });
 
             rpass.set_pipeline(&self.render_pipeline);
-            rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            rpass.set_bind_group(1, &self.terrain_bind_group, &[]);
+            rpass.set_bind_group(0, &uniform_bg, &[]);
+            rpass.set_vertex_buffer(0, &self.vox_models.vertices.buffer.as_ref().unwrap(), 0, 0);
 
-            if self.vb.len() > 0 {
-                rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
-                rpass.draw(0..self.vb.len(), 0..1);
-            }
-
-            for chunk in chunks.visible_chunks() {
-                let buffer = chunk.maybe_render_chunk(camera_z);
-                if let Some(buffer) = buffer {
-                    rpass.set_vertex_buffer(0, buffer.0.buffer.as_ref().unwrap(), 0, 0);
-                    rpass.draw(0..buffer.1, 0..1);
-                }
+            // Render
+            for i in vox_instances.iter() {
+                rpass.draw(i.0 .. i.1, 0..1);
             }
         }
         context.queue.submit(&[encoder.finish()]);
-    }
-
-    pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
-        self.gbuffer = gbuffer::GBuffer::new(context);
-        println!("Warning: a resize was just called.");
     }
 }

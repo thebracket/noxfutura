@@ -1,4 +1,5 @@
 use crate::engine::{Context, VertexBuffer};
+use super::gbuffer::GBuffer;
 
 pub struct GBufferTestPass {
     pub vb: VertexBuffer<f32>,
@@ -8,7 +9,7 @@ pub struct GBufferTestPass {
 }
 
 impl GBufferTestPass {
-    pub fn new(context: &mut Context, gbuffer: &super::gbuffer::GBuffer) -> Self {
+    pub fn new(context: &mut Context, gbuffer: &GBuffer) -> Self {
         // Simple quad VB for output
         let mut vb = VertexBuffer::<f32>::new(&[2, 2]);
         vb.add_slice(&[

@@ -1,7 +1,6 @@
-use super::Camera;
+use super::camera::Camera;
 use crate::engine::uniforms::UniformBlock;
 use ultraviolet::Mat4;
-use ultraviolet::Vec3;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
