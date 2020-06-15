@@ -9,7 +9,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x:usize, y:usize, z:usize) {
             (
                 Position{x, y, z},
                 Dimensions{width: 1, height: 1},
-                VoxelModel{index: rlock.buildings.get_building_idx(tag) }
+                VoxelModel{index: rlock.vox.get_model_idx(tag) }
             )
         }),
     );

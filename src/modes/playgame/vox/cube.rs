@@ -23,9 +23,9 @@ pub fn add_cube_geometry(
     let rg : u8 = ((color_bytes & 0x0000ff00) >> 8) as u8;
     let rb : u8 = (color_bytes & 0x000000ff) as u8;
 
-    let r = rr as f32 / 255.0;
+    let b = rr as f32 / 255.0;
     let g = rg as f32 / 255.0;
-    let b = rb as f32 / 255.0;
+    let r = rb as f32 / 255.0;
 
     #[rustfmt::skip]
     let cube_geometry = [

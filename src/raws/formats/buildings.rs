@@ -13,16 +13,6 @@ impl Buildings {
             buildings: Vec::new(),
         }
     }
-
-    pub fn get_building_idx(&self, tag: &str) -> usize {
-        for (i,b) in self.buildings.iter().enumerate() {
-            if b.tag == tag {
-                return i;
-            }
-        }
-        println!("No vox match for {}", tag);
-        0
-    }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

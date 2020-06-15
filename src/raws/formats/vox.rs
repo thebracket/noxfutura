@@ -13,6 +13,16 @@ impl VoxelModels {
             vox: Vec::new(),
         }
     }
+
+    pub fn get_model_idx(&self, tag: &str) -> usize {
+        for (i,b) in self.vox.iter().enumerate() {
+            if b.tag == tag {
+                return i;
+            }
+        }
+        println!("No vox match for {}", tag);
+        0
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

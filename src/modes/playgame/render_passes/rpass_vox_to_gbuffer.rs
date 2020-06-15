@@ -140,14 +140,17 @@ impl VoxRenderPass {
             if pos.z <= camera_z {
                 let first = self.vox_models.offsets[vm.index].0;
                 let last = self.vox_models.offsets[vm.index].1;
-                vox_instances.push((first, last-first, n));
+                //assert!(first < last);
+                vox_instances.push((first, last, n));
                 n += 1;
 
                 self.instance_buffer.add3(pos.x as f32, pos.z as f32, pos.y as f32);
                 self.instance_buffer.add3(1.0, 1.0, 1.0);
             }
         }
-        self.instance_buffer.update_buffer(context);
+        if !vox_instances.is_empty() {
+            self.instance_buffer.update_buffer(context);
+        }
 
         // Render code
         let mut encoder = context

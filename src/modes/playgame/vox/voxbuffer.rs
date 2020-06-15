@@ -20,12 +20,12 @@ impl VoxBuffer {
     pub fn load(&mut self, context: &crate::engine::Context) {
         self.vertices.clear();
         let rlock = RAWS.read();
+        let mut last_index = 0;
         for modelfile in rlock.vox.vox.iter() {
             let filename = format!("resources/vox/{}.vox", modelfile.file);
             println!("Loading: {}", filename);
             let rawvox = dot_vox::load(&filename).unwrap();
 
-            let mut last_index = 0;
             let mut cubes : HashMap<u32, u8> = HashMap::new();
             for model in rawvox.models.iter() {
                 let size = ModelSize::new(model.size);
@@ -34,6 +34,7 @@ impl VoxBuffer {
                     cubes.insert(idx, v.i);
                 }
                 greedy_cubes(&mut cubes, &mut self.vertices.data, &size);
+                assert_ne!(last_index, self.vertices.len());
                 self.offsets.push((last_index, self.vertices.len()));
                 last_index = self.vertices.len();
             }
