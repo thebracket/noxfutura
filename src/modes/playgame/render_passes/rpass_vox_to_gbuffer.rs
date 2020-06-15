@@ -203,8 +203,10 @@ impl VoxRenderPass {
             rpass.set_vertex_buffer(1, &self.instance_buffer.buffer.as_ref().unwrap(), 0, 0);
 
             // Render
-            for (count, i) in vox_instances.iter().enumerate() {
-                rpass.draw(i.0 .. i.1, count as u32..count as u32 +1);
+            if !vox_instances.is_empty() {
+                for (count, i) in vox_instances.iter().enumerate() {
+                    rpass.draw(i.0 .. i.1, count as u32..count as u32 +1);
+                }
             }
         }
         context.queue.submit(&[encoder.finish()]);

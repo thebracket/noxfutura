@@ -1,7 +1,6 @@
 (
     vox: [
-        VoxelModel( tag:"cordex", file:"cordex" ),
-        /*
+        VoxelModel( tag:"cordex", file:"cordex" ),        
         VoxelModel( tag:"floorlight", file:"floorlight" ),
         VoxelModel( tag:"rtg", file:"rtg" ),
         VoxelModel( tag:"cabinet", file:"cabinet" ),
@@ -10,7 +9,7 @@
         VoxelModel( tag:"solar_panel", file:"solar_panel" ),
         VoxelModel( tag:"wood_logs", file:"woodlogs" ),
         VoxelModel( tag:"turret", file:"turret" ),
-        VoxelModel( tag:"axe", file:"axe" ),
+        VoxelModel( tag:"axe", file:"simpleaxe" ),
         VoxelModel( tag:"campfire_kit", file:"crate-fakefire" ),
         VoxelModel( tag:"tent", file:"tent" ),
         VoxelModel( tag:"sawmill", file:"sawmill" ),
@@ -21,11 +20,11 @@
         VoxelModel( tag:"carpenter", file:"carpenter" ),
         VoxelModel( tag:"chemist", file:"chemist" ),
         VoxelModel( tag:"stairs_up", file:"stairs-up" ),
-        VoxelModel( tag:"stairs_down", file:"stairs_down" ),
+        VoxelModel( tag:"stairs_down", file:"stairs-down" ),
         VoxelModel( tag:"stairs_updown", file:"stairs-updown" ),
         VoxelModel( tag:"tailor", file:"tailor" ),
         VoxelModel( tag:"forge", file:"forge" ),
-        VoxelModel( tag:"pick", file:"pick" ),
+        VoxelModel( tag:"pick", file:"simplepick" ),
         VoxelModel( tag:"boulder", file:"boulder" ),
         VoxelModel( tag:"ore", file:"ore" ),
         VoxelModel( tag:"powder", file:"powder" ),
@@ -114,8 +113,8 @@
 
         VoxelModel( tag:"corpse", file:"corpse" ),
 
-        VoxelModel( tag:"pick_held", file:"pick_held" ),
-        VoxelModel( tag:"axe_held", file:"axe_held" ),
+        VoxelModel( tag:"pick_held", file:"simplepick_held" ),
+        VoxelModel( tag:"axe_held", file:"simpleaxe_held" ),
         VoxelModel( tag:"hoe", file:"hoe" ),
         VoxelModel( tag:"hoe_held", file:"hoe_held" ),
 
@@ -130,15 +129,15 @@
         VoxelModel( tag:"leatherworker", file:"leatherworker" ),
         VoxelModel( tag:"refinery", file:"refinery" ),
 
-        VoxelModel( tag:"lever_on", file:"lever_on" ),
-        VoxelModel( tag:"lever_off", file:"lever_off" ),
-        VoxelModel( tag:"pressure_plate", file:"pressure_plate" ),
-        VoxelModel( tag:"energy_door_open", file:"energy_door_open" ),
-        VoxelModel( tag:"energy_door_closed", file:"energy_door_closed" ),
-        VoxelModel( tag:"spikes_retracted", file:"spikes_retracted" ),
-        VoxelModel( tag:"spikes_extended", file:"spikes_extended" ),
-        VoxelModel( tag:"blades_retracted", file:"blades_retracted" ),
-        VoxelModel( tag:"blades_extended", file:"blades_extended" ),
+        VoxelModel( tag:"lever_on", file:"lever-on" ),
+        VoxelModel( tag:"lever_off", file:"lever-off" ),
+        VoxelModel( tag:"pressure_plate", file:"pressureplate" ),
+        VoxelModel( tag:"energy_door_open", file:"energydoor-open" ),
+        VoxelModel( tag:"energy_door_closed", file:"energydoor-closed" ),
+        VoxelModel( tag:"spikes_retracted", file:"spikes-retracted" ),
+        VoxelModel( tag:"spikes_extended", file:"spikes-extended" ),
+        VoxelModel( tag:"blades_retracted", file:"blades-retracted" ),
+        VoxelModel( tag:"blades_extended", file:"blades-extended" ),
         VoxelModel( tag:"stonefall", file:"stonefall" ),
         VoxelModel( tag:"door_open", file:"door_open" ),
         VoxelModel( tag:"floodgate_open", file:"floodgate_open" ),
@@ -154,6 +153,6 @@
         VoxelModel( tag:"gate_nand", file:"gate_nand" ),
         VoxelModel( tag:"gate_nor", file:"gate_nor" ),
         VoxelModel( tag:"gate_xor", file:"gate_xor" ),
-        VoxelModel( tag:"support", file:"support" ),*/
+        VoxelModel( tag:"support", file:"support" ),
     ]
 )
