@@ -12,6 +12,10 @@ mod dimensions;
 pub use dimensions::*;
 mod voxel_model;
 pub use voxel_model::*;
+mod name;
+pub use name::*;
+mod description;
+pub use description::*;
 
 pub mod spawner;
 

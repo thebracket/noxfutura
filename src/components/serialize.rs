@@ -377,6 +377,8 @@ pub fn serialize_world(world: &World) -> String {
         ComponentRegistration::of::<Dimensions>(),
         ComponentRegistration::of::<VoxelModel>(),
         ComponentRegistration::of::<WorldPosition>(),
+        ComponentRegistration::of::<Name>(),
+        ComponentRegistration::of::<Description>(),
     ];
     let tag_registrations = [TagRegistration::of::<Cordex>()];
 
@@ -398,6 +400,8 @@ pub fn deserialize_world(raw: String) -> World {
         ComponentRegistration::of::<Dimensions>(),
         ComponentRegistration::of::<VoxelModel>(),
         ComponentRegistration::of::<WorldPosition>(),
+        ComponentRegistration::of::<Name>(),
+        ComponentRegistration::of::<Description>(),
     ];
     let tag_registrations = [TagRegistration::of::<Cordex>()];
 

@@ -135,16 +135,23 @@ impl VoxRenderPass {
         use crate::components::*;
         self.instance_buffer.clear();
         let mut vox_instances = Vec::new();
-        let query = <(Read<Position>, Read<VoxelModel>)>::query();
+        let query = <(Read<Position>, Read<VoxelModel>, Read<Dimensions>)>::query();
         let mut n = 0;
-        for (pos, vm) in query.iter(&ecs) {
+        for (pos, vm, dims) in query.iter(&ecs) {
             if pos.z <= camera_z {
                 let first = self.vox_models.offsets[vm.index].0;
                 let last = self.vox_models.offsets[vm.index].1;
                 vox_instances.push((first, last, n));
                 n += 1;
 
-                self.instance_buffer.add3(pos.x as f32, pos.z as f32, pos.y as f32);
+                let mut x = pos.x as f32;
+                let mut y = pos.y as f32;
+                let z = pos.z as f32;
+
+                if dims.width == 3 { x -= 1.0; }
+                if dims.height == 3 { y -= 1.0; }
+
+                self.instance_buffer.add3(x, z, y);
                 self.instance_buffer.add3(1.0, 1.0, 1.0);
             }
         }

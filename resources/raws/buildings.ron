@@ -5,7 +5,91 @@
             name : "Cordex",
             components : [ BuildingComponent(item: "cordex_core", qty: 1) ],
             skill : [ BuildingSkill(skill: "Construction", difficulty: 25) ],
-            vox : "cordex"
-        )
+            vox : "cordex",
+            description : "This is you, the ship-borne AI trying to keep the motley crew of meat-bag morons from your ship alive.",
+            blocked: Some("-X-XXX-X-"),
+            provides : [ ],
+            dimensions: Some((3,3))
+        ),
+
+        BuildingDef(
+            tag: "ship_lamp",
+            name: "Lamp",
+            components : [ BuildingComponent(item: "lamp_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 25) ],
+            description: "A simple lamp, designed to provide light.",
+            vox : "ship_lamp",
+            provides : [ Light(radius: 5, color: (1.0, 1.0, 1.0))  ]
+        ),
+
+        BuildingDef(
+            tag : "ship_defense_turret",
+            name : "Ship Defense Turret",
+            components : [ BuildingComponent(item: "ship_turret_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 25) ],
+            vox : "ship_defense_turret",
+            description : "An automated ship defense turret, designed to deter critters and blackguards from entering the ship without permission. It has an angry personality.",
+            provides : [ ]
+        ),
+
+        BuildingDef(
+            tag : "cryo_bed",
+            name : "Cryogenic Bed",
+            components : [ BuildingComponent(item: "cryo_bed_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 10) ],
+            vox : "cryo_bed",
+            description : "An uncomfortable cryogenic bed, designed for long trips through the stars. It can double as a regular bed if you don't want to freeze anyone.",
+            provides : [ Sleep ]
+        ),
+
+        BuildingDef(
+            tag : "storage_locker",
+            name : "Storage Locker",
+            components : [ BuildingComponent(item: "storage_locker", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 10) ],
+            vox : "cabinet",
+            description : "A ship-mounted storage locker, pre-shipped with enough to survive settling a new world.",
+            provides : [ Storage ]
+        ),
+
+        BuildingDef(
+            tag : "solar_panel",
+            name : "Solar Panel",
+            components : [ BuildingComponent(item: "solar_panel_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 15) ],
+            vox : "solar_panel",
+            description : "An array of cells that convert solar energy into useful power, and wirelessly transmits it into Cordex's power banks.",
+            provides : [ Generator(energy: 10) ]
+        ),
+
+        BuildingDef(
+            tag : "battery",
+            name : "Battery Bank",
+            components : [ BuildingComponent(item: "battery_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 15) ],
+            vox : "battery",
+            description : "An array of large batteries, used for storing power.",
+            provides : [ EnergyStorage(energy: 20) ]
+        ),
+
+        BuildingDef(
+            tag : "rtg",
+            name : "Small Nuclear Power Generator",
+            components : [ BuildingComponent(item: "refined_plutonium", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 15) ],
+            vox : "rtg",
+            description : "An array of large batteries, used for storing power.",
+            provides : [ EnergyStorage(energy: 10), Generator(energy: 10), Light(radius: 5, color: (0.2, 1.0, 0.2)) ]
+        ),
+
+        BuildingDef(
+            tag : "small_replicator",
+            name : "Small replicator",
+            components : [ BuildingComponent(item: "replicator_unit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 15) ],
+            vox : "small_replicator",
+            description : "A portable device that can convert energy into matter, according to pre-programmed recipes. This model is designed for field-trips and can make tea and sandwiches.",
+            provides : [ ]
+        ),
     ]
 )
