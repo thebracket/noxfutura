@@ -12,6 +12,7 @@ mod strata;
 mod trees;
 mod water_features;
 mod game_components;
+mod debris;
 use crate::components::*;
 use legion::prelude::*;
 pub use primitive::Primitive;
@@ -78,7 +79,8 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
 
     set_worldgen_status("Blight");
     set_worldgen_status("Trail of debris");
-    set_worldgen_status("Escape pod");
+    debris::debris_trail(region, ship_loc, &mut world);
+
     set_worldgen_status("Settlers");
     set_worldgen_status("Features");
     set_worldgen_status("Looking for the map");
