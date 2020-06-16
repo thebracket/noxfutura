@@ -10,3 +10,10 @@ mod texarray;
 mod uniforms;
 pub mod frustrum;
 
+#[derive(Clone)]
+pub struct ChunkModel {
+    pub id : usize,
+    pub x : usize,
+    pub y : usize,
+    pub z : usize
+}

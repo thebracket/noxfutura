@@ -128,7 +128,8 @@ impl VoxRenderPass {
         gbuffer: &GBuffer,
         uniform_bg: &wgpu::BindGroup,
         camera_z: usize,
-        ecs: &World
+        ecs: &World,
+        chunk_models: &[super::ChunkModel]
     ) {
         // Instances builder
         use crate::components::*;
@@ -140,7 +141,6 @@ impl VoxRenderPass {
             if pos.z <= camera_z {
                 let first = self.vox_models.offsets[vm.index].0;
                 let last = self.vox_models.offsets[vm.index].1;
-                //assert!(first < last);
                 vox_instances.push((first, last, n));
                 n += 1;
 
@@ -148,6 +148,18 @@ impl VoxRenderPass {
                 self.instance_buffer.add3(1.0, 1.0, 1.0);
             }
         }
+        for m in chunk_models {
+            if m.z <= camera_z {
+                let first = self.vox_models.offsets[m.id].0;
+                let last = self.vox_models.offsets[m.id].1;
+                vox_instances.push((first, last, n));
+                n += 1;
+
+                self.instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
+                self.instance_buffer.add3(1.0, 1.0, 1.0);
+            }
+        }
+
         if !vox_instances.is_empty() {
             self.instance_buffer.update_buffer(context);
         }

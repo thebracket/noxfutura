@@ -23,6 +23,7 @@ pub struct PlayGame {
     rpass: Option<BlockRenderPass>,
     gbuffer_pass: Option<GBufferTestPass>,
     vox_pass : Option<VoxRenderPass>,
+    chunk_models: Vec<ChunkModel>,
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
@@ -41,7 +42,8 @@ impl PlayGame {
             rebuild_geometry: true,
             ecs: universe.create_world(),
             chunks: chunks::Chunks::empty(),
-            vox_pass : None
+            vox_pass : None,
+            chunk_models: Vec::new()
         }
     }
 
@@ -147,12 +149,14 @@ impl PlayGame {
             menu_bar.end(imgui);
         }
 
+        self.chunk_models.clear();
         pass.render(
             context,
             depth_id,
             frame,
             &mut self.chunks,
             camera_z as usize,
+            &mut self.chunk_models
         );
         self.vox_pass.as_mut().unwrap().render(
             context,
@@ -162,6 +166,7 @@ impl PlayGame {
             &pass.uniform_bind_group,
             camera_z as usize,
             &self.ecs,
+            &self.chunk_models,
         );
 
         let pass2 = self.gbuffer_pass.as_mut().unwrap();

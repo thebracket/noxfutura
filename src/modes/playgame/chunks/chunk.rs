@@ -1,10 +1,10 @@
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
-use crate::planet::{Region, TileType};
+use crate::planet::{Region, TileType, StairsType};
 use crate::utils::{add_floor_geometry, add_ramp_geometry, mapidx};
-use std::collections::HashSet;
 use ultraviolet::Vec3;
+use super::super::ChunkModel;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -15,6 +15,7 @@ pub struct Chunk {
     vb: VertexBuffer<f32>,
     element_count: [u32; CHUNK_SIZE],
     pub center_pos: Vec3,
+    pub chunk_models : Vec<ChunkModel>
 }
 
 impl Chunk {
@@ -42,6 +43,7 @@ impl Chunk {
                 (z * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,
             )
                 .into(),
+            chunk_models: Vec::new()
         }
     }
 
@@ -49,6 +51,7 @@ impl Chunk {
         if !self.dirty {
             return;
         }
+        self.chunk_models.clear();
 
         let mut count_empty = 0;
         self.cells.iter().for_each(|idx| {
@@ -132,6 +135,21 @@ impl Chunk {
                                             mat,
                                         );
                                     }
+                                    TileType::Stairs{direction} => {
+                                        let tag = match direction {
+                                            StairsType::Up => "stairs_up",
+                                            StairsType::Down => "stairs_down",
+                                            StairsType::UpDown => "stairs_updown"
+                                        };
+                                        self.chunk_models.push(
+                                            ChunkModel{
+                                                id: crate::raws::RAWS.read().vox.get_model_idx(tag),
+                                                x: x + self.base.0,
+                                                y: y + self.base.1,
+                                                z: z + self.base.2
+                                            }
+                                        );
+                                    }
                                     _ => {}
                                 }
 
@@ -174,10 +192,12 @@ impl Chunk {
         }
     }
 
-    pub fn maybe_render_chunk(&self, camera_z: usize) -> Option<(&VertexBuffer<f32>, u32)> {
+    pub fn maybe_render_chunk(&self, camera_z: usize, render_chunks: &mut Vec<ChunkModel>) -> Option<(&VertexBuffer<f32>, u32)> {
         if self.t == ChunkType::Empty {
             return None;
         }
+
+        render_chunks.extend_from_slice(&self.chunk_models);
 
         //let camera_ceiling = camera_z + 20;
         let mut n_elements = 0;

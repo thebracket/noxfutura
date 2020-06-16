@@ -79,7 +79,7 @@ fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &st
         "ship_defense_turret" => add_building(region, "ship_defense_turret", x, y, z, ecs),
         "small_replicator" => add_building(region, "small_replicator", x, y, z, ecs),
         "rtg" => add_building(region, "rtg", x, y, z, ecs),
-        "ship_door" => add_building(region, "ship_door", x, y, z, ecs),
+        "ship_door" => add_building(region, "energy_door_open", x, y, z, ecs),
         "ship_lamp" => add_building(region, "ship_lamp", x, y, z, ecs),
         _ => {
             println!("Warning: No decoder for {}", name);
