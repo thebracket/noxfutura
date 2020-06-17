@@ -12,9 +12,9 @@ pub struct Raws {
     pub buildings: Buildings,
     pub vox: VoxelModels,
     pub species: Species,
-    pub names : Names,
+    pub names: Names,
     pub professions: Professions,
-    pub clothing: Clothing
+    pub clothing: Clothing,
 }
 
 impl Raws {
@@ -29,7 +29,7 @@ impl Raws {
             species: Species::new(),
             names: Names::new(),
             professions: Professions::new(),
-            clothing: Clothing::new()
+            clothing: Clothing::new(),
         }
     }
 

@@ -1,6 +1,6 @@
 use crate::components::prelude::*;
-use parking_lot::Mutex;
 use legion::prelude::*;
+use parking_lot::Mutex;
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "32327503-a48b-483a-bde4-cc2825164b45"]
@@ -17,7 +17,7 @@ impl Identity {
         let mut lock = IDENTITY.lock();
         *lock += 1;
         let id = *lock;
-        Self{ id }
+        Self { id }
     }
 }
 

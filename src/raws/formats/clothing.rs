@@ -1,7 +1,7 @@
+use super::ProfClothLoc;
 use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use super::ProfClothLoc;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Clothing {
@@ -34,7 +34,7 @@ pub struct ClothingDef {
     pub model: String,
     pub item_model: String,
     pub colors: Vec<String>,
-    pub slot: ProfClothLoc
+    pub slot: ProfClothLoc,
 }
 
 pub fn load_clothing() -> Clothing {

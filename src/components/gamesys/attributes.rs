@@ -8,5 +8,5 @@ pub struct Attributes {
     pub con: i32,
     pub int: i32,
     pub wis: i32,
-    pub cha: i32
+    pub cha: i32,
 }

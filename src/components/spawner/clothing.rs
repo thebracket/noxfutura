@@ -1,15 +1,19 @@
 use crate::components::*;
-use legion::prelude::*;
 use crate::raws::*;
 use bracket_random::prelude::*;
+use legion::prelude::*;
 
-pub fn spawn_clothing_from_raws_worn(ecs: &mut World, tag: &str, wearer: usize, rng: &mut RandomNumberGenerator) -> Vec<(usize, (f32, f32, f32))> {
+pub fn spawn_clothing_from_raws_worn(
+    ecs: &mut World,
+    tag: &str,
+    wearer: usize,
+    rng: &mut RandomNumberGenerator,
+) -> Vec<(usize, (f32, f32, f32))> {
     let mut result = Vec::new();
     println!("Spawning: {}", tag);
 
     let cd = RAWS.read().clothing.clothing_by_tag(tag);
     if let Some(cd) = cd {
-
         let index = RAWS.read().vox.get_model_idx(&cd.model);
 
         let color = get_color(rng.random_slice_entry(&cd.colors));
@@ -18,11 +22,13 @@ pub fn spawn_clothing_from_raws_worn(ecs: &mut World, tag: &str, wearer: usize, 
             (Item {},),
             vec![(
                 Identity::new(),
-                ItemWorn{ wearer },
-                Name{name: cd.name },
-                Description{desc: cd.description },
-                crate::components::VoxelModel{ index },
-                Tint{color}
+                ItemWorn { wearer },
+                Name { name: cd.name },
+                Description {
+                    desc: cd.description,
+                },
+                crate::components::VoxelModel { index },
+                Tint { color },
             )],
         );
 

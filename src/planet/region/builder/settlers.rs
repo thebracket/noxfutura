@@ -138,12 +138,18 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
         });
     }
 
-    let name = Name{ name: rlock.names.random_settler_name(rng, species.gender_identity) };
+    let name = Name {
+        name: rlock
+            .names
+            .random_settler_name(rng, species.gender_identity),
+    };
 
-    let profession_def = rng.random_slice_entry(&rlock.professions.professions).unwrap();
+    let profession_def = rng
+        .random_slice_entry(&rlock.professions.professions)
+        .unwrap();
     println!("{} ({})", name.name, profession_def.name);
 
-    let attr = Attributes{
+    let attr = Attributes {
         str: rng.roll_dice(3, 6) + profession_def.modifiers.str.unwrap_or(0),
         dex: rng.roll_dice(3, 6) + profession_def.modifiers.dex.unwrap_or(0),
         con: rng.roll_dice(3, 6) + profession_def.modifiers.con.unwrap_or(0),
@@ -161,30 +167,28 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
     let clothing_list = match gi {
         GenderIdentity::Male => &profession_def.clothing.male,
         GenderIdentity::Female => &profession_def.clothing.female,
-        GenderIdentity::Neutral => {
-            match rng.range(1,2) {
-                1 => &profession_def.clothing.male,
-                _ => &profession_def.clothing.female
-            }
-        }
+        GenderIdentity::Neutral => match rng.range(1, 2) {
+            1 => &profession_def.clothing.male,
+            _ => &profession_def.clothing.female,
+        },
     };
     use crate::components::spawner::spawn_clothing_from_raws_worn;
 
     for c in clothing_list.iter() {
         let spawned = spawn_clothing_from_raws_worn(ecs, &c.tag, settler_id, rng);
         for s in spawned.iter() {
-            composite.layers.push(VoxLayer{
+            composite.layers.push(VoxLayer {
                 model: s.0,
-                tint: s.1
+                tint: s.1,
             });
         }
     }
     for c in profession_def.clothing.both.iter() {
         let spawned = spawn_clothing_from_raws_worn(ecs, &c.tag, settler_id, rng);
         for s in spawned.iter() {
-            composite.layers.push(VoxLayer{
+            composite.layers.push(VoxLayer {
                 model: s.0,
-                tint: s.1
+                tint: s.1,
             });
         }
     }
@@ -201,8 +205,10 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             species,
             composite,
             name,
-            Tagline{name: profession_def.name.clone()},
-            attr
+            Tagline {
+                name: profession_def.name.clone(),
+            },
+            attr,
         )],
     );
 }
