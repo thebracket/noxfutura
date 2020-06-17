@@ -379,8 +379,16 @@ pub fn serialize_world(world: &World) -> String {
         ComponentRegistration::of::<WorldPosition>(),
         ComponentRegistration::of::<Name>(),
         ComponentRegistration::of::<Description>(),
+        ComponentRegistration::of::<Tint>(),
+        ComponentRegistration::of::<Species>(),
+        ComponentRegistration::of::<CompositeRender>(),
     ];
-    let tag_registrations = [TagRegistration::of::<Cordex>()];
+    let tag_registrations = [
+        TagRegistration::of::<Cordex>(),
+        TagRegistration::of::<Building>(),
+        TagRegistration::of::<Item>(),
+        TagRegistration::of::<Sentient>(),
+    ];
 
     use std::iter::FromIterator;
     let ser_helper = SerializeImpl {
@@ -402,8 +410,16 @@ pub fn deserialize_world(raw: String) -> World {
         ComponentRegistration::of::<WorldPosition>(),
         ComponentRegistration::of::<Name>(),
         ComponentRegistration::of::<Description>(),
+        ComponentRegistration::of::<Tint>(),
+        ComponentRegistration::of::<Species>(),
+        ComponentRegistration::of::<CompositeRender>(),
     ];
-    let tag_registrations = [TagRegistration::of::<Cordex>()];
+    let tag_registrations = [
+        TagRegistration::of::<Cordex>(),
+        TagRegistration::of::<Building>(),
+        TagRegistration::of::<Item>(),
+        TagRegistration::of::<Sentient>(),
+    ];
 
     use std::iter::FromIterator;
     let ser_helper = SerializeImpl {

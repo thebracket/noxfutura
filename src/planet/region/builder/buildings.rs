@@ -11,7 +11,7 @@ fn load_ship() -> XpFile {
     XpFile::read(&mut f).unwrap()
 }
 
-pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World) {
+pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World) -> usize {
     let z = ground_z(region, crash_site.x as usize, crash_site.y as usize) - 2;
     let ship = load_ship();
 
@@ -51,6 +51,7 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World
             }
         }
     }
+    z
 }
 
 fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &str, solid: bool, ecs: &mut World) {

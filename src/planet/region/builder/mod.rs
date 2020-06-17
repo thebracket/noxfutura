@@ -13,6 +13,7 @@ mod trees;
 mod water_features;
 mod game_components;
 mod debris;
+mod settlers;
 use crate::components::*;
 use legion::prelude::*;
 pub use primitive::Primitive;
@@ -72,7 +73,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
 
     set_worldgen_status("Crashing the ship");
     let ship_loc = Point::new(128, 128);
-    buildings::build_escape_pod(region, &ship_loc, &mut world);
+    let crash_z = buildings::build_escape_pod(region, &ship_loc, &mut world);
 
     set_worldgen_status("Trees");
     trees::plant_trees(region, &biome_info, &mut rng);
@@ -82,6 +83,8 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     debris::debris_trail(region, ship_loc, &mut world);
 
     set_worldgen_status("Settlers");
+    settlers::spawn_settlers(&mut world, &mut rng, &ship_loc, crash_z);
+
     set_worldgen_status("Features");
     set_worldgen_status("Looking for the map");
 

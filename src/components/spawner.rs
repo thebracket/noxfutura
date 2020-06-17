@@ -19,7 +19,8 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x:usize, y:usize, z:usize) {
                     dims,
                     VoxelModel{index: rlock.vox.get_model_idx(&building_def.vox)},
                     Description{desc: building_def.description.clone()},
-                    Position{x, y, z}
+                    Position{x, y, z},
+                    Tint{color: (1.0, 1.0, 1.0)}
                 )
             ]
         );

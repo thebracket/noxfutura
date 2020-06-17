@@ -8,3 +8,5 @@ mod buildings;
 pub use buildings::*;
 mod vox;
 pub use vox::*;
+mod species;
+pub use species::*;

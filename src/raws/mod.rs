@@ -10,7 +10,8 @@ pub struct Raws {
     pub matmap: material_map::MaterialMap,
     pub plants: Plants,
     pub buildings: Buildings,
-    pub vox: VoxelModels
+    pub vox: VoxelModels,
+    pub species: Species
 }
 
 impl Raws {
@@ -21,7 +22,8 @@ impl Raws {
             matmap: material_map::MaterialMap::new(),
             plants: Plants::new(),
             buildings: Buildings::new(),
-            vox: VoxelModels::new()
+            vox: VoxelModels::new(),
+            species: Species::new()
         }
     }
 
@@ -31,6 +33,7 @@ impl Raws {
         self.plants = load_plants();
         self.vox = load_vox();
         self.buildings = load_buildings();
+        self.species = load_species();
     }
 }
 

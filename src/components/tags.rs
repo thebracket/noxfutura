@@ -9,3 +9,15 @@ pub struct Cordex {}
 pub struct Building {
 
 }
+
+#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
+#[uuid = "3e878aaa-b147-4d6f-8a03-ce0acdb26191"]
+pub struct Item {
+
+}
+
+#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
+#[uuid = "d21ed260-2438-417e-8701-6fb276c4ba09"]
+pub struct Sentient {
+
+}

@@ -1,0 +1,63 @@
+(
+    species: [
+        SpeciesDef(
+            name: "Human", male_name: "Man", female_name: "Woman", group_name: "People",
+            description: "A bipedal ape-descendant with an unhealthy obsession with money and power.",
+            parts: [
+                SpeciesPart( tag: "head", qty: 1, size: 10 ),
+                SpeciesPart( tag: "neck", qty: 1, size: 1 ),
+                SpeciesPart( tag: "torso", qty: 1, size: 50 ),
+                SpeciesPart( tag: "left_arm", qty: 1, size: 10 ),
+                SpeciesPart( tag: "left_hand", qty: 1, size: 2 ),
+                SpeciesPart( tag: "right_arm", qty: 1, size: 10 ),
+                SpeciesPart( tag: "right_hand", qty: 1, size: 2 ),
+                SpeciesPart( tag: "left_leg", qty: 1, size: 10 ),
+                SpeciesPart( tag: "left_foot", qty: 1, size: 2 ),
+                SpeciesPart( tag: "right_leg", qty: 1, size: 10 ),
+                SpeciesPart( tag: "right_foot", qty: 1, size: 2 ),
+            ],
+            diet: Omnivore,
+            alignment: Neutral,
+            max_age: 114,
+            infant_age: 3,
+            child_age: 16,
+            skin_colors: [
+                ColorDef( tag: "Pale", r: 237, g: 232, b: 226 ),
+                ColorDef( tag: "Peach", r: 255, g: 216, b: 173 ),
+                ColorDef( tag: "Tanned", r: 255, g: 205, b: 148 ),
+                ColorDef( tag: "Wan", r:234, g:192, b: 134 ),
+                ColorDef( tag: "Yellow", r:255, g:227, b:159 ),
+                ColorDef( tag: "Red", r:113, g:2, b:0 ),
+                ColorDef( tag: "Dark", r:198, g:134, b:66 ),
+                ColorDef( tag: "Darker", r:141, g:85, b:36 ),
+                ColorDef( tag: "Really Dark", r:56, g:0, b:0 )
+            ],
+            hair_colors: [
+                ColorDef( tag: "Black", r:9, g:8, b:6 ),
+                ColorDef( tag: "OffBlack", r:44, g:34, b:43  ),
+                ColorDef( tag: "DarkestBrown", r:59, g:49, b:38 ),
+                ColorDef( tag: "Mocha", r:78, g:87, b:83  ),
+                ColorDef( tag: "Chestnut", r:90, g:68, b:68  ),
+                ColorDef( tag: "LightChestnut", r:106, g:78, b:66  ),
+                ColorDef( tag: "DarkGoldenBrown", r:05, g:72, b:56  ),
+                ColorDef( tag: "LightGoldenBrown", r:167, g:133, b:106  ),
+                ColorDef( tag: "DarkHoneyBlonde", r:194, g:151, b:123  ),
+                ColorDef( tag: "BleachedBlonde", r:220, g:209, b:196  ),
+                ColorDef( tag: "LightAshBlonde", r:222, g:168, b:153  ),
+                ColorDef( tag: "LightAshBrown", r:151, g:121, b:97  ),
+                ColorDef( tag: "LightestBlonde", r:230, g:206, b:168  ),
+                ColorDef( tag: "PaleGoldenBlonde", r:229, g:200, b:168  ),
+                ColorDef( tag: "StrawberryBlonde", r:165, g:137, b:70  ),
+                ColorDef( tag: "LightAuburn", r:146, g:85, b:61  ),
+                ColorDef( tag: "DarkAuburn", r:83, g:61, b:53  ),
+                ColorDef( tag: "DarkestGrey", r:113, g:99, b:93  ),
+                ColorDef( tag: "MediumGrey",  r:183, g:166, b:158  ),
+                ColorDef( tag: "LightGrey", r:214, g:196, b:194  ),
+                ColorDef( tag: "WhiteBlonde", r:255, g:245, b:225  ),
+                ColorDef( tag: "PlatinumBlonde", r:202, g:191, b:177  ),
+                ColorDef( tag: "RussetRed", r:141, g:74, b:67  ),
+                ColorDef( tag: "Terracotta", r:181, g:82, b:57  )
+            ]
+        )
+    ]
+)
