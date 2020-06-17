@@ -34,23 +34,73 @@ impl TextureArray {
                 .replace("-r.jpg", "")
                 .replace("-m.jpg", "")
                 .replace("-t.jpg", "");
+            assert!(!stubname.ends_with(".jpg"));
             if !tex_map.contains_key(&stubname) {
                 tex_map.insert(stubname, i);
             }
         }
-        //println!("{:#?}", tex_map);
-        {
-            let mut rawlock = crate::raws::RAWS.write();
-            let mats = rawlock.materials.materials.clone();
-            rawlock.matmap.build(&tex_map, &mats);
-        }
 
         // Make an atlas
-        let atlas_rows = 16;
+        //let atlas_rows = 16;
         //println!("{} rows", atlas_rows);
         let mut atlas_data = image::DynamicImage::new_rgba8(ATLAS_W, ATLAS_H);
 
-        texture_filenames
+        let mut matmap = HashMap::<String, usize>::new();
+        for (i, (k, v)) in tex_map.iter().enumerate() {
+            // i is index, k is stub-name, v is the index in the texture array and can be largely ignored?
+            let albdeo_fn = format!("resources/terrain/{}-t.jpg", k);
+            let normal_fn = format!("resources/terrain/{}-n.jpg", k);
+            let rough_fn = format!("resources/terrain/{}-r.jpg", k);
+            let ao_fn = format!("resources/terrain/{}-ao.jpg", k);
+            let metal_fn = format!("resources/terrain/{}-m.jpg", k);
+
+            matmap.insert(k.clone(), i * 3);
+
+            //println!("Constructing {}: {}", i, k);
+            let albdeo = image::open(&albdeo_fn).unwrap().into_rgba();
+            let normal = image::open(&normal_fn).unwrap().into_rgba();
+            let rough = image::open(&rough_fn).unwrap().into_rgba();
+            let ao = image::open(&ao_fn).unwrap().into_rgba();
+            let metal  = if std::path::Path::new(&metal_fn).exists() {
+                image::open(&metal_fn).unwrap().into_rgba()
+            } else {
+                image::open("resources/metal-template.jpg").unwrap().into_rgba()
+            };
+
+            let base_i = i * 3;
+            // Paste the albedo
+            let x = (base_i % ATLAS_COLS) * TEXTURE_SIZE;
+            let y = (base_i / ATLAS_COLS) * TEXTURE_SIZE;
+            image::imageops::overlay(&mut atlas_data, &albdeo, x as u32, y as u32);
+
+            // Paste the normal
+            let x = ((base_i+1) % ATLAS_COLS) * TEXTURE_SIZE;
+            let y = ((base_i+1) / ATLAS_COLS) * TEXTURE_SIZE;
+            image::imageops::overlay(&mut atlas_data, &normal, x as u32, y as u32);
+
+            let mut fancy = ao.clone();
+            for iy in 0..TEXTURE_SIZE as u32 {
+                for ix in 0..TEXTURE_SIZE as u32 {
+                    let aop = ao.get_pixel(ix, iy);
+                    let roughp = rough.get_pixel(ix, iy);
+                    let metalp = metal.get_pixel(ix, iy);
+                    let p = image::Rgba::<u8>([aop[0], roughp[0], metalp[0], 255]);
+                    fancy.put_pixel(ix, iy, p);
+                }
+            }
+            let x = ((base_i+2) % ATLAS_COLS) * TEXTURE_SIZE;
+            let y = ((base_i+2) / ATLAS_COLS) * TEXTURE_SIZE;
+            image::imageops::overlay(&mut atlas_data, &fancy, x as u32, y as u32);
+        }
+
+        {
+            let mut rawlock = crate::raws::RAWS.write();
+            let mats = rawlock.materials.materials.clone();
+            rawlock.matmap.build(&matmap, &mats);
+        }
+
+        // The old way that works
+        /*texture_filenames
             .iter()
             .enumerate()
             .for_each(|(i, image_filename)| {
@@ -59,8 +109,9 @@ impl TextureArray {
                 let x = (i % ATLAS_COLS) * TEXTURE_SIZE;
                 let y = (i / ATLAS_COLS) * TEXTURE_SIZE;
                 image::imageops::overlay(&mut atlas_data, &img, x as u32, y as u32);
-            });
+            });*/
         //image::save_buffer("atlas.png", &atlas_data.raw_pixels(), ATLAS_W, ATLAS_H, image::ColorType::RGBA(8));
+        // End old way
 
         // Build the texture
         let size = wgpu::Extent3d {
