@@ -152,6 +152,8 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
         cha: rng.roll_dice(3, 6) + profession_def.modifiers.cha.unwrap_or(0),
     };
 
+    let gi = species.gender_identity.clone();
+
     let entity = ecs.insert(
         (Building {},),
         vec![(
@@ -169,4 +171,20 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
     );
 
     // Spawning clothing and equipment goes here
+    let clothing_list = match gi {
+        GenderIdentity::Male => &profession_def.clothing.male,
+        GenderIdentity::Female => &profession_def.clothing.female,
+        GenderIdentity::Neutral => {
+            match rng.range(1,2) {
+                1 => &profession_def.clothing.male,
+                _ => &profession_def.clothing.female
+            }
+        }
+    };
+    for c in clothing_list.iter() {
+        println!("Spawn: {}", c.tag);
+    }
+    for c in profession_def.clothing.both.iter() {
+        println!("Spawn: {}", c.tag);
+    }
 }
