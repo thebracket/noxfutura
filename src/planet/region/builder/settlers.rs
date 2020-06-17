@@ -139,7 +139,18 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
     }
 
     let name = Name{ name: rlock.names.random_settler_name(rng, species.gender_identity) };
-    println!("{}", name.name);
+
+    let profession_def = rng.random_slice_entry(&rlock.professions.professions).unwrap();
+    println!("{} ({})", name.name, profession_def.name);
+
+    let attr = Attributes{
+        str: rng.roll_dice(3, 6) + profession_def.modifiers.str.unwrap_or(0),
+        dex: rng.roll_dice(3, 6) + profession_def.modifiers.dex.unwrap_or(0),
+        con: rng.roll_dice(3, 6) + profession_def.modifiers.con.unwrap_or(0),
+        int: rng.roll_dice(3, 6) + profession_def.modifiers.int.unwrap_or(0),
+        wis: rng.roll_dice(3, 6) + profession_def.modifiers.wis.unwrap_or(0),
+        cha: rng.roll_dice(3, 6) + profession_def.modifiers.cha.unwrap_or(0),
+    };
 
     let entity = ecs.insert(
         (Building {},),
@@ -151,7 +162,11 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             Position { x, y, z },
             species,
             composite,
-            name
+            name,
+            Tagline{name: profession_def.name.clone()},
+            attr
         )],
     );
+
+    // Spawning clothing and equipment goes here
 }

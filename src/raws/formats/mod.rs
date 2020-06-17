@@ -12,3 +12,5 @@ mod species;
 pub use species::*;
 mod names;
 pub use names::*;
+mod professions;
+pub use professions::*;
