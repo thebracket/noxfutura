@@ -1,4 +1,4 @@
-use super::*;
+use crate::components::*;
 use legion::prelude::*;
 
 pub fn spawn_building(ecs: &mut World, tag: &str, x:usize, y:usize, z:usize) {
