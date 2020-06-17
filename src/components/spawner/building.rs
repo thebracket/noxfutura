@@ -19,6 +19,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
         let entity = ecs.insert(
             (Building {},),
             vec![(
+                Identity::new(),
                 Name {
                     name: building_def.name.clone(),
                 },

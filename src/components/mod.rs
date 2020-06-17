@@ -12,6 +12,10 @@ mod text;
 pub use text::*;
 mod gamesys;
 pub use gamesys::*;
+mod items;
+pub use items::*;
+mod identity;
+pub use identity::*;
 
 pub mod spawner;
 
@@ -46,6 +50,8 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         ComponentRegistration::of::<CompositeRender>(),
         ComponentRegistration::of::<Tagline>(),
         ComponentRegistration::of::<Attributes>(),
+        ComponentRegistration::of::<ItemWorn>(),
+        ComponentRegistration::of::<Identity>(),
     ];
     let tag_registrations = vec![
         TagRegistration::of::<Cordex>(),

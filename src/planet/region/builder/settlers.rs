@@ -154,21 +154,8 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
 
     let gi = species.gender_identity.clone();
 
-    let entity = ecs.insert(
-        (Building {},),
-        vec![(
-            Dimensions {
-                width: 1,
-                height: 1,
-            },
-            Position { x, y, z },
-            species,
-            composite,
-            name,
-            Tagline{name: profession_def.name.clone()},
-            attr
-        )],
-    );
+    let id = Identity::new();
+    let settler_id = id.id;
 
     // Spawning clothing and equipment goes here
     let clothing_list = match gi {
@@ -181,10 +168,41 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             }
         }
     };
+    use crate::components::spawner::spawn_clothing_from_raws_worn;
+
     for c in clothing_list.iter() {
-        println!("Spawn: {}", c.tag);
+        let spawned = spawn_clothing_from_raws_worn(ecs, &c.tag, settler_id, rng);
+        for s in spawned.iter() {
+            composite.layers.push(VoxLayer{
+                model: s.0,
+                tint: s.1
+            });
+        }
     }
     for c in profession_def.clothing.both.iter() {
-        println!("Spawn: {}", c.tag);
+        let spawned = spawn_clothing_from_raws_worn(ecs, &c.tag, settler_id, rng);
+        for s in spawned.iter() {
+            composite.layers.push(VoxLayer{
+                model: s.0,
+                tint: s.1
+            });
+        }
     }
+
+    ecs.insert(
+        (Building {},),
+        vec![(
+            id,
+            Dimensions {
+                width: 1,
+                height: 1,
+            },
+            Position { x, y, z },
+            species,
+            composite,
+            name,
+            Tagline{name: profession_def.name.clone()},
+            attr
+        )],
+    );
 }

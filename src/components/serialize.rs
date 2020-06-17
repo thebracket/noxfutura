@@ -423,5 +423,7 @@ pub fn deserialize_world(raw: String) -> World {
     let mut deserializer = ron::Deserializer::from_str(&raw).unwrap();
     legion::serialize::de::deserialize(&mut deserialized_world, &de_helper, &mut deserializer)
         .unwrap();
+
+    super::rebuild_identity(&deserialized_world);
     deserialized_world
 }

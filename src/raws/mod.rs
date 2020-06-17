@@ -13,7 +13,8 @@ pub struct Raws {
     pub vox: VoxelModels,
     pub species: Species,
     pub names : Names,
-    pub professions: Professions
+    pub professions: Professions,
+    pub clothing: Clothing
 }
 
 impl Raws {
@@ -27,7 +28,8 @@ impl Raws {
             vox: VoxelModels::new(),
             species: Species::new(),
             names: Names::new(),
-            professions: Professions::new()
+            professions: Professions::new(),
+            clothing: Clothing::new()
         }
     }
 
@@ -40,6 +42,7 @@ impl Raws {
         self.species = load_species();
         self.names = load_names();
         self.professions = load_professions();
+        self.clothing = load_clothing();
     }
 }
 

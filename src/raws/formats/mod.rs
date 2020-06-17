@@ -14,3 +14,5 @@ mod names;
 pub use names::*;
 mod professions;
 pub use professions::*;
+mod clothing;
+pub use clothing::*;

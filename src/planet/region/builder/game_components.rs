@@ -8,6 +8,7 @@ pub fn add_game_components(world: &mut World, hm: &[u8], crash_site: Point) {
         (Cordex {},),
         (0..1).map(|_| {
             (
+                Identity::new(),
                 Position {
                     x: 128,
                     y: 128,
