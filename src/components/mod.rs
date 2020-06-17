@@ -1,27 +1,15 @@
-mod camera;
-pub use camera::*;
-mod position;
-pub use position::*;
 mod tags;
 pub use tags::*;
-mod world_position;
-pub use world_position::*;
 mod calendar;
 pub use calendar::*;
-mod dimensions;
-pub use dimensions::*;
-mod voxel_model;
-pub use voxel_model::*;
-mod name;
-pub use name::*;
-mod description;
-pub use description::*;
-mod tint;
-pub use tint::*;
 mod species;
 pub use species::*;
-mod composite_render;
-pub use composite_render::*;
+mod spatial;
+pub use spatial::*;
+mod render;
+pub use render::*;
+mod text;
+pub use text::*;
 
 pub mod spawner;
 

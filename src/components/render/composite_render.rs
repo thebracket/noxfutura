@@ -1,4 +1,4 @@
-use super::prelude::*;
+use crate::components::prelude::*;
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Debug, PartialEq)]
 #[uuid = "5c7ec587-0072-4e6d-8af0-64ef4c54f809"]
