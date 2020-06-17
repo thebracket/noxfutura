@@ -138,6 +138,9 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
         });
     }
 
+    let name = Name{ name: rlock.names.random_settler_name(rng, species.gender_identity) };
+    println!("{}", name.name);
+
     let entity = ecs.insert(
         (Building {},),
         vec![(
@@ -148,6 +151,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             Position { x, y, z },
             species,
             composite,
+            name
         )],
     );
 }

@@ -12,6 +12,7 @@ pub struct Raws {
     pub buildings: Buildings,
     pub vox: VoxelModels,
     pub species: Species,
+    pub names : Names
 }
 
 impl Raws {
@@ -24,6 +25,7 @@ impl Raws {
             buildings: Buildings::new(),
             vox: VoxelModels::new(),
             species: Species::new(),
+            names: Names::new()
         }
     }
 
@@ -34,6 +36,7 @@ impl Raws {
         self.vox = load_vox();
         self.buildings = load_buildings();
         self.species = load_species();
+        self.names = load_names();
     }
 }
 
