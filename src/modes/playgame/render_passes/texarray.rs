@@ -99,20 +99,6 @@ impl TextureArray {
             rawlock.matmap.build(&matmap, &mats);
         }
 
-        // The old way that works
-        /*texture_filenames
-            .iter()
-            .enumerate()
-            .for_each(|(i, image_filename)| {
-                //println!("Loading {} for Atlas, image #{}", image_filename, i);
-                let img = image::open(&image_filename).unwrap().into_rgba();
-                let x = (i % ATLAS_COLS) * TEXTURE_SIZE;
-                let y = (i / ATLAS_COLS) * TEXTURE_SIZE;
-                image::imageops::overlay(&mut atlas_data, &img, x as u32, y as u32);
-            });*/
-        //image::save_buffer("atlas.png", &atlas_data.raw_pixels(), ATLAS_W, ATLAS_H, image::ColorType::RGBA(8));
-        // End old way
-
         // Build the texture
         let size = wgpu::Extent3d {
             width: ATLAS_W as u32,
@@ -123,16 +109,33 @@ impl TextureArray {
             label,
             size,
             array_layer_count: 1,
-            mip_level_count: 1,
+            mip_level_count: 3,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format: wgpu::TextureFormat::Rgba8Unorm,
             usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::COPY_DST,
         });
 
+        let mut pixelbuf = atlas_data.raw_pixels().clone();
+        let mip1 = pixelbuf.len();
+        pixelbuf.extend_from_slice(&atlas_data.clone().resize_exact(2048, 2048, image::FilterType::Gaussian).raw_pixels());
+        let mip2 = pixelbuf.len();
+        pixelbuf.extend_from_slice(&atlas_data.clone().resize_exact(1024, 1024, image::FilterType::Gaussian).raw_pixels());
+
+        let size1 = wgpu::Extent3d {
+            width: ATLAS_W as u32 / 2,
+            height: ATLAS_H as u32 / 2,
+            depth: 1,
+        };
+        let size2 = wgpu::Extent3d {
+            width: ATLAS_W as u32 / 4,
+            height: ATLAS_H as u32 / 4,
+            depth: 1,
+        };
+
         let buffer = context
             .device
-            .create_buffer_with_data(&atlas_data.raw_pixels(), wgpu::BufferUsage::COPY_SRC);
+            .create_buffer_with_data(&pixelbuf, wgpu::BufferUsage::COPY_SRC);
 
         let mut encoder = context
             .device
@@ -154,6 +157,38 @@ impl TextureArray {
                 origin: wgpu::Origin3d::ZERO,
             },
             size,
+        );
+
+        encoder.copy_buffer_to_texture(
+            wgpu::BufferCopyView {
+                buffer: &buffer,
+                offset: mip1 as u64,
+                bytes_per_row: 4 * 2048,
+                rows_per_image: 2048,
+            },
+            wgpu::TextureCopyView {
+                texture: &texture,
+                mip_level: 1,
+                array_layer: 0,
+                origin: wgpu::Origin3d::ZERO,
+            },
+            size1,
+        );
+
+        encoder.copy_buffer_to_texture(
+            wgpu::BufferCopyView {
+                buffer: &buffer,
+                offset: mip2 as u64,
+                bytes_per_row: 4 * 1024,
+                rows_per_image: 1024,
+            },
+            wgpu::TextureCopyView {
+                texture: &texture,
+                mip_level: 2,
+                array_layer: 0,
+                origin: wgpu::Origin3d::ZERO,
+            },
+            size2,
         );
 
         let cmd_buffer = encoder.finish();
