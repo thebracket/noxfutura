@@ -370,25 +370,7 @@ impl legion::serialize::de::WorldDeserializer for DeserializeImpl {
 use super::*;
 
 pub fn serialize_world(world: &World) -> String {
-    let comp_registrations = [
-        ComponentRegistration::of::<Position>(),
-        ComponentRegistration::of::<CameraOptions>(),
-        ComponentRegistration::of::<Calendar>(),
-        ComponentRegistration::of::<Dimensions>(),
-        ComponentRegistration::of::<VoxelModel>(),
-        ComponentRegistration::of::<WorldPosition>(),
-        ComponentRegistration::of::<Name>(),
-        ComponentRegistration::of::<Description>(),
-        ComponentRegistration::of::<Tint>(),
-        ComponentRegistration::of::<Species>(),
-        ComponentRegistration::of::<CompositeRender>(),
-    ];
-    let tag_registrations = [
-        TagRegistration::of::<Cordex>(),
-        TagRegistration::of::<Building>(),
-        TagRegistration::of::<Item>(),
-        TagRegistration::of::<Sentient>(),
-    ];
+    let (comp_registrations, tag_registrations) = super::component_registration();
 
     use std::iter::FromIterator;
     let ser_helper = SerializeImpl {
@@ -401,25 +383,7 @@ pub fn serialize_world(world: &World) -> String {
 }
 
 pub fn deserialize_world(raw: String) -> World {
-    let comp_registrations = [
-        ComponentRegistration::of::<Position>(),
-        ComponentRegistration::of::<CameraOptions>(),
-        ComponentRegistration::of::<Calendar>(),
-        ComponentRegistration::of::<Dimensions>(),
-        ComponentRegistration::of::<VoxelModel>(),
-        ComponentRegistration::of::<WorldPosition>(),
-        ComponentRegistration::of::<Name>(),
-        ComponentRegistration::of::<Description>(),
-        ComponentRegistration::of::<Tint>(),
-        ComponentRegistration::of::<Species>(),
-        ComponentRegistration::of::<CompositeRender>(),
-    ];
-    let tag_registrations = [
-        TagRegistration::of::<Cordex>(),
-        TagRegistration::of::<Building>(),
-        TagRegistration::of::<Item>(),
-        TagRegistration::of::<Sentient>(),
-    ];
+    let (comp_registrations, tag_registrations) = super::component_registration();
 
     use std::iter::FromIterator;
     let ser_helper = SerializeImpl {

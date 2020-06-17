@@ -38,3 +38,28 @@ pub(crate) mod prelude {
     };
     pub use type_uuid::TypeUuid;
 }
+
+use serialize::{ComponentRegistration, TagRegistration};
+
+fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>) {
+    let comp_registrations = vec![
+        ComponentRegistration::of::<Position>(),
+        ComponentRegistration::of::<CameraOptions>(),
+        ComponentRegistration::of::<Calendar>(),
+        ComponentRegistration::of::<Dimensions>(),
+        ComponentRegistration::of::<VoxelModel>(),
+        ComponentRegistration::of::<WorldPosition>(),
+        ComponentRegistration::of::<Name>(),
+        ComponentRegistration::of::<Description>(),
+        ComponentRegistration::of::<Tint>(),
+        ComponentRegistration::of::<Species>(),
+        ComponentRegistration::of::<CompositeRender>(),
+    ];
+    let tag_registrations = vec![
+        TagRegistration::of::<Cordex>(),
+        TagRegistration::of::<Building>(),
+        TagRegistration::of::<Item>(),
+        TagRegistration::of::<Sentient>(),
+    ];
+    (comp_registrations, tag_registrations)
+}
