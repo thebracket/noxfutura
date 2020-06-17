@@ -1,10 +1,10 @@
 use crate::engine::Context;
 
 pub struct GBuffer {
-    pub albedo : GBufferTarget,
-    pub normal : GBufferTarget,
-    pub pbr : GBufferTarget,
-    pub coords : GBufferTarget,
+    pub albedo: GBufferTarget,
+    pub normal: GBufferTarget,
+    pub pbr: GBufferTarget,
+    pub coords: GBufferTarget,
 }
 
 impl GBuffer {
@@ -62,7 +62,7 @@ impl GBufferTarget {
         });
 
         // Return something useful
-        Self{
+        Self {
             texture,
             view,
             sampler,

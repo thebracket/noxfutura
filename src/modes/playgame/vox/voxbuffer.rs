@@ -1,19 +1,19 @@
+use super::greedy::*;
+use super::modelsize::*;
 use crate::engine::VertexBuffer;
 use crate::raws::*;
 use std::collections::HashMap;
-use super::greedy::*;
-use super::modelsize::*;
 
 pub struct VoxBuffer {
-    pub vertices : VertexBuffer<f32>,
-    pub offsets: Vec<(u32, u32)>
+    pub vertices: VertexBuffer<f32>,
+    pub offsets: Vec<(u32, u32)>,
 }
 
 impl VoxBuffer {
     pub fn new() -> Self {
         Self {
             vertices: VertexBuffer::new(&[3, 1, 3]), // Position, normal index, tint
-            offsets: Vec::new()
+            offsets: Vec::new(),
         }
     }
 
@@ -26,7 +26,7 @@ impl VoxBuffer {
             println!("Loading: {}", filename);
             let rawvox = dot_vox::load(&filename).unwrap();
 
-            let mut cubes : HashMap<u32, u8> = HashMap::new();
+            let mut cubes: HashMap<u32, u8> = HashMap::new();
             for model in rawvox.models.iter() {
                 let size = ModelSize::new(model.size);
                 for v in model.voxels.iter() {
@@ -40,6 +40,7 @@ impl VoxBuffer {
             }
         }
 
-        self.vertices.build(&context.device, wgpu::BufferUsage::VERTEX);
+        self.vertices
+            .build(&context.device, wgpu::BufferUsage::VERTEX);
     }
 }

@@ -1,10 +1,10 @@
-use crate::planet::{Region, TileType, StairsType};
+use crate::components::*;
+use crate::planet::{Region, StairsType, TileType};
 use crate::raws::get_material_by_tag;
 use crate::utils::{ground_z, mapidx, rex::*};
 use bracket_geometry::prelude::*;
-use std::fs::File;
 use legion::prelude::*;
-use crate::components::*;
+use std::fs::File;
 
 fn load_ship() -> XpFile {
     let mut f = File::open("resources/rex/spaceship.xp").unwrap();
@@ -37,10 +37,22 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World
                             178 => add_construction(region, mx, my, mz, "solar_panel", true, ecs),
                             241 => add_construction(region, mx, my, mz, "battery", true, ecs),
                             48 => add_construction(region, mx, my, mz, "cryo_bed", true, ecs),
-                            236 => add_construction(region, mx, my, mz, "storage_locker", true, ecs),
+                            236 => {
+                                add_construction(region, mx, my, mz, "storage_locker", true, ecs)
+                            }
                             67 => add_construction(region, mx, my, mz, "cordex", true, ecs),
-                            243 => add_construction(region, mx, my, mz, "ship_defense_turret", true, ecs),
-                            251 => add_construction(region, mx, my, mz, "small_replicator", true, ecs),
+                            243 => add_construction(
+                                region,
+                                mx,
+                                my,
+                                mz,
+                                "ship_defense_turret",
+                                true,
+                                ecs,
+                            ),
+                            251 => {
+                                add_construction(region, mx, my, mz, "small_replicator", true, ecs)
+                            }
                             232 => add_construction(region, mx, my, mz, "rtg", true, ecs),
                             197 => add_construction(region, mx, my, mz, "ship_door", true, ecs),
                             76 => add_construction(region, mx, my, mz, "ship_lamp", true, ecs),
@@ -54,7 +66,15 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World
     z
 }
 
-fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &str, solid: bool, ecs: &mut World) {
+fn add_construction(
+    region: &mut Region,
+    x: usize,
+    y: usize,
+    z: usize,
+    name: &str,
+    solid: bool,
+    ecs: &mut World,
+) {
     let plasteel = get_material_by_tag("Plasteel").unwrap();
     let idx = mapidx(x, y, z);
     region.tile_types[idx] = TileType::Floor;
@@ -69,9 +89,21 @@ fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &st
             region.tile_types[idx] = TileType::Window;
         }
         "ship_floor" => {}
-        "ship_updown" => region.tile_types[idx] = TileType::Stairs{direction: StairsType::UpDown},
-        "ship_up" => region.tile_types[idx] = TileType::Stairs{direction: StairsType::Up},
-        "ship_down" => region.tile_types[idx] = TileType::Stairs{direction: StairsType::Down},
+        "ship_updown" => {
+            region.tile_types[idx] = TileType::Stairs {
+                direction: StairsType::UpDown,
+            }
+        }
+        "ship_up" => {
+            region.tile_types[idx] = TileType::Stairs {
+                direction: StairsType::Up,
+            }
+        }
+        "ship_down" => {
+            region.tile_types[idx] = TileType::Stairs {
+                direction: StairsType::Down,
+            }
+        }
         "solar_panel" => add_building(region, "solar_panel", x, y, z, ecs),
         "battery" => add_building(region, "battery", x, y, z, ecs),
         "cryo_bed" => add_building(region, "cryo_bed", x, y, z, ecs),
@@ -88,6 +120,6 @@ fn add_construction(region: &mut Region, x: usize, y: usize, z: usize, name: &st
     }
 }
 
-fn add_building(region: &mut Region, tag: &str, x:usize, y:usize, z:usize, ecs: &mut World) {
+fn add_building(region: &mut Region, tag: &str, x: usize, y: usize, z: usize, ecs: &mut World) {
     spawner::spawn_building(ecs, tag, x, y, z);
 }

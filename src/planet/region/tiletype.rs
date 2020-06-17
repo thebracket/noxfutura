@@ -11,7 +11,7 @@ pub enum TileType {
     SemiMoltenRock,
     TreeTrunk,
     TreeFoliage,
-    Window
+    Window,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]

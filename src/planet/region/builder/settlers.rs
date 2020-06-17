@@ -1,29 +1,39 @@
 use crate::components::*;
-use legion::prelude::*;
-use bracket_random::prelude::*;
 use bracket_geometry::prelude::*;
+use bracket_random::prelude::*;
+use legion::prelude::*;
 
-pub fn spawn_settlers(ecs: &mut World, rng: &mut RandomNumberGenerator, crash_site: &Point, crash_z : usize) {
+pub fn spawn_settlers(
+    ecs: &mut World,
+    rng: &mut RandomNumberGenerator,
+    crash_site: &Point,
+    crash_z: usize,
+) {
     let spawn_points = vec![
-        ( crash_site.x -3, crash_site.y -2, crash_z+3 ),
-        ( crash_site.x -2, crash_site.y -2, crash_z+3 ),
-        ( crash_site.x -1, crash_site.y -2, crash_z+3 ),
-        ( crash_site.x, crash_site.y -2, crash_z+3 ),
-        ( crash_site.x +1, crash_site.y -2, crash_z+3 ),
-
-        ( crash_site.x -3, crash_site.y, crash_z+3 ),
-        ( crash_site.x -2, crash_site.y, crash_z+3 ),
-        ( crash_site.x -1, crash_site.y, crash_z+3 ),
-        ( crash_site.x, crash_site.y, crash_z+3 ),
-        ( crash_site.x +1, crash_site.y, crash_z+3 ),
+        (crash_site.x - 3, crash_site.y - 2, crash_z + 3),
+        (crash_site.x - 2, crash_site.y - 2, crash_z + 3),
+        (crash_site.x - 1, crash_site.y - 2, crash_z + 3),
+        (crash_site.x, crash_site.y - 2, crash_z + 3),
+        (crash_site.x + 1, crash_site.y - 2, crash_z + 3),
+        (crash_site.x - 3, crash_site.y, crash_z + 3),
+        (crash_site.x - 2, crash_site.y, crash_z + 3),
+        (crash_site.x - 1, crash_site.y, crash_z + 3),
+        (crash_site.x, crash_site.y, crash_z + 3),
+        (crash_site.x + 1, crash_site.y, crash_z + 3),
     ];
 
     for spawn in spawn_points.iter() {
-        spawn_settler(ecs, rng, spawn.0 as usize, spawn.1 as usize, spawn.2 as usize);
+        spawn_settler(
+            ecs,
+            rng,
+            spawn.0 as usize,
+            spawn.1 as usize,
+            spawn.2 as usize,
+        );
     }
 }
 
-fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x:usize, y:usize, z:usize) {
+fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: usize, z: usize) {
     let species_def = crate::raws::RAWS.read().species.species[0].clone();
 
     let gender = if rng.roll_dice(1, 20) < 11 {
@@ -36,7 +46,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x:usize, y:us
         match rng.roll_dice(1, 3) {
             1 => GenderIdentity::Female,
             2 => GenderIdentity::Neutral,
-            _ => GenderIdentity::Male
+            _ => GenderIdentity::Male,
         }
     } else {
         if gender == Gender::Male {
@@ -50,7 +60,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x:usize, y:us
         1 => Sexuality::Homosexual,
         2 => Sexuality::Pansexual,
         3 => Sexuality::ASexual,
-        _ => Sexuality::Heterosexual
+        _ => Sexuality::Heterosexual,
     };
 
     let height_cm = if gender == Gender::Male {
@@ -76,59 +86,68 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x:usize, y:us
             2 => HairStyle::Mohawk,
             3 => HairStyle::ShortHair,
             4 => HairStyle::LongHair,
-            _ => HairStyle::Bald
+            _ => HairStyle::Bald,
         }
     } else {
         match rng.roll_dice(1, 4) {
             1 => HairStyle::ShortHair,
             2 => HairStyle::LongHair,
             3 => HairStyle::Pigtails,
-            _ => HairStyle::Triangle
+            _ => HairStyle::Triangle,
         }
     };
 
-    let species = Species{
+    let species = Species {
         gender,
         gender_identity,
         sexuality,
         height_cm,
         weight_kg,
         bearded,
-        skin_color: (skin_color_def.r as f32 / 255.0, skin_color_def.g as f32 / 255.0, skin_color_def.b as f32 / 255.0),
-        hair_color: (hair_color_def.r as f32 / 255.0, hair_color_def.g as f32 / 255.0, hair_color_def.b as f32 / 255.0),
-        hair_style
+        skin_color: (
+            skin_color_def.r as f32 / 255.0,
+            skin_color_def.g as f32 / 255.0,
+            skin_color_def.b as f32 / 255.0,
+        ),
+        hair_color: (
+            hair_color_def.r as f32 / 255.0,
+            hair_color_def.g as f32 / 255.0,
+            hair_color_def.b as f32 / 255.0,
+        ),
+        hair_style,
     };
 
     let rlock = crate::raws::RAWS.read();
-    let mut composite = CompositeRender{ layers: Vec::new() };
-    composite.layers.push(VoxLayer{
-        model : rlock.vox.get_model_idx("person_base"),
-        tint: species.skin_color
+    let mut composite = CompositeRender { layers: Vec::new() };
+    composite.layers.push(VoxLayer {
+        model: rlock.vox.get_model_idx("person_base"),
+        tint: species.skin_color,
     });
     if species.hair_style != HairStyle::Bald {
-        composite.layers.push(VoxLayer{
-            model : match species.hair_style {
+        composite.layers.push(VoxLayer {
+            model: match species.hair_style {
                 HairStyle::Balding => rlock.vox.get_model_idx("person_hair_balding"),
                 HairStyle::Mohawk => rlock.vox.get_model_idx("person_hair_mohawk"),
                 HairStyle::ShortHair => rlock.vox.get_model_idx("person_hair_short"),
                 HairStyle::LongHair => rlock.vox.get_model_idx("person_hair_long"),
                 HairStyle::Pigtails => rlock.vox.get_model_idx("person_hair_pigtails"),
                 HairStyle::Triangle => rlock.vox.get_model_idx("person_hair_triangle"),
-                HairStyle::Bald => 0
+                HairStyle::Bald => 0,
             },
-            tint: species.hair_color
+            tint: species.hair_color,
         });
     }
 
     let entity = ecs.insert(
-        (Building{},),
-        vec![
-            (
-                Dimensions{width: 1, height: 1},
-                Position{x, y, z},
-                species,
-                composite,
-            )
-        ]
+        (Building {},),
+        vec![(
+            Dimensions {
+                width: 1,
+                height: 1,
+            },
+            Position { x, y, z },
+            species,
+            composite,
+        )],
     );
 }

@@ -9,13 +9,11 @@ pub struct VoxelModels {
 
 impl VoxelModels {
     pub fn new() -> Self {
-        Self {
-            vox: Vec::new(),
-        }
+        Self { vox: Vec::new() }
     }
 
     pub fn get_model_idx(&self, tag: &str) -> usize {
-        for (i,b) in self.vox.iter().enumerate() {
+        for (i, b) in self.vox.iter().enumerate() {
             if b.tag == tag {
                 return i;
             }
@@ -28,9 +26,8 @@ impl VoxelModels {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct VoxelModel {
     pub tag: String,
-    pub file: String
+    pub file: String,
 }
-
 
 pub fn load_vox() -> VoxelModels {
     let mat_path = "resources/raws/vox.ron";

@@ -1,10 +1,10 @@
+use super::super::ChunkModel;
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
-use crate::planet::{Region, TileType, StairsType};
+use crate::planet::{Region, StairsType, TileType};
 use crate::utils::{add_floor_geometry, add_ramp_geometry, mapidx};
 use ultraviolet::Vec3;
-use super::super::ChunkModel;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -15,7 +15,7 @@ pub struct Chunk {
     vb: VertexBuffer<f32>,
     element_count: [u32; CHUNK_SIZE],
     pub center_pos: Vec3,
-    pub chunk_models : Vec<ChunkModel>
+    pub chunk_models: Vec<ChunkModel>,
 }
 
 impl Chunk {
@@ -43,7 +43,7 @@ impl Chunk {
                 (z * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,
             )
                 .into(),
-            chunk_models: Vec::new()
+            chunk_models: Vec::new(),
         }
     }
 
@@ -135,20 +135,18 @@ impl Chunk {
                                             mat,
                                         );
                                     }
-                                    TileType::Stairs{direction} => {
+                                    TileType::Stairs { direction } => {
                                         let tag = match direction {
                                             StairsType::Up => "stairs_up",
                                             StairsType::Down => "stairs_down",
-                                            StairsType::UpDown => "stairs_updown"
+                                            StairsType::UpDown => "stairs_updown",
                                         };
-                                        self.chunk_models.push(
-                                            ChunkModel{
-                                                id: crate::raws::RAWS.read().vox.get_model_idx(tag),
-                                                x: x + self.base.0,
-                                                y: y + self.base.1,
-                                                z: z + self.base.2
-                                            }
-                                        );
+                                        self.chunk_models.push(ChunkModel {
+                                            id: crate::raws::RAWS.read().vox.get_model_idx(tag),
+                                            x: x + self.base.0,
+                                            y: y + self.base.1,
+                                            z: z + self.base.2,
+                                        });
                                     }
                                     _ => {}
                                 }
@@ -192,7 +190,11 @@ impl Chunk {
         }
     }
 
-    pub fn maybe_render_chunk(&self, camera_z: usize, render_chunks: &mut Vec<ChunkModel>) -> Option<(&VertexBuffer<f32>, u32)> {
+    pub fn maybe_render_chunk(
+        &self,
+        camera_z: usize,
+        render_chunks: &mut Vec<ChunkModel>,
+    ) -> Option<(&VertexBuffer<f32>, u32)> {
         if self.t == ChunkType::Empty {
             return None;
         }

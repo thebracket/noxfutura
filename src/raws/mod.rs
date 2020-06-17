@@ -11,7 +11,7 @@ pub struct Raws {
     pub plants: Plants,
     pub buildings: Buildings,
     pub vox: VoxelModels,
-    pub species: Species
+    pub species: Species,
 }
 
 impl Raws {
@@ -23,7 +23,7 @@ impl Raws {
             plants: Plants::new(),
             buildings: Buildings::new(),
             vox: VoxelModels::new(),
-            species: Species::new()
+            species: Species::new(),
         }
     }
 

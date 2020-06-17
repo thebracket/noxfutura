@@ -1,11 +1,13 @@
-use crate::planet::{Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, REGION_TILES_COUNT};
-use bracket_geometry::prelude::Point;
+use crate::planet::{
+    Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH,
+};
 use crate::utils::{ground_z, mapidx};
+use bracket_geometry::prelude::Point;
 use legion::prelude::*;
 
 pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
-    for x in ship_loc.x - (REGION_WIDTH as i32/4) .. ship_loc.x {
-        for y in ship_loc.y - 3 .. ship_loc.y + 4 {
+    for x in ship_loc.x - (REGION_WIDTH as i32 / 4)..ship_loc.x {
+        for y in ship_loc.y - 3..ship_loc.y + 4 {
             let z = ground_z(region, x as usize, y as usize);
             let idx = mapidx(x as usize, y as usize, z as usize);
             region.vegetation_type_id[idx] = None;

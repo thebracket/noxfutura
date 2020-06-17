@@ -1,26 +1,23 @@
-use crate::modes::playgame::chunks::Chunks;
-use crate::engine::{Context, VertexBuffer};
-use super::{camera::Camera, uniforms::Uniforms, gbuffer::GBuffer, texarray::TextureArray};
 use super::super::VoxBuffer;
+use super::{camera::Camera, gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms};
+use crate::engine::{Context, VertexBuffer};
+use crate::modes::playgame::chunks::Chunks;
 use legion::prelude::*;
 
 pub struct VoxRenderPass {
     pub vox_models: VoxBuffer,
     pub shader_id: usize,
     pub render_pipeline: wgpu::RenderPipeline,
-    instance_buffer: VertexBuffer<f32>
+    instance_buffer: VertexBuffer<f32>,
 }
 
 impl VoxRenderPass {
-    pub fn new(
-        context: &mut Context, 
-        uniform_bind_group_layout: &wgpu::BindGroupLayout
-    ) -> Self {
+    pub fn new(context: &mut Context, uniform_bind_group_layout: &wgpu::BindGroupLayout) -> Self {
         let mut vox_models = VoxBuffer::new();
         vox_models.load(context);
 
         // Instance buffer
-        let mut instance_buffer = VertexBuffer::<f32>::new(&[3,3]);
+        let mut instance_buffer = VertexBuffer::<f32>::new(&[3, 3]);
         instance_buffer.attributes[0].shader_location = 3;
         instance_buffer.attributes[1].shader_location = 4;
         instance_buffer.add3(128., 256., 128.);
@@ -90,7 +87,7 @@ impl VoxRenderPass {
                             color_blend: wgpu::BlendDescriptor::REPLACE,
                             alpha_blend: wgpu::BlendDescriptor::REPLACE,
                             write_mask: wgpu::ColorWrite::ALL,
-                        }
+                        },
                     ],
                     depth_stencil_state: Some(wgpu::DepthStencilStateDescriptor {
                         format: crate::engine::texture::Texture::DEPTH_FORMAT,
@@ -103,7 +100,10 @@ impl VoxRenderPass {
                     }),
                     vertex_state: wgpu::VertexStateDescriptor {
                         index_format: wgpu::IndexFormat::Uint16,
-                        vertex_buffers: &[vox_models.vertices.descriptor(), instance_buffer.instance_descriptor()],
+                        vertex_buffers: &[
+                            vox_models.vertices.descriptor(),
+                            instance_buffer.instance_descriptor(),
+                        ],
                     },
                     sample_count: 1,
                     sample_mask: !0,
@@ -115,7 +115,7 @@ impl VoxRenderPass {
             shader_id,
             render_pipeline,
             vox_models,
-            instance_buffer
+            instance_buffer,
         };
         builder
     }
@@ -129,13 +129,18 @@ impl VoxRenderPass {
         uniform_bg: &wgpu::BindGroup,
         camera_z: usize,
         ecs: &World,
-        chunk_models: &[super::ChunkModel]
+        chunk_models: &[super::ChunkModel],
     ) {
         // Instances builder
         use crate::components::*;
         self.instance_buffer.clear();
         let mut vox_instances = Vec::new();
-        let query = <(Read<Position>, Read<VoxelModel>, Read<Dimensions>, Read<Tint>)>::query();
+        let query = <(
+            Read<Position>,
+            Read<VoxelModel>,
+            Read<Dimensions>,
+            Read<Tint>,
+        )>::query();
         let mut n = 0;
         for (pos, vm, dims, tint) in query.iter(&ecs) {
             if pos.z <= camera_z {
@@ -148,11 +153,16 @@ impl VoxRenderPass {
                 let mut y = pos.y as f32;
                 let z = pos.z as f32;
 
-                if dims.width == 3 { x -= 1.0; }
-                if dims.height == 3 { y -= 1.0; }
+                if dims.width == 3 {
+                    x -= 1.0;
+                }
+                if dims.height == 3 {
+                    y -= 1.0;
+                }
 
                 self.instance_buffer.add3(x, z, y);
-                self.instance_buffer.add3(tint.color.0, tint.color.1, tint.color.2);
+                self.instance_buffer
+                    .add3(tint.color.0, tint.color.1, tint.color.2);
             }
         }
 
@@ -184,11 +194,11 @@ impl VoxRenderPass {
                 vox_instances.push((first, last, n));
                 n += 1;
 
-                self.instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
+                self.instance_buffer
+                    .add3(m.x as f32, m.z as f32, m.y as f32);
                 self.instance_buffer.add3(1.0, 1.0, 1.0);
             }
         }
-        
 
         if !vox_instances.is_empty() {
             self.instance_buffer.update_buffer(context);
@@ -229,7 +239,7 @@ impl VoxRenderPass {
                         load_op: wgpu::LoadOp::Load,
                         store_op: wgpu::StoreOp::Store,
                         clear_color: wgpu::Color::RED,
-                    }
+                    },
                 ],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: &context.textures[depth_id].view,
@@ -250,7 +260,7 @@ impl VoxRenderPass {
             // Render
             if !vox_instances.is_empty() {
                 for (count, i) in vox_instances.iter().enumerate() {
-                    rpass.draw(i.0 .. i.1, count as u32..count as u32 +1);
+                    rpass.draw(i.0..i.1, count as u32..count as u32 + 1);
                 }
             }
         }

@@ -5,14 +5,13 @@ use imgui::*;
 use legion::prelude::*;
 use winit::event::VirtualKeyCode;
 mod loadstate;
-pub use loadstate::*;
 use crate::engine::uniforms::UniformBlock;
+pub use loadstate::*;
 mod chunks;
 pub mod vox;
 use vox::VoxBuffer;
 mod render_passes;
 use render_passes::*;
-
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
@@ -22,7 +21,7 @@ pub struct PlayGame {
     // Internals
     rpass: Option<BlockRenderPass>,
     gbuffer_pass: Option<GBufferTestPass>,
-    vox_pass : Option<VoxRenderPass>,
+    vox_pass: Option<VoxRenderPass>,
     chunk_models: Vec<ChunkModel>,
 
     // Game stuff that doesn't belong here
@@ -42,8 +41,8 @@ impl PlayGame {
             rebuild_geometry: true,
             ecs: universe.create_world(),
             chunks: chunks::Chunks::empty(),
-            vox_pass : None,
-            chunk_models: Vec::new()
+            vox_pass: None,
+            chunk_models: Vec::new(),
         }
     }
 
@@ -72,18 +71,22 @@ impl PlayGame {
     pub fn setup(&mut self, context: &mut crate::engine::Context) {
         crate::raws::load_raws();
         self.rpass = Some(BlockRenderPass::new(context));
-        self.gbuffer_pass = Some(GBufferTestPass::new(context, &self.rpass.as_ref().unwrap().gbuffer));
-        self.vox_pass = Some(
-            VoxRenderPass::new(
-                context, 
-                &self.rpass.as_ref().unwrap().uniform_bind_group_layout
-            )
-        );
+        self.gbuffer_pass = Some(GBufferTestPass::new(
+            context,
+            &self.rpass.as_ref().unwrap().gbuffer,
+        ));
+        self.vox_pass = Some(VoxRenderPass::new(
+            context,
+            &self.rpass.as_ref().unwrap().uniform_bind_group_layout,
+        ));
     }
 
     pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
         self.rpass.as_mut().unwrap().on_resize(context);
-        self.gbuffer_pass = Some(GBufferTestPass::new(context, &self.rpass.as_ref().unwrap().gbuffer));
+        self.gbuffer_pass = Some(GBufferTestPass::new(
+            context,
+            &self.rpass.as_ref().unwrap().gbuffer,
+        ));
     }
 
     pub fn tick(
@@ -94,7 +97,7 @@ impl PlayGame {
         imgui: &imgui::Ui,
         depth_id: usize,
         keycode: Option<VirtualKeyCode>,
-        frame_time: u128
+        frame_time: u128,
     ) -> super::ProgramMode {
         //super::helpers::render_menu_background(context, frame, resources);
 
@@ -126,14 +129,17 @@ impl PlayGame {
             pass.vb.update_buffer(context);
         }
 
-        let title = format!("Playing. Frame time: {} ms. FPS: {}.", frame_time, imgui.io().framerate);
+        let title = format!(
+            "Playing. Frame time: {} ms. FPS: {}.",
+            frame_time,
+            imgui.io().framerate
+        );
         let title_tmp = ImString::new(title);
         let window = imgui::Window::new(&title_tmp);
         window
             .collapsed(true, Condition::FirstUseEver)
             .size([300.0, 100.0], Condition::FirstUseEver)
-            .build(imgui, || {
-            });
+            .build(imgui, || {});
 
         // Show the menu
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
@@ -156,7 +162,7 @@ impl PlayGame {
             frame,
             &mut self.chunks,
             camera_z as usize,
-            &mut self.chunk_models
+            &mut self.chunk_models,
         );
         self.vox_pass.as_mut().unwrap().render(
             context,

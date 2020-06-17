@@ -31,32 +31,39 @@ pub struct BuildingDef {
     pub name: String,
     pub components: Vec<BuildingComponent>,
     pub skill: Vec<BuildingSkill>,
-    pub vox : String,
-    pub description : String,
-    pub blocked : Option<String>,
-    pub provides : Vec<BuildingProvides>,
-    pub dimensions: Option<(usize,usize)>
+    pub vox: String,
+    pub description: String,
+    pub blocked: Option<String>,
+    pub provides: Vec<BuildingProvides>,
+    pub dimensions: Option<(usize, usize)>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct BuildingComponent {
     pub item: String,
-    pub qty: i32
+    pub qty: i32,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct BuildingSkill {
     pub skill: String,
-    pub difficulty: i32
+    pub difficulty: i32,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum BuildingProvides {
-    Light{radius: usize, color: (f32, f32, f32)},
+    Light {
+        radius: usize,
+        color: (f32, f32, f32),
+    },
     Sleep,
     Storage,
-    Generator{energy: i32},
-    EnergyStorage{energy: i32}
+    Generator {
+        energy: i32,
+    },
+    EnergyStorage {
+        energy: i32,
+    },
 }
 
 pub fn load_buildings() -> Buildings {

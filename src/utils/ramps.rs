@@ -21,8 +21,7 @@ pub fn add_ramp_geometry(
         }
         RampDirection::WestEast => {
             west_east(vb, element_count, x, y, z, material_index as f32 / 255.0)
-        }
-        //_ => {}
+        } //_ => {}
     }
 }
 

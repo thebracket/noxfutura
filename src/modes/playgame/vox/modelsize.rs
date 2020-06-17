@@ -1,19 +1,19 @@
 pub struct ModelSize {
     pub x: u32,
     pub y: u32,
-    pub z: u32
+    pub z: u32,
 }
 
 impl ModelSize {
     pub fn new(sz: dot_vox::Size) -> Self {
-        Self{
+        Self {
             x: sz.x,
             y: sz.y,
-            z: sz.z
+            z: sz.z,
         }
     }
 
-    pub fn idx(&self, x: u32, y:u32, z:u32) -> u32 {
+    pub fn idx(&self, x: u32, y: u32, z: u32) -> u32 {
         (z as u32 * self.x * self.y) + (y as u32 * self.x) + x as u32
     }
 

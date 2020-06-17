@@ -1,7 +1,7 @@
-use legion::prelude::*;
 use crate::components::*;
 use crate::planet::REGION_WIDTH;
 use bracket_geometry::prelude::Point;
+use legion::prelude::*;
 
 pub fn add_game_components(world: &mut World, hm: &[u8], crash_site: Point) {
     world.insert(
@@ -17,15 +17,18 @@ pub fn add_game_components(world: &mut World, hm: &[u8], crash_site: Point) {
                     zoom_level: 10,
                     mode: CameraMode::TopDown,
                 },
-                WorldPosition{ planet_x: crash_site.x as _, planet_y: crash_site.y as _ },
-                Calendar{
+                WorldPosition {
+                    planet_x: crash_site.x as _,
+                    planet_y: crash_site.y as _,
+                },
+                Calendar {
                     year: 2525,
                     month: 0,
                     day: 0,
                     hour: 0,
                     minute: 0,
-                    second: 0
-                }
+                    second: 0,
+                },
             )
         }),
     );

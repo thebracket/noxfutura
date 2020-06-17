@@ -1,6 +1,8 @@
-use crate::modes::playgame::chunks::Chunks;
+use super::{
+    camera::Camera, gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms, ChunkModel,
+};
 use crate::engine::{Context, VertexBuffer};
-use super::{camera::Camera, uniforms::Uniforms, gbuffer::GBuffer, texarray::TextureArray, ChunkModel};
+use crate::modes::playgame::chunks::Chunks;
 
 pub struct BlockRenderPass {
     pub vb: VertexBuffer<f32>,
@@ -12,8 +14,8 @@ pub struct BlockRenderPass {
     pub uniform_buf: wgpu::Buffer,
     pub terrain_textures: TextureArray,
     terrain_bind_group: wgpu::BindGroup,
-    pub gbuffer : GBuffer,
-    pub uniform_bind_group_layout : wgpu::BindGroupLayout
+    pub gbuffer: GBuffer,
+    pub uniform_bind_group_layout: wgpu::BindGroupLayout,
 }
 
 impl BlockRenderPass {
@@ -159,7 +161,7 @@ impl BlockRenderPass {
                             color_blend: wgpu::BlendDescriptor::REPLACE,
                             alpha_blend: wgpu::BlendDescriptor::REPLACE,
                             write_mask: wgpu::ColorWrite::ALL,
-                        }
+                        },
                     ],
                     depth_stencil_state: Some(wgpu::DepthStencilStateDescriptor {
                         format: crate::engine::texture::Texture::DEPTH_FORMAT,
@@ -190,8 +192,8 @@ impl BlockRenderPass {
             uniform_buf,
             terrain_textures,
             terrain_bind_group,
-            gbuffer : GBuffer::new(context),
-            uniform_bind_group_layout
+            gbuffer: GBuffer::new(context),
+            uniform_bind_group_layout,
         };
         builder
     }
@@ -203,7 +205,7 @@ impl BlockRenderPass {
         frame: &wgpu::SwapChainOutput,
         chunks: &Chunks,
         camera_z: usize,
-        render_models: &mut Vec<ChunkModel>
+        render_models: &mut Vec<ChunkModel>,
     ) {
         let mut encoder = context
             .device
@@ -239,7 +241,7 @@ impl BlockRenderPass {
                         load_op: wgpu::LoadOp::Clear,
                         store_op: wgpu::StoreOp::Store,
                         clear_color: wgpu::Color::RED,
-                    }
+                    },
                 ],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: &context.textures[depth_id].view,

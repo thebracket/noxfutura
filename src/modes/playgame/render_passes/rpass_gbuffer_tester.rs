@@ -1,11 +1,11 @@
-use crate::engine::{Context, VertexBuffer};
 use super::gbuffer::GBuffer;
+use crate::engine::{Context, VertexBuffer};
 
 pub struct GBufferTestPass {
     pub vb: VertexBuffer<f32>,
     pub shader_id: usize,
     pub render_pipeline: wgpu::RenderPipeline,
-    pub bind_group : wgpu::BindGroup
+    pub bind_group: wgpu::BindGroup,
 }
 
 impl GBufferTestPass {
@@ -44,7 +44,6 @@ impl GBufferTestPass {
                             visibility: wgpu::ShaderStage::FRAGMENT,
                             ty: wgpu::BindingType::Sampler { comparison: false },
                         },
-
                         wgpu::BindGroupLayoutEntry {
                             binding: 2,
                             visibility: wgpu::ShaderStage::FRAGMENT,
@@ -59,7 +58,6 @@ impl GBufferTestPass {
                             visibility: wgpu::ShaderStage::FRAGMENT,
                             ty: wgpu::BindingType::Sampler { comparison: false },
                         },
-
                         wgpu::BindGroupLayoutEntry {
                             binding: 4,
                             visibility: wgpu::ShaderStage::FRAGMENT,
@@ -76,8 +74,7 @@ impl GBufferTestPass {
                         },
                     ],
                     label: None,
-                }
-            );
+                });
         let bind_group = context
             .device
             .create_bind_group(&wgpu::BindGroupDescriptor {
@@ -91,7 +88,6 @@ impl GBufferTestPass {
                         binding: 1,
                         resource: wgpu::BindingResource::Sampler(&gbuffer.albedo.sampler),
                     },
-
                     wgpu::Binding {
                         binding: 2,
                         resource: wgpu::BindingResource::TextureView(&gbuffer.normal.view),
@@ -100,7 +96,6 @@ impl GBufferTestPass {
                         binding: 3,
                         resource: wgpu::BindingResource::Sampler(&gbuffer.normal.sampler),
                     },
-
                     wgpu::Binding {
                         binding: 4,
                         resource: wgpu::BindingResource::TextureView(&gbuffer.pbr.view),
@@ -111,8 +106,7 @@ impl GBufferTestPass {
                     },
                 ],
                 label: None,
-            }
-        );
+            });
 
         // WGPU Details
         let pipeline_layout =
@@ -142,14 +136,12 @@ impl GBufferTestPass {
                         depth_bias_clamp: 0.0,
                     }),
                     primitive_topology: wgpu::PrimitiveTopology::TriangleList,
-                    color_states: &vec![
-                        wgpu::ColorStateDescriptor {
-                            format: context.swapchain_format,
-                            color_blend: wgpu::BlendDescriptor::REPLACE,
-                            alpha_blend: wgpu::BlendDescriptor::REPLACE,
-                            write_mask: wgpu::ColorWrite::ALL,
-                        },
-                    ],
+                    color_states: &vec![wgpu::ColorStateDescriptor {
+                        format: context.swapchain_format,
+                        color_blend: wgpu::BlendDescriptor::REPLACE,
+                        alpha_blend: wgpu::BlendDescriptor::REPLACE,
+                        write_mask: wgpu::ColorWrite::ALL,
+                    }],
                     depth_stencil_state: None,
                     vertex_state: wgpu::VertexStateDescriptor {
                         index_format: wgpu::IndexFormat::Uint16,
@@ -158,38 +150,31 @@ impl GBufferTestPass {
                     sample_count: 1,
                     sample_mask: !0,
                     alpha_to_coverage_enabled: false,
-                }
-            );
+                });
 
-        Self{
+        Self {
             vb,
             shader_id,
             render_pipeline,
-            bind_group
+            bind_group,
         }
     }
 
-    pub fn render(
-        &mut self,
-        context: &mut Context,
-        frame: &wgpu::SwapChainOutput
-    ) {
+    pub fn render(&mut self, context: &mut Context, frame: &wgpu::SwapChainOutput) {
         let mut encoder = context
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
 
         {
             let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                color_attachments: &[
-                    wgpu::RenderPassColorAttachmentDescriptor {
-                        attachment: &frame.view,
-                        resolve_target: None,
-                        load_op: wgpu::LoadOp::Clear,
-                        store_op: wgpu::StoreOp::Store,
-                        clear_color: wgpu::Color::BLUE,
-                    },
-                ],
-                depth_stencil_attachment: None
+                color_attachments: &[wgpu::RenderPassColorAttachmentDescriptor {
+                    attachment: &frame.view,
+                    resolve_target: None,
+                    load_op: wgpu::LoadOp::Clear,
+                    store_op: wgpu::StoreOp::Store,
+                    clear_color: wgpu::Color::BLUE,
+                }],
+                depth_stencil_attachment: None,
             });
 
             rpass.set_pipeline(&self.render_pipeline);

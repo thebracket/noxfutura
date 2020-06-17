@@ -1,4 +1,4 @@
-const MODEL_SCALE : f32 = 1.0 / 32.0;
+const MODEL_SCALE: f32 = 1.0 / 32.0;
 
 pub fn add_cube_geometry(
     vb: &mut Vec<f32>,
@@ -19,9 +19,9 @@ pub fn add_cube_geometry(
 
     let color_bytes = dot_vox::DEFAULT_PALETTE[material_index as usize];
 
-    let rr : u8 = ((color_bytes & 0x00ff0000) >> 16) as u8;
-    let rg : u8 = ((color_bytes & 0x0000ff00) >> 8) as u8;
-    let rb : u8 = (color_bytes & 0x000000ff) as u8;
+    let rr: u8 = ((color_bytes & 0x00ff0000) >> 16) as u8;
+    let rg: u8 = ((color_bytes & 0x0000ff00) >> 8) as u8;
+    let rb: u8 = (color_bytes & 0x000000ff) as u8;
 
     let b = rr as f32 / 255.0;
     let g = rg as f32 / 255.0;
