@@ -209,7 +209,7 @@ impl TextureArray {
 use image::*;
 
 fn load_image_levels(base : &DynamicImage) -> [ImageBuffer<Rgba<u8>, Vec<u8>>; 8] {
-    const TEX_FILTER : FilterType = FilterType::Gaussian;
+    const TEX_FILTER : FilterType = FilterType::Lanczos3;
     const TS : u32 = TEXTURE_SIZE as u32;
 
     [
