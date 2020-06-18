@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-use std::fs;
 use crate::engine::DEVICE_CONTEXT;
 use crate::modes::loader_progress;
+use std::collections::HashMap;
+use std::fs;
 
 const TEXTURE_SIZE: usize = 256;
 const ATLAS_COLS: usize = 16;
@@ -154,7 +154,15 @@ impl TextureArray {
             usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::COPY_DST,
         });
 
-        const CAPACITY : usize = (4096*4096)+(2048+2048)+(1024*1024)+(512*512)+(256*256)+(128*128)+(64*64)+(32*32)+(16*16) * 4;
+        const CAPACITY: usize = (4096 * 4096)
+            + (2048 + 2048)
+            + (1024 * 1024)
+            + (512 * 512)
+            + (256 * 256)
+            + (128 * 128)
+            + (64 * 64)
+            + (32 * 32)
+            + (16 * 16) * 4;
         let mut pixelbuf = Vec::<u8>::with_capacity(CAPACITY);
         let mut tex_size = 4096;
         let mut offsets = Vec::with_capacity(8);

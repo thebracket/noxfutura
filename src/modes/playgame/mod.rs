@@ -88,9 +88,7 @@ impl PlayGame {
 
     pub fn on_resize(&mut self) {
         self.rpass.as_mut().unwrap().on_resize();
-        self.gbuffer_pass = Some(GBufferTestPass::new(
-            &self.rpass.as_ref().unwrap().gbuffer,
-        ));
+        self.gbuffer_pass = Some(GBufferTestPass::new(&self.rpass.as_ref().unwrap().gbuffer));
     }
 
     pub fn tick(
@@ -184,10 +182,7 @@ impl PlayGame {
         super::ProgramMode::PlayGame
     }
 
-    fn camera_control(
-        &mut self,
-        keycode: &Option<VirtualKeyCode>,
-    ) -> usize {
+    fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> usize {
         let mut result = 0;
         let pass = self.rpass.as_mut().unwrap();
         let query = <(Write<Position>, Write<CameraOptions>)>::query();

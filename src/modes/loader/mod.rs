@@ -1,8 +1,8 @@
 mod ui;
-pub use ui::*;
+use crate::modes::playgame::{BlockRenderPass, GBufferTestPass, VoxRenderPass};
 use parking_lot::RwLock;
 use std::thread;
-use crate::modes::playgame::{BlockRenderPass, GBufferTestPass, VoxRenderPass};
+pub use ui::*;
 
 lazy_static! {
     pub static ref LOADER: RwLock<LoaderState> = RwLock::new(LoaderState::new());
@@ -15,32 +15,30 @@ pub struct LoaderState {
 
     pub rpass: Option<BlockRenderPass>,
     pub gpass: Option<GBufferTestPass>,
-    pub vpass: Option<VoxRenderPass>
+    pub vpass: Option<VoxRenderPass>,
 }
 
 impl LoaderState {
     pub fn new() -> Self {
-        Self{
+        Self {
             progress: 0.0,
             status: "Randomly Flipping Bits...".to_string(),
             done: false,
             rpass: None,
             gpass: None,
-            vpass: None
+            vpass: None,
         }
     }
 
     pub fn start_loading() {
         thread::spawn(|| {
-            LOADER.write().update(0.01, "Starting to load things", false);
+            LOADER
+                .write()
+                .update(0.01, "Starting to load things", false);
             crate::raws::load_raws();
             let rpass = BlockRenderPass::new();
-            let gbuffer_pass = GBufferTestPass::new(
-                &rpass.gbuffer,
-            );
-            let vox_pass = VoxRenderPass::new(
-                &rpass.uniform_bind_group_layout,
-            );
+            let gbuffer_pass = GBufferTestPass::new(&rpass.gbuffer);
+            let vox_pass = VoxRenderPass::new(&rpass.uniform_bind_group_layout);
 
             let mut lock = LOADER.write();
             lock.rpass = Some(rpass);

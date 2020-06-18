@@ -1,10 +1,7 @@
 use crate::engine::renderpass;
 use crate::engine::DEVICE_CONTEXT;
 
-pub fn render_menu_background(
-    frame: &wgpu::SwapChainOutput,
-    resources: &super::SharedResources,
-) {
+pub fn render_menu_background(frame: &wgpu::SwapChainOutput, resources: &super::SharedResources) {
     let mut ctx = DEVICE_CONTEXT.write();
     let context = ctx.as_mut().unwrap();
     let mut encoder = renderpass::get_encoder(&context);

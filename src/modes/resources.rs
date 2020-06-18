@@ -25,8 +25,7 @@ impl SharedResources {
             -1.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 0.0, 0.0,
             1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
         ]);
-        self.quad_vb
-            .build(wgpu::BufferUsage::VERTEX);
+        self.quad_vb.build(wgpu::BufferUsage::VERTEX);
 
         // Load the background image
         self.background_image = crate::engine::register_texture(

@@ -1,15 +1,15 @@
-use crate::modes::{resources::SharedResources, helpers, ProgramMode};
-use imgui::*;
 use super::LOADER;
+use crate::modes::{helpers, resources::SharedResources, ProgramMode};
+use imgui::*;
 
 pub struct Loader {
-    started_thread : bool
+    started_thread: bool,
 }
 
 impl Loader {
     pub fn new() -> Self {
-        Self { 
-            started_thread : false
+        Self {
+            started_thread: false,
         }
     }
 
@@ -36,9 +36,7 @@ impl Loader {
         window
             .size([300.0, 100.0], Condition::FirstUseEver)
             .build(ui, || {
-                ProgressBar::new(progress)
-                    .size([250.0, 20.0])
-                    .build(ui);
+                ProgressBar::new(progress).size([250.0, 20.0]).build(ui);
 
                 ui.text(&load_state);
             });

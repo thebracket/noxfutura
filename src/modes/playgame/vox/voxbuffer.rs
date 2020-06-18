@@ -39,7 +39,6 @@ impl VoxBuffer {
             }
         }
 
-        self.vertices
-            .build(wgpu::BufferUsage::VERTEX);
+        self.vertices.build(wgpu::BufferUsage::VERTEX);
     }
 }

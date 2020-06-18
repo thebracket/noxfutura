@@ -77,10 +77,7 @@ impl MainMenu {
         let size = crate::engine::get_window_size();
         let thanks = imgui::Window::new(im_str!("Thanks to our supporters"));
         thanks
-            .position(
-                [size.width as f32 - 300.0, 125.0],
-                Condition::Always,
-            )
+            .position([size.width as f32 - 300.0, 125.0], Condition::Always)
             .size([400.0, 400.0], Condition::FirstUseEver)
             .always_auto_resize(true)
             .collapsible(false)

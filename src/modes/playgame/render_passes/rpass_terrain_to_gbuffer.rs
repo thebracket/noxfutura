@@ -2,9 +2,9 @@ use super::{
     camera::Camera, gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms, ChunkModel,
 };
 use crate::engine::VertexBuffer;
-use crate::modes::playgame::chunks::Chunks;
 use crate::engine::DEVICE_CONTEXT;
 use crate::modes::loader_progress;
+use crate::modes::playgame::chunks::Chunks;
 
 pub struct BlockRenderPass {
     pub vb: VertexBuffer<f32>,

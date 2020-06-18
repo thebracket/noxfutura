@@ -1,13 +1,13 @@
 use imgui::*;
 use imgui_wgpu::Renderer;
 use imgui_winit_support;
+use parking_lot::RwLock;
 use std::time::Instant;
 use winit::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
-use parking_lot::RwLock;
 mod shader;
 mod vertex_buffer;
 pub use vertex_buffer::VertexBuffer;
@@ -62,7 +62,14 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         .await;
 
     let mut ctx = DEVICE_CONTEXT.write();
-    *ctx = Some(Context::new(adapter, device, queue, size, surface, swapchain_format));
+    *ctx = Some(Context::new(
+        adapter,
+        device,
+        queue,
+        size,
+        surface,
+        swapchain_format,
+    ));
     let context = ctx.as_mut().unwrap();
 
     let depth_id = context.register_depth_texture("depth_texture");

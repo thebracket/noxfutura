@@ -1,12 +1,12 @@
 use super::resources::SharedResources;
 use crate::engine::uniforms::UniformBlock;
+use crate::engine::DEVICE_CONTEXT;
 use crate::modes::WORLDGEN_RENDER;
 use imgui::*;
 use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},
 };
-use crate::engine::DEVICE_CONTEXT;
 
 pub struct PlanetGen2 {
     planet_shader: usize,
@@ -33,9 +33,7 @@ impl PlanetGen2 {
         use crate::engine::*;
 
         let mut renderlock = WORLDGEN_RENDER.lock();
-        renderlock
-            .vertex_buffer
-            .build(wgpu::BufferUsage::VERTEX);
+        renderlock.vertex_buffer.build(wgpu::BufferUsage::VERTEX);
 
         self.planet_shader = crate::engine::register_shader(
             "resources/shaders/planetgen.vert",

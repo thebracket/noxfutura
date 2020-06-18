@@ -1,8 +1,8 @@
 mod resources;
 use resources::SharedResources;
 mod loader;
-use loader::Loader;
 pub use loader::loader_progress;
+use loader::Loader;
 mod main_menu;
 use main_menu::MainMenu;
 mod helpers;
@@ -73,12 +73,8 @@ impl<'a> Program {
         keycode: Option<winit::event::VirtualKeyCode>,
     ) -> bool {
         match self.mode {
-            ProgramMode::Loader => {
-                self.mode = self.loader.tick(&self.resources, frame, imgui)
-            }
-            ProgramMode::MainMenu => {
-                self.mode = self.main_menu.tick(&self.resources, frame, imgui)
-            }
+            ProgramMode::Loader => self.mode = self.loader.tick(&self.resources, frame, imgui),
+            ProgramMode::MainMenu => self.mode = self.main_menu.tick(&self.resources, frame, imgui),
             ProgramMode::PlanetGen => {
                 self.mode = self.planet_gen.tick(&self.resources, frame, imgui)
             }
