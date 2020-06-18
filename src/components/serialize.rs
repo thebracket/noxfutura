@@ -367,7 +367,6 @@ impl legion::serialize::de::WorldDeserializer for DeserializeImpl {
 }
 
 ////////////
-use super::*;
 
 pub fn serialize_world(world: &World) -> String {
     let (comp_registrations, tag_registrations) = super::component_registration();

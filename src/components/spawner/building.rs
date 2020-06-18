@@ -16,7 +16,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
             }
         };
 
-        let entity = ecs.insert(
+        ecs.insert(
             (Building {},),
             vec![(
                 Identity::new(),

@@ -14,8 +14,8 @@ layout(set = 0, binding = 5) uniform sampler s_pbr;
 
 void main() {
     vec3 normal = normalize(texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb * 2.0 - 1.0);
-    vec3 lightDir = normalize(vec3(0.7, 1.0, 0.0));
+    vec3 lightDir = normalize(vec3(0.1, 1.0, 0.0));
     float diff = max(dot(lightDir, normal), 0.1);
-    float ao = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).g;
-    f_color = vec4(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb * diff * ao, 1.0);
+    //float ao = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).g;
+    f_color = vec4(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb * diff, 1.0);
 }

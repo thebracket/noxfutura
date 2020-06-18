@@ -32,8 +32,9 @@ impl Camera {
         proj * view
     }
 
-    pub fn update(&mut self, pos: &Position, opts: &CameraOptions) {
+    pub fn update(&mut self, pos: &Position, opts: &CameraOptions, width: u32, height: u32) {
         self.target = (pos.x as f32, pos.z as f32, pos.y as f32).into();
+        self.aspect = width as f32 / height as f32;
         match opts.mode {
             CameraMode::TopDown => {
                 self.eye = (
