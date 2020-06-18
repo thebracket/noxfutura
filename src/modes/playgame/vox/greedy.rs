@@ -1,6 +1,4 @@
 use super::modelsize::ModelSize;
-use crate::planet::REGION_WIDTH;
-use crate::utils::idxmap;
 use std::collections::HashMap;
 
 pub type VoxMap = HashMap<u32, u8>;

@@ -5,7 +5,6 @@ use crate::planet::Region;
 use bracket_geometry::prelude::*;
 use rayon::prelude::*;
 use ultraviolet::Mat4;
-use crate::engine::DEVICE_CONTEXT;
 
 pub struct Chunks {
     chunks: Vec<Chunk>,

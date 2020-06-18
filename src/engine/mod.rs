@@ -7,7 +7,7 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
-use parking_lot::{RwLock, RwLockWriteGuard, RawRwLock};
+use parking_lot::RwLock;
 mod shader;
 mod vertex_buffer;
 pub use vertex_buffer::VertexBuffer;

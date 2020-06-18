@@ -3,7 +3,6 @@ use super::modelsize::*;
 use crate::engine::VertexBuffer;
 use crate::raws::*;
 use std::collections::HashMap;
-use crate::engine::DEVICE_CONTEXT;
 
 pub struct VoxBuffer {
     pub vertices: VertexBuffer<f32>,
