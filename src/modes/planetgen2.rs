@@ -6,6 +6,7 @@ use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},
 };
+use crate::engine::DEVICE_CONTEXT;
 
 pub struct PlanetGen2 {
     planet_shader: usize,
@@ -28,20 +29,25 @@ impl PlanetGen2 {
         }
     }
 
-    pub fn setup(&mut self, context: &mut crate::engine::Context) {
+    pub fn setup(&mut self) {
         use crate::engine::*;
 
         let mut renderlock = WORLDGEN_RENDER.lock();
         renderlock
             .vertex_buffer
-            .build(&context.device, wgpu::BufferUsage::VERTEX);
-        self.planet_shader = context.register_shader(
+            .build(wgpu::BufferUsage::VERTEX);
+
+        self.planet_shader = crate::engine::register_shader(
             "resources/shaders/planetgen.vert",
             "resources/shaders/planetgen.frag",
         );
 
         // Uniforms and camera etc.
-        self.camera = Some(Camera::new(context.size.width, context.size.height));
+        let size = get_window_size();
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
+
+        self.camera = Some(Camera::new(size.width, size.height));
         self.uniforms = Some(Uniforms::new());
         self.uniforms
             .as_mut()
@@ -73,10 +79,9 @@ impl PlanetGen2 {
         &mut self,
         resources: &SharedResources,
         frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
         ui: &imgui::Ui,
     ) {
-        super::helpers::render_menu_background(context, frame, resources);
+        super::helpers::render_menu_background(frame, resources);
 
         imgui::Window::new(im_str!("Status"))
             .position([10.0, 10.0], Condition::Always)
@@ -91,23 +96,25 @@ impl PlanetGen2 {
         &mut self,
         resources: &SharedResources,
         frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
         ui: &imgui::Ui,
         depth_id: usize,
     ) -> super::ProgramMode {
         use crate::engine::renderpass;
-        self.background_and_status(resources, frame, context, ui);
+        self.background_and_status(resources, frame, ui);
 
         if let Some(uniforms) = self.uniforms.as_mut() {
             uniforms.update_view_proj(self.camera.as_ref().unwrap());
-            uniforms.update_buffer(context, self.uniform_buffer.as_ref().unwrap());
+            uniforms.update_buffer(self.uniform_buffer.as_ref().unwrap());
         }
 
         let mut renderlock = WORLDGEN_RENDER.lock();
         if renderlock.needs_update {
-            renderlock.vertex_buffer.update_buffer(&context);
+            renderlock.vertex_buffer.update_buffer();
             renderlock.needs_update = false;
         }
+
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
 
         if renderlock.vertex_buffer.len() > 0 {
             let mut encoder = renderpass::get_encoder(&context);

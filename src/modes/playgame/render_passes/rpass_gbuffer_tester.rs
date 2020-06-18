@@ -1,5 +1,6 @@
 use super::gbuffer::GBuffer;
-use crate::engine::{Context, VertexBuffer};
+use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
+use crate::modes::loader_progress;
 
 pub struct GBufferTestPass {
     pub vb: VertexBuffer<f32>,
@@ -9,22 +10,25 @@ pub struct GBufferTestPass {
 }
 
 impl GBufferTestPass {
-    pub fn new(context: &mut Context, gbuffer: &GBuffer) -> Self {
+    pub fn new(gbuffer: &GBuffer) -> Self {
+        loader_progress(0.5, "Building the GBuffer", false);
         // Simple quad VB for output
         let mut vb = VertexBuffer::<f32>::new(&[2, 2]);
         vb.add_slice(&[
             -1.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 0.0, 0.0,
             1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
         ]);
-        vb.build(&context.device, wgpu::BufferUsage::VERTEX);
+        vb.build(wgpu::BufferUsage::VERTEX);
 
         // Shader
-        let shader_id = context.register_shader(
+        let shader_id = crate::engine::register_shader(
             "resources/shaders/gbuffer_test.vert",
             "resources/shaders/gbuffer_test.frag",
         );
 
         // Bind Group Layout
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
         let bind_group_layout =
             context
                 .device
@@ -160,7 +164,9 @@ impl GBufferTestPass {
         }
     }
 
-    pub fn render(&mut self, context: &mut Context, frame: &wgpu::SwapChainOutput) {
+    pub fn render(&mut self, frame: &wgpu::SwapChainOutput) {
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
         let mut encoder = context
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });

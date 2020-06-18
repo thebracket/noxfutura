@@ -1,4 +1,4 @@
-use crate::engine::Context;
+use crate::engine::DEVICE_CONTEXT;
 
 pub struct GBuffer {
     pub albedo: GBufferTarget,
@@ -8,11 +8,11 @@ pub struct GBuffer {
 }
 
 impl GBuffer {
-    pub fn new(context: &Context) -> Self {
-        let albedo = GBufferTarget::make_texture(context, "Albedo");
-        let normal = GBufferTarget::make_texture(context, "Normal");
-        let pbr = GBufferTarget::make_texture(context, "PBR");
-        let coords = GBufferTarget::make_texture(context, "Coords");
+    pub fn new() -> Self {
+        let albedo = GBufferTarget::make_texture("Albedo");
+        let normal = GBufferTarget::make_texture("Normal");
+        let pbr = GBufferTarget::make_texture("PBR");
+        let coords = GBufferTarget::make_texture("Coords");
 
         Self {
             albedo,
@@ -31,7 +31,10 @@ pub struct GBufferTarget {
 }
 
 impl GBufferTarget {
-    pub fn make_texture(context: &Context, label: &str) -> Self {
+    pub fn make_texture(label: &str) -> Self {
+        let mut ctx_lock = DEVICE_CONTEXT.write();
+        let context = ctx_lock.as_mut().unwrap();
+
         let size = wgpu::Extent3d {
             width: context.size.width as u32,
             height: context.size.height as u32,

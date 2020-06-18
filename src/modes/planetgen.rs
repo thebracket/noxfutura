@@ -26,11 +26,10 @@ impl PlanetGen {
         &mut self,
         resources: &SharedResources,
         frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
         ui: &imgui::Ui,
     ) -> super::ProgramMode {
         let mut result = super::ProgramMode::PlanetGen;
-        super::helpers::render_menu_background(context, frame, resources);
+        super::helpers::render_menu_background(frame, resources);
 
         let window = imgui::Window::new(im_str!("World Generation Parameters"));
         window.always_auto_resize(true).build(ui, || {

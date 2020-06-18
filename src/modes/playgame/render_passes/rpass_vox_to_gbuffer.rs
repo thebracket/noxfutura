@@ -1,8 +1,9 @@
 use super::super::VoxBuffer;
-use super::{camera::Camera, gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms};
-use crate::engine::{Context, VertexBuffer};
-use crate::modes::playgame::chunks::Chunks;
+use super::{camera::Camera, gbuffer::GBuffer, uniforms::Uniforms};
+use crate::engine::{VertexBuffer};
 use legion::prelude::*;
+use crate::engine::DEVICE_CONTEXT;
+use crate::modes::loader_progress;
 
 pub struct VoxRenderPass {
     pub vox_models: VoxBuffer,
@@ -12,9 +13,10 @@ pub struct VoxRenderPass {
 }
 
 impl VoxRenderPass {
-    pub fn new(context: &mut Context, uniform_bind_group_layout: &wgpu::BindGroupLayout) -> Self {
+    pub fn new(uniform_bind_group_layout: &wgpu::BindGroupLayout) -> Self {
+        loader_progress(0.75, "Loading voxels", false);
         let mut vox_models = VoxBuffer::new();
-        vox_models.load(context);
+        vox_models.load();
 
         // Instance buffer
         let mut instance_buffer = VertexBuffer::<f32>::new(&[3, 3]);
@@ -22,20 +24,23 @@ impl VoxRenderPass {
         instance_buffer.attributes[1].shader_location = 4;
         instance_buffer.add3(128., 256., 128.);
         instance_buffer.add3(128., 128., 128.);
-        instance_buffer.build(&context.device, wgpu::BufferUsage::VERTEX);
+        instance_buffer.build(wgpu::BufferUsage::VERTEX);
 
         // Initialize camera and uniforms
-        let camera = Camera::new(context.size.width, context.size.height);
+        let size = crate::engine::get_window_size();
+        let camera = Camera::new(size.width, size.height);
         let mut uniforms = Uniforms::new();
         uniforms.update_view_proj(&camera);
 
         // Shader
-        let shader_id = context.register_shader(
+        let shader_id = crate::engine::register_shader(
             "resources/shaders/voxmod.vert",
             "resources/shaders/voxmod.frag",
         );
 
         // WGPU Details
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
         let pipeline_layout =
             context
                 .device
@@ -122,9 +127,8 @@ impl VoxRenderPass {
 
     pub fn render(
         &mut self,
-        context: &mut Context,
         depth_id: usize,
-        frame: &wgpu::SwapChainOutput,
+        _frame: &wgpu::SwapChainOutput,
         gbuffer: &GBuffer,
         uniform_bg: &wgpu::BindGroup,
         camera_z: usize,
@@ -176,8 +180,8 @@ impl VoxRenderPass {
                     vox_instances.push((first, last, n));
                     n += 1;
 
-                    let mut x = pos.x as f32;
-                    let mut y = pos.y as f32;
+                    let x = pos.x as f32;
+                    let y = pos.y as f32;
                     let z = pos.z as f32;
 
                     self.instance_buffer.add3(x, z, y);
@@ -201,10 +205,12 @@ impl VoxRenderPass {
         }
 
         if !vox_instances.is_empty() {
-            self.instance_buffer.update_buffer(context);
+            self.instance_buffer.update_buffer();
         }
 
         // Render code
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
         let mut encoder = context
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });

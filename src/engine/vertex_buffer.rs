@@ -63,12 +63,16 @@ where
         }
     }
 
-    pub fn build(&mut self, device: &wgpu::Device, usage: wgpu::BufferUsage) {
+    pub fn build(&mut self, usage: wgpu::BufferUsage) {
+        use crate::engine::DEVICE_CONTEXT;
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
+        let device = &context.device;
         self.buffer = Some(device.create_buffer_with_data(bytemuck::cast_slice(&self.data), usage));
     }
 
-    pub fn update_buffer(&mut self, context: &super::Context) {
-        self.build(&context.device, wgpu::BufferUsage::VERTEX);
+    pub fn update_buffer(&mut self) {
+        self.build(wgpu::BufferUsage::VERTEX);
     }
 
     pub fn len(&self) -> u32 {

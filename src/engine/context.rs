@@ -13,7 +13,7 @@ pub struct Context {
     pub swapchain_format: wgpu::TextureFormat,
 }
 
-impl Context {
+impl<'a> Context {
     pub fn new(
         adapter: wgpu::Adapter,
         device: wgpu::Device,

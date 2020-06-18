@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 use std::fs;
+use crate::engine::DEVICE_CONTEXT;
+use crate::modes::loader_progress;
 
 const TEXTURE_SIZE: usize = 256;
 const ATLAS_COLS: usize = 16;
@@ -15,7 +17,8 @@ pub struct TextureArray {
 }
 
 impl TextureArray {
-    pub fn blank(context: &crate::engine::Context) -> Result<Self, failure::Error> {
+    pub fn blank() -> Result<Self, failure::Error> {
+        loader_progress(0.1, "Building texture maps", false);
         let label = Some("terraintex");
 
         let paths = fs::read_dir("resources/terrain/").unwrap();
@@ -43,6 +46,7 @@ impl TextureArray {
         // Make an atlas
         //let atlas_rows = 16;
         //println!("{} rows", atlas_rows);
+        loader_progress(0.15, "Building an atlas", false);
         let mut atlas_data = [
             image::DynamicImage::new_rgba8(ATLAS_W, ATLAS_H),
             image::DynamicImage::new_rgba8(ATLAS_W / 2, ATLAS_H / 2),
@@ -54,6 +58,7 @@ impl TextureArray {
             image::DynamicImage::new_rgba8(ATLAS_W / 128, ATLAS_H / 128),
         ];
 
+        loader_progress(0.17, "Squashing things", false);
         let mut matmap = HashMap::<String, usize>::new();
         for (i, (k, _v)) in tex_map.iter().enumerate() {
             // i is index, k is stub-name, v is the index in the texture array and can be largely ignored?
@@ -122,6 +127,7 @@ impl TextureArray {
             }
         }
 
+        loader_progress(0.18, "Mapping Materials", false);
         {
             let mut rawlock = crate::raws::RAWS.write();
             let mats = rawlock.materials.materials.clone();
@@ -129,11 +135,14 @@ impl TextureArray {
         }
 
         // Build the texture
+        loader_progress(0.19, "Throwing data around", false);
         let size = wgpu::Extent3d {
             width: ATLAS_W as u32,
             height: ATLAS_H as u32,
             depth: 1,
         };
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
         let texture = context.device.create_texture(&wgpu::TextureDescriptor {
             label,
             size,
@@ -145,15 +154,17 @@ impl TextureArray {
             usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::COPY_DST,
         });
 
-        let mut pixelbuf = Vec::<u8>::new();
+        const CAPACITY : usize = (4096*4096)+(2048+2048)+(1024*1024)+(512*512)+(256*256)+(128*128)+(64*64)+(32*32)+(16*16) * 4;
+        let mut pixelbuf = Vec::<u8>::with_capacity(CAPACITY);
         let mut tex_size = 4096;
-        let mut offsets = Vec::new();
+        let mut offsets = Vec::with_capacity(8);
         for mip in 0..8 {
             offsets.push(pixelbuf.len());
             pixelbuf.extend_from_slice(&atlas_data[mip].raw_pixels());
             tex_size /= 2;
         }
 
+        loader_progress(0.20, "Feeding the video card", false);
         let buffer = context
             .device
             .create_buffer_with_data(&pixelbuf, wgpu::BufferUsage::COPY_SRC);

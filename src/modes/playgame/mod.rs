@@ -11,7 +11,8 @@ mod chunks;
 pub mod vox;
 use vox::VoxBuffer;
 mod render_passes;
-use render_passes::*;
+pub use render_passes::*;
+use crate::engine::DEVICE_CONTEXT;
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
@@ -62,29 +63,33 @@ impl PlayGame {
                 self.planet = Some(game.planet);
                 self.current_region = Some(game.current_region);
                 self.ecs = crate::components::deserialize_world(game.ecs_text);
+
+                let mut loader_lock = crate::modes::loader::LOADER.write();
+                self.rpass = loader_lock.rpass.take();
+                self.gbuffer_pass = loader_lock.gpass.take();
+                self.vox_pass = loader_lock.vpass.take();
             }
             _ => panic!("Not meant to go here."),
         }
         *LOAD_STATE.lock() = LoadState::Idle;
     }
 
-    pub fn setup(&mut self, context: &mut crate::engine::Context) {
+    pub fn setup(&mut self) {
+        /*
         crate::raws::load_raws();
-        self.rpass = Some(BlockRenderPass::new(context));
+        self.rpass = Some(BlockRenderPass::new());
         self.gbuffer_pass = Some(GBufferTestPass::new(
-            context,
             &self.rpass.as_ref().unwrap().gbuffer,
         ));
         self.vox_pass = Some(VoxRenderPass::new(
-            context,
             &self.rpass.as_ref().unwrap().uniform_bind_group_layout,
         ));
+        */
     }
 
-    pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
-        self.rpass.as_mut().unwrap().on_resize(context);
+    pub fn on_resize(&mut self) {
+        self.rpass.as_mut().unwrap().on_resize();
         self.gbuffer_pass = Some(GBufferTestPass::new(
-            context,
             &self.rpass.as_ref().unwrap().gbuffer,
         ));
     }
@@ -93,7 +98,6 @@ impl PlayGame {
         &mut self,
         _resources: &SharedResources,
         frame: &wgpu::SwapChainOutput,
-        context: &mut crate::engine::Context,
         imgui: &imgui::Ui,
         depth_id: usize,
         keycode: Option<VirtualKeyCode>,
@@ -101,7 +105,7 @@ impl PlayGame {
     ) -> super::ProgramMode {
         //super::helpers::render_menu_background(context, frame, resources);
 
-        let camera_z = self.camera_control(&keycode, context);
+        let camera_z = self.camera_control(&keycode);
         let pass = self.rpass.as_mut().unwrap();
 
         if self.rebuild_geometry {
@@ -109,17 +113,18 @@ impl PlayGame {
             if let Some(region) = &self.current_region {
                 // Rebuild chunks that need it
                 pass.vb.clear();
-                self.chunks.rebuild_all(region, context);
+                self.chunks.rebuild_all(region);
             }
 
             // Update the chunk frustrum system
             let query = <(Read<Position>, Read<CameraOptions>)>::query();
             for (pos, camopts) in query.iter(&self.ecs) {
+                let size = crate::engine::get_window_size();
                 pass.camera
-                    .update(&*pos, &*camopts, context.size.width, context.size.height);
+                    .update(&*pos, &*camopts, size.width, size.height);
                 let camera_matrix = pass.camera.build_view_projection_matrix();
                 self.chunks.on_camera_move(&camera_matrix, &*pos);
-                pass.uniforms.update_buffer(context, &pass.uniform_buf);
+                pass.uniforms.update_buffer(&pass.uniform_buf);
             }
 
             // Mark clean
@@ -127,7 +132,7 @@ impl PlayGame {
         }
 
         if pass.vb.len() > 0 {
-            pass.vb.update_buffer(context);
+            pass.vb.update_buffer();
         }
 
         let title = format!(
@@ -158,7 +163,6 @@ impl PlayGame {
 
         self.chunk_models.clear();
         pass.render(
-            context,
             depth_id,
             frame,
             &mut self.chunks,
@@ -166,7 +170,6 @@ impl PlayGame {
             &mut self.chunk_models,
         );
         self.vox_pass.as_mut().unwrap().render(
-            context,
             depth_id,
             frame,
             &pass.gbuffer,
@@ -177,7 +180,7 @@ impl PlayGame {
         );
 
         let pass2 = self.gbuffer_pass.as_mut().unwrap();
-        pass2.render(context, frame);
+        pass2.render(frame);
 
         super::ProgramMode::PlayGame
     }
@@ -185,7 +188,6 @@ impl PlayGame {
     fn camera_control(
         &mut self,
         keycode: &Option<VirtualKeyCode>,
-        context: &crate::engine::Context,
     ) -> usize {
         let mut result = 0;
         let pass = self.rpass.as_mut().unwrap();
@@ -219,10 +221,11 @@ impl PlayGame {
                 }
             }
             if camera_changed {
-                cam.update(&*pos, &*camopts, context.size.width, context.size.height);
+                let size = crate::engine::get_window_size();
+                cam.update(&*pos, &*camopts, size.width, size.height);
                 pass.uniforms.update_view_proj(&pass.camera);
                 self.chunks.on_camera_move(&pass.uniforms.view_proj, &*pos);
-                pass.uniforms.update_buffer(context, &pass.uniform_buf);
+                pass.uniforms.update_buffer(&pass.uniform_buf);
             }
 
             result = pos.z;

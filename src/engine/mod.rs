@@ -7,6 +7,7 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
+use parking_lot::{RwLock, RwLockWriteGuard, RawRwLock};
 mod shader;
 mod vertex_buffer;
 pub use vertex_buffer::VertexBuffer;
@@ -17,6 +18,25 @@ pub use context::Context;
 pub mod pipelines;
 pub mod renderpass;
 pub mod uniforms;
+
+lazy_static! {
+    pub static ref DEVICE_CONTEXT: RwLock<Option<Context>> = RwLock::new(None);
+}
+
+pub fn get_window_size() -> winit::dpi::PhysicalSize<u32> {
+    let lock = DEVICE_CONTEXT.read();
+    lock.as_ref().unwrap().size.clone()
+}
+
+pub fn register_shader<S: ToString>(vertex_src: S, frag_src: S) -> usize {
+    let mut lock = DEVICE_CONTEXT.write();
+    lock.as_mut().unwrap().register_shader(vertex_src, frag_src)
+}
+
+pub fn register_texture(bytes: &[u8], label: &str) -> usize {
+    let mut lock = DEVICE_CONTEXT.write();
+    lock.as_mut().unwrap().register_texture(bytes, label)
+}
 
 async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
     let size = window.inner_size();
@@ -41,7 +61,9 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         })
         .await;
 
-    let mut context = Context::new(adapter, device, queue, size, surface, swapchain_format);
+    let mut ctx = DEVICE_CONTEXT.write();
+    *ctx = Some(Context::new(adapter, device, queue, size, surface, swapchain_format));
+    let context = ctx.as_mut().unwrap();
 
     let depth_id = context.register_depth_texture("depth_texture");
 
@@ -84,6 +106,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
         sc_desc.format,
         None,
     );
+    std::mem::drop(ctx);
 
     let mut last_frame = Instant::now();
 
@@ -91,7 +114,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     // END IMGUI
 
     let mut program = crate::modes::Program::new();
-    program.init(&mut context);
+    program.init();
 
     let mut keycode: Option<winit::event::VirtualKeyCode> = None;
 
@@ -110,13 +133,16 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 event: WindowEvent::Resized(size),
                 ..
             } => {
+                let mut context_lock = DEVICE_CONTEXT.write();
+                let mut context = context_lock.as_mut().unwrap();
                 sc_desc.width = size.width;
                 sc_desc.height = size.height;
                 swap_chain = context.device.create_swap_chain(&context.surface, &sc_desc);
                 context.textures[depth_id] =
                     texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
                 context.size = size;
-                program.on_resize(&mut context);
+                std::mem::drop(context_lock);
+                program.on_resize();
             }
             Event::RedrawRequested(_) => {
                 let frame = renderpass::get_frame(&mut swap_chain);
@@ -127,7 +153,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                     .expect("Failed to prepare frame");
                 let ui = imgui.frame();
 
-                let should_continue = program.tick(&mut context, &frame, depth_id, &ui, keycode);
+                let should_continue = program.tick(&frame, depth_id, &ui, keycode);
                 if !should_continue {
                     *control_flow = ControlFlow::Exit;
                 }
@@ -135,6 +161,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
                 // ImGui
                 {
+                    let mut ctx = DEVICE_CONTEXT.write();
+                    let context = ctx.as_mut().unwrap();
                     let mut encoder: wgpu::CommandEncoder = context
                         .device
                         .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });

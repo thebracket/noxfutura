@@ -1,3 +1,5 @@
+use crate::engine::DEVICE_CONTEXT;
+
 pub struct SharedResources {
     pub background_image: usize,
     pub quad_vb: crate::engine::VertexBuffer<f32>,
@@ -17,33 +19,30 @@ impl SharedResources {
         }
     }
 
-    pub fn init(&mut self, context: &mut crate::engine::Context) {
-        // Load the background image
-        self.background_image = context.register_texture(
-            include_bytes!("../../resources/images/background_image.png"),
-            "NF Background",
-        );
-
-        /*context.register_texture(
-            include_bytes!("../../resources/avon-and-guards.png"),
-            "Kerr Avon",
-        );*/
-
+    pub fn init(&mut self) {
         // Setup the helper quad VB
         self.quad_vb.add_slice(&[
             -1.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 0.0, 0.0,
             1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
         ]);
         self.quad_vb
-            .build(&context.device, wgpu::BufferUsage::VERTEX);
+            .build(wgpu::BufferUsage::VERTEX);
+
+        // Load the background image
+        self.background_image = crate::engine::register_texture(
+            include_bytes!("../../resources/images/background_image.png"),
+            "NF Background",
+        );
 
         // Quad shader
-        self.quad_tex_shader = context.register_shader(
+        self.quad_tex_shader = crate::engine::register_shader(
             "resources/shaders/quad_tex.vert",
             "resources/shaders/quad_tex.frag",
         );
 
         // Texture buffer descriptions
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
         let texture_bind_group_layout =
             context
                 .device

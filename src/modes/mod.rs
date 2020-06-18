@@ -2,6 +2,7 @@ mod resources;
 use resources::SharedResources;
 mod loader;
 use loader::Loader;
+pub use loader::loader_progress;
 mod main_menu;
 use main_menu::MainMenu;
 mod helpers;
@@ -36,7 +37,7 @@ pub struct Program {
     last_frame: Instant,
 }
 
-impl Program {
+impl<'a> Program {
     pub fn new() -> Self {
         Self {
             mode: ProgramMode::Loader,
@@ -50,19 +51,22 @@ impl Program {
         }
     }
 
-    pub fn init(&mut self, context: &mut crate::engine::Context) {
-        self.resources.init(context);
-        self.planet_gen2.setup(context);
-        self.play.setup(context);
+    pub fn init(&mut self) {
+        println!("Init started");
+        self.resources.init();
+        println!("Resources initialized");
+        self.planet_gen2.setup();
+        println!("Planetgen initialized, starting to build play mode");
+        self.play.setup();
+        println!("Init finished");
     }
 
-    pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
-        self.play.on_resize(context);
+    pub fn on_resize(&mut self) {
+        self.play.on_resize();
     }
 
     pub fn tick(
         &mut self,
-        context: &mut crate::engine::Context,
         frame: &wgpu::SwapChainOutput,
         depth_id: usize,
         imgui: &imgui::Ui,
@@ -70,21 +74,21 @@ impl Program {
     ) -> bool {
         match self.mode {
             ProgramMode::Loader => {
-                self.mode = self.loader.tick(&self.resources, frame, context, imgui)
+                self.mode = self.loader.tick(&self.resources, frame, imgui)
             }
             ProgramMode::MainMenu => {
-                self.mode = self.main_menu.tick(&self.resources, frame, context, imgui)
+                self.mode = self.main_menu.tick(&self.resources, frame, imgui)
             }
             ProgramMode::PlanetGen => {
-                self.mode = self.planet_gen.tick(&self.resources, frame, context, imgui)
+                self.mode = self.planet_gen.tick(&self.resources, frame, imgui)
             }
             ProgramMode::PlanetGen2 => {
                 self.mode = self
                     .planet_gen2
-                    .tick(&self.resources, frame, context, imgui, depth_id)
+                    .tick(&self.resources, frame, imgui, depth_id)
             }
             ProgramMode::Resume => {
-                helpers::render_menu_background(context, frame, &self.resources);
+                helpers::render_menu_background(frame, &self.resources);
                 use imgui::*;
                 let ls = LOAD_STATE.lock().clone();
                 match ls {
@@ -107,7 +111,6 @@ impl Program {
                 self.mode = self.play.tick(
                     &self.resources,
                     frame,
-                    context,
                     imgui,
                     depth_id,
                     keycode,

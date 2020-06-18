@@ -1,8 +1,10 @@
 use super::{
     camera::Camera, gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms, ChunkModel,
 };
-use crate::engine::{Context, VertexBuffer};
+use crate::engine::VertexBuffer;
 use crate::modes::playgame::chunks::Chunks;
+use crate::engine::DEVICE_CONTEXT;
+use crate::modes::loader_progress;
 
 pub struct BlockRenderPass {
     pub vb: VertexBuffer<f32>,
@@ -19,27 +21,32 @@ pub struct BlockRenderPass {
 }
 
 impl BlockRenderPass {
-    pub fn new(context: &mut Context) -> Self {
-        let terrain_textures = TextureArray::blank(context).unwrap();
+    pub fn new() -> Self {
+        let terrain_textures = TextureArray::blank().unwrap();
 
         // Initialize the vertex buffer for cube geometry
         let mut vb = VertexBuffer::<f32>::new(&[3, 1, 2, 1]);
         let mut tmp = 0;
         crate::utils::add_floor_geometry(&mut vb.data, &mut tmp, 1.0, 1.0, 1.0, 1.0, 1.0, 0);
-        vb.build(&context.device, wgpu::BufferUsage::VERTEX);
+        vb.build(wgpu::BufferUsage::VERTEX);
 
+        loader_progress(0.4, "Building chunk rendering", false);
         // Initialize camera and uniforms
-        let camera = Camera::new(context.size.width, context.size.height);
+        let size = crate::engine::get_window_size();
+        let camera = Camera::new(size.width, size.height);
         let mut uniforms = Uniforms::new();
         uniforms.update_view_proj(&camera);
 
         // Shader
-        let shader_id = context.register_shader(
+        let shader_id = crate::engine::register_shader(
             "resources/shaders/regionblocks.vert",
             "resources/shaders/regionblocks.frag",
         );
 
         // WGPU Details
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
+
         let uniform_buf = context.device.create_buffer_with_data(
             bytemuck::cast_slice(&[uniforms]),
             wgpu::BufferUsage::UNIFORM | wgpu::BufferUsage::COPY_DST,
@@ -180,6 +187,7 @@ impl BlockRenderPass {
                     sample_mask: !0,
                     alpha_to_coverage_enabled: false,
                 });
+        std::mem::drop(ctx);
 
         // Build the result
         let builder = Self {
@@ -192,7 +200,7 @@ impl BlockRenderPass {
             uniform_buf,
             terrain_textures,
             terrain_bind_group,
-            gbuffer: GBuffer::new(context),
+            gbuffer: GBuffer::new(),
             uniform_bind_group_layout,
         };
         builder
@@ -200,13 +208,14 @@ impl BlockRenderPass {
 
     pub fn render(
         &mut self,
-        context: &mut Context,
         depth_id: usize,
-        frame: &wgpu::SwapChainOutput,
+        _frame: &wgpu::SwapChainOutput,
         chunks: &Chunks,
         camera_z: usize,
         render_models: &mut Vec<ChunkModel>,
     ) {
+        let mut ctx_lock = DEVICE_CONTEXT.write();
+        let context = ctx_lock.as_mut().unwrap();
         let mut encoder = context
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
@@ -274,8 +283,8 @@ impl BlockRenderPass {
         context.queue.submit(&[encoder.finish()]);
     }
 
-    pub fn on_resize(&mut self, context: &mut crate::engine::Context) {
-        self.gbuffer = GBuffer::new(context);
+    pub fn on_resize(&mut self) {
+        self.gbuffer = GBuffer::new();
         println!("Warning: a resize was just called.");
     }
 }

@@ -3,6 +3,7 @@ use super::modelsize::*;
 use crate::engine::VertexBuffer;
 use crate::raws::*;
 use std::collections::HashMap;
+use crate::engine::DEVICE_CONTEXT;
 
 pub struct VoxBuffer {
     pub vertices: VertexBuffer<f32>,
@@ -17,13 +18,12 @@ impl VoxBuffer {
         }
     }
 
-    pub fn load(&mut self, context: &crate::engine::Context) {
+    pub fn load(&mut self) {
         self.vertices.clear();
         let rlock = RAWS.read();
         let mut last_index = 0;
         for modelfile in rlock.vox.vox.iter() {
             let filename = format!("resources/vox/{}.vox", modelfile.file);
-            println!("Loading: {}", filename);
             let rawvox = dot_vox::load(&filename).unwrap();
 
             let mut cubes: HashMap<u32, u8> = HashMap::new();
@@ -41,6 +41,6 @@ impl VoxBuffer {
         }
 
         self.vertices
-            .build(&context.device, wgpu::BufferUsage::VERTEX);
+            .build(wgpu::BufferUsage::VERTEX);
     }
 }

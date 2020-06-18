@@ -1,4 +1,5 @@
 use super::Context;
+use crate::engine::DEVICE_CONTEXT;
 
 pub trait UniformBlock<T: bytemuck::Pod = Self>: bytemuck::Pod {
     fn create_buffer_with_data(&self, device: &wgpu::Device) -> wgpu::Buffer {
@@ -45,7 +46,9 @@ pub trait UniformBlock<T: bytemuck::Pod = Self>: bytemuck::Pod {
         })
     }
 
-    fn update_buffer(&self, context: &Context, uniform_buffer: &wgpu::Buffer) {
+    fn update_buffer(&self, uniform_buffer: &wgpu::Buffer) {
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
         let mut encoder = context
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
