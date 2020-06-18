@@ -102,39 +102,43 @@ impl PlayGame {
         depth_id: usize,
         keycode: Option<VirtualKeyCode>,
         frame_time: u128,
-    ) -> super::ProgramMode {
-        //super::helpers::render_menu_background(context, frame, resources);
-
+    ) -> super::ProgramMode 
+    {
         let camera_z = self.camera_control(&keycode);
-        let pass = self.rpass.as_mut().unwrap();
 
         if self.rebuild_geometry {
-            println!("Rebuilding geometry");
-            if let Some(region) = &self.current_region {
-                // Rebuild chunks that need it
-                pass.vb.clear();
-                self.chunks.rebuild_all(region);
-            }
-
-            // Update the chunk frustrum system
-            let query = <(Read<Position>, Read<CameraOptions>)>::query();
-            for (pos, camopts) in query.iter(&self.ecs) {
-                let size = crate::engine::get_window_size();
-                pass.camera
-                    .update(&*pos, &*camopts, size.width, size.height);
-                let camera_matrix = pass.camera.build_view_projection_matrix();
-                self.chunks.on_camera_move(&camera_matrix, &*pos);
-                pass.uniforms.update_buffer(&pass.uniform_buf);
-            }
-
-            // Mark clean
-            self.rebuild_geometry = false;
+            self.update_geometry();
         }
 
-        if pass.vb.len() > 0 {
-            pass.vb.update_buffer();
+        self.user_interface(frame_time, imgui);
+        self.render(camera_z, depth_id, frame);
+        super::ProgramMode::PlayGame
+    }
+
+    fn update_geometry(&mut self) {
+        let pass = self.rpass.as_mut().unwrap();
+        if let Some(region) = &self.current_region {
+            // Rebuild chunks that need it
+            pass.vb.clear();
+            self.chunks.rebuild_all(region);
         }
 
+        // Update the chunk frustrum system
+        let query = <(Read<Position>, Read<CameraOptions>)>::query();
+        for (pos, camopts) in query.iter(&self.ecs) {
+            let size = crate::engine::get_window_size();
+            pass.camera
+                .update(&*pos, &*camopts, size.width, size.height);
+            let camera_matrix = pass.camera.build_view_projection_matrix();
+            self.chunks.on_camera_move(&camera_matrix, &*pos);
+            pass.uniforms.update_buffer(&pass.uniform_buf);
+        }
+
+        // Mark clean
+        self.rebuild_geometry = false;
+    }
+
+    fn user_interface(&mut self, frame_time: u128, imgui: &Ui) {
         let title = format!(
             "Playing. Frame time: {} ms. FPS: {}.",
             frame_time,
@@ -160,29 +164,6 @@ impl PlayGame {
             }
             menu_bar.end(imgui);
         }
-
-        self.chunk_models.clear();
-        pass.render(
-            depth_id,
-            frame,
-            &mut self.chunks,
-            camera_z as usize,
-            &mut self.chunk_models,
-        );
-        self.vox_pass.as_mut().unwrap().render(
-            depth_id,
-            frame,
-            &pass.gbuffer,
-            &pass.uniform_bind_group,
-            camera_z as usize,
-            &self.ecs,
-            &self.chunk_models,
-        );
-
-        let pass2 = self.gbuffer_pass.as_mut().unwrap();
-        pass2.render(frame);
-
-        super::ProgramMode::PlayGame
     }
 
     fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> usize {
@@ -228,5 +209,33 @@ impl PlayGame {
             result = pos.z;
         }
         result
+    }
+
+    fn render(&mut self, camera_z: usize, depth_id: usize, frame: &wgpu::SwapChainOutput) {
+        let pass = self.rpass.as_mut().unwrap();
+        if pass.vb.len() > 0 {
+            pass.vb.update_buffer();
+        }
+
+        self.chunk_models.clear();
+        pass.render(
+            depth_id,
+            frame,
+            &mut self.chunks,
+            camera_z as usize,
+            &mut self.chunk_models,
+        );
+        self.vox_pass.as_mut().unwrap().render(
+            depth_id,
+            frame,
+            &pass.gbuffer,
+            &pass.uniform_bind_group,
+            camera_z as usize,
+            &self.ecs,
+            &self.chunk_models,
+        );
+
+        let pass2 = self.gbuffer_pass.as_mut().unwrap();
+        pass2.render(frame);
     }
 }
