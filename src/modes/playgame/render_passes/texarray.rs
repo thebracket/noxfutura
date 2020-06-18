@@ -70,7 +70,7 @@ impl TextureArray {
             let normal = image::open(&normal_fn).unwrap();
             let rough = image::open(&rough_fn).unwrap();
             let ao = image::open(&ao_fn).unwrap();
-            let metal  = if std::path::Path::new(&metal_fn).exists() {
+            let metal = if std::path::Path::new(&metal_fn).exists() {
                 image::open(&metal_fn).unwrap()
             } else {
                 image::open("resources/metal-template.jpg").unwrap()
@@ -84,17 +84,26 @@ impl TextureArray {
 
             let mut tex_size = TEXTURE_SIZE as usize;
             for mip in 0..8 {
-
                 // Paste the albedo
                 let base_i = i * 3;
                 let x = (base_i % ATLAS_COLS) * tex_size;
                 let y = (base_i / ATLAS_COLS) * tex_size;
-                image::imageops::overlay(&mut atlas_data[mip], &albedo_mip[mip], x as u32, y as u32);
+                image::imageops::overlay(
+                    &mut atlas_data[mip],
+                    &albedo_mip[mip],
+                    x as u32,
+                    y as u32,
+                );
 
                 // Paste the normal
-                let x = ((base_i+1) % ATLAS_COLS) * tex_size;
-                let y = ((base_i+1) / ATLAS_COLS) * tex_size;
-                image::imageops::overlay(&mut atlas_data[mip], &normal_mip[mip], x as u32, y as u32);
+                let x = ((base_i + 1) % ATLAS_COLS) * tex_size;
+                let y = ((base_i + 1) / ATLAS_COLS) * tex_size;
+                image::imageops::overlay(
+                    &mut atlas_data[mip],
+                    &normal_mip[mip],
+                    x as u32,
+                    y as u32,
+                );
 
                 let mut fancy = ao_mip[mip].clone();
                 for iy in 0..tex_size as u32 {
@@ -106,10 +115,10 @@ impl TextureArray {
                         fancy.put_pixel(ix, iy, p);
                     }
                 }
-                let x = ((base_i+2) % ATLAS_COLS) * tex_size;
-                let y = ((base_i+2) / ATLAS_COLS) * tex_size;
+                let x = ((base_i + 2) % ATLAS_COLS) * tex_size;
+                let y = ((base_i + 2) / ATLAS_COLS) * tex_size;
                 image::imageops::overlay(&mut atlas_data[mip], &fancy, x as u32, y as u32);
-                tex_size /= 2 ;
+                tex_size /= 2;
             }
         }
 
@@ -156,7 +165,7 @@ impl TextureArray {
             });
 
         tex_size = ATLAS_W;
-        for mip in 0..8  {
+        for mip in 0..8 {
             encoder.copy_buffer_to_texture(
                 wgpu::BufferCopyView {
                     buffer: &buffer,
@@ -208,18 +217,18 @@ impl TextureArray {
 
 use image::*;
 
-fn load_image_levels(base : &DynamicImage) -> [ImageBuffer<Rgba<u8>, Vec<u8>>; 8] {
-    const TEX_FILTER : FilterType = FilterType::Lanczos3;
-    const TS : u32 = TEXTURE_SIZE as u32;
+fn load_image_levels(base: &DynamicImage) -> [ImageBuffer<Rgba<u8>, Vec<u8>>; 8] {
+    const TEX_FILTER: FilterType = FilterType::Lanczos3;
+    const TS: u32 = TEXTURE_SIZE as u32;
 
     [
         base.to_rgba(),
-        base.resize_exact(TS/2, TS/2, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS/4, TS/4, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS/8, TS/8, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS/16, TS/16, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS/32, TS/32, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS/64, TS/64, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS/128, TS/128, TEX_FILTER).to_rgba(),
+        base.resize_exact(TS / 2, TS / 2, TEX_FILTER).to_rgba(),
+        base.resize_exact(TS / 4, TS / 4, TEX_FILTER).to_rgba(),
+        base.resize_exact(TS / 8, TS / 8, TEX_FILTER).to_rgba(),
+        base.resize_exact(TS / 16, TS / 16, TEX_FILTER).to_rgba(),
+        base.resize_exact(TS / 32, TS / 32, TEX_FILTER).to_rgba(),
+        base.resize_exact(TS / 64, TS / 64, TEX_FILTER).to_rgba(),
+        base.resize_exact(TS / 128, TS / 128, TEX_FILTER).to_rgba(),
     ]
 }

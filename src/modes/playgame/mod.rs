@@ -115,7 +115,8 @@ impl PlayGame {
             // Update the chunk frustrum system
             let query = <(Read<Position>, Read<CameraOptions>)>::query();
             for (pos, camopts) in query.iter(&self.ecs) {
-                pass.camera.update(&*pos, &*camopts, context.size.width, context.size.height);
+                pass.camera
+                    .update(&*pos, &*camopts, context.size.width, context.size.height);
                 let camera_matrix = pass.camera.build_view_projection_matrix();
                 self.chunks.on_camera_move(&camera_matrix, &*pos);
                 pass.uniforms.update_buffer(context, &pass.uniform_buf);
