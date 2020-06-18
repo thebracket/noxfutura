@@ -2,6 +2,7 @@ use crate::engine::DEVICE_CONTEXT;
 use crate::modes::loader_progress;
 use std::collections::HashMap;
 use std::fs;
+use rayon::prelude::*;
 
 const TEXTURE_SIZE: usize = 256;
 const ATLAS_COLS: usize = 16;
@@ -63,6 +64,7 @@ impl TextureArray {
         let mut progress = 0.17;
         for (i, (k, _v)) in tex_map.iter().enumerate() {
             // i is index, k is stub-name, v is the index in the texture array and can be largely ignored?
+
             let albdeo_fn = format!("resources/terrain/{}-t.jpg", k);
             let normal_fn = format!("resources/terrain/{}-n.jpg", k);
             let rough_fn = format!("resources/terrain/{}-r.jpg", k);
@@ -82,10 +84,15 @@ impl TextureArray {
                 image::open("resources/metal-template.jpg").unwrap()
             };
 
-            let albedo_mip = load_image_levels(&albedo);
-            let normal_mip = load_image_levels(&normal);
-            let rough_mip = load_image_levels(&rough);
-            let ao_mip = load_image_levels(&ao);
+            let (albedo_mip, normal_mip) = rayon::join(
+                || load_image_levels(&albedo),
+                ||load_image_levels(&normal)
+            );
+            let (rough_mip, ao_mip) = rayon::join(
+                || load_image_levels(&rough),
+                ||load_image_levels(&ao)
+            );
+
             let metal_mip = load_image_levels(&metal);
 
             let mut tex_size = TEXTURE_SIZE as usize;
@@ -240,18 +247,22 @@ impl TextureArray {
 
 use image::*;
 
-fn load_image_levels(base: &DynamicImage) -> [ImageBuffer<Rgba<u8>, Vec<u8>>; 8] {
+fn load_image_levels(base: &DynamicImage) -> Vec<ImageBuffer<Rgba<u8>, Vec<u8>>> {
     const TEX_FILTER: FilterType = FilterType::Lanczos3;
     const TS: u32 = TEXTURE_SIZE as u32;
 
+    let mut result_optional : [(usize, Option<ImageBuffer<Rgba<u8>, Vec<u8>>>); 8] =
     [
-        base.to_rgba(),
-        base.resize_exact(TS / 2, TS / 2, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS / 4, TS / 4, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS / 8, TS / 8, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS / 16, TS / 16, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS / 32, TS / 32, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS / 64, TS / 64, TEX_FILTER).to_rgba(),
-        base.resize_exact(TS / 128, TS / 128, TEX_FILTER).to_rgba(),
-    ]
+        (0, None), (1, None), (2, None), (3, None), (4, None), (5, None), (6, None), (7, None)
+    ];
+    result_optional.par_iter_mut().for_each(|(i, r)| {
+        let sz = TS / (1 << *i as u32);
+        *r = Some(
+            base.resize_exact(sz, sz, TEX_FILTER).to_rgba()
+        );
+    });
+    result_optional
+        .iter()
+        .map(|(_,r)| r.as_ref().unwrap().clone() )
+        .collect::<Vec<ImageBuffer<Rgba<u8>, Vec<u8>>>>()
 }

@@ -87,6 +87,9 @@ impl PlayGame {
     }
 
     pub fn on_resize(&mut self) {
+        if self.rpass.is_none() {
+            return;
+        }
         self.rpass.as_mut().unwrap().on_resize();
         self.gbuffer_pass = Some(GBufferTestPass::new(&self.rpass.as_ref().unwrap().gbuffer));
     }
