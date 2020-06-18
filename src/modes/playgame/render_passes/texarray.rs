@@ -134,7 +134,7 @@ impl TextureArray {
                 tex_size /= 2;
             }
 
-            loader_progress(progress, "Still squashing things", false);
+            loader_progress(progress, &format!("Squished {}", k), false);
             progress += 0.01;
         }
 

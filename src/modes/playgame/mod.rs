@@ -12,11 +12,13 @@ pub mod vox;
 use vox::VoxBuffer;
 mod render_passes;
 pub use render_passes::*;
+mod systems;
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
     pub current_region: Option<Region>,
     pub ecs: legion::prelude::World,
+    pub ecs_resources: legion::prelude::Resources,
 
     // Internals
     rpass: Option<BlockRenderPass>,
@@ -27,6 +29,7 @@ pub struct PlayGame {
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
     chunks: chunks::Chunks,
+    scheduler: Option<Schedule>
 }
 
 impl PlayGame {
@@ -40,9 +43,11 @@ impl PlayGame {
             gbuffer_pass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
+            ecs_resources: legion::prelude::Resources::default(),
             chunks: chunks::Chunks::empty(),
             vox_pass: None,
             chunk_models: Vec::new(),
+            scheduler: None
         }
     }
 
@@ -67,6 +72,8 @@ impl PlayGame {
                 self.rpass = loader_lock.rpass.take();
                 self.gbuffer_pass = loader_lock.gpass.take();
                 self.vox_pass = loader_lock.vpass.take();
+
+                self.scheduler = Some(systems::build_scheduler());
             }
             _ => panic!("Not meant to go here."),
         }
@@ -74,16 +81,7 @@ impl PlayGame {
     }
 
     pub fn setup(&mut self) {
-        /*
-        crate::raws::load_raws();
-        self.rpass = Some(BlockRenderPass::new());
-        self.gbuffer_pass = Some(GBufferTestPass::new(
-            &self.rpass.as_ref().unwrap().gbuffer,
-        ));
-        self.vox_pass = Some(VoxRenderPass::new(
-            &self.rpass.as_ref().unwrap().uniform_bind_group_layout,
-        ));
-        */
+        // Moved to the loader
     }
 
     pub fn on_resize(&mut self) {
@@ -110,7 +108,9 @@ impl PlayGame {
             self.update_geometry();
         }
 
-        self.user_interface(frame_time, imgui);
+        self.run_systems();
+
+        let sun_position = self.user_interface(frame_time, imgui);
         self.render(camera_z, depth_id, frame);
         super::ProgramMode::PlayGame
     }
@@ -138,7 +138,8 @@ impl PlayGame {
         self.rebuild_geometry = false;
     }
 
-    fn user_interface(&mut self, frame_time: u128, imgui: &Ui) {
+    fn user_interface(&mut self, frame_time: u128, imgui: &Ui) -> (f32, f32, f32) {
+        let mut result = (0.0, 0.0, 0.0);
         let title = format!(
             "Playing. Frame time: {} ms. FPS: {}.",
             frame_time,
@@ -151,6 +152,15 @@ impl PlayGame {
             .size([300.0, 100.0], Condition::FirstUseEver)
             .build(imgui, || {});
 
+        // Obtain info to display
+        let mut hud_time = String::new();
+        let query = <Read<Calendar>>::query();
+        for c in query.iter(&self.ecs) {
+            hud_time = c.get_date_time();
+            result = c.calculate_sun_moon();
+        }
+        let hud_time_im = ImString::new(hud_time);
+
         // Show the menu
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
             if let Some(menu) = imgui.begin_menu(im_str!("Nox Futura"), true) {
@@ -162,8 +172,13 @@ impl PlayGame {
             if let Some(menu) = imgui.begin_menu(im_str!("Units"), true) {
                 menu.end(imgui);
             }
+            let status_size = imgui.calc_text_size(&hud_time_im, false, 0.0);
+            imgui.same_line(imgui.window_content_region_width() - (status_size[0] + 10.0));
+            imgui.text(hud_time_im);
             menu_bar.end(imgui);
         }
+
+        result
     }
 
     fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> usize {
@@ -237,5 +252,9 @@ impl PlayGame {
 
         let pass2 = self.gbuffer_pass.as_mut().unwrap();
         pass2.render(frame);
+    }
+
+    fn run_systems(&mut self) {
+        self.scheduler.as_mut().unwrap().execute(&mut self.ecs, &mut self.ecs_resources);
     }
 }
