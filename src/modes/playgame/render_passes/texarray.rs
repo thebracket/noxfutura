@@ -60,6 +60,7 @@ impl TextureArray {
 
         loader_progress(0.17, "Squashing things", false);
         let mut matmap = HashMap::<String, usize>::new();
+        let mut progress = 0.17;
         for (i, (k, _v)) in tex_map.iter().enumerate() {
             // i is index, k is stub-name, v is the index in the texture array and can be largely ignored?
             let albdeo_fn = format!("resources/terrain/{}-t.jpg", k);
@@ -125,9 +126,12 @@ impl TextureArray {
                 image::imageops::overlay(&mut atlas_data[mip], &fancy, x as u32, y as u32);
                 tex_size /= 2;
             }
+
+            loader_progress(progress, "Still squashing things", false);
+            progress += 0.01;
         }
 
-        loader_progress(0.18, "Mapping Materials", false);
+        loader_progress(0.25, "Mapping Materials", false);
         {
             let mut rawlock = crate::raws::RAWS.write();
             let mats = rawlock.materials.materials.clone();
@@ -135,7 +139,7 @@ impl TextureArray {
         }
 
         // Build the texture
-        loader_progress(0.19, "Throwing data around", false);
+        loader_progress(0.26, "Throwing data around", false);
         let size = wgpu::Extent3d {
             width: ATLAS_W as u32,
             height: ATLAS_H as u32,
@@ -172,7 +176,7 @@ impl TextureArray {
             tex_size /= 2;
         }
 
-        loader_progress(0.20, "Feeding the video card", false);
+        loader_progress(0.27, "Feeding the video card", false);
         let buffer = context
             .device
             .create_buffer_with_data(&pixelbuf, wgpu::BufferUsage::COPY_SRC);
