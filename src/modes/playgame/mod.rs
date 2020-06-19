@@ -24,6 +24,7 @@ pub struct PlayGame {
     rpass: Option<BlockRenderPass>,
     gbuffer_pass: Option<GBufferTestPass>,
     vox_pass: Option<VoxRenderPass>,
+    sun_terrain_pass: Option<SunDepthTerrainPass>,
     chunk_models: Vec<ChunkModel>,
 
     // Game stuff that doesn't belong here
@@ -41,6 +42,7 @@ impl PlayGame {
             current_region: None,
             rpass: None,
             gbuffer_pass: None,
+            sun_terrain_pass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
             ecs_resources: legion::prelude::Resources::default(),
@@ -72,6 +74,7 @@ impl PlayGame {
                 self.rpass = loader_lock.rpass.take();
                 self.gbuffer_pass = loader_lock.gpass.take();
                 self.vox_pass = loader_lock.vpass.take();
+                self.sun_terrain_pass = loader_lock.sun_terrain.take();
 
                 self.scheduler = Some(systems::build_scheduler());
             }
@@ -111,7 +114,7 @@ impl PlayGame {
         self.run_systems();
 
         let sun_position = self.user_interface(frame_time, imgui);
-        self.render(camera_z, depth_id, frame);
+        self.render(camera_z, depth_id, frame, sun_position);
         super::ProgramMode::PlayGame
     }
 
@@ -226,11 +229,18 @@ impl PlayGame {
         result
     }
 
-    fn render(&mut self, camera_z: usize, depth_id: usize, frame: &wgpu::SwapChainOutput) {
+    fn render(&mut self, camera_z: usize, depth_id: usize, frame: &wgpu::SwapChainOutput, sun_pos: (f32, f32, f32)) {
         let pass = self.rpass.as_mut().unwrap();
         if pass.vb.len() > 0 {
             pass.vb.update_buffer();
         }
+
+        self.chunk_models.clear();
+        self.sun_terrain_pass.as_mut().unwrap().render(
+            &mut self.chunks,
+            &mut self.chunk_models,
+            (129.0, 256.0, 128.0)
+        );
 
         self.chunk_models.clear();
         pass.render(

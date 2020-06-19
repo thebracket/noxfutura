@@ -1,5 +1,5 @@
 mod ui;
-use crate::modes::playgame::{BlockRenderPass, GBufferTestPass, VoxRenderPass};
+use crate::modes::playgame::*;
 use parking_lot::RwLock;
 use std::thread;
 pub use ui::*;
@@ -16,6 +16,7 @@ pub struct LoaderState {
     pub rpass: Option<BlockRenderPass>,
     pub gpass: Option<GBufferTestPass>,
     pub vpass: Option<VoxRenderPass>,
+    pub sun_terrain: Option<SunDepthTerrainPass>
 }
 
 impl LoaderState {
@@ -27,6 +28,7 @@ impl LoaderState {
             rpass: None,
             gpass: None,
             vpass: None,
+            sun_terrain: None
         }
     }
 
@@ -39,11 +41,13 @@ impl LoaderState {
             let rpass = BlockRenderPass::new();
             let gbuffer_pass = GBufferTestPass::new(&rpass.gbuffer);
             let vox_pass = VoxRenderPass::new(&rpass.uniform_bind_group_layout);
+            let stpass = SunDepthTerrainPass::new();
 
             let mut lock = LOADER.write();
             lock.rpass = Some(rpass);
             lock.gpass = Some(gbuffer_pass);
             lock.vpass = Some(vox_pass);
+            lock.sun_terrain = Some(stpass);
             std::mem::drop(lock);
             LOADER.write().update(1.00, "Built all the things", true);
         });

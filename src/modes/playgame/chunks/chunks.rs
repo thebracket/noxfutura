@@ -69,4 +69,8 @@ impl Chunks {
             .map(|(_, i)| &self.chunks[*i])
             .collect()
     }
+
+    pub fn all_chunks(&self) -> &Vec<Chunk> {
+        &self.chunks
+    }
 }
