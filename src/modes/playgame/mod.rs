@@ -240,7 +240,6 @@ impl PlayGame {
             &mut self.chunks,
             &mut self.chunk_models,
             (255.0, 256.0, 128.0),
-            &pass.uniform_bind_group
         );
 
         self.chunk_models.clear();

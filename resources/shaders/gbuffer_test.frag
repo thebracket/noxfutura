@@ -22,7 +22,7 @@ void main() {
     //float ao = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).g;
     f_color = vec4(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb * diff, 1.0);
 
-    //highp float depth = texture(sampler2D(t_sun, s_sun), v_tex_coords).r;
-    //highp float depth_scaled = (depth - 0.99) * 100.0;
-    //f_color = vec4(depth_scaled, depth_scaled, depth, 1.0);
+    /*highp float depth = texture(sampler2D(t_sun, s_sun), v_tex_coords).r;
+    highp float depth_scaled = (depth - 0.9) * 10.0;
+    f_color = vec4(depth_scaled, depth_scaled, depth_scaled, 1.0);*/
 }

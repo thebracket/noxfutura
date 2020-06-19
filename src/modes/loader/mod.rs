@@ -40,7 +40,7 @@ impl LoaderState {
             crate::raws::load_raws();
             let rpass = BlockRenderPass::new();
             let vox_pass = VoxRenderPass::new(&rpass.uniform_bind_group_layout);
-            let stpass = SunDepthTerrainPass::new(&rpass.uniform_bind_group_layout);
+            let stpass = SunDepthTerrainPass::new();
             let gbuffer_pass = GBufferTestPass::new(&rpass.gbuffer, &stpass.depth_view, &stpass.depth_sampler);
 
             let mut lock = LOADER.write();
