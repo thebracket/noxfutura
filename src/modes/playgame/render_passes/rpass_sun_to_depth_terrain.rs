@@ -11,20 +11,15 @@ use ultraviolet::Vec3;
 
 pub struct SunDepthTerrainPass {
     pub vb: VertexBuffer<f32>,
-    pub camera: SunCamera,
-    pub uniforms: SunUniforms,
     pub shader_id: usize,
-    pub uniform_bind_group: wgpu::BindGroup,
     pub render_pipeline: wgpu::RenderPipeline,
-    pub uniform_buf: wgpu::Buffer,
-    pub uniform_bind_group_layout: wgpu::BindGroupLayout,
     pub depth_tex : wgpu::Texture,
     pub depth_view : wgpu::TextureView,
     pub depth_sampler : wgpu::Sampler
 }
 
 impl SunDepthTerrainPass {
-    pub fn new() -> Self {
+    pub fn new(uniform_bind_group_layout: &wgpu::BindGroupLayout) -> Self {
         let (depth_tex, depth_view, depth_sampler) = create_depth_texture();
 
         // Initialize the vertex buffer for cube geometry
@@ -34,10 +29,6 @@ impl SunDepthTerrainPass {
         vb.build(wgpu::BufferUsage::VERTEX);
 
         loader_progress(0.7, "Lighting the Sun", false);
-        // Initialize camera and uniforms
-        let mut camera = SunCamera::new(2048, 2048);
-        let mut uniforms = SunUniforms::new();
-        uniforms.update_view_proj(&mut camera, (128.0, 256.0, 128.0).into());
 
         // Shader
         let shader_id = crate::engine::register_shader(
@@ -48,36 +39,6 @@ impl SunDepthTerrainPass {
         // WGPU Details
         let mut ctx = DEVICE_CONTEXT.write();
         let context = ctx.as_mut().unwrap();
-
-        let uniform_buf = context.device.create_buffer_with_data(
-            bytemuck::cast_slice(&[uniforms]),
-            wgpu::BufferUsage::UNIFORM | wgpu::BufferUsage::COPY_DST,
-        );
-        let uniform_bind_group_layout =
-            context
-                .device
-                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                    bindings: &[wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStage::VERTEX,
-                        ty: wgpu::BindingType::UniformBuffer { dynamic: false },
-                    }],
-                    label: None,
-                });
-        let uniform_bind_group = context
-            .device
-            .create_bind_group(&wgpu::BindGroupDescriptor {
-                layout: &uniform_bind_group_layout,
-                bindings: &[wgpu::Binding {
-                    binding: 0,
-                    resource: wgpu::BindingResource::Buffer {
-                        buffer: &uniform_buf,
-                        range: 0..std::mem::size_of::<SunUniforms>() as wgpu::BufferAddress,
-                    },
-                }],
-                label: None,
-            });
-
 
         let pipeline_layout =
             context
@@ -129,13 +90,8 @@ impl SunDepthTerrainPass {
         // Build the result
         let builder = Self {
             vb,
-            camera,
-            uniforms,
             shader_id,
-            uniform_bind_group,
             render_pipeline,
-            uniform_buf,
-            uniform_bind_group_layout,
             depth_tex,
             depth_view,
             depth_sampler
@@ -147,11 +103,9 @@ impl SunDepthTerrainPass {
         &mut self,
         chunks: &Chunks,
         render_models: &mut Vec<ChunkModel>,
-        sun_pos: (f32, f32, f32)
+        sun_pos: (f32, f32, f32),
+        uniform_bg: &wgpu::BindGroup,
     ) {
-        self.uniforms.update_view_proj(&mut self.camera, sun_pos.into());
-        self.uniforms.update_buffer(&self.uniform_buf);
-
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
         let mut encoder = context
@@ -173,7 +127,7 @@ impl SunDepthTerrainPass {
             });
 
             rpass.set_pipeline(&self.render_pipeline);
-            rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
+            rpass.set_bind_group(0, uniform_bg, &[]);
 
             if self.vb.len() > 0 {
                 rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
@@ -193,12 +147,13 @@ impl SunDepthTerrainPass {
 }
 
 pub fn create_depth_texture() -> (wgpu::Texture, wgpu::TextureView, wgpu::Sampler) {
+    let sz = crate::engine::get_window_size();
     let mut ctx_lock = DEVICE_CONTEXT.write();
     let context = ctx_lock.as_mut().unwrap();
 
     let size = wgpu::Extent3d {
-        width: 2048,
-        height: 2048,
+        width: sz.width,
+        height: sz.height,
         depth: 1,
     };
     let desc = wgpu::TextureDescriptor {
@@ -211,7 +166,6 @@ pub fn create_depth_texture() -> (wgpu::Texture, wgpu::TextureView, wgpu::Sample
         format: wgpu::TextureFormat::Depth32Float,
         usage: wgpu::TextureUsage::OUTPUT_ATTACHMENT
             | wgpu::TextureUsage::SAMPLED
-            | wgpu::TextureUsage::COPY_SRC,
     };
     let texture = context.device.create_texture(&desc);
 
@@ -220,7 +174,7 @@ pub fn create_depth_texture() -> (wgpu::Texture, wgpu::TextureView, wgpu::Sample
         address_mode_u: wgpu::AddressMode::ClampToEdge,
         address_mode_v: wgpu::AddressMode::ClampToEdge,
         address_mode_w: wgpu::AddressMode::ClampToEdge,
-        mag_filter: wgpu::FilterMode::Linear,
+        mag_filter: wgpu::FilterMode::Nearest,
         min_filter: wgpu::FilterMode::Nearest,
         mipmap_filter: wgpu::FilterMode::Nearest,
         lod_min_clamp: -100.0,
@@ -233,64 +187,4 @@ pub fn create_depth_texture() -> (wgpu::Texture, wgpu::TextureView, wgpu::Sample
         view,
         sampler,
     )
-}
-
-pub struct SunCamera {
-    eye: Vec3,
-    target: Vec3,
-    up: Vec3,
-    aspect: f32,
-    fovy: f32,
-    znear: f32,
-    zfar: f32,
-}
-
-impl SunCamera {
-    pub fn new(width: u32, height: u32) -> Self {
-        Self {
-            eye: (129.0, 256.0, 128.0).into(),
-            target: (128.0, 128.0, 128.0).into(),
-            up: Vec3::unit_y(),
-            aspect: width as f32 / height as f32,
-            fovy: 0.785398,
-            znear: 0.01,
-            zfar: 1000.0,
-        }
-    }
-
-    pub fn build_view_projection_matrix(&self) -> Mat4 {
-        let view = Mat4::look_at(self.eye, self.target, self.up);
-        let proj = ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
-        proj * view
-    }
-
-    pub fn update(&mut self, sun_pos: Vec3) {
-        //self.eye = sun_pos;
-    }
-}
-
-#[repr(C)]
-#[derive(Copy, Clone)]
-pub struct SunUniforms {
-    pub view_proj: Mat4,
-    pub sun_pos: Vec3
-}
-
-unsafe impl bytemuck::Pod for SunUniforms {}
-unsafe impl bytemuck::Zeroable for SunUniforms {}
-impl UniformBlock for SunUniforms {}
-
-impl SunUniforms {
-    pub fn new() -> Self {
-        Self {
-            view_proj: ultraviolet::mat::Mat4::identity(),
-            sun_pos: (0.0, 0.0, 0.0).into()
-        }
-    }
-
-    pub fn update_view_proj(&mut self, camera: &mut SunCamera, sun_pos: Vec3) {
-        camera.update(sun_pos);
-        self.view_proj = camera.build_view_projection_matrix();
-        self.sun_pos = sun_pos;
-    }
 }

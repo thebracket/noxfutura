@@ -10,7 +10,7 @@ pub struct GBufferTestPass {
 }
 
 impl GBufferTestPass {
-    pub fn new(gbuffer: &GBuffer) -> Self {
+    pub fn new(gbuffer: &GBuffer, sun_v : &wgpu::TextureView, sun_s: &wgpu::Sampler) -> Self {
         loader_progress(0.5, "Building the GBuffer", false);
         // Simple quad VB for output
         let mut vb = VertexBuffer::<f32>::new(&[2, 2]);
@@ -76,6 +76,20 @@ impl GBufferTestPass {
                             visibility: wgpu::ShaderStage::FRAGMENT,
                             ty: wgpu::BindingType::Sampler { comparison: false },
                         },
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 6,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::SampledTexture {
+                                multisampled: false,
+                                dimension: wgpu::TextureViewDimension::D2,
+                                component_type: wgpu::TextureComponentType::Uint,
+                            },
+                        },
+                        wgpu::BindGroupLayoutEntry {
+                            binding: 7,
+                            visibility: wgpu::ShaderStage::FRAGMENT,
+                            ty: wgpu::BindingType::Sampler { comparison: false },
+                        },
                     ],
                     label: None,
                 });
@@ -107,6 +121,14 @@ impl GBufferTestPass {
                     wgpu::Binding {
                         binding: 5,
                         resource: wgpu::BindingResource::Sampler(&gbuffer.pbr.sampler),
+                    },
+                    wgpu::Binding {
+                        binding: 6,
+                        resource: wgpu::BindingResource::TextureView(sun_v),
+                    },
+                    wgpu::Binding {
+                        binding: 7,
+                        resource: wgpu::BindingResource::Sampler(sun_s),
                     },
                 ],
                 label: None,

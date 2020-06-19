@@ -92,7 +92,7 @@ impl PlayGame {
             return;
         }
         self.rpass.as_mut().unwrap().on_resize();
-        self.gbuffer_pass = Some(GBufferTestPass::new(&self.rpass.as_ref().unwrap().gbuffer));
+        //self.gbuffer_pass = Some(GBufferTestPass::new(&self.rpass.as_ref().unwrap().gbuffer));
     }
 
     pub fn tick(
@@ -239,7 +239,8 @@ impl PlayGame {
         self.sun_terrain_pass.as_mut().unwrap().render(
             &mut self.chunks,
             &mut self.chunk_models,
-            (129.0, 256.0, 128.0)
+            (255.0, 256.0, 128.0),
+            &pass.uniform_bind_group
         );
 
         self.chunk_models.clear();

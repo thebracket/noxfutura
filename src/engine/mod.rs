@@ -139,16 +139,16 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
             Event::WindowEvent {
                 event: WindowEvent::Resized(size),
                 ..
-            } => {
+            } => {                
                 let mut context_lock = DEVICE_CONTEXT.write();
                 let mut context = context_lock.as_mut().unwrap();
                 sc_desc.width = size.width;
                 sc_desc.height = size.height;
                 swap_chain = context.device.create_swap_chain(&context.surface, &sc_desc);
-                //context.textures[depth_id] = texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
+                context.textures[depth_id] = texture::Texture::create_depth_texture(&context.device, size, "depth_texture");
                 context.size = size;
                 std::mem::drop(context_lock);
-                //program.on_resize();
+                program.on_resize();
             }
             Event::RedrawRequested(_) => {
                 let frame = renderpass::get_frame(&mut swap_chain);
