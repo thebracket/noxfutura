@@ -175,7 +175,7 @@ pub fn layer_cake(
                 .unwrap_or(&strata.material_idx[mat_idx]);
 
             // Temporary reveal code
-            z -= 3;
+            //z -= 1;
             while z < REGION_DEPTH {
                 let cell_idx = mapidx(x, y, z);
                 region.revealed[cell_idx] = true;
