@@ -57,7 +57,7 @@ void main() {
     gl_Position = u_view_proj * vec4(a_position, 1.0);
     v_normal = normal_lut[int(a_normal)];
     v_frag_pos  = gl_Position.xyz;
-    v_world_pos = vec3(a_position.x, a_position.y, a_position.z);
+    v_world_pos = a_position;
     v_uv = a_uv;
     v_material = a_material;
     v_tbn = TBN[int(a_normal)];

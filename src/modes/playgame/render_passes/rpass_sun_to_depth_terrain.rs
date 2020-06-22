@@ -150,7 +150,7 @@ impl SunDepthTerrainPass {
         render_models: &mut Vec<ChunkModel>,
         sun_pos: (f32, f32, f32)
     ) {
-        self.camera.update();
+        self.camera.update(sun_pos);
         self.uniforms.update_view_proj(&self.camera);
         self.uniforms.update_buffer(&self.uniform_buf);
 
@@ -263,12 +263,12 @@ impl SunCamera {
     pub fn build_view_projection_matrix(&self) -> Mat4 {
         let view = Mat4::look_at(self.eye, self.target, self.up);
         //let proj = ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
-        let proj = ultraviolet::projection::orthographic_gl(-128.0, 128.0, -128.0, 128.0, 128.0, 512.0);
+        let proj = ultraviolet::projection::orthographic_gl(-128.0, 128.0, -128.0, 128.0, 0.0, 512.0);
         proj * view
     }
 
-    pub fn update(&mut self) {
-        self.eye = (128.5, 512.0, 128.0).into();
+    pub fn update(&mut self, sun_pos: (f32, f32, f32)) {
+        self.eye = sun_pos.into();
     }
 }
 

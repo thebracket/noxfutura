@@ -242,7 +242,7 @@ impl PlayGame {
         sun_pass.render(
             &mut self.chunks,
             &mut self.chunk_models,
-            (255.0, 256.0, 128.0),
+            sun_pos,
         );
 
         self.chunk_models.clear();
