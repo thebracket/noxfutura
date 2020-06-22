@@ -181,8 +181,7 @@ impl PlayGame {
             menu_bar.end(imgui);
         }
 
-        //result
-        (128.5, 512.0, 128.0)
+        result
     }
 
     fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> usize {
