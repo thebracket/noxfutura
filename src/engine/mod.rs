@@ -139,7 +139,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
             Event::WindowEvent {
                 event: WindowEvent::Resized(size),
                 ..
-            } => {                
+            } => {
                 let mut context_lock = DEVICE_CONTEXT.write();
                 let mut context = context_lock.as_mut().unwrap();
                 sc_desc.width = size.width;

@@ -14,7 +14,7 @@ pub struct LoaderState {
     done: bool,
 
     pub rpass: Option<BlockRenderPass>,
-    pub gpass: Option<GBufferTestPass>,
+    pub sun_render: Option<SunlightPass>,
     pub vpass: Option<VoxRenderPass>,
     pub sun_terrain: Option<SunDepthTerrainPass>
 }
@@ -26,7 +26,7 @@ impl LoaderState {
             status: "Randomly Flipping Bits...".to_string(),
             done: false,
             rpass: None,
-            gpass: None,
+            sun_render: None,
             vpass: None,
             sun_terrain: None
         }
@@ -41,11 +41,11 @@ impl LoaderState {
             let rpass = BlockRenderPass::new();
             let vox_pass = VoxRenderPass::new(&rpass.uniform_bind_group_layout);
             let stpass = SunDepthTerrainPass::new();
-            let gbuffer_pass = GBufferTestPass::new(&rpass.gbuffer, &stpass.depth_view, &stpass.depth_sampler);
+            let sunlight_pass = SunlightPass::new(&rpass.gbuffer, &stpass.depth_view, &stpass.depth_sampler);
 
             let mut lock = LOADER.write();
             lock.rpass = Some(rpass);
-            lock.gpass = Some(gbuffer_pass);
+            lock.sun_render = Some(sunlight_pass);
             lock.vpass = Some(vox_pass);
             lock.sun_terrain = Some(stpass);
             std::mem::drop(lock);

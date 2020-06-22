@@ -85,5 +85,9 @@ impl Camera {
                     .into();
             }
         }
+
+        // Sun testing
+        //self.eye = (128.5, 512.0, 128.0).into();
+        //self.target = (128.0, 128.0, 128.0).into();
     }
 }

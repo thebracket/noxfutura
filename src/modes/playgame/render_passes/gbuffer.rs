@@ -9,10 +9,12 @@ pub struct GBuffer {
 
 impl GBuffer {
     pub fn new() -> Self {
-        let albedo = GBufferTarget::make_texture("Albedo");
-        let normal = GBufferTarget::make_texture("Normal");
-        let pbr = GBufferTarget::make_texture("PBR");
-        let coords = GBufferTarget::make_texture("Coords");
+        let swap_format = DEVICE_CONTEXT.read().as_ref().unwrap().swapchain_format;
+
+        let albedo = GBufferTarget::make_texture("Albedo", swap_format);
+        let normal = GBufferTarget::make_texture("Normal", swap_format);
+        let pbr = GBufferTarget::make_texture("PBR", swap_format);
+        let coords = GBufferTarget::make_texture("Coords", wgpu::TextureFormat::Rgba32Float);
 
         Self {
             albedo,
@@ -31,7 +33,7 @@ pub struct GBufferTarget {
 }
 
 impl GBufferTarget {
-    pub fn make_texture(label: &str) -> Self {
+    pub fn make_texture(label: &str, format: wgpu::TextureFormat) -> Self {
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
 
@@ -47,7 +49,7 @@ impl GBufferTarget {
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
-            format: context.swapchain_format,
+            format,
             usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT,
         });
 

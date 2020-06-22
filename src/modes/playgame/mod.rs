@@ -22,7 +22,7 @@ pub struct PlayGame {
 
     // Internals
     rpass: Option<BlockRenderPass>,
-    gbuffer_pass: Option<GBufferTestPass>,
+    sunlight_pass: Option<SunlightPass>,
     vox_pass: Option<VoxRenderPass>,
     sun_terrain_pass: Option<SunDepthTerrainPass>,
     chunk_models: Vec<ChunkModel>,
@@ -41,7 +41,7 @@ impl PlayGame {
             planet: None,
             current_region: None,
             rpass: None,
-            gbuffer_pass: None,
+            sunlight_pass: None,
             sun_terrain_pass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
@@ -72,7 +72,7 @@ impl PlayGame {
 
                 let mut loader_lock = crate::modes::loader::LOADER.write();
                 self.rpass = loader_lock.rpass.take();
-                self.gbuffer_pass = loader_lock.gpass.take();
+                self.sunlight_pass = loader_lock.sun_render.take();
                 self.vox_pass = loader_lock.vpass.take();
                 self.sun_terrain_pass = loader_lock.sun_terrain.take();
 
@@ -181,7 +181,8 @@ impl PlayGame {
             menu_bar.end(imgui);
         }
 
-        result
+        //result
+        (128.5, 512.0, 128.0)
     }
 
     fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> usize {
@@ -220,6 +221,7 @@ impl PlayGame {
                 let size = crate::engine::get_window_size();
                 cam.update(&*pos, &*camopts, size.width, size.height);
                 pass.uniforms.update_view_proj(&pass.camera);
+                //pass.uniforms.view_proj = self.sun_terrain_pass.as_ref().unwrap().uniforms.view_proj; // Comment out
                 self.chunks.on_camera_move(&pass.uniforms.view_proj, &*pos);
                 pass.uniforms.update_buffer(&pass.uniform_buf);
             }
@@ -236,7 +238,8 @@ impl PlayGame {
         }
 
         self.chunk_models.clear();
-        self.sun_terrain_pass.as_mut().unwrap().render(
+        let sun_pass = self.sun_terrain_pass.as_mut().unwrap();
+        sun_pass.render(
             &mut self.chunks,
             &mut self.chunk_models,
             (255.0, 256.0, 128.0),
@@ -260,8 +263,8 @@ impl PlayGame {
             &self.chunk_models,
         );
 
-        let pass2 = self.gbuffer_pass.as_mut().unwrap();
-        pass2.render(frame);
+        let pass2 = self.sunlight_pass.as_mut().unwrap();
+        pass2.render(frame, sun_pass.uniforms.view_proj, sun_pos.into());
     }
 
     fn run_systems(&mut self) {

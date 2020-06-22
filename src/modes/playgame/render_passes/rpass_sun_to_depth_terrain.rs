@@ -222,8 +222,8 @@ pub fn create_depth_texture() -> (wgpu::Texture, wgpu::TextureView, wgpu::Sample
         address_mode_u: wgpu::AddressMode::ClampToEdge,
         address_mode_v: wgpu::AddressMode::ClampToEdge,
         address_mode_w: wgpu::AddressMode::ClampToEdge,
-        mag_filter: wgpu::FilterMode::Nearest,
-        min_filter: wgpu::FilterMode::Nearest,
+        mag_filter: wgpu::FilterMode::Linear,
+        min_filter: wgpu::FilterMode::Linear,
         mipmap_filter: wgpu::FilterMode::Nearest,
         lod_min_clamp: -100.0,
         lod_max_clamp: 100.0,
@@ -250,25 +250,25 @@ pub struct SunCamera {
 impl SunCamera {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
-            eye: (128.0, 192.0, 128.0).into(),
-            target: (128.0, 128.0, 128.0).into(),
+            eye: (128.5, 512.0, 128.0).into(),
+            target: (128.0, 0.0, 128.0).into(),
             up: Vec3::unit_y(),
             aspect: width as f32 / height as f32,
             fovy: 0.785398,
-            znear: 1.0,
-            zfar: 256.0,
+            znear: 0.1,
+            zfar: 512.0,
         }
     }
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {
         let view = Mat4::look_at(self.eye, self.target, self.up);
-        let proj =
-            ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
+        //let proj = ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
+        let proj = ultraviolet::projection::orthographic_gl(-128.0, 128.0, -128.0, 128.0, 128.0, 512.0);
         proj * view
     }
 
     pub fn update(&mut self) {
-        self.eye = (128.5, 192.0, 128.0).into();
+        self.eye = (128.5, 512.0, 128.0).into();
     }
 }
 
