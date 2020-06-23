@@ -46,6 +46,7 @@ impl Calendar {
         //let y = f32::sin(time_as_radians);
         //(x, y, 0.0)
         let x = (2048.0 * time_overall) - 1024.0;
-        (x, 512.0, 128.0)
+        //(x, 512.0, 128.0)
+        (128.5, 512.0, 128.0)
     }
 }
