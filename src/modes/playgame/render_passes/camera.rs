@@ -3,7 +3,7 @@ use ultraviolet::Mat4;
 use ultraviolet::Vec3;
 
 pub struct Camera {
-    eye: Vec3,
+    pub eye: Vec3,
     target: Vec3,
     up: Vec3,
     aspect: f32,

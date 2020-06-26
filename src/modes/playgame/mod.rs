@@ -252,6 +252,8 @@ impl PlayGame {
 
         // Render lighting z-buffers
         let sun_pass = self.sun_terrain_pass.as_mut().unwrap();
+        // Disabling shadowing for now, it's driving me nuts
+        /*
         sun_pass.render(
             &mut self.chunks,
         );
@@ -260,7 +262,7 @@ impl PlayGame {
             &vox_pass.vox_models.vertices,
             &vox_pass.instance_buffer,
             &vox_instances,
-        );
+        );*/
 
         // Render the g-buffer pass
         pass.render(
@@ -279,7 +281,7 @@ impl PlayGame {
 
         // Render z-buffer and g-buffer to 1st pass lighting
         let pass2 = self.sunlight_pass.as_mut().unwrap();
-        pass2.render(frame, sun_pass.uniforms.view_proj, sun_pass.camera.eye);
+        pass2.render(frame, sun_pass.uniforms.view_proj, sun_pass.camera.eye, pass.camera.eye);
     }
 
     fn run_systems(&mut self) {

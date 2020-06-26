@@ -249,8 +249,8 @@ impl SunlightPass {
         }
     }
 
-    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_mat: Mat4, sun_pos: Vec3) {
-        self.uniforms.update(sun_mat, sun_pos);
+    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_mat: Mat4, sun_pos: Vec3, camera_pos: Vec3) {
+        self.uniforms.update(sun_mat, sun_pos, camera_pos);
         self.uniforms.update_buffer(&self.uniform_buf);
 
         let mut ctx = DEVICE_CONTEXT.write();
@@ -289,7 +289,8 @@ impl SunlightPass {
 pub struct LightUniforms {
     pub view_proj: Mat4,
     pub sun_pos: Vec3,
-    pub sun_color: Vec3
+    pub sun_color: Vec3,
+    pub camera_position: Vec3
 }
 
 unsafe impl bytemuck::Pod for LightUniforms {}
@@ -301,13 +302,15 @@ impl LightUniforms {
         Self {
             view_proj: ultraviolet::mat::Mat4::identity(),
             sun_pos: (128.0, 512.0, 128.0).into(),
-            sun_color: (1.0, 1.0, 1.0).into()
+            sun_color: (1.0, 1.0, 1.0).into(),
+            camera_position: (0.0, 0.0, 0.0).into()
         }
     }
 
-    pub fn update(&mut self, matrix: Mat4, sun_pos: Vec3) {
+    pub fn update(&mut self, matrix: Mat4, sun_pos: Vec3, camera_pos: Vec3) {
         self.view_proj = matrix;
         self.sun_pos = sun_pos;
+        self.camera_position = camera_pos;
         //println!("{:#?}", self.sun_pos);
         //println!("{:#?}", self.view_proj);
     }

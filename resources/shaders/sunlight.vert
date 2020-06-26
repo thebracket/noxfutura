@@ -10,6 +10,7 @@ uniform Uniforms {
     mat4 sun_view_proj;
     vec3 sun_pos;
     vec3 sun_color;
+    vec3 camera_position;
 };
 
 void main() {
