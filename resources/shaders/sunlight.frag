@@ -24,7 +24,7 @@ uniform Uniforms {
 
 float shadowCalculation(vec3 world_pos) {
     vec4 fragPosLightSpace = sun_view_proj * vec4(world_pos.xyz, 1.0);
-    if (fragPosLightSpace.w <= 0.0) { discard; }
+    //if (fragPosLightSpace.w <= 0.0) { discard; }
     const vec2 flip_correction = vec2(0.5, -0.5);
     vec3 light_local = vec3(
         fragPosLightSpace.xy * flip_correction / fragPosLightSpace.w + 0.5,
@@ -33,7 +33,7 @@ float shadowCalculation(vec3 world_pos) {
     float closestDepth = texture(sampler2D(t_sun, s_sun), light_local.xy).r;
     float currentDepth = light_local.z;
     float shadow = currentDepth - 0.005 > closestDepth ? 0.0 : 1.0;
-    if (shadow < 0.1) { discard; }
+    //if (shadow < 0.1) { discard; }
     return shadow;
 }
 
@@ -46,8 +46,10 @@ void main() {
     float ao = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).r;
     float rough = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).g;
     float metal = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).b;
-    f_color = vec4(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb * diff, 1.0);
+    vec4 output_color = vec4(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb * diff, 1.0);
 
     float shadow = shadowCalculation(world_pos);
-    if (shadow < 0.1) { discard; }
+    if (shadow < 0.1) { output_color = output_color * vec4(0.1, 0.1, 0.1, 1.0); }
+
+    f_color = output_color;
 }

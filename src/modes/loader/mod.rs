@@ -16,7 +16,8 @@ pub struct LoaderState {
     pub rpass: Option<BlockRenderPass>,
     pub sun_render: Option<SunlightPass>,
     pub vpass: Option<VoxRenderPass>,
-    pub sun_terrain: Option<SunDepthTerrainPass>
+    pub sun_terrain: Option<SunDepthTerrainPass>,
+    pub sun_vox: Option<SunDepthVoxPass>
 }
 
 impl LoaderState {
@@ -28,7 +29,8 @@ impl LoaderState {
             rpass: None,
             sun_render: None,
             vpass: None,
-            sun_terrain: None
+            sun_terrain: None,
+            sun_vox: None
         }
     }
 
@@ -41,6 +43,7 @@ impl LoaderState {
             let rpass = BlockRenderPass::new();
             let vox_pass = VoxRenderPass::new(&rpass.uniform_bind_group_layout);
             let stpass = SunDepthTerrainPass::new();
+            let svpass = SunDepthVoxPass::new(&vox_pass.vox_models.vertices, &vox_pass.instance_buffer);
             let sunlight_pass = SunlightPass::new(&rpass.gbuffer, &stpass.depth_view, &stpass.depth_sampler);
 
             let mut lock = LOADER.write();
@@ -48,6 +51,7 @@ impl LoaderState {
             lock.sun_render = Some(sunlight_pass);
             lock.vpass = Some(vox_pass);
             lock.sun_terrain = Some(stpass);
+            lock.sun_vox = Some(svpass);
             std::mem::drop(lock);
             LOADER.write().update(1.00, "Built all the things", true);
         });

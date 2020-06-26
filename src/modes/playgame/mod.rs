@@ -25,6 +25,7 @@ pub struct PlayGame {
     sunlight_pass: Option<SunlightPass>,
     vox_pass: Option<VoxRenderPass>,
     sun_terrain_pass: Option<SunDepthTerrainPass>,
+    sun_vox_pass: Option<SunDepthVoxPass>,
     chunk_models: Vec<ChunkModel>,
 
     // Game stuff that doesn't belong here
@@ -43,6 +44,7 @@ impl PlayGame {
             rpass: None,
             sunlight_pass: None,
             sun_terrain_pass: None,
+            sun_vox_pass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
             ecs_resources: legion::prelude::Resources::default(),
@@ -75,6 +77,7 @@ impl PlayGame {
                 self.sunlight_pass = loader_lock.sun_render.take();
                 self.vox_pass = loader_lock.vpass.take();
                 self.sun_terrain_pass = loader_lock.sun_terrain.take();
+                self.sun_vox_pass = loader_lock.sun_vox.take();
 
                 self.scheduler = Some(systems::build_scheduler());
             }
@@ -113,8 +116,8 @@ impl PlayGame {
 
         self.run_systems();
 
-        let sun_position = self.user_interface(frame_time, imgui);
-        self.render(camera_z, depth_id, frame, sun_position);
+        self.user_interface(frame_time, imgui);
+        self.render(camera_z, depth_id, frame);
         super::ProgramMode::PlayGame
     }
 
@@ -141,8 +144,8 @@ impl PlayGame {
         self.rebuild_geometry = false;
     }
 
-    fn user_interface(&mut self, frame_time: u128, imgui: &Ui) -> (f32, f32, f32) {
-        let mut result = (0.0, 0.0, 0.0);
+    fn user_interface(&mut self, frame_time: u128, imgui: &Ui) {
+        let mut sun_pos = (0.0, 0.0, 0.0);
         let title = format!(
             "Playing. Frame time: {} ms. FPS: {}.",
             frame_time,
@@ -160,9 +163,11 @@ impl PlayGame {
         let query = <Read<Calendar>>::query();
         for c in query.iter(&self.ecs) {
             hud_time = c.get_date_time();
-            result = c.calculate_sun_moon();
+            sun_pos = c.calculate_sun_moon();
         }
         let hud_time_im = ImString::new(hud_time);
+        self.sun_terrain_pass.as_mut().unwrap().update_uniforms(sun_pos);
+        self.sun_vox_pass.as_mut().unwrap().update_uniforms(sun_pos);
 
         // Show the menu
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
@@ -180,8 +185,6 @@ impl PlayGame {
             imgui.text(hud_time_im);
             menu_bar.end(imgui);
         }
-
-        result
     }
 
     fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> usize {
@@ -230,40 +233,53 @@ impl PlayGame {
         result
     }
 
-    fn render(&mut self, camera_z: usize, depth_id: usize, frame: &wgpu::SwapChainOutput, sun_pos: (f32, f32, f32)) {
+    fn render(&mut self, camera_z: usize, depth_id: usize, frame: &wgpu::SwapChainOutput) {
         let pass = self.rpass.as_mut().unwrap();
         if pass.vb.len() > 0 {
             pass.vb.update_buffer();
         }
 
+        // Build the voxel instance list
         self.chunk_models.clear();
+        let vox_pass =self.vox_pass.as_mut().unwrap();
+        let vox_instances = vox::build_vox_instances(
+            &self.ecs,
+            camera_z,
+            &vox_pass.vox_models,
+            &mut vox_pass.instance_buffer,
+            &mut self.chunk_models
+        );
+
+        // Render lighting z-buffers
         let sun_pass = self.sun_terrain_pass.as_mut().unwrap();
         sun_pass.render(
             &mut self.chunks,
-            &mut self.chunk_models,
-            sun_pos,
+        );
+        self.sun_vox_pass.as_mut().unwrap().render(
+            &sun_pass.depth_view,
+            &vox_pass.vox_models.vertices,
+            &vox_pass.instance_buffer,
+            &vox_instances,
         );
 
-        self.chunk_models.clear();
+        // Render the g-buffer pass
         pass.render(
             depth_id,
             frame,
             &mut self.chunks,
             camera_z as usize,
-            &mut self.chunk_models,
         );
-        self.vox_pass.as_mut().unwrap().render(
+        vox_pass.render(
             depth_id,
             frame,
             &pass.gbuffer,
             &pass.uniform_bind_group,
-            camera_z as usize,
-            &self.ecs,
-            &self.chunk_models,
+            &vox_instances
         );
 
+        // Render z-buffer and g-buffer to 1st pass lighting
         let pass2 = self.sunlight_pass.as_mut().unwrap();
-        pass2.render(frame, sun_pass.uniforms.view_proj, sun_pos.into());
+        pass2.render(frame, sun_pass.uniforms.view_proj, sun_pass.camera.eye);
     }
 
     fn run_systems(&mut self) {
