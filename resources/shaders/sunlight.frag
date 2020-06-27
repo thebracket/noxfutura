@@ -127,8 +127,8 @@ void main() {
     light_output += vec3(0.03) * albedo * ao; // Ambient component
 
     // Map it - remove when layering
-    //light_output = light_output / (light_output + vec3(1.0));
-    //light_output = pow(light_output, vec3(1.0/2.2));
+    light_output = light_output / (light_output + vec3(1.0));
+    light_output = pow(light_output, vec3(1.0/2.2));
 
     f_color = vec4(light_output, 1.0);
 }

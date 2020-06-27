@@ -12,7 +12,7 @@ impl GBuffer {
         let swap_format = DEVICE_CONTEXT.read().as_ref().unwrap().swapchain_format;
 
         let albedo = GBufferTarget::make_texture("Albedo", swap_format);
-        let normal = GBufferTarget::make_texture("Normal", swap_format);
+        let normal = GBufferTarget::make_texture("Normal", wgpu::TextureFormat::Rgba32Float);
         let pbr = GBufferTarget::make_texture("PBR", swap_format);
         let coords = GBufferTarget::make_texture("Coords", wgpu::TextureFormat::Rgba32Float);
 

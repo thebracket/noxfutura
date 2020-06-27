@@ -152,7 +152,7 @@ impl BlockRenderPass {
                             write_mask: wgpu::ColorWrite::ALL,
                         },
                         wgpu::ColorStateDescriptor {
-                            format: context.swapchain_format,
+                            format: wgpu::TextureFormat::Rgba32Float,
                             color_blend: wgpu::BlendDescriptor::REPLACE,
                             alpha_blend: wgpu::BlendDescriptor::REPLACE,
                             write_mask: wgpu::ColorWrite::ALL,
