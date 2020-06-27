@@ -84,24 +84,20 @@ vec3 CalculateLightOutput(vec3 albedo, vec3 N, vec3 V, vec3 F0, vec3 L, vec3 rad
     kD *= 1.0 - metallic;
 
     // scale light by NdotL
-    float NdotL = max(abs(dot(N, L)), 0.0);
+    float NdotL = max(dot(L, N), 0.0);
 
-    //return (kD * albedo / PI + specular) * radiance * NdotL;
-    //return (((kD  * albedo) / PI) + specular) * NdotL;
     return (kD * (albedo / PI) + specular) * NdotL;
 }
 
-vec3 GameLight(vec3 albedo, vec3 N, vec3 V, vec3 F0, float roughness, float metallic, vec3 light_position, vec3 position, vec3 light_color) {
-    float far_plane = 512.0;
-
-    vec3 L = normalize(light_position - position);
+vec3 GameLight(float far_plane, vec3 albedo, vec3 N, vec3 V, vec3 F0, float roughness, float metallic, vec3 light_position, vec3 position, vec3 light_color) {
+    vec3 L = far_plane < 512.0 ? normalize(light_position - position) : normalize(light_position);
     float distance = distance(light_position.xyz, position);
     float attenuation = far_plane > 64.0 ? 1.0 : (1.0 / (distance));
     //float attenuation = 1.0;
     vec3 radiance = light_color * attenuation;
 
     // For simple light output calculation
-    //float diff = max(dot(L, N), 0.1);
+    //float diff = max(dot(L, N), 0.0);
     //return albedo * diff;
 
     return CalculateLightOutput(albedo, N, V, F0, L, radiance, roughness, metallic) * radiance.r;
@@ -123,12 +119,12 @@ void main() {
     vec3 F0 = mix(vec3(0.04), albedo, metal);
 
     vec3 light_output = vec3(0.0, 0.0, 0.0);
-    light_output += GameLight(albedo, normal, V, F0, rough, metal, sun_pos, position, sun_color);
+    light_output += GameLight(512.0, albedo, normal, V, F0, rough, metal, sun_pos, position, sun_color);
     light_output += vec3(0.03) * albedo * ao; // Ambient component
 
     // Map it - remove when layering
-    light_output = light_output / (light_output + vec3(1.0));
-    light_output = pow(light_output, vec3(1.0/2.2));
+    //light_output = light_output / (light_output + vec3(1.0));
+    //light_output = pow(light_output, vec3(1.0/2.2));
 
     f_color = vec4(light_output, 1.0);
 }
