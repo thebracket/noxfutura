@@ -16,7 +16,7 @@ pub struct SunlightPass {
 }
 
 impl SunlightPass {
-    pub fn new(gbuffer: &GBuffer, sun_v : &wgpu::TextureView, sun_s: &wgpu::Sampler) -> Self {
+    pub fn new(gbuffer: &GBuffer) -> Self {
         let uniforms = LightUniforms::new();
 
         // Simple quad VB for output
@@ -127,20 +127,6 @@ impl SunlightPass {
                             visibility: wgpu::ShaderStage::FRAGMENT,
                             ty: wgpu::BindingType::Sampler { comparison: false },
                         },
-                        wgpu::BindGroupLayoutEntry {
-                            binding: 8,
-                            visibility: wgpu::ShaderStage::FRAGMENT,
-                            ty: wgpu::BindingType::SampledTexture {
-                                multisampled: false,
-                                dimension: wgpu::TextureViewDimension::D2,
-                                component_type: wgpu::TextureComponentType::Uint,
-                            },
-                        },
-                        wgpu::BindGroupLayoutEntry {
-                            binding: 9,
-                            visibility: wgpu::ShaderStage::FRAGMENT,
-                            ty: wgpu::BindingType::Sampler { comparison: false },
-                        },
                     ],
                     label: None,
                 });
@@ -175,18 +161,10 @@ impl SunlightPass {
                     },
                     wgpu::Binding {
                         binding: 6,
-                        resource: wgpu::BindingResource::TextureView(sun_v),
-                    },
-                    wgpu::Binding {
-                        binding: 7,
-                        resource: wgpu::BindingResource::Sampler(sun_s),
-                    },
-                    wgpu::Binding {
-                        binding: 8,
                         resource: wgpu::BindingResource::TextureView(&gbuffer.coords.view),
                     },
                     wgpu::Binding {
-                        binding: 9,
+                        binding: 7,
                         resource: wgpu::BindingResource::Sampler(&gbuffer.coords.sampler),
                     },
                 ],
@@ -249,8 +227,8 @@ impl SunlightPass {
         }
     }
 
-    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_mat: Mat4, sun_pos: Vec3, camera_pos: Vec3) {
-        self.uniforms.update(sun_mat, sun_pos, camera_pos);
+    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_pos: Vec3, camera_pos: Vec3) {
+        self.uniforms.update(sun_pos, camera_pos);
         self.uniforms.update_buffer(&self.uniform_buf);
 
         let mut ctx = DEVICE_CONTEXT.write();
@@ -287,7 +265,6 @@ impl SunlightPass {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct LightUniforms {
-    pub view_proj: Mat4,
     pub sun_pos: Vec3,
     pub sun_color: Vec3,
     pub camera_position: Vec3
@@ -300,15 +277,13 @@ impl UniformBlock for LightUniforms {}
 impl LightUniforms {
     pub fn new() -> Self {
         Self {
-            view_proj: ultraviolet::mat::Mat4::identity(),
             sun_pos: (128.0, 512.0, 128.0).into(),
             sun_color: (1.0, 1.0, 1.0).into(),
             camera_position: (0.0, 0.0, 0.0).into()
         }
     }
 
-    pub fn update(&mut self, matrix: Mat4, sun_pos: Vec3, camera_pos: Vec3) {
-        self.view_proj = matrix;
+    pub fn update(&mut self, sun_pos: Vec3, camera_pos: Vec3) {
         self.sun_pos = sun_pos;
         self.camera_position = camera_pos;
         //println!("{:#?}", self.sun_pos);

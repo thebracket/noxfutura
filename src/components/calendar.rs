@@ -1,4 +1,5 @@
 use super::prelude::*;
+use ultraviolet::Vec3;
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "a6464855-c959-4eb3-be05-dec8301b06b8"]
@@ -36,7 +37,7 @@ impl Calendar {
         )
     }
 
-    pub fn calculate_sun_moon(&self) -> (f32, f32, f32) {
+    pub fn calculate_sun_moon(&self) -> Vec3 {
         let minutes_fraction = self.minute as f32 / 60.0;
         let hours_fraction = self.hour as f32 + minutes_fraction;
         let time_overall = hours_fraction / 24.0;
@@ -47,6 +48,6 @@ impl Calendar {
         //(x, y, 0.0)
         let x = (2048.0 * time_overall) - 1024.0;
         //(x, 512.0, 128.0)
-        (128.5, 512.0, 128.0)
+        (128.5, 512.0, 128.0).into()
     }
 }
