@@ -47,7 +47,7 @@ void main() {
     );
 
     vec4 terrain_color = sample_material(mat_base, uv);
-    vec3 tex_normal = sample_material(mat_base + 1, uv).rgb;
+    vec3 tex_normal = pow(sample_material(mat_base + 1, uv).rgb, vec3(2.2));
     tex_normal = normalize(tex_normal * 2.0 - 1.0);
     vec3 normal = normalize(v_tbn * tex_normal);
     vec3 pbr = sample_material(mat_base + 2, uv).rgb;

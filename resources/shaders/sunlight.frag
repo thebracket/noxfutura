@@ -25,7 +25,6 @@ uniform Uniforms {
 
 #define PI 3.1415926
 
-/*
 float shadowCalculation(vec3 world_pos) {
     vec4 fragPosLightSpace = sun_view_proj * vec4(world_pos.xyz, 1.0);
     //if (fragPosLightSpace.w <= 0.0) { discard; }
@@ -40,7 +39,6 @@ float shadowCalculation(vec3 world_pos) {
     //if (shadow < 0.1) { discard; }
     return shadow;
 }
-*/
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
@@ -116,8 +114,8 @@ vec3 GameLight(vec3 albedo, vec3 N, vec3 V, vec3 F0, float roughness, float meta
 
     vec3 L = normalize(light_position - position);
     float distance = distance(light_position.xyz, position);
-    //float attenuation = far_plane > 64.0 ? 1.0 : (1.0 / (distance));
-    float attenuation = 1.0;
+    float attenuation = far_plane > 64.0 ? 1.0 : (1.0 / (distance));
+    //float attenuation = 1.0;
     vec3 radiance = light_color * attenuation;
 
     // For simple light output calculation
@@ -130,7 +128,7 @@ vec3 GameLight(vec3 albedo, vec3 N, vec3 V, vec3 F0, float roughness, float meta
 
 void main() {
     float gamma = 2.2;
-    vec3 albedo = pow(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb, vec3(gamma));
+    vec3 albedo = texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb;
     vec3 position = texture(sampler2D(t_coords, s_coords), v_tex_coords).rgb;
     vec3 normal = normalize(texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb * 2.0 - 1.0);
 
@@ -139,15 +137,18 @@ void main() {
     float rough = material_lookup.g;
     float metal = material_lookup.b;
 
-    /*float shadow = shadowCalculation(world_pos);
-    if (shadow < 0.1) { output_color = output_color * vec4(0.1, 0.1, 0.1, 1.0); }
+    float shadow = shadowCalculation(position);
+    //if (shadow < 0.1) discard;
+    /*if (shadow < 0.1) { output_color = output_color * vec4(0.1, 0.1, 0.1, 1.0); }
     f_color = output_color;*/
 
     vec3 V = normalize(camera_position - position);
     vec3 F0 = mix(vec3(0.04), albedo, metal);
 
     vec3 light_output = vec3(0.0, 0.0, 0.0);
-    light_output += GameLight(albedo, normal, V, F0, rough, metal, sun_pos, position, sun_color);
+    if (shadow > 0.0 ) {
+        light_output += GameLight(albedo, normal, V, F0, rough, metal, sun_pos, position, sun_color);
+    }
     light_output += vec3(0.03) * albedo * ao; // Ambient component
 
     // Map it - remove when layering
