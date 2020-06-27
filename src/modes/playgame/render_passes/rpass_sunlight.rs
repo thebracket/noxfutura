@@ -1,6 +1,5 @@
 use super::gbuffer::GBuffer;
 use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
-use ultraviolet::Mat4;
 use ultraviolet::Vec3;
 use crate::engine::uniforms::UniformBlock;
 

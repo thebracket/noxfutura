@@ -1,9 +1,8 @@
 use super::super::VoxBuffer;
-use super::{camera::Camera, gbuffer::GBuffer, uniforms::Uniforms};
+use super::{Camera, gbuffer::GBuffer, Uniforms};
 use crate::engine::VertexBuffer;
 use crate::engine::DEVICE_CONTEXT;
 use crate::modes::loader_progress;
-use legion::prelude::*;
 
 pub struct VoxRenderPass {
     pub vox_models: VoxBuffer,

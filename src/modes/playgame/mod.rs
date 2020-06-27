@@ -234,8 +234,17 @@ impl PlayGame {
             pass.vb.update_buffer();
         }
 
-        // Build the voxel instance list
+        // Render terrain building the initial chunk models list
         self.chunk_models.clear();
+        pass.render(
+            depth_id,
+            frame,
+            &mut self.chunks,
+            camera_z as usize,
+            &mut self.chunk_models
+        );
+
+        // Build the voxel instance list
         let vox_pass =self.vox_pass.as_mut().unwrap();
         let vox_instances = vox::build_vox_instances(
             &self.ecs,
@@ -245,13 +254,6 @@ impl PlayGame {
             &mut self.chunk_models
         );
 
-        // Render the g-buffer pass
-        pass.render(
-            depth_id,
-            frame,
-            &mut self.chunks,
-            camera_z as usize,
-        );
         vox_pass.render(
             depth_id,
             frame,
