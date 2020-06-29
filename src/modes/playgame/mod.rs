@@ -14,10 +14,11 @@ mod render_passes;
 pub use render_passes::*;
 mod systems;
 use ultraviolet::Vec3;
+mod shared_state;
+pub use shared_state::*;
 
 pub struct PlayGame {
     pub planet: Option<Planet>,
-    pub current_region: Option<Region>,
     pub ecs: World,
     pub ecs_resources: Resources,
 
@@ -39,7 +40,6 @@ impl PlayGame {
         let universe = Universe::new();
         Self {
             planet: None,
-            current_region: None,
             rpass: None,
             sunlight_pass: None,
             rebuild_geometry: true,
@@ -66,7 +66,7 @@ impl PlayGame {
         match locker {
             LoadState::Loaded { game } => {
                 self.planet = Some(game.planet);
-                self.current_region = Some(game.current_region);
+                *REGION.write() = game.current_region;
                 self.ecs = crate::components::deserialize_world(game.ecs_text);
 
                 let mut loader_lock = crate::modes::loader::LOADER.write();
@@ -118,11 +118,10 @@ impl PlayGame {
 
     fn update_geometry(&mut self) {
         let pass = self.rpass.as_mut().unwrap();
-        if let Some(region) = &self.current_region {
-            // Rebuild chunks that need it
-            pass.vb.clear();
-            self.chunks.rebuild_all(region);
-        }
+
+        // Rebuild chunks that need it
+        pass.vb.clear();
+        self.chunks.rebuild_all();
 
         // Update the chunk frustrum system
         let query = <(Read<Position>, Read<CameraOptions>)>::query();
@@ -264,7 +263,7 @@ impl PlayGame {
 
         // Render z-buffer and g-buffer to 1st pass lighting
         let pass2 = self.sunlight_pass.as_mut().unwrap();
-        pass2.render(frame, sun_pos.into(), pass.camera.eye);
+        pass2.render(frame, sun_pos.into(), pass.camera.eye, &self.ecs);
     }
 
     fn run_systems(&mut self) {

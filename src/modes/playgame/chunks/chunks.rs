@@ -2,6 +2,7 @@ use super::super::render_passes::frustrum::Frustrum;
 use super::{Chunk, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
 use crate::components::Position;
 use crate::planet::Region;
+use crate::modes::playgame::REGION;
 use bracket_geometry::prelude::*;
 use rayon::prelude::*;
 use ultraviolet::Mat4;
@@ -29,8 +30,9 @@ impl Chunks {
         result
     }
 
-    pub fn rebuild_all(&mut self, region: &Region) {
-        self.chunks.par_iter_mut().for_each(|c| c.rebuild(region));
+    pub fn rebuild_all(&mut self) {
+        let rlock = REGION.read();
+        self.chunks.par_iter_mut().for_each(|c| c.rebuild(&rlock));
     }
 
     pub fn on_camera_move(&mut self, camera_matrix: &Mat4, camera_position: &Position) {

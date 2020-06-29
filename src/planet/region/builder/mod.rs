@@ -17,6 +17,7 @@ mod water_features;
 use crate::components::*;
 use legion::prelude::*;
 pub use primitive::Primitive;
+mod flags;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");
@@ -87,6 +88,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
 
     set_worldgen_status("Features");
     set_worldgen_status("Looking for the map");
+    flags::set_flags(region);
 
     world
 }

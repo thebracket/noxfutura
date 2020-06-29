@@ -6,3 +6,5 @@ mod voxel_model;
 pub use voxel_model::*;
 mod composite_render;
 pub use composite_render::*;
+mod light;
+pub use light::*;

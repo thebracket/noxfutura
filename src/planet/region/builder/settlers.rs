@@ -209,6 +209,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
                 name: profession_def.name.clone(),
             },
             attr,
+            FieldOfView::new(8),
         )],
     );
 }

@@ -16,6 +16,8 @@ mod items;
 pub use items::*;
 mod identity;
 pub use identity::*;
+mod field_of_view;
+pub use field_of_view::*;
 
 pub mod spawner;
 
@@ -52,6 +54,8 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         ComponentRegistration::of::<Attributes>(),
         ComponentRegistration::of::<ItemWorn>(),
         ComponentRegistration::of::<Identity>(),
+        ComponentRegistration::of::<Light>(),
+        ComponentRegistration::of::<FieldOfView>(),
     ];
     let tag_registrations = vec![
         TagRegistration::of::<Cordex>(),

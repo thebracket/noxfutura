@@ -3,6 +3,7 @@ use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
 use ultraviolet::Vec3;
 use crate::engine::uniforms::UniformBlock;
 use super::LightUniforms;
+use legion::prelude::*;
 
 pub struct SunlightPass {
     pub vb: VertexBuffer<f32>,
@@ -227,8 +228,8 @@ impl SunlightPass {
         }
     }
 
-    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_pos: Vec3, camera_pos: Vec3) {
-        self.uniforms.update(sun_pos, camera_pos);
+    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_pos: Vec3, camera_pos: Vec3, ecs: &World) {
+        self.uniforms.update(ecs, sun_pos, camera_pos);
         self.uniforms.update_buffer(&self.uniform_buf);
 
         let mut ctx = DEVICE_CONTEXT.write();

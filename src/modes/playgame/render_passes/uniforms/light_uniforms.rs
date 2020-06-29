@@ -1,6 +1,7 @@
-
+use legion::prelude::*;
 use ultraviolet::Vec3;
 use crate::engine::uniforms::UniformBlock;
+use crate::components::*;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -23,10 +24,14 @@ impl LightUniforms {
         }
     }
 
-    pub fn update(&mut self, sun_pos: Vec3, camera_pos: Vec3) {
+    pub fn update(&mut self, ecs: &World, sun_pos: Vec3, camera_pos: Vec3) {
         self.sun_pos = sun_pos;
         self.camera_position = camera_pos;
-        //println!("{:#?}", self.sun_pos);
-        //println!("{:#?}", self.view_proj);
+
+        let light_query = <(Read<Position>, Read<Light>)>::query();
+        light_query.iter(ecs).for_each(|(pos, light)| {
+            //println!("{:?}", pos);
+            //println!("{:?}", light);
+        });
     }
 }
