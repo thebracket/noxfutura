@@ -9,8 +9,6 @@ mod gbuffer;
 mod texarray;
 mod uniforms;
 use uniforms::*;
-mod tex3d;
-use tex3d::Texture3D;
 
 #[derive(Clone)]
 pub struct ChunkModel {
