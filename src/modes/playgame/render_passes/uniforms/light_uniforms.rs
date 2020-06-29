@@ -46,6 +46,11 @@ impl LightUniforms {
         self.lights[0].pos = [ sun_pos.x, sun_pos.y, sun_pos.z, 512.0 ];
         self.lights[0].color = [ 1.0, 1.0, 1.0, 1.0 ];
 
+        self.lights.iter_mut().skip(1).for_each(|l| {
+            l.pos = [ 0.0, 0.0, 0.0, 0.0];
+            l.color = [0.0, 0.0, 0.0, 0.0];
+        });
+
         let mut index = 1;
         let light_query = <(Read<Position>, Read<Light>)>::query();
         light_query.iter(ecs).for_each(|(pos, light)| {
