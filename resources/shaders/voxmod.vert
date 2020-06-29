@@ -28,7 +28,7 @@ void main() {
     vec3 pos = a_position + i_position;
     gl_Position = u_view_proj * vec4(pos, 1.0);
     v_normal = normal_lut[int(a_normal)];
-    v_world_pos = a_position;
+    v_world_pos = a_position + i_position;
     float gamma = 2.2;
     v_tint = pow(a_tint * i_tint, vec3(gamma));
 }

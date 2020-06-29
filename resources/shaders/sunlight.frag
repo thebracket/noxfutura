@@ -12,12 +12,16 @@ layout(set = 1, binding = 5) uniform sampler s_pbr;
 layout(set = 1, binding = 6) uniform texture2D t_coords;
 layout(set = 1, binding = 7) uniform sampler s_coords;
 
-// Uniform with the light position and transformation
+// Uniform with light data
+struct LightInfo {
+    vec4 pos; // 4 contains the far_view
+    vec4 color;
+};
+
 layout(set=0, binding=0) 
 uniform Uniforms {
-    vec3 sun_pos;
-    vec3 sun_color;
-    vec3 camera_position;
+    vec4 camera_position;
+    LightInfo lights[32];
 };
 
 #define PI 3.1415926
@@ -87,40 +91,43 @@ vec3 CalculateLightOutput(vec3 albedo, vec3 N, vec3 V, vec3 F0, vec3 L, vec3 rad
     float NdotL = max(dot(L, N), 0.0);
 
     return (kD * (albedo / PI) + specular) * NdotL;
+    //return (kD * (albedo / PI) + specular);
 }
 
-vec3 GameLight(float far_plane, vec3 albedo, vec3 N, vec3 V, vec3 F0, float roughness, float metallic, vec3 light_position, vec3 position, vec3 light_color) {
+vec3 GameLight(float far_plane, vec3 albedo, vec3 N, vec3 V, vec3 F0, float roughness, float metallic, vec3 light_position, vec3 position, vec3 light_color, float distance) {
     vec3 L = far_plane < 512.0 ? normalize(light_position - position) : normalize(light_position);
-    float distance = distance(light_position.xyz, position);
-    float attenuation = far_plane > 64.0 ? 1.0 : (1.0 / (distance));
-    //float attenuation = 1.0;
+    float attenuation = far_plane > 64.0 ? 1.0 : 1.0 / (distance * 1.0);
     vec3 radiance = light_color * attenuation;
 
     // For simple light output calculation
     //float diff = max(dot(L, N), 0.0);
     //return albedo * diff;
 
-    return CalculateLightOutput(albedo, N, V, F0, L, radiance, roughness, metallic) * radiance.r;
-    //return light_color * attenuation;
+    return CalculateLightOutput(albedo, N, V, F0, L, radiance, roughness, metallic) * radiance;
 }
 
 void main() {
-    float gamma = 2.2;
-    vec3 albedo = texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb;
+    vec3 albedo = pow(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb, vec3(2.2));
     vec3 position = texture(sampler2D(t_coords, s_coords), v_tex_coords).rgb;
-    vec3 normal = normalize(texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb * 2.0 - 1.0);
+    vec3 normal = normalize(texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb);
 
-    vec3 material_lookup = pow(texture(sampler2D(t_pbr, s_pbr), v_tex_coords).rgb, vec3(gamma));
+    vec3 material_lookup = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).rgb;
     float ao = material_lookup.r;
-    float rough = material_lookup.g;
+    float rough = 1.0 - material_lookup.g;
     float metal = material_lookup.b;
 
-    vec3 V = normalize(camera_position - position);
+    vec3 V = normalize(camera_position.xyz - position);
     vec3 F0 = mix(vec3(0.04), albedo, metal);
 
     vec3 light_output = vec3(0.0, 0.0, 0.0);
-    light_output += GameLight(512.0, albedo, normal, V, F0, rough, metal, sun_pos, position, sun_color);
-    light_output += vec3(0.03) * albedo * ao; // Ambient component
+    for (int i=1; i<32; ++i) {
+        float radius = lights[i].pos.a;
+        float distance = distance(lights[i].pos.xyz, position);
+        if (radius > 0.0 && distance < radius) {
+            light_output += GameLight(radius, albedo, normal, V, F0, rough, metal, lights[i].pos.xyz, position, lights[i].color.xyz, distance);
+        }
+    }
+    light_output += vec3(0.1) * albedo * ao; // Ambient component
 
     // Map it - remove when layering
     //light_output = light_output / (light_output + vec3(1.0));
