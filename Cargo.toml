@@ -26,6 +26,7 @@ serde = { version = "1.0.106" }
 ron = "0.6.0"
 miniz_oxide = "0.3.6"
 bincode = "1.2.1"
+zerocopy = "0.3.0"
 
 legion = { git = "https://github.com/TomGillen/legion", features = [ "serialize" ]}
 type-uuid = "0.1"

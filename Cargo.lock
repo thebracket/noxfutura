@@ -1331,6 +1331,7 @@ dependencies = [
  "uuid",
  "wgpu",
  "winit",
+ "zerocopy",
 ]
 
 [[package]]
@@ -2413,3 +2414,24 @@ name = "xml-rs"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b07db065a5cf61a7e4ba64f29e67db906fb1787316516c4e6e5ff0fea1efcd8a"
+
+[[package]]
+name = "zerocopy"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6580539ad917b7c026220c4b3f2c08d52ce54d6ce0dc491e66002e35388fab46"
+dependencies = [
+ "byteorder",
+ "zerocopy-derive",
+]
+
+[[package]]
+name = "zerocopy-derive"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d498dbd1fd7beb83c86709ae1c33ca50942889473473d287d56ce4770a18edfb"
+dependencies = [
+ "proc-macro2 1.0.18",
+ "syn 1.0.30",
+ "synstructure",
+]

@@ -41,7 +41,7 @@ impl LightUniforms {
         }
     }
 
-    pub fn update(&mut self, ecs: &World, sun_pos: Vec3, camera_pos: Vec3) {
+    pub fn update(&mut self, ecs: &World, sun_pos: Vec3, camera_pos: Vec3, light_bits: &mut [u32]) {
         self.camera_position = vec_to_float(&camera_pos);
         self.lights[0].pos = [ sun_pos.x, sun_pos.y, sun_pos.z, 512.0 ];
         self.lights[0].color = [ 1.0, 1.0, 1.0, 1.0 ];
@@ -51,6 +51,10 @@ impl LightUniforms {
             l.color = [0.0, 0.0, 0.0, 0.0];
         });
 
+        // Clear and set outdoors
+        light_bits.iter_mut().for_each(|l| *l = 0);
+
+        // Index the lights
         let mut index = 1;
         let light_query = <(Read<Position>, Read<Light>)>::query();
         light_query.iter(ecs).for_each(|(pos, light)| {

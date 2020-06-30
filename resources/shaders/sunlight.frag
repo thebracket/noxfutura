@@ -12,6 +12,10 @@ layout(set = 1, binding = 5) uniform sampler s_pbr;
 layout(set = 1, binding = 6) uniform texture2D t_coords;
 layout(set = 1, binding = 7) uniform sampler s_coords;
 
+layout(set = 2, binding = 0) buffer LightMap {
+    uint[] light_bits;
+};
+
 // Uniform with light data
 struct LightInfo {
     vec4 pos; // 4 contains the far_view

@@ -2,7 +2,7 @@ use super::gbuffer::GBuffer;
 use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
 use ultraviolet::Vec3;
 use crate::engine::uniforms::UniformBlock;
-use super::LightUniforms;
+use super::{LightUniforms, TerrainLights};
 use legion::prelude::*;
 
 pub struct SunlightPass {
@@ -14,11 +14,13 @@ pub struct SunlightPass {
     pub uniform_bind_group: wgpu::BindGroup,
     pub uniform_bind_group_layout: wgpu::BindGroupLayout,
     pub uniform_buf: wgpu::Buffer,
+    pub lighting_map: TerrainLights
 }
 
 impl SunlightPass {
     pub fn new(gbuffer: &GBuffer) -> Self {
         let uniforms = LightUniforms::new();
+        let lighting_map = TerrainLights::new();
 
         // Simple quad VB for output
         let mut vb = VertexBuffer::<f32>::new(&[2, 2]);
@@ -177,7 +179,7 @@ impl SunlightPass {
             context
                 .device
                 .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-                    bind_group_layouts: &[&uniform_bind_group_layout, &bind_group_layout],
+                    bind_group_layouts: &[&uniform_bind_group_layout, &bind_group_layout, &lighting_map.bind_group_layout],
                 });
         let render_pipeline =
             context
@@ -216,6 +218,7 @@ impl SunlightPass {
                     alpha_to_coverage_enabled: false,
                 });
 
+        std::mem::drop(ctx);
         Self {
             vb,
             shader_id,
@@ -224,12 +227,13 @@ impl SunlightPass {
             uniforms,
             uniform_bind_group,
             uniform_bind_group_layout,
-            uniform_buf
+            uniform_buf,
+            lighting_map
         }
     }
 
     pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_pos: Vec3, camera_pos: Vec3, ecs: &World) {
-        self.uniforms.update(ecs, sun_pos, camera_pos);
+        self.uniforms.update(ecs, sun_pos, camera_pos, &mut self.lighting_map.flags);
         self.uniforms.update_buffer(&self.uniform_buf);
 
         let mut ctx = DEVICE_CONTEXT.write();
@@ -253,6 +257,7 @@ impl SunlightPass {
             rpass.set_pipeline(&self.render_pipeline);
             rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
             rpass.set_bind_group(1, &self.bind_group, &[]);
+            rpass.set_bind_group(2, &self.lighting_map.bind_group, &[]);
 
             if self.vb.len() > 0 {
                 rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
