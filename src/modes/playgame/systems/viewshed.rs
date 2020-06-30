@@ -2,7 +2,7 @@ use legion::prelude::*;
 use crate::components::*;
 use ultraviolet::Vec3;
 use crate::utils::mapidx;
-use crate::planet::{REGION_WIDTH, REGION_HEIGHT, REGION_DEPTH, Region};
+use crate::planet::{REGION_WIDTH, REGION_HEIGHT, REGION_DEPTH, Region, TileType};
 use crate::modes::playgame::REGION;
 
 pub fn build() -> Box<dyn Schedulable> {
@@ -17,9 +17,9 @@ pub fn build() -> Box<dyn Schedulable> {
                 fov.visible_tiles.clear();
                 let radius = fov.radius as i32;
                 reveal(mapidx(pos.x, pos.y, pos.z), &mut *fov);
-                let radius_range = (0i32 - radius) .. radius;
+                let radius_range = (0i32 - radius) ..= radius;
                 for z in radius_range {
-                    for i in (0i32 - radius) .. radius {
+                    for i in (0i32 - radius) ..= radius {
                         internal_view_to(&*pos, &mut *fov, i as i32, radius as i32, z as i32);
                         internal_view_to(&*pos, &mut *fov, i as i32, 0i32 - radius as i32, z as i32);
                         internal_view_to(&*pos, &mut *fov, radius as i32, i as i32, z as i32);
@@ -34,9 +34,10 @@ pub fn build() -> Box<dyn Schedulable> {
 #[inline(always)]
 fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i32) {
     let radius = fov.radius as f32;
-    let start : Vec3 = (pos.x as f32, pos.y as f32, pos.z as f32).into();
+    let start : Vec3 = (pos.x as f32 + 0.5, pos.y as f32 + 0.5, pos.z as f32 + 0.5).into();
     let end : Vec3 = (x as f32 + start.x, y as f32 + start.y, z as f32 + start.z).into();
     let mut blocked = false;
+    let mut last_z = f32::floor(start.z) as i32;
     line_func_3d(start, end, |pos| {
         if pos.x > 0.0 && pos.x < REGION_WIDTH as f32 && pos.y > 0.0 && pos.y < REGION_HEIGHT as f32 && pos.z > 0.0 && pos.z < REGION_DEPTH as f32 {
             let distance = (pos - start).abs().mag();
@@ -45,9 +46,26 @@ fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i3
                 if !blocked {
                     reveal(idx, fov);
                 }
+
+                let fz = f32::floor(pos.z) as i32;
+                // Block on entering a solid tile
                 if REGION.read().flag(idx, Region::SOLID) {
                     blocked = true;
+                } else if fz < last_z {
+                    // Check if we're trying to go through a floor
+                    if REGION.read().tile_types[idx] == TileType::Floor {
+                        blocked = true;
+                        reveal(idx, fov);
+                    }
+                } else if z > last_z {
+                    // Check if we're trying to go through a ceiling
+                    if REGION.read().tile_types[idx + (REGION_WIDTH*REGION_HEIGHT)] == TileType::Floor {
+                        blocked = true;
+                        reveal(idx, fov);
+                    }
                 }
+
+                last_z = fz;
             }
         }
     });
