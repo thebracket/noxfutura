@@ -38,13 +38,17 @@ impl Calendar {
     }
 
     pub fn calculate_sun_moon(&self) -> Vec3 {
+        if self.hour < 6 || self.hour > 18 {
+            return (0.0, 0.0, 0.0).into();
+        }
+
         let minutes_fraction = self.minute as f32 / 60.0;
-        let hours_fraction = self.hour as f32 + minutes_fraction;
-        let time_overall = (hours_fraction / 24.0) - 6.0;
+        let hours_fraction = self.hour as f32 + minutes_fraction - 6.0;
+        let time_overall = hours_fraction / 24.0;
         //println!("{}", time_overall);
         let time_as_radians = time_overall * 6.28319;
         let x = f32::cos(time_as_radians);
         let y = f32::sin(time_as_radians);
-        (x, y, 0.0).into()
+        (x, y, 0.2).into()
     }
 }

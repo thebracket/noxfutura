@@ -42,8 +42,8 @@ vec4 sample_material_exact(int diffuse_tex_index, vec2 uv) {
 void main() {
     int mat_base = int(v_material * 255.0);
     vec2 uv = vec2(
-        fract(v_uv.x) * 256.0,
-        fract(v_uv.y) * 256.0
+        clamp(fract(v_uv.x), 0.01, 0.99) * 256.0,
+        clamp(fract(v_uv.y), 0.01, 0.99) * 256.0
     );
 
     vec4 terrain_color = sample_material(mat_base, uv);
@@ -54,12 +54,6 @@ void main() {
 
     f_color = terrain_color;
     f_normal = vec4(normal, 1.0);
-    /*f_pbr = vec4(
-        pbr.b, // Metallic
-        pbr.r, // Ambient Occlusion
-        pbr.g, // Roughness
-        0.0
-    );*/
     f_pbr = vec4(
         pbr.r, // AO
         pbr.g, // Rough
