@@ -31,16 +31,16 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World
                             219 => add_construction(region, mx, my, mz, "ship_wall", true, ecs),
                             87 => add_construction(region, mx, my, mz, "ship_window", true, ecs),
                             176 => add_construction(region, mx, my, mz, "ship_floor", true, ecs),
-                            88 => add_construction(region, mx, my, mz, "ship_updown", true, ecs),
-                            60 => add_construction(region, mx, my, mz, "ship_up", true, ecs),
-                            62 => add_construction(region, mx, my, mz, "ship_down", true, ecs),
+                            88 => add_construction(region, mx, my, mz, "ship_updown", false, ecs),
+                            60 => add_construction(region, mx, my, mz, "ship_up", false, ecs),
+                            62 => add_construction(region, mx, my, mz, "ship_down", false, ecs),
                             178 => add_construction(region, mx, my, mz, "solar_panel", true, ecs),
-                            241 => add_construction(region, mx, my, mz, "battery", true, ecs),
-                            48 => add_construction(region, mx, my, mz, "cryo_bed", true, ecs),
+                            241 => add_construction(region, mx, my, mz, "battery", false, ecs),
+                            48 => add_construction(region, mx, my, mz, "cryo_bed", false, ecs),
                             236 => {
-                                add_construction(region, mx, my, mz, "storage_locker", true, ecs)
+                                add_construction(region, mx, my, mz, "storage_locker", false, ecs)
                             }
-                            67 => add_construction(region, mx, my, mz, "cordex", true, ecs),
+                            67 => add_construction(region, mx, my, mz, "cordex", false, ecs),
                             243 => add_construction(
                                 region,
                                 mx,
@@ -51,11 +51,11 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World
                                 ecs,
                             ),
                             251 => {
-                                add_construction(region, mx, my, mz, "small_replicator", true, ecs)
+                                add_construction(region, mx, my, mz, "small_replicator", false, ecs)
                             }
-                            232 => add_construction(region, mx, my, mz, "rtg", true, ecs),
-                            197 => add_construction(region, mx, my, mz, "ship_door", true, ecs),
-                            76 => add_construction(region, mx, my, mz, "ship_lamp", true, ecs),
+                            232 => add_construction(region, mx, my, mz, "rtg", false, ecs),
+                            197 => add_construction(region, mx, my, mz, "ship_door", false, ecs),
+                            76 => add_construction(region, mx, my, mz, "ship_lamp", false, ecs),
                             _ => println!("No decoder for glyph {} in spaceship", glyph.ch),
                         }
                     }
@@ -80,13 +80,16 @@ fn add_construction(
     region.tile_types[idx] = TileType::Floor;
     region.material_idx[idx] = plasteel;
     region.vegetation_type_id[idx] = None;
+    if solid {
+        region.set_flag(idx, Region::SOLID);
+    }
 
     match name {
         "ship_wall" => {
             region.tile_types[idx] = TileType::Solid;
         }
         "ship_window" => {
-            region.tile_types[idx] = TileType::Window;
+            region.tile_types[idx] = TileType::Solid;
         }
         "ship_floor" => {}
         "ship_updown" => {

@@ -51,7 +51,9 @@ fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i3
                 // Block on entering a solid tile
                 if REGION.read().flag(idx, Region::SOLID) {
                     blocked = true;
-                } else if fz < last_z {
+                    reveal(idx, fov);
+                } 
+                else if fz < last_z {
                     // Check if we're trying to go through a floor
                     if REGION.read().tile_types[idx] == TileType::Floor {
                         blocked = true;
@@ -77,7 +79,7 @@ fn line_func_3d<F: FnMut(Vec3)>(start: Vec3, end: Vec3, mut func : F) {
     let length = (start - end).abs().mag();
     //println!("{:?}", length);
     let step = (start - end) / length;
-    for _ in 0 .. f32::floor(length) as usize {
+    for _ in 0 ..= f32::floor(length) as usize {
         pos += step;
         func(pos);
     }
