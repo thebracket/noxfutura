@@ -92,7 +92,7 @@ vec3 CalculateLightOutput(vec3 albedo, vec3 N, vec3 V, vec3 F0, vec3 L, vec3 rad
     kD *= 1.0 - metallic;
 
     // scale light by NdotL
-    float NdotL = max(dot(L, N), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
 
     return (kD * (albedo / PI) + specular) * NdotL;
     //return (kD * (albedo / PI) + specular);
@@ -110,6 +110,13 @@ vec3 GameLight(float far_plane, vec3 albedo, vec3 N, vec3 V, vec3 F0, float roug
     return CalculateLightOutput(albedo, N, V, F0, L, radiance, roughness, metallic) * radiance;
 }
 
+int mapidx(vec3 position) {
+    int zc = int(position.y);
+    int yc = int(position.z);
+    int xc = int(position.x);
+    return (zc * 256 * 256) + (yc * 256) + xc;
+}
+
 void main() {
     vec3 albedo = pow(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb, vec3(2.2));
     vec3 position = texture(sampler2D(t_coords, s_coords), v_tex_coords).rgb;
@@ -124,11 +131,18 @@ void main() {
     vec3 F0 = mix(vec3(0.04), albedo, metal);
 
     vec3 light_output = vec3(0.0, 0.0, 0.0);
-    for (int i=1; i<32; ++i) {
-        float radius = lights[i].pos.a;
-        float distance = distance(lights[i].pos.xyz, position);
-        if (radius > 0.0 && distance < radius) {
-            light_output += GameLight(radius, albedo, normal, V, F0, rough, metal, lights[i].pos.xyz, position, lights[i].color.xyz, distance);
+    for (int i=0; i<32; ++i) {
+        uint flag = 1 << i;
+
+        int idx = mapidx(position);
+        if ( (light_bits[idx] & flag) > 0 ) {
+
+            float radius = lights[i].pos.a;
+            float distance = distance(lights[i].pos.xyz, position);
+            if (radius > 0.0 && distance < radius) {
+                light_output += GameLight(radius, albedo, normal, V, F0, rough, metal, lights[i].pos.xyz, position, lights[i].color.xyz, distance);
+            }
+
         }
     }
     light_output += vec3(0.1) * albedo * ao; // Ambient component

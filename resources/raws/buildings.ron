@@ -79,7 +79,7 @@
             skill : [ BuildingSkill(skill: "Construction", difficulty: 15) ],
             vox : "rtg",
             description : "An array of large batteries, used for storing power.",
-            provides : [ EnergyStorage(energy: 10), Generator(energy: 10), Light(radius: 5, color: (0.2, 1.0, 0.2)) ]
+            provides : [ EnergyStorage(energy: 10), Generator(energy: 10), Light(radius: 10, color: (0.2, 1.0, 0.2)) ]
         ),
 
         BuildingDef(

@@ -2,6 +2,9 @@ use legion::prelude::*;
 use ultraviolet::Vec3;
 use crate::engine::uniforms::UniformBlock;
 use crate::components::*;
+use crate::modes::playgame::REGION;
+use crate::planet::Region;
+use crate::utils::mapidx;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -44,7 +47,8 @@ impl LightUniforms {
     pub fn update(&mut self, ecs: &World, sun_pos: Vec3, camera_pos: Vec3, light_bits: &mut [u32]) {
         self.camera_position = vec_to_float(&camera_pos);
         self.lights[0].pos = [ sun_pos.x, sun_pos.y, sun_pos.z, 512.0 ];
-        self.lights[0].color = [ 1.0, 1.0, 1.0, 1.0 ];
+        //self.lights[0].pos = [ 0.0, 512.0, 0.0, 512.0 ];
+        self.lights[0].color = [ 10.0, 10.0, 10.0, 1.0 ];
 
         self.lights.iter_mut().skip(1).for_each(|l| {
             l.pos = [ 0.0, 0.0, 0.0, 0.0];
@@ -52,15 +56,28 @@ impl LightUniforms {
         });
 
         // Clear and set outdoors
-        light_bits.iter_mut().for_each(|l| *l = 0);
+        let region = REGION.read();
+        light_bits.iter_mut().enumerate().for_each(|(idx,l)| {
+            if region.flag(idx, Region::OUTSIDE) {
+                *l = 1;
+            } else {
+                *l = 0;
+            }
+        });
 
         // Index the lights
+        const LIGHT_BOOST : f32 = 5.0;
         let mut index = 1;
-        let light_query = <(Read<Position>, Read<Light>)>::query();
-        light_query.iter(ecs).for_each(|(pos, light)| {
+        let light_query = <(Read<Position>, Read<Light>, Read<FieldOfView>)>::query();
+        light_query.iter(ecs).for_each(|(pos, light, fov)| {
             if index < 32 {
-                self.lights[index].color = [ light.color.0, light.color.1, light.color.2, 0.0 ];
-                self.lights[index].pos = [ pos.x as f32 + 0.5, pos.z as f32 + 0.5, pos.y as f32 + 0.5, light.radius as f32 ]
+                self.lights[index].color = [ light.color.0 * LIGHT_BOOST, light.color.1 * LIGHT_BOOST, light.color.2 * LIGHT_BOOST, 0.0 ];
+                self.lights[index].pos = [ pos.x as f32 + 0.5, pos.z as f32 + 0.5, pos.y as f32 + 0.5, light.radius as f32 ];
+                let bit = 1 << index;
+
+                for idx in fov.visible_tiles.iter() {
+                    light_bits[*idx] = light_bits[*idx] | bit;
+                }
             }
             index += 1;
         });

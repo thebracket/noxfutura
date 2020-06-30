@@ -4,10 +4,10 @@ use zerocopy::AsBytes as _;
 
 pub struct TerrainLights {
     pub flags: Vec<u32>,
-    pub staging_buffer : wgpu::Buffer,
     pub storage_buffer : wgpu::Buffer,
     pub bind_group_layout : wgpu::BindGroupLayout,
-    pub bind_group : wgpu::BindGroup
+    pub bind_group : wgpu::BindGroup,
+    pub dirty : bool
 }
 
 impl TerrainLights {
@@ -61,10 +61,30 @@ impl TerrainLights {
 
         Self {
             flags,
-            staging_buffer,
             storage_buffer,
             bind_group_layout,
-            bind_group
+            bind_group,
+            dirty: true
         }
+    }
+
+    pub fn update_buffer(&mut self) {
+        if !self.dirty {
+            return;
+        }
+        let mut ctx = DEVICE_CONTEXT.write();
+        let context = ctx.as_mut().unwrap();
+        let size = (std::mem::size_of::<u32>() * REGION_TILES_COUNT) as wgpu::BufferAddress;
+
+        let staging_buffer = context.device.create_buffer_with_data(
+            self.flags.as_slice().as_bytes(),
+            wgpu::BufferUsage::MAP_READ | wgpu::BufferUsage::COPY_DST | wgpu::BufferUsage::COPY_SRC,
+        );
+
+        let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+        encoder.copy_buffer_to_buffer(&staging_buffer, 0, &self.storage_buffer, 0, size);
+        context.queue.submit(&[encoder.finish()]);
+
+        self.dirty = false;
     }
 }

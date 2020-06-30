@@ -235,6 +235,7 @@ impl SunlightPass {
     pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_pos: Vec3, camera_pos: Vec3, ecs: &World) {
         self.uniforms.update(ecs, sun_pos, camera_pos, &mut self.lighting_map.flags);
         self.uniforms.update_buffer(&self.uniform_buf);
+        self.lighting_map.update_buffer();
 
         let mut ctx = DEVICE_CONTEXT.write();
         let context = ctx.as_mut().unwrap();
