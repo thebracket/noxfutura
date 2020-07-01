@@ -17,6 +17,11 @@ use ultraviolet::Vec3;
 mod shared_state;
 pub use shared_state::*;
 
+#[derive(PartialEq, Copy, Clone)]
+enum RunState {
+    Paused, OneStep, Running
+}
+
 pub struct PlayGame {
     pub planet: Option<Planet>,
     pub ecs: World,
@@ -31,7 +36,8 @@ pub struct PlayGame {
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
     chunks: chunks::Chunks,
-    scheduler: Option<Schedule>
+    scheduler: Option<Schedule>,
+    run_state: RunState
 }
 
 impl PlayGame {
@@ -48,7 +54,8 @@ impl PlayGame {
             chunks: chunks::Chunks::empty(),
             vox_pass: None,
             chunk_models: Vec::new(),
-            scheduler: None
+            scheduler: None,
+            run_state: RunState::Paused
         }
     }
 
@@ -163,6 +170,29 @@ impl PlayGame {
 
         // Show the menu
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
+
+            /*let run_menu_name = match self.run_state {
+                RunState::Paused => im_str!("PAUSED"),
+                RunState::OneStep => im_str!("1-Step"),
+                RunState::Running => im_str!("Running"),
+            };*/
+            if let Some(menu) = imgui.begin_menu(im_str!("Time"), true) {
+                println!("Menu active");
+                MenuItem::new(im_str!("Paused"))
+                    .build(imgui);
+                /*if MenuItem::new(im_str!("Pause")).build(imgui) {
+                    self.run_state = RunState::Paused;
+                }
+                if MenuItem::new(im_str!("Single-Step")).build(imgui) {
+                    self.run_state = RunState::OneStep;
+                }
+                if MenuItem::new(im_str!("Running")).build(imgui) {
+                    self.run_state = RunState::Running;
+                }*/
+                menu.end(imgui);
+            }
+
+
             if let Some(menu) = imgui.begin_menu(im_str!("Nox Futura"), true) {
                 menu.end(imgui);
             }
@@ -172,6 +202,7 @@ impl PlayGame {
             if let Some(menu) = imgui.begin_menu(im_str!("Units"), true) {
                 menu.end(imgui);
             }
+
             let status_size = imgui.calc_text_size(&hud_time_im, false, 0.0);
             imgui.same_line(imgui.window_content_region_width() - (status_size[0] + 10.0));
             imgui.text(hud_time_im);
