@@ -126,7 +126,8 @@ impl MainMenu {
                     result = super::ProgramMode::Quit;
                 }
                 ui.text_colored([1.0, 0.0, 0.0, 1.0], &MainMenu::DEDICATION);
-            });
+            }
+        );
 
         result
     }

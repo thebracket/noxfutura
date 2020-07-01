@@ -216,28 +216,4 @@ impl Chunk {
             None
         }
     }
-
-    pub fn maybe_render_chunk_no_models(
-        &self,
-        camera_z: usize,
-    ) -> Option<(&VertexBuffer<f32>, u32)> {
-        if self.t == ChunkType::Empty {
-            return None;
-        }
-
-        //let camera_ceiling = camera_z + 20;
-        let mut n_elements = 0;
-        for z in 0..CHUNK_SIZE {
-            let layer_z = z + self.base.2;
-            if layer_z <= camera_z {
-                n_elements += self.element_count[z];
-            }
-        }
-
-        if n_elements > 0 {
-            Some((&self.vb, n_elements * 3))
-        } else {
-            None
-        }
-    }
 }

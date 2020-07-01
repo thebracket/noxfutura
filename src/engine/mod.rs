@@ -176,8 +176,8 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
                     if last_cursor != Some(ui.mouse_cursor()) {
                         last_cursor = Some(ui.mouse_cursor());
-                        platform.prepare_render(&ui, &window);
                     }
+                    platform.prepare_render(&ui, &window);
                     renderer
                         .render(ui.render(), &mut context.device, &mut encoder, &frame.view)
                         .expect("Rendering failed");

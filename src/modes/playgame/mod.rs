@@ -149,7 +149,18 @@ impl PlayGame {
 
     fn user_interface(&mut self, frame_time: u128, imgui: &Ui) -> Vec3 {
         let mut sun_pos = Vec3::zero();
-        let title = format!(
+
+        if let Some(menu_bar) = imgui.begin_main_menu_bar() {
+            if let Some(menu) = imgui.begin_menu(im_str!("Test"), true) {
+                MenuItem::new(im_str!("Test Item")).build(imgui);
+                menu.end(imgui);
+            }
+            menu_bar.end(imgui);
+        }
+
+        //imgui.spacing();
+
+        /*let title = format!(
             "Playing. Frame time: {} ms. FPS: {}.",
             frame_time,
             imgui.io().framerate
@@ -157,9 +168,9 @@ impl PlayGame {
         let title_tmp = ImString::new(title);
         let window = imgui::Window::new(&title_tmp);
         window
-            .collapsed(true, Condition::FirstUseEver)
-            .size([300.0, 100.0], Condition::FirstUseEver)
-            .build(imgui, || {});
+            .collapsed(true, Condition::Always)
+            .size([300.0, 100.0], Condition::Always)
+            .build(imgui, || {});*/
 
         // Obtain info to display
         let mut hud_time = String::new();
@@ -169,44 +180,6 @@ impl PlayGame {
             sun_pos = c.calculate_sun_moon();
         }
         let hud_time_im = ImString::new(hud_time);
-
-        // Show the menu
-        if let Some(menu_bar) = imgui.begin_main_menu_bar() {
-            /*let run_menu_name = match self.run_state {
-                RunState::Paused => im_str!("PAUSED"),
-                RunState::OneStep => im_str!("1-Step"),
-                RunState::Running => im_str!("Running"),
-            };*/
-            if let Some(menu) = imgui.begin_menu(im_str!("Time"), true) {
-                println!("Menu active");
-                MenuItem::new(im_str!("Paused")).build(imgui);
-                /*if MenuItem::new(im_str!("Pause")).build(imgui) {
-                    self.run_state = RunState::Paused;
-                }
-                if MenuItem::new(im_str!("Single-Step")).build(imgui) {
-                    self.run_state = RunState::OneStep;
-                }
-                if MenuItem::new(im_str!("Running")).build(imgui) {
-                    self.run_state = RunState::Running;
-                }*/
-                menu.end(imgui);
-            }
-
-            if let Some(menu) = imgui.begin_menu(im_str!("Nox Futura"), true) {
-                menu.end(imgui);
-            }
-            if let Some(menu) = imgui.begin_menu(im_str!("Design"), true) {
-                menu.end(imgui);
-            }
-            if let Some(menu) = imgui.begin_menu(im_str!("Units"), true) {
-                menu.end(imgui);
-            }
-
-            let status_size = imgui.calc_text_size(&hud_time_im, false, 0.0);
-            imgui.same_line(imgui.window_content_region_width() - (status_size[0] + 10.0));
-            imgui.text(hud_time_im);
-            menu_bar.end(imgui);
-        }
 
         sun_pos
     }
