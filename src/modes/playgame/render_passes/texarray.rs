@@ -179,7 +179,7 @@ impl TextureArray {
         let mut offsets = Vec::with_capacity(8);
         for mip in 0..8 {
             offsets.push(pixelbuf.len());
-            pixelbuf.extend_from_slice(&atlas_data[mip].raw_pixels());
+            pixelbuf.extend_from_slice(&atlas_data[mip].to_bytes());
             tex_size /= 2;
         }
 
@@ -248,7 +248,7 @@ impl TextureArray {
 use image::*;
 
 fn load_image_levels(base: &DynamicImage) -> Vec<ImageBuffer<Rgba<u8>, Vec<u8>>> {
-    const TEX_FILTER: FilterType = FilterType::Lanczos3;
+    const TEX_FILTER: imageops::FilterType = imageops::FilterType::Triangle;
     const TS: u32 = TEXTURE_SIZE as u32;
 
     let mut result_optional : [(usize, Option<ImageBuffer<Rgba<u8>, Vec<u8>>>); 8] =
