@@ -9,7 +9,7 @@ pub struct SunlightPass {
     pub vb: VertexBuffer<f32>,
     pub shader_id: usize,
     pub render_pipeline: wgpu::RenderPipeline,
-    pub bind_group: wgpu::BindGroup,
+    pub bind_group_layout: wgpu::BindGroupLayout,
     pub uniforms: LightUniforms,
     pub uniform_bind_group: wgpu::BindGroup,
     pub uniform_bind_group_layout: wgpu::BindGroupLayout,
@@ -18,7 +18,7 @@ pub struct SunlightPass {
 }
 
 impl SunlightPass {
-    pub fn new(gbuffer: &GBuffer) -> Self {
+    pub fn new() -> Self {
         let uniforms = LightUniforms::new();
         let lighting_map = TerrainLights::new();
 
@@ -132,47 +132,8 @@ impl SunlightPass {
                         },
                     ],
                     label: None,
-                });
-        let bind_group = context
-            .device
-            .create_bind_group(&wgpu::BindGroupDescriptor {
-                layout: &bind_group_layout,
-                bindings: &[
-                    wgpu::Binding {
-                        binding: 0,
-                        resource: wgpu::BindingResource::TextureView(&gbuffer.albedo.view),
-                    },
-                    wgpu::Binding {
-                        binding: 1,
-                        resource: wgpu::BindingResource::Sampler(&gbuffer.albedo.sampler),
-                    },
-                    wgpu::Binding {
-                        binding: 2,
-                        resource: wgpu::BindingResource::TextureView(&gbuffer.normal.view),
-                    },
-                    wgpu::Binding {
-                        binding: 3,
-                        resource: wgpu::BindingResource::Sampler(&gbuffer.normal.sampler),
-                    },
-                    wgpu::Binding {
-                        binding: 4,
-                        resource: wgpu::BindingResource::TextureView(&gbuffer.pbr.view),
-                    },
-                    wgpu::Binding {
-                        binding: 5,
-                        resource: wgpu::BindingResource::Sampler(&gbuffer.pbr.sampler),
-                    },
-                    wgpu::Binding {
-                        binding: 6,
-                        resource: wgpu::BindingResource::TextureView(&gbuffer.coords.view),
-                    },
-                    wgpu::Binding {
-                        binding: 7,
-                        resource: wgpu::BindingResource::Sampler(&gbuffer.coords.sampler),
-                    },
-                ],
-                label: None,
-            });
+                }
+            );
 
         // WGPU Details
         let pipeline_layout =
@@ -223,7 +184,7 @@ impl SunlightPass {
             vb,
             shader_id,
             render_pipeline,
-            bind_group,
+            bind_group_layout,
             uniforms,
             uniform_bind_group,
             uniform_bind_group_layout,
@@ -232,7 +193,7 @@ impl SunlightPass {
         }
     }
 
-    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_pos: Vec3, camera_pos: Vec3, ecs: &World) {
+    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_pos: Vec3, camera_pos: Vec3, ecs: &World, gbuffer: &GBuffer) {
         self.uniforms.update(ecs, sun_pos, camera_pos, &mut self.lighting_map.flags);
         self.uniforms.update_buffer(&self.uniform_buf);
         self.lighting_map.update_buffer();
@@ -242,6 +203,49 @@ impl SunlightPass {
         let mut encoder = context
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+
+        // Bind group
+        let bind_group = context
+            .device
+            .create_bind_group(&wgpu::BindGroupDescriptor {
+                layout: &self.bind_group_layout,
+                bindings: &[
+                    wgpu::Binding {
+                        binding: 0,
+                        resource: wgpu::BindingResource::TextureView(&gbuffer.albedo.view),
+                    },
+                    wgpu::Binding {
+                        binding: 1,
+                        resource: wgpu::BindingResource::Sampler(&gbuffer.albedo.sampler),
+                    },
+                    wgpu::Binding {
+                        binding: 2,
+                        resource: wgpu::BindingResource::TextureView(&gbuffer.normal.view),
+                    },
+                    wgpu::Binding {
+                        binding: 3,
+                        resource: wgpu::BindingResource::Sampler(&gbuffer.normal.sampler),
+                    },
+                    wgpu::Binding {
+                        binding: 4,
+                        resource: wgpu::BindingResource::TextureView(&gbuffer.pbr.view),
+                    },
+                    wgpu::Binding {
+                        binding: 5,
+                        resource: wgpu::BindingResource::Sampler(&gbuffer.pbr.sampler),
+                    },
+                    wgpu::Binding {
+                        binding: 6,
+                        resource: wgpu::BindingResource::TextureView(&gbuffer.coords.view),
+                    },
+                    wgpu::Binding {
+                        binding: 7,
+                        resource: wgpu::BindingResource::Sampler(&gbuffer.coords.sampler),
+                    },
+                ],
+                label: None,
+            }
+        );
 
         {
             let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -257,7 +261,7 @@ impl SunlightPass {
 
             rpass.set_pipeline(&self.render_pipeline);
             rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
-            rpass.set_bind_group(1, &self.bind_group, &[]);
+            rpass.set_bind_group(1, &bind_group, &[]);
             rpass.set_bind_group(2, &self.lighting_map.bind_group, &[]);
 
             if self.vb.len() > 0 {

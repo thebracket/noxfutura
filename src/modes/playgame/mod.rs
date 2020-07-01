@@ -93,6 +93,7 @@ impl PlayGame {
     }
 
     pub fn on_resize(&mut self) {
+        println!("Resize called");
         if self.rpass.is_none() {
             return;
         }
@@ -294,7 +295,7 @@ impl PlayGame {
 
         // Render z-buffer and g-buffer to 1st pass lighting
         let pass2 = self.sunlight_pass.as_mut().unwrap();
-        pass2.render(frame, sun_pos.into(), pass.camera.eye, &self.ecs);
+        pass2.render(frame, sun_pos.into(), pass.camera.eye, &self.ecs, &pass.gbuffer);
     }
 
     fn run_systems(&mut self) {

@@ -38,7 +38,7 @@ impl LoaderState {
             crate::raws::load_raws();
             let rpass = BlockRenderPass::new();
             let vox_pass = VoxRenderPass::new(&rpass.uniform_bind_group_layout);
-            let sunlight_pass = SunlightPass::new(&rpass.gbuffer);
+            let sunlight_pass = SunlightPass::new();
 
             let mut lock = LOADER.write();
             lock.rpass = Some(rpass);

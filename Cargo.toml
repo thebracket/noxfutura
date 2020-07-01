@@ -6,12 +6,12 @@ edition = "2018"
 
 [dependencies]
 wgpu = { version = "0.5.0" }
-winit = { version = "0.21.0", features = ["web-sys"] }
+winit = { version = "0.22.2", features = ["web-sys"] }
 futures = "0.3"
 glsl-to-spirv = "0.1.7"
 imgui = "0.4.0"
 imgui-wgpu = "0.7.0"
-imgui-winit-support = { version = "0.4", default-features = false, features = [ "winit-20" ] }
+imgui-winit-support = { version = "0.4", default-features = false, features = [ "winit-22" ] }
 bytemuck = "1.2.0"
 image = "0.23.6"
 failure = "0.1"
