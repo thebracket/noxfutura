@@ -1,8 +1,8 @@
 use crate::engine::DEVICE_CONTEXT;
 use crate::modes::loader_progress;
+use rayon::prelude::*;
 use std::collections::HashMap;
 use std::fs;
-use rayon::prelude::*;
 
 const TEXTURE_SIZE: usize = 256;
 const ATLAS_COLS: usize = 16;
@@ -84,14 +84,10 @@ impl TextureArray {
                 image::open("resources/metal-template.jpg").unwrap()
             };
 
-            let (albedo_mip, normal_mip) = rayon::join(
-                || load_image_levels(&albedo),
-                ||load_image_levels(&normal)
-            );
-            let (rough_mip, ao_mip) = rayon::join(
-                || load_image_levels(&rough),
-                ||load_image_levels(&ao)
-            );
+            let (albedo_mip, normal_mip) =
+                rayon::join(|| load_image_levels(&albedo), || load_image_levels(&normal));
+            let (rough_mip, ao_mip) =
+                rayon::join(|| load_image_levels(&rough), || load_image_levels(&ao));
 
             let metal_mip = load_image_levels(&metal);
 
@@ -251,18 +247,22 @@ fn load_image_levels(base: &DynamicImage) -> Vec<ImageBuffer<Rgba<u8>, Vec<u8>>>
     const TEX_FILTER: imageops::FilterType = imageops::FilterType::Triangle;
     const TS: u32 = TEXTURE_SIZE as u32;
 
-    let mut result_optional : [(usize, Option<ImageBuffer<Rgba<u8>, Vec<u8>>>); 8] =
-    [
-        (0, None), (1, None), (2, None), (3, None), (4, None), (5, None), (6, None), (7, None)
+    let mut result_optional: [(usize, Option<ImageBuffer<Rgba<u8>, Vec<u8>>>); 8] = [
+        (0, None),
+        (1, None),
+        (2, None),
+        (3, None),
+        (4, None),
+        (5, None),
+        (6, None),
+        (7, None),
     ];
     result_optional.par_iter_mut().for_each(|(i, r)| {
         let sz = TS / (1 << *i as u32);
-        *r = Some(
-            base.resize_exact(sz, sz, TEX_FILTER).to_rgba()
-        );
+        *r = Some(base.resize_exact(sz, sz, TEX_FILTER).to_rgba());
     });
     result_optional
         .iter()
-        .map(|(_,r)| r.as_ref().unwrap().clone() )
+        .map(|(_, r)| r.as_ref().unwrap().clone())
         .collect::<Vec<ImageBuffer<Rgba<u8>, Vec<u8>>>>()
 }

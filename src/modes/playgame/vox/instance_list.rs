@@ -1,15 +1,15 @@
-use legion::prelude::*;
 use crate::components::*;
+use crate::engine::VertexBuffer;
 use crate::modes::playgame::vox::VoxBuffer;
 use crate::modes::playgame::ChunkModel;
-use crate::engine::VertexBuffer;
+use legion::prelude::*;
 
 pub fn build_vox_instances(
     ecs: &World,
     camera_z: usize,
     vox_models: &VoxBuffer,
     instance_buffer: &mut VertexBuffer<f32>,
-    chunk_models: &[ChunkModel]
+    chunk_models: &[ChunkModel],
 ) -> Vec<(u32, u32, i32)> {
     // Instances builder
     instance_buffer.clear();
@@ -40,8 +40,7 @@ pub fn build_vox_instances(
             }
 
             instance_buffer.add3(x, z, y);
-            instance_buffer
-                .add3(tint.color.0, tint.color.1, tint.color.2);
+            instance_buffer.add3(tint.color.0, tint.color.1, tint.color.2);
         }
     }
 
@@ -73,8 +72,7 @@ pub fn build_vox_instances(
             vox_instances.push((first, last, n));
             n += 1;
 
-            instance_buffer
-                .add3(m.x as f32, m.z as f32, m.y as f32);
+            instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
             instance_buffer.add3(1.0, 1.0, 1.0);
         }
     }

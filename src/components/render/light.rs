@@ -4,5 +4,5 @@ use crate::components::prelude::*;
 #[uuid = "c149854b-f14e-4e97-9a2c-f1cbc7f68faa"]
 pub struct Light {
     pub color: (f32, f32, f32),
-    pub radius: usize
+    pub radius: usize,
 }

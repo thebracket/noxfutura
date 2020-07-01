@@ -11,10 +11,10 @@ pub struct FieldOfView {
 
 impl FieldOfView {
     pub fn new(radius: usize) -> Self {
-        Self{
+        Self {
             radius,
-            visible_tiles : HashSet::new(),
-            is_dirty : true
+            visible_tiles: HashSet::new(),
+            is_dirty: true,
         }
     }
 }

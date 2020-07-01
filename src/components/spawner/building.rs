@@ -36,14 +36,21 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
                     color: (1.0, 1.0, 1.0),
                 },
             )],
-        )[0].clone();
+        )[0]
+        .clone();
 
         for provides in building_def.provides.iter() {
-            if let BuildingProvides::Light{radius, color} = provides {
-                ecs.add_component(entity, Light{
-                    color: *color, radius: *radius
-                }).expect("Unable to add light");
-                ecs.add_component(entity, FieldOfView::new(*radius) ).expect("Unable to add field-of-view");
+            if let BuildingProvides::Light { radius, color } = provides {
+                ecs.add_component(
+                    entity,
+                    Light {
+                        color: *color,
+                        radius: *radius,
+                    },
+                )
+                .expect("Unable to add light");
+                ecs.add_component(entity, FieldOfView::new(*radius))
+                    .expect("Unable to add field-of-view");
             }
         }
 

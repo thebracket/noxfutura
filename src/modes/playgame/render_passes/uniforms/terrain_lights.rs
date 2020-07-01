@@ -1,13 +1,13 @@
-use crate::planet::REGION_TILES_COUNT;
 use crate::engine::DEVICE_CONTEXT;
+use crate::planet::REGION_TILES_COUNT;
 use zerocopy::AsBytes as _;
 
 pub struct TerrainLights {
     pub flags: Vec<u32>,
-    pub storage_buffer : wgpu::Buffer,
-    pub bind_group_layout : wgpu::BindGroupLayout,
-    pub bind_group : wgpu::BindGroup,
-    pub dirty : bool
+    pub storage_buffer: wgpu::Buffer,
+    pub bind_group_layout: wgpu::BindGroupLayout,
+    pub bind_group: wgpu::BindGroup,
+    pub dirty: bool,
 }
 
 impl TerrainLights {
@@ -31,31 +31,38 @@ impl TerrainLights {
             label: None,
         });
 
-        let bind_group_layout = context.device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            bindings: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStage::FRAGMENT,
-                ty: wgpu::BindingType::StorageBuffer {
-                    dynamic: false,
-                    readonly: false,
-                },
-            }],
-            label: None,
-        });
+        let bind_group_layout =
+            context
+                .device
+                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                    bindings: &[wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStage::FRAGMENT,
+                        ty: wgpu::BindingType::StorageBuffer {
+                            dynamic: false,
+                            readonly: false,
+                        },
+                    }],
+                    label: None,
+                });
 
-        let bind_group = context.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            layout: &bind_group_layout,
-            bindings: &[wgpu::Binding {
-                binding: 0,
-                resource: wgpu::BindingResource::Buffer {
-                    buffer: &storage_buffer,
-                    range: 0 .. size,
-                },
-            }],
-            label: None,
-        });
+        let bind_group = context
+            .device
+            .create_bind_group(&wgpu::BindGroupDescriptor {
+                layout: &bind_group_layout,
+                bindings: &[wgpu::Binding {
+                    binding: 0,
+                    resource: wgpu::BindingResource::Buffer {
+                        buffer: &storage_buffer,
+                        range: 0..size,
+                    },
+                }],
+                label: None,
+            });
 
-        let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+        let mut encoder = context
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
         encoder.copy_buffer_to_buffer(&staging_buffer, 0, &storage_buffer, 0, size);
         context.queue.submit(&[encoder.finish()]);
 
@@ -64,7 +71,7 @@ impl TerrainLights {
             storage_buffer,
             bind_group_layout,
             bind_group,
-            dirty: true
+            dirty: true,
         }
     }
 
@@ -81,7 +88,9 @@ impl TerrainLights {
             wgpu::BufferUsage::MAP_READ | wgpu::BufferUsage::COPY_DST | wgpu::BufferUsage::COPY_SRC,
         );
 
-        let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+        let mut encoder = context
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
         encoder.copy_buffer_to_buffer(&staging_buffer, 0, &self.storage_buffer, 0, size);
         context.queue.submit(&[encoder.finish()]);
 

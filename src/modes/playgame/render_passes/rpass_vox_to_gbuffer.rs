@@ -1,5 +1,5 @@
 use super::super::VoxBuffer;
-use super::{Camera, gbuffer::GBuffer, Uniforms};
+use super::{gbuffer::GBuffer, Camera, Uniforms};
 use crate::engine::VertexBuffer;
 use crate::engine::DEVICE_CONTEXT;
 use crate::modes::loader_progress;
@@ -130,9 +130,8 @@ impl VoxRenderPass {
         _frame: &wgpu::SwapChainOutput,
         gbuffer: &GBuffer,
         uniform_bg: &wgpu::BindGroup,
-        vox_instances: &Vec<(u32, u32, i32)>
-    )
-    {
+        vox_instances: &Vec<(u32, u32, i32)>,
+    ) {
         // Render code
         let mut ctx = DEVICE_CONTEXT.write();
         let context = ctx.as_mut().unwrap();

@@ -1,4 +1,4 @@
-use crate::planet::{Region, TileType, REGION_WIDTH, REGION_HEIGHT, REGION_DEPTH};
+use crate::planet::{Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use crate::utils::{ground_z, mapidx};
 
 pub fn set_flags(region: &mut Region) {
@@ -13,8 +13,8 @@ pub fn set_flags(region: &mut Region) {
         }
     }
 
-    for y in 0 .. REGION_HEIGHT {
-        for x in 0 .. REGION_WIDTH {
+    for y in 0..REGION_HEIGHT {
+        for x in 0..REGION_WIDTH {
             let mut blocked = false;
             for z in (0..REGION_DEPTH).rev() {
                 let idx = mapidx(x, y, z);

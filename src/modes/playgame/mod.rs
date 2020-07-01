@@ -19,7 +19,9 @@ pub use shared_state::*;
 
 #[derive(PartialEq, Copy, Clone)]
 enum RunState {
-    Paused, OneStep, Running
+    Paused,
+    OneStep,
+    Running,
 }
 
 pub struct PlayGame {
@@ -37,7 +39,7 @@ pub struct PlayGame {
     rebuild_geometry: bool,
     chunks: chunks::Chunks,
     scheduler: Option<Schedule>,
-    run_state: RunState
+    run_state: RunState,
 }
 
 impl PlayGame {
@@ -55,7 +57,7 @@ impl PlayGame {
             vox_pass: None,
             chunk_models: Vec::new(),
             scheduler: None,
-            run_state: RunState::Paused
+            run_state: RunState::Paused,
         }
     }
 
@@ -109,8 +111,7 @@ impl PlayGame {
         depth_id: usize,
         keycode: Option<VirtualKeyCode>,
         frame_time: u128,
-    ) -> super::ProgramMode 
-    {
+    ) -> super::ProgramMode {
         let camera_z = self.camera_control(&keycode);
 
         if self.rebuild_geometry {
@@ -171,7 +172,6 @@ impl PlayGame {
 
         // Show the menu
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
-
             /*let run_menu_name = match self.run_state {
                 RunState::Paused => im_str!("PAUSED"),
                 RunState::OneStep => im_str!("1-Step"),
@@ -179,8 +179,7 @@ impl PlayGame {
             };*/
             if let Some(menu) = imgui.begin_menu(im_str!("Time"), true) {
                 println!("Menu active");
-                MenuItem::new(im_str!("Paused"))
-                    .build(imgui);
+                MenuItem::new(im_str!("Paused")).build(imgui);
                 /*if MenuItem::new(im_str!("Pause")).build(imgui) {
                     self.run_state = RunState::Paused;
                 }
@@ -192,7 +191,6 @@ impl PlayGame {
                 }*/
                 menu.end(imgui);
             }
-
 
             if let Some(menu) = imgui.begin_menu(im_str!("Nox Futura"), true) {
                 menu.end(imgui);
@@ -259,7 +257,13 @@ impl PlayGame {
         result
     }
 
-    fn render(&mut self, camera_z: usize, depth_id: usize, frame: &wgpu::SwapChainOutput, sun_pos: Vec3) {
+    fn render(
+        &mut self,
+        camera_z: usize,
+        depth_id: usize,
+        frame: &wgpu::SwapChainOutput,
+        sun_pos: Vec3,
+    ) {
         let pass = self.rpass.as_mut().unwrap();
         if pass.vb.len() > 0 {
             pass.vb.update_buffer();
@@ -272,17 +276,17 @@ impl PlayGame {
             frame,
             &mut self.chunks,
             camera_z as usize,
-            &mut self.chunk_models
+            &mut self.chunk_models,
         );
 
         // Build the voxel instance list
-        let vox_pass =self.vox_pass.as_mut().unwrap();
+        let vox_pass = self.vox_pass.as_mut().unwrap();
         let vox_instances = vox::build_vox_instances(
             &self.ecs,
             camera_z,
             &vox_pass.vox_models,
             &mut vox_pass.instance_buffer,
-            &mut self.chunk_models
+            &mut self.chunk_models,
         );
 
         vox_pass.render(
@@ -290,15 +294,24 @@ impl PlayGame {
             frame,
             &pass.gbuffer,
             &pass.uniform_bind_group,
-            &vox_instances
+            &vox_instances,
         );
 
         // Render z-buffer and g-buffer to 1st pass lighting
         let pass2 = self.sunlight_pass.as_mut().unwrap();
-        pass2.render(frame, sun_pos.into(), pass.camera.eye, &self.ecs, &pass.gbuffer);
+        pass2.render(
+            frame,
+            sun_pos.into(),
+            pass.camera.eye,
+            &self.ecs,
+            &pass.gbuffer,
+        );
     }
 
     fn run_systems(&mut self) {
-        self.scheduler.as_mut().unwrap().execute(&mut self.ecs, &mut self.ecs_resources);
+        self.scheduler
+            .as_mut()
+            .unwrap()
+            .execute(&mut self.ecs, &mut self.ecs_resources);
     }
 }

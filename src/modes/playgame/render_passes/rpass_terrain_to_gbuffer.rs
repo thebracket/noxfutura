@@ -1,6 +1,4 @@
-use super::{
-    Camera, gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms, ChunkModel
-};
+use super::{gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms, Camera, ChunkModel};
 use crate::engine::VertexBuffer;
 use crate::engine::DEVICE_CONTEXT;
 use crate::modes::loader_progress;
@@ -212,7 +210,7 @@ impl BlockRenderPass {
         _frame: &wgpu::SwapChainOutput,
         chunks: &Chunks,
         camera_z: usize,
-        chunk_models: &mut Vec<ChunkModel>
+        chunk_models: &mut Vec<ChunkModel>,
     ) {
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();

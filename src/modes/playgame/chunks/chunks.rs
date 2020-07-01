@@ -1,8 +1,8 @@
 use super::super::render_passes::frustrum::Frustrum;
 use super::{Chunk, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
 use crate::components::Position;
-use crate::planet::Region;
 use crate::modes::playgame::REGION;
+use crate::planet::Region;
 use bracket_geometry::prelude::*;
 use rayon::prelude::*;
 use ultraviolet::Mat4;

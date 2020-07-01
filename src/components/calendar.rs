@@ -16,7 +16,7 @@ impl Calendar {
     pub fn get_date_time(&self) -> String {
         format!(
             "{:02} {} {} {:02}:{:02}",
-            self.day+1,
+            self.day + 1,
             match self.month {
                 0 => "Jan",
                 1 => "Feb",
@@ -29,7 +29,7 @@ impl Calendar {
                 8 => "Sep",
                 9 => "Oct",
                 10 => "Nov",
-                _ => "Dec"
+                _ => "Dec",
             },
             self.year,
             self.hour,

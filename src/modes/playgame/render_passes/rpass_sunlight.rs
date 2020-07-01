@@ -1,9 +1,9 @@
 use super::gbuffer::GBuffer;
-use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
-use ultraviolet::Vec3;
-use crate::engine::uniforms::UniformBlock;
 use super::{LightUniforms, TerrainLights};
+use crate::engine::uniforms::UniformBlock;
+use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
 use legion::prelude::*;
+use ultraviolet::Vec3;
 
 pub struct SunlightPass {
     pub vb: VertexBuffer<f32>,
@@ -14,7 +14,7 @@ pub struct SunlightPass {
     pub uniform_bind_group: wgpu::BindGroup,
     pub uniform_bind_group_layout: wgpu::BindGroupLayout,
     pub uniform_buf: wgpu::Buffer,
-    pub lighting_map: TerrainLights
+    pub lighting_map: TerrainLights,
 }
 
 impl SunlightPass {
@@ -132,15 +132,18 @@ impl SunlightPass {
                         },
                     ],
                     label: None,
-                }
-            );
+                });
 
         // WGPU Details
         let pipeline_layout =
             context
                 .device
                 .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-                    bind_group_layouts: &[&uniform_bind_group_layout, &bind_group_layout, &lighting_map.bind_group_layout],
+                    bind_group_layouts: &[
+                        &uniform_bind_group_layout,
+                        &bind_group_layout,
+                        &lighting_map.bind_group_layout,
+                    ],
                 });
         let render_pipeline =
             context
@@ -189,12 +192,20 @@ impl SunlightPass {
             uniform_bind_group,
             uniform_bind_group_layout,
             uniform_buf,
-            lighting_map
+            lighting_map,
         }
     }
 
-    pub fn render(&mut self, frame: &wgpu::SwapChainOutput, sun_pos: Vec3, camera_pos: Vec3, ecs: &World, gbuffer: &GBuffer) {
-        self.uniforms.update(ecs, sun_pos, camera_pos, &mut self.lighting_map.flags);
+    pub fn render(
+        &mut self,
+        frame: &wgpu::SwapChainOutput,
+        sun_pos: Vec3,
+        camera_pos: Vec3,
+        ecs: &World,
+        gbuffer: &GBuffer,
+    ) {
+        self.uniforms
+            .update(ecs, sun_pos, camera_pos, &mut self.lighting_map.flags);
         self.uniforms.update_buffer(&self.uniform_buf);
         self.lighting_map.update_buffer();
 
@@ -244,8 +255,7 @@ impl SunlightPass {
                     },
                 ],
                 label: None,
-            }
-        );
+            });
 
         {
             let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {

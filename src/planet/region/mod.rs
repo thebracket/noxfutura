@@ -16,7 +16,7 @@ pub struct Region {
     pub water_level: Vec<u8>,
     pub tree_id: Vec<usize>,
     pub vegetation_type_id: Vec<Option<usize>>,
-    flags: Vec<u8>
+    flags: Vec<u8>,
 }
 
 impl Region {
@@ -46,7 +46,7 @@ impl Region {
             water_level: vec![0; REGION_TILES_COUNT],
             tree_id: vec![0; REGION_TILES_COUNT],
             vegetation_type_id: vec![None; REGION_TILES_COUNT],
-            flags: vec![0u8; REGION_TILES_COUNT]
+            flags: vec![0u8; REGION_TILES_COUNT],
         }
     }
 
@@ -59,6 +59,6 @@ impl Region {
     }
 
     // Flags
-    pub const SOLID : u8 = 1;
-    pub const OUTSIDE : u8 = 2;
+    pub const SOLID: u8 = 1;
+    pub const OUTSIDE: u8 = 2;
 }
