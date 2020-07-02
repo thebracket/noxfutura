@@ -9,3 +9,9 @@ pub fn build_scheduler() -> Schedule {
         .add_system(viewshed::build())
         .build()
 }
+
+pub fn paused_scheduler() -> Schedule {
+    Schedule::builder()
+        .add_system(viewshed::build())
+        .build()
+}

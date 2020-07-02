@@ -39,6 +39,7 @@ pub struct PlayGame {
     rebuild_geometry: bool,
     chunks: chunks::Chunks,
     scheduler: Option<Schedule>,
+    paused_scheduler: Option<Schedule>,
     run_state: RunState,
 }
 
@@ -57,6 +58,7 @@ impl PlayGame {
             vox_pass: None,
             chunk_models: Vec::new(),
             scheduler: None,
+            paused_scheduler: None,
             run_state: RunState::Paused,
         }
     }
@@ -84,6 +86,7 @@ impl PlayGame {
                 self.vox_pass = loader_lock.vpass.take();
 
                 self.scheduler = Some(systems::build_scheduler());
+                self.paused_scheduler = Some(systems::paused_scheduler());
             }
             _ => panic!("Not meant to go here."),
         }
@@ -346,6 +349,11 @@ impl PlayGame {
     fn run_systems(&mut self) {
         if self.run_state != RunState::Paused {
             self.scheduler
+                .as_mut()
+                .unwrap()
+                .execute(&mut self.ecs, &mut self.ecs_resources);
+        } else {
+            self.paused_scheduler
                 .as_mut()
                 .unwrap()
                 .execute(&mut self.ecs, &mut self.ecs_resources);
