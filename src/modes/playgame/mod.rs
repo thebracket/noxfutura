@@ -35,6 +35,8 @@ pub struct PlayGame {
     vox_pass: Option<VoxRenderPass>,
     vox_instances: Vec<(u32, u32, i32)>,
     vox_changed: bool,
+    lights_changed: bool,
+    first_run: bool,
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
@@ -61,7 +63,9 @@ impl PlayGame {
             paused_scheduler: None,
             run_state: RunState::Paused,
             vox_instances: Vec::new(),
-            vox_changed: true
+            vox_changed: true,
+            lights_changed: true,
+            first_run: true
         }
     }
 
@@ -255,10 +259,12 @@ impl PlayGame {
                             RunState::Paused => RunState::Running,
                             RunState::Running => RunState::Paused,
                             RunState::OneStep => RunState::Paused
-                        }
+                        };
+                        camera_changed = false;
                     }
                     VirtualKeyCode::Slash => {
                         self.run_state = RunState::OneStep;
+                        camera_changed = false;
                     }
                     VirtualKeyCode::Left => pos.x -= 1,
                     VirtualKeyCode::Right => pos.x += 1,
@@ -282,8 +288,10 @@ impl PlayGame {
                     },
                     _ => camera_changed = false,
                 }
+            } else {
+                camera_changed = false;
             }
-            if camera_changed {
+            if camera_changed | self.first_run {
                 let size = crate::engine::get_window_size();
                 cam.update(&*pos, &*camopts, size.width, size.height);
                 pass.uniforms.update_view_proj(&pass.camera);
@@ -291,6 +299,8 @@ impl PlayGame {
                 self.chunks.on_camera_move(&pass.uniforms.view_proj, &*pos);
                 pass.uniforms.update_buffer(&pass.uniform_buf);
                 self.vox_changed = true;
+                self.lights_changed = true;
+                self.first_run = false;
             }
 
             result = pos.z;
@@ -298,6 +308,7 @@ impl PlayGame {
         result
     }
 
+    #[inline(always)]
     fn render(
         &mut self,
         camera_z: usize,
@@ -306,10 +317,6 @@ impl PlayGame {
         sun_pos: Vec3,
     ) {
         let pass = self.rpass.as_mut().unwrap();
-        //if pass.vb.len() > 0 {
-        //    pass.vb.update_buffer();
-        //}
-
         // Render terrain building the initial chunk models list
         pass.render(
             depth_id,
@@ -349,7 +356,9 @@ impl PlayGame {
             pass.camera.eye,
             &self.ecs,
             &pass.gbuffer,
+            self.lights_changed
         );
+        self.lights_changed = false;
     }
 
     fn run_systems(&mut self) {

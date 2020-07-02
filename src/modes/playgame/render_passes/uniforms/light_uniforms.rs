@@ -2,9 +2,9 @@ use crate::components::*;
 use crate::engine::uniforms::UniformBlock;
 use crate::modes::playgame::REGION;
 use crate::planet::Region;
-use crate::utils::mapidx;
 use legion::prelude::*;
 use ultraviolet::Vec3;
+use rayon::prelude::*;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -57,7 +57,7 @@ impl LightUniforms {
 
         // Clear and set outdoors
         let region = REGION.read();
-        light_bits.iter_mut().enumerate().for_each(|(idx, l)| {
+        light_bits.par_iter_mut().enumerate().for_each(|(idx, l)| {
             if region.flag(idx, Region::OUTSIDE) {
                 *l = 1;
             } else {
