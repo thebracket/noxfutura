@@ -203,7 +203,7 @@ impl SunlightPass {
         camera_pos: Vec3,
         ecs: &World,
         gbuffer: &GBuffer,
-        lights_changed: bool
+        lights_changed: bool,
     ) {
         if lights_changed {
             self.uniforms

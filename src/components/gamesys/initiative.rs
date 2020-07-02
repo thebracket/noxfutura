@@ -9,9 +9,9 @@ pub struct Initiative {
 
 impl Initiative {
     pub fn new() -> Self {
-        Self{
+        Self {
             initiative: 0,
-            modifier: 0
+            modifier: 0,
         }
     }
 }

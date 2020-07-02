@@ -65,7 +65,7 @@ impl PlayGame {
             vox_instances: Vec::new(),
             vox_changed: true,
             lights_changed: true,
-            first_run: true
+            first_run: true,
         }
     }
 
@@ -174,45 +174,49 @@ impl PlayGame {
         };
 
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
-            MenuItem::new(im_str!("\u{f135} Nox Futura ### NFMain"))
-                .build(imgui);
+            MenuItem::new(im_str!("\u{f135} Nox Futura ### NFMain")).build(imgui);
 
             if let Some(menu) = imgui.begin_menu(running_str, true) {
                 match self.run_state {
                     RunState::Paused => {
                         if MenuItem::new(im_str!("\u{f144} Unpause"))
                             .shortcut(im_str!("SPACE"))
-                            .build(imgui) {
-                                self.run_state = RunState::Running;
-                            }
+                            .build(imgui)
+                        {
+                            self.run_state = RunState::Running;
+                        }
 
                         if MenuItem::new(im_str!("\u{f051} Single Step"))
                             .shortcut(im_str!("/"))
-                            .build(imgui) {
-                                self.run_state = RunState::OneStep;
-                            }
+                            .build(imgui)
+                        {
+                            self.run_state = RunState::OneStep;
+                        }
                         menu.end(imgui);
                     }
                     RunState::Running => {
                         if MenuItem::new(im_str!("\u{f28b} Pause"))
                             .shortcut(im_str!("SPACE"))
-                            .build(imgui) {
-                                self.run_state = RunState::Paused;
-                            }
+                            .build(imgui)
+                        {
+                            self.run_state = RunState::Paused;
+                        }
 
                         if MenuItem::new(im_str!("\u{f051} Single Step"))
                             .shortcut(im_str!("/"))
-                            .build(imgui) {
-                                self.run_state = RunState::OneStep;
-                            }
+                            .build(imgui)
+                        {
+                            self.run_state = RunState::OneStep;
+                        }
                         menu.end(imgui);
                     }
                     RunState::OneStep => {
                         if MenuItem::new(im_str!("\u{f28b} Pause"))
                             .shortcut(im_str!("SPACE"))
-                            .build(imgui) {
-                                self.run_state = RunState::Paused;
-                            }
+                            .build(imgui)
+                        {
+                            self.run_state = RunState::Paused;
+                        }
                         menu.end(imgui);
                     }
                 }
@@ -258,7 +262,7 @@ impl PlayGame {
                         self.run_state = match self.run_state {
                             RunState::Paused => RunState::Running,
                             RunState::Running => RunState::Paused,
-                            RunState::OneStep => RunState::Paused
+                            RunState::OneStep => RunState::Paused,
                         };
                         camera_changed = false;
                     }
@@ -318,12 +322,7 @@ impl PlayGame {
     ) {
         let pass = self.rpass.as_mut().unwrap();
         // Render terrain building the initial chunk models list
-        pass.render(
-            depth_id,
-            frame,
-            &mut self.chunks,
-            camera_z as usize,
-        );
+        pass.render(depth_id, frame, &mut self.chunks, camera_z as usize);
 
         // Build the voxel instance list
         let vox_pass = self.vox_pass.as_mut().unwrap();
@@ -335,7 +334,7 @@ impl PlayGame {
                 &mut vox_pass.instance_buffer,
                 &mut self.vox_instances,
                 &self.chunks.frustrum,
-                &self.chunks
+                &self.chunks,
             );
             self.vox_changed = false;
         }
@@ -356,7 +355,7 @@ impl PlayGame {
             pass.camera.eye,
             &self.ecs,
             &pass.gbuffer,
-            self.lights_changed
+            self.lights_changed,
         );
         self.lights_changed = false;
     }

@@ -4,7 +4,7 @@ use legion::prelude::*;
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("initiative")
         .with_query(<(Write<Initiative>, Write<MyTurn>)>::query())
-        .build(| _, ecs, _, actors| {
+        .build(|_, ecs, _, actors| {
             actors.iter_mut(ecs).for_each(|(mut i, mut t)| {
                 i.initiative -= 1;
                 if i.initiative + i.modifier < 1 {

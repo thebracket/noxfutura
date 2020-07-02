@@ -3,9 +3,9 @@ use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::planet::{Region, StairsType, TileType};
+use crate::raws::MappedTexture;
 use crate::utils::{add_floor_geometry, add_ramp_geometry, mapidx};
 use ultraviolet::Vec3;
-use crate::raws::MappedTexture;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -99,18 +99,33 @@ impl Chunk {
                                     TileType::TreeTrunk => {
                                         // bark
                                         let mat = crate::raws::RAWS.read().matmap.bark_id;
-                                        cubes.insert(idx, MappedTexture{texture: mat, tint: (1.0, 1.0, 1.0)});
+                                        cubes.insert(
+                                            idx,
+                                            MappedTexture {
+                                                texture: mat,
+                                                tint: (1.0, 1.0, 1.0),
+                                            },
+                                        );
                                     }
                                     TileType::TreeFoliage => {
                                         // leaf
                                         let mat = crate::raws::RAWS.read().matmap.leaf_id;
-                                        cubes.insert(idx, MappedTexture{texture: mat, tint: (1.0, 1.0, 1.0)});
+                                        cubes.insert(
+                                            idx,
+                                            MappedTexture {
+                                                texture: mat,
+                                                tint: (1.0, 1.0, 1.0),
+                                            },
+                                        );
                                     }
                                     TileType::Floor => {
                                         let mat = if let Some(_plant_idx) =
                                             region.vegetation_type_id[idx]
                                         {
-                                            MappedTexture{texture: crate::raws::RAWS.read().matmap.grass_id, tint: (1.0, 1.0, 1.0)}
+                                            MappedTexture {
+                                                texture: crate::raws::RAWS.read().matmap.grass_id,
+                                                tint: (1.0, 1.0, 1.0),
+                                            }
                                         } else {
                                             crate::raws::RAWS
                                                 .read()
@@ -155,9 +170,9 @@ impl Chunk {
                                 // Add water - temporarily here, it'll have to move
                                 let wl = region.water_level[idx];
                                 if wl > 0 {
-                                    let mat = MappedTexture{
+                                    let mat = MappedTexture {
                                         texture: crate::raws::RAWS.read().matmap.water_id,
-                                        tint: (1.0, 1.0, 1.0)
+                                        tint: (1.0, 1.0, 1.0),
                                     };
                                     add_floor_geometry(
                                         &mut self.vb.data,
@@ -194,10 +209,7 @@ impl Chunk {
         }
     }
 
-    pub fn maybe_render_chunk(
-        &self,
-        camera_z: usize,
-    ) -> Option<(&VertexBuffer<f32>, u32)> {
+    pub fn maybe_render_chunk(&self, camera_z: usize) -> Option<(&VertexBuffer<f32>, u32)> {
         if self.t == ChunkType::Empty {
             return None;
         }

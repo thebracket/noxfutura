@@ -3,8 +3,8 @@ use crate::engine::uniforms::UniformBlock;
 use crate::modes::playgame::REGION;
 use crate::planet::Region;
 use legion::prelude::*;
-use ultraviolet::Vec3;
 use rayon::prelude::*;
+use ultraviolet::Vec3;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

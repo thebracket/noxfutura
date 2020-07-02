@@ -1,11 +1,11 @@
+use super::super::chunks::Chunks;
+use super::super::frustrum::Frustrum;
 use crate::components::*;
 use crate::engine::VertexBuffer;
 use crate::modes::playgame::vox::VoxBuffer;
 use legion::prelude::*;
-use super::super::frustrum::Frustrum;
-use super::super::chunks::Chunks;
 
-const FRUSTRUM_CHECK_RANGE : f32 = 2.0;
+const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
 
 pub fn build_vox_instances(
     ecs: &World,
@@ -14,7 +14,7 @@ pub fn build_vox_instances(
     instance_buffer: &mut VertexBuffer<f32>,
     vox_instances: &mut Vec<(u32, u32, i32)>,
     frustrum: &Frustrum,
-    chunks: &Chunks
+    chunks: &Chunks,
 ) {
     // Instances builder
     instance_buffer.clear();
@@ -27,7 +27,12 @@ pub fn build_vox_instances(
     )>::query();
     let mut n = 0;
     for (pos, vm, dims, tint) in query.iter(&ecs) {
-        if pos.z <= camera_z && frustrum.check_sphere(&(pos.x as f32, pos.y as f32, pos.z as f32).into(), FRUSTRUM_CHECK_RANGE) {
+        if pos.z <= camera_z
+            && frustrum.check_sphere(
+                &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
+                FRUSTRUM_CHECK_RANGE,
+            )
+        {
             let first = vox_models.offsets[vm.index].0;
             let last = vox_models.offsets[vm.index].1;
             vox_instances.push((first, last, n));
@@ -52,7 +57,12 @@ pub fn build_vox_instances(
     // Composite Models
     let query = <(Read<Position>, Read<CompositeRender>)>::query();
     for (pos, composite) in query.iter(&ecs) {
-        if pos.z <= camera_z&& frustrum.check_sphere(&(pos.x as f32, pos.y as f32, pos.z as f32).into(), FRUSTRUM_CHECK_RANGE) {
+        if pos.z <= camera_z
+            && frustrum.check_sphere(
+                &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
+                FRUSTRUM_CHECK_RANGE,
+            )
+        {
             for vm in composite.layers.iter() {
                 let first = vox_models.offsets[vm.model].0;
                 let last = vox_models.offsets[vm.model].1;
@@ -70,20 +80,17 @@ pub fn build_vox_instances(
     }
 
     // Terrain chunk models
-    chunks
-        .visible_chunks()
-        .iter()
-        .for_each(|c| {
-            for m in c.chunk_models.iter() {
-                let first = vox_models.offsets[m.id].0;
-                let last = vox_models.offsets[m.id].1;
-                vox_instances.push((first, last, n));
-                n += 1;
+    chunks.visible_chunks().iter().for_each(|c| {
+        for m in c.chunk_models.iter() {
+            let first = vox_models.offsets[m.id].0;
+            let last = vox_models.offsets[m.id].1;
+            vox_instances.push((first, last, n));
+            n += 1;
 
-                instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
-                instance_buffer.add3(1.0, 1.0, 1.0);
-            }
-        });
+            instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
+            instance_buffer.add3(1.0, 1.0, 1.0);
+        }
+    });
     /*
     for m in chunk_models {
         if m.z <= camera_z&& frustrum.check_sphere(&(m.x as f32, m.y as f32, m.z as f32).into(), FRUSTRUM_CHECK_RANGE) {

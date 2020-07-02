@@ -26,10 +26,22 @@ impl MaterialMap {
             self.map.insert(
                 i,
                 MappedMaterial {
-                    texture: MappedTexture{ texture: matmap[&m.texture], tint: m.tint },
-                    constructed: MappedTexture{ texture: matmap[&m.constructed], tint: m.tint },
-                    floor: MappedTexture{ texture: matmap[&m.floor], tint: m.tint },
-                    floor_constructed: MappedTexture{ texture: matmap[&m.floor_constructed], tint: m.tint },
+                    texture: MappedTexture {
+                        texture: matmap[&m.texture],
+                        tint: m.tint,
+                    },
+                    constructed: MappedTexture {
+                        texture: matmap[&m.constructed],
+                        tint: m.tint,
+                    },
+                    floor: MappedTexture {
+                        texture: matmap[&m.floor],
+                        tint: m.tint,
+                    },
+                    floor_constructed: MappedTexture {
+                        texture: matmap[&m.floor_constructed],
+                        tint: m.tint,
+                    },
                 },
             );
         }
@@ -71,5 +83,5 @@ pub struct MappedMaterial {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct MappedTexture {
     pub texture: usize,
-    pub tint: (f32, f32, f32)
+    pub tint: (f32, f32, f32),
 }

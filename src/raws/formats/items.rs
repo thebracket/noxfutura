@@ -9,9 +9,7 @@ pub struct Items {
 
 impl Items {
     pub fn new() -> Self {
-        Self {
-            items: Vec::new(),
-        }
+        Self { items: Vec::new() }
     }
 
     pub fn item_by_tag(&self, tag: &str) -> Option<&ItemDef> {
@@ -36,7 +34,10 @@ pub struct ItemDef {
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum ItemDefType {
-    Component, ToolChopping, ToolDigging, ToolFarming
+    Component,
+    ToolChopping,
+    ToolDigging,
+    ToolFarming,
 }
 
 pub fn load_items() -> Items {

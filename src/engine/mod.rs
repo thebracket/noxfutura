@@ -97,21 +97,24 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
     let font_size = (13.0 * hidpi_factor) as f32;
     imgui.io_mut().font_global_scale = (1.0 / hidpi_factor) as f32;
-    imgui.fonts().add_font(&[FontSource::DefaultFontData {
-        config: Some(imgui::FontConfig {
-            oversample_h: 1,
-            pixel_snap_h: true,
+    imgui.fonts().add_font(&[
+        FontSource::DefaultFontData {
+            config: Some(imgui::FontConfig {
+                oversample_h: 1,
+                pixel_snap_h: true,
+                size_pixels: font_size,
+                ..Default::default()
+            }),
+        },
+        FontSource::TtfData {
+            data: include_bytes!("../../resources/fontawesome-webfont.ttf"),
             size_pixels: font_size,
-            ..Default::default()
-        }),
-    }, FontSource::TtfData{
-        data: include_bytes!("../../resources/fontawesome-webfont.ttf"),
-        size_pixels: font_size,
-        config: Some(FontConfig{
-            glyph_ranges: FontGlyphRanges::from_slice(&[0xf000, 0xf2e0, 0]),
-            ..FontConfig::default()
-        })
-    }]);
+            config: Some(FontConfig {
+                glyph_ranges: FontGlyphRanges::from_slice(&[0xf000, 0xf2e0, 0]),
+                ..FontConfig::default()
+            }),
+        },
+    ]);
 
     let mut renderer = Renderer::new(
         &mut imgui,

@@ -107,9 +107,15 @@ fn add_construction(
                 direction: StairsType::Down,
             }
         }
-        "solar_panel" => { add_building(region, "solar_panel", x, y, z, ecs); }
-        "battery" => { add_building(region, "battery", x, y, z, ecs); }
-        "cryo_bed" => { add_building(region, "cryo_bed", x, y, z, ecs); }
+        "solar_panel" => {
+            add_building(region, "solar_panel", x, y, z, ecs);
+        }
+        "battery" => {
+            add_building(region, "battery", x, y, z, ecs);
+        }
+        "cryo_bed" => {
+            add_building(region, "cryo_bed", x, y, z, ecs);
+        }
         "storage_locker" => {
             let storage_id = add_building(region, "storage_locker", x, y, z, ecs);
             spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id);
@@ -119,18 +125,37 @@ fn add_construction(
             spawner::spawn_item_in_container(ecs, "pickaxe", storage_id);
             spawner::spawn_item_in_container(ecs, "hoe", storage_id);
         }
-        "cordex" => { add_building(region, "cordex", x, y, z, ecs); }
-        "ship_defense_turret" => { add_building(region, "ship_defense_turret", x, y, z, ecs); }
-        "small_replicator" => { add_building(region, "small_replicator", x, y, z, ecs); }
-        "rtg" => { add_building(region, "rtg", x, y, z, ecs); }
-        "ship_door" => { add_building(region, "ship_door", x, y, z, ecs); }
-        "ship_lamp" => { add_building(region, "ship_lamp", x, y, z, ecs); }
+        "cordex" => {
+            add_building(region, "cordex", x, y, z, ecs);
+        }
+        "ship_defense_turret" => {
+            add_building(region, "ship_defense_turret", x, y, z, ecs);
+        }
+        "small_replicator" => {
+            add_building(region, "small_replicator", x, y, z, ecs);
+        }
+        "rtg" => {
+            add_building(region, "rtg", x, y, z, ecs);
+        }
+        "ship_door" => {
+            add_building(region, "ship_door", x, y, z, ecs);
+        }
+        "ship_lamp" => {
+            add_building(region, "ship_lamp", x, y, z, ecs);
+        }
         _ => {
             println!("Warning: No decoder for {}", name);
         }
     }
 }
 
-fn add_building(_region: &mut Region, tag: &str, x: usize, y: usize, z: usize, ecs: &mut World) -> usize {
+fn add_building(
+    _region: &mut Region,
+    tag: &str,
+    x: usize,
+    y: usize,
+    z: usize,
+    ecs: &mut World,
+) -> usize {
     spawner::spawn_building(ecs, tag, x, y, z)
 }

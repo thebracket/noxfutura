@@ -3,8 +3,8 @@ pub use formats::*;
 use formats::{load_biomes, load_materials};
 use parking_lot::RwLock;
 mod material_map;
-pub use material_map::MappedTexture;
 use crate::modes::loader_progress;
+pub use material_map::MappedTexture;
 
 pub struct Raws {
     pub biomes: Biomes,
@@ -17,7 +17,7 @@ pub struct Raws {
     pub names: Names,
     pub professions: Professions,
     pub clothing: Clothing,
-    pub items: Items
+    pub items: Items,
 }
 
 impl Raws {
@@ -33,7 +33,7 @@ impl Raws {
             names: Names::new(),
             professions: Professions::new(),
             clothing: Clothing::new(),
-            items: Items::new()
+            items: Items::new(),
         }
     }
 

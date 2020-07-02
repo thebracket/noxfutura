@@ -1,7 +1,7 @@
 mod calendar;
-mod viewshed;
-mod initiative;
 mod endturn;
+mod initiative;
+mod viewshed;
 
 use legion::prelude::*;
 
@@ -16,7 +16,5 @@ pub fn build_scheduler() -> Schedule {
 }
 
 pub fn paused_scheduler() -> Schedule {
-    Schedule::builder()
-        .add_system(viewshed::build())
-        .build()
+    Schedule::builder().add_system(viewshed::build()).build()
 }

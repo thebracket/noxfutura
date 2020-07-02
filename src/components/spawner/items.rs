@@ -1,8 +1,8 @@
-use legion::prelude::*;
-use crate::raws::*;
 use crate::components::*;
+use crate::raws::*;
+use legion::prelude::*;
 
-pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z:usize) {
+pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
     let raws = RAWS.read();
     if let Some(item) = raws.items.item_by_tag(tag) {
         ecs.insert(
@@ -10,13 +10,22 @@ pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z:us
             vec![(
                 Identity::new(),
                 Position { x, y, z },
-                Name { name: item.name.clone() },
+                Name {
+                    name: item.name.clone(),
+                },
                 Description {
                     desc: item.description.clone(),
                 },
-                crate::components::VoxelModel { index: raws.vox.get_model_idx( &item.vox ) },
-                Tint { color: (1.0, 1.0, 1.0) },
-                Dimensions{ width: 1, height: 1},
+                crate::components::VoxelModel {
+                    index: raws.vox.get_model_idx(&item.vox),
+                },
+                Tint {
+                    color: (1.0, 1.0, 1.0),
+                },
+                Dimensions {
+                    width: 1,
+                    height: 1,
+                },
             )],
         );
         println!("Ground spawned a {}", tag);
@@ -32,14 +41,23 @@ pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) {
             (Item {},),
             vec![(
                 Identity::new(),
-                ItemStored{ container },
-                Name { name: item.name.clone() },
+                ItemStored { container },
+                Name {
+                    name: item.name.clone(),
+                },
                 Description {
                     desc: item.description.clone(),
                 },
-                crate::components::VoxelModel { index: raws.vox.get_model_idx( &item.vox ) },
-                Tint { color: (1.0, 1.0, 1.0) },
-                Dimensions{ width: 1, height: 1},
+                crate::components::VoxelModel {
+                    index: raws.vox.get_model_idx(&item.vox),
+                },
+                Tint {
+                    color: (1.0, 1.0, 1.0),
+                },
+                Dimensions {
+                    width: 1,
+                    height: 1,
+                },
             )],
         );
     } else {
@@ -54,14 +72,23 @@ pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) {
             (Item {},),
             vec![(
                 Identity::new(),
-                ItemWorn{ wearer },
-                Name { name: item.name.clone() },
+                ItemWorn { wearer },
+                Name {
+                    name: item.name.clone(),
+                },
                 Description {
                     desc: item.description.clone(),
                 },
-                crate::components::VoxelModel { index: raws.vox.get_model_idx( &item.vox ) },
-                Tint { color: (1.0, 1.0, 1.0) },
-                Dimensions{ width: 1, height: 1},
+                crate::components::VoxelModel {
+                    index: raws.vox.get_model_idx(&item.vox),
+                },
+                Tint {
+                    color: (1.0, 1.0, 1.0),
+                },
+                Dimensions {
+                    width: 1,
+                    height: 1,
+                },
             )],
         );
     } else {
@@ -76,13 +103,19 @@ pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize) {
             (Item {},),
             vec![(
                 Identity::new(),
-                ItemCarried{ wearer },
-                Name { name: item.name.clone() },
+                ItemCarried { wearer },
+                Name {
+                    name: item.name.clone(),
+                },
                 Description {
                     desc: item.description.clone(),
                 },
-                crate::components::VoxelModel { index: raws.vox.get_model_idx( &item.vox ) },
-                Tint { color: (1.0, 1.0, 1.0) },
+                crate::components::VoxelModel {
+                    index: raws.vox.get_model_idx(&item.vox),
+                },
+                Tint {
+                    color: (1.0, 1.0, 1.0),
+                },
             )],
         );
     } else {

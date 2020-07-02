@@ -1,6 +1,4 @@
-use crate::planet::{
-    Region, TileType, REGION_TILES_COUNT, REGION_WIDTH,
-};
+use crate::planet::{Region, TileType, REGION_TILES_COUNT, REGION_WIDTH};
 use crate::utils::{ground_z, mapidx};
 use bracket_geometry::prelude::Point;
 use legion::prelude::*;
@@ -26,7 +24,9 @@ pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
                 region.tile_types[idx] = TileType::Floor;
                 num_logs = (num_logs / 20) + 1;
                 for _ in 0..num_logs {
-                    crate::components::spawner::spawn_item_on_ground(ecs, "wood_log", x as usize, y as usize, z as usize);
+                    crate::components::spawner::spawn_item_on_ground(
+                        ecs, "wood_log", x as usize, y as usize, z as usize,
+                    );
                 }
             }
         }
