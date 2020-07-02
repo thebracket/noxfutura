@@ -1,5 +1,5 @@
 use crate::planet::{Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
-use crate::utils::{ground_z, mapidx};
+use crate::utils::mapidx;
 
 pub fn set_flags(region: &mut Region) {
     for (idx, tt) in region.tile_types.clone().iter().enumerate() {

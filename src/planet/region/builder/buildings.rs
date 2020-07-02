@@ -131,6 +131,6 @@ fn add_construction(
     }
 }
 
-fn add_building(region: &mut Region, tag: &str, x: usize, y: usize, z: usize, ecs: &mut World) -> usize {
+fn add_building(_region: &mut Region, tag: &str, x: usize, y: usize, z: usize, ecs: &mut World) -> usize {
     spawner::spawn_building(ecs, tag, x, y, z)
 }

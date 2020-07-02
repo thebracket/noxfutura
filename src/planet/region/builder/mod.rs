@@ -14,7 +14,6 @@ mod settlers;
 mod strata;
 mod trees;
 mod water_features;
-use crate::components::*;
 use legion::prelude::*;
 pub use primitive::Primitive;
 mod flags;

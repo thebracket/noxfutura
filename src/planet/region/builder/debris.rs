@@ -1,5 +1,5 @@
 use crate::planet::{
-    Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH,
+    Region, TileType, REGION_TILES_COUNT, REGION_WIDTH,
 };
 use crate::utils::{ground_z, mapidx};
 use bracket_geometry::prelude::Point;

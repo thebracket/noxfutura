@@ -1,7 +1,6 @@
 use crate::components::*;
 use crate::engine::VertexBuffer;
 use crate::modes::playgame::vox::VoxBuffer;
-use crate::modes::playgame::ChunkModel;
 use legion::prelude::*;
 use super::super::frustrum::Frustrum;
 use super::super::chunks::Chunks;
