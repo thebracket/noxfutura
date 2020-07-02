@@ -1,8 +1,9 @@
 use crate::components::*;
 use legion::prelude::*;
 
-pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
+pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) -> usize {
     use crate::raws::*;
+    let mut result = 0;
     let rlock = crate::raws::RAWS.read();
     if let Some(building_def) = rlock.buildings.building_by_tag(tag) {
         let dims = if let Some(dims) = building_def.dimensions {
@@ -17,10 +18,13 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
             }
         };
 
+        let identity = Identity::new();
+        result = identity.id;
+
         let entity = ecs.insert(
             (Building {},),
             vec![(
-                Identity::new(),
+                identity,
                 Name {
                     name: building_def.name.clone(),
                 },
@@ -58,4 +62,6 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
     } else {
         println!("Failed to spawn building: {}", tag);
     }
+
+    result
 }

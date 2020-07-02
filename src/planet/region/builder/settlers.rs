@@ -212,4 +212,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             FieldOfView::new(8),
         )],
     );
+
+    spawner::spawn_item_worn(ecs, "ray_pistol", settler_id);
+    spawner::spawn_item_carried(ecs, "small_energy_cell", settler_id);
 }

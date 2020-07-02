@@ -53,6 +53,8 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         ComponentRegistration::of::<Tagline>(),
         ComponentRegistration::of::<Attributes>(),
         ComponentRegistration::of::<ItemWorn>(),
+        ComponentRegistration::of::<ItemStored>(),
+        ComponentRegistration::of::<ItemCarried>(),
         ComponentRegistration::of::<Identity>(),
         ComponentRegistration::of::<Light>(),
         ComponentRegistration::of::<FieldOfView>(),

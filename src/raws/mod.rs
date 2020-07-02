@@ -17,6 +17,7 @@ pub struct Raws {
     pub names: Names,
     pub professions: Professions,
     pub clothing: Clothing,
+    pub items: Items
 }
 
 impl Raws {
@@ -32,6 +33,7 @@ impl Raws {
             names: Names::new(),
             professions: Professions::new(),
             clothing: Clothing::new(),
+            items: Items::new()
         }
     }
 
@@ -54,6 +56,8 @@ impl Raws {
         self.professions = load_professions();
         loader_progress(0.09, "Loading Clothing Data", false);
         self.clothing = load_clothing();
+        loader_progress(0.091, "Loading Item Data", false);
+        self.items = load_items();
     }
 }
 

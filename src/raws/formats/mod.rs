@@ -16,3 +16,5 @@ mod professions;
 pub use professions::*;
 mod clothing;
 pub use clothing::*;
+mod items;
+pub use items::*;
