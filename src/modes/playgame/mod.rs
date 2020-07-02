@@ -165,6 +165,9 @@ impl PlayGame {
         };
 
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
+            MenuItem::new(im_str!("\u{f135} Nox Futura ### NFMain"))
+                .build(imgui);
+
             if let Some(menu) = imgui.begin_menu(running_str, true) {
                 match self.run_state {
                     RunState::Paused => {
