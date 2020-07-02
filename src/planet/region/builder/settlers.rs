@@ -210,7 +210,8 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             },
             attr,
             FieldOfView::new(8),
-            Initiative::new()
+            Initiative::new(),
+            MyTurn(false),
         )],
     );
 

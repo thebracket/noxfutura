@@ -3,10 +3,10 @@ use legion::prelude::*;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("endturn")
-    .with_query(<Read<Initiative>>::query().filter(tag::<MyTurn>()))
-        .build(| commands, ecs, _, turn| {
-            turn.iter_entities(ecs).for_each(|(entity, _)| {
-                commands.remove_tag::<MyTurn>(entity);
+    .with_query(<Write<MyTurn>>::query())
+        .build(| _, ecs, _, turn| {
+            turn.iter_mut(ecs).for_each(|mut t| {
+                t.0 = false;
             });
         })
 }
