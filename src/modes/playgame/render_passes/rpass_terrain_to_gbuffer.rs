@@ -210,7 +210,6 @@ impl BlockRenderPass {
         _frame: &wgpu::SwapChainOutput,
         chunks: &Chunks,
         camera_z: usize,
-        chunk_models: &mut Vec<ChunkModel>,
     ) {
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
@@ -271,7 +270,7 @@ impl BlockRenderPass {
             }
 
             for chunk in chunks.visible_chunks() {
-                let buffer = chunk.maybe_render_chunk(camera_z, chunk_models);
+                let buffer = chunk.maybe_render_chunk(camera_z);
                 if let Some(buffer) = buffer {
                     rpass.set_vertex_buffer(0, buffer.0.buffer.as_ref().unwrap(), 0, 0);
                     rpass.draw(0..buffer.1, 0..1);

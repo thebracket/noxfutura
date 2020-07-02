@@ -197,13 +197,10 @@ impl Chunk {
     pub fn maybe_render_chunk(
         &self,
         camera_z: usize,
-        render_chunks: &mut Vec<ChunkModel>,
     ) -> Option<(&VertexBuffer<f32>, u32)> {
         if self.t == ChunkType::Empty {
             return None;
         }
-
-        render_chunks.extend_from_slice(&self.chunk_models);
 
         //let camera_ceiling = camera_z + 20;
         let mut n_elements = 0;

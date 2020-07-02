@@ -4,6 +4,7 @@ use crate::modes::playgame::vox::VoxBuffer;
 use crate::modes::playgame::ChunkModel;
 use legion::prelude::*;
 use super::super::frustrum::Frustrum;
+use super::super::chunks::Chunks;
 
 const FRUSTRUM_CHECK_RANGE : f32 = 2.0;
 
@@ -12,9 +13,9 @@ pub fn build_vox_instances(
     camera_z: usize,
     vox_models: &VoxBuffer,
     instance_buffer: &mut VertexBuffer<f32>,
-    chunk_models: &[ChunkModel],
     vox_instances: &mut Vec<(u32, u32, i32)>,
-    frustrum: &Frustrum
+    frustrum: &Frustrum,
+    chunks: &Chunks
 ) {
     // Instances builder
     instance_buffer.clear();
@@ -70,6 +71,21 @@ pub fn build_vox_instances(
     }
 
     // Terrain chunk models
+    chunks
+        .visible_chunks()
+        .iter()
+        .for_each(|c| {
+            for m in c.chunk_models.iter() {
+                let first = vox_models.offsets[m.id].0;
+                let last = vox_models.offsets[m.id].1;
+                vox_instances.push((first, last, n));
+                n += 1;
+
+                instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
+                instance_buffer.add3(1.0, 1.0, 1.0);
+            }
+        });
+    /*
     for m in chunk_models {
         if m.z <= camera_z&& frustrum.check_sphere(&(m.x as f32, m.y as f32, m.z as f32).into(), FRUSTRUM_CHECK_RANGE) {
             let first = vox_models.offsets[m.id].0;
@@ -80,7 +96,7 @@ pub fn build_vox_instances(
             instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
             instance_buffer.add3(1.0, 1.0, 1.0);
         }
-    }
+    }*/
 
     if !vox_instances.is_empty() {
         instance_buffer.update_buffer();

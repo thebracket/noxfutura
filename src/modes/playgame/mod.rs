@@ -33,7 +33,6 @@ pub struct PlayGame {
     rpass: Option<BlockRenderPass>,
     sunlight_pass: Option<SunlightPass>,
     vox_pass: Option<VoxRenderPass>,
-    chunk_models: Vec<ChunkModel>,
     vox_instances: Vec<(u32, u32, i32)>,
     vox_changed: bool,
 
@@ -58,7 +57,6 @@ impl PlayGame {
             ecs_resources: Resources::default(),
             chunks: chunks::Chunks::empty(),
             vox_pass: None,
-            chunk_models: Vec::new(),
             scheduler: None,
             paused_scheduler: None,
             run_state: RunState::Paused,
@@ -292,6 +290,7 @@ impl PlayGame {
                 //pass.uniforms.view_proj = self.sun_terrain_pass.as_ref().unwrap().uniforms.view_proj; // Comment out
                 self.chunks.on_camera_move(&pass.uniforms.view_proj, &*pos);
                 pass.uniforms.update_buffer(&pass.uniform_buf);
+                self.vox_changed = true;
             }
 
             result = pos.z;
@@ -312,29 +311,27 @@ impl PlayGame {
         //}
 
         // Render terrain building the initial chunk models list
-        self.chunk_models.clear();
         pass.render(
             depth_id,
             frame,
             &mut self.chunks,
             camera_z as usize,
-            &mut self.chunk_models,
         );
 
         // Build the voxel instance list
         let vox_pass = self.vox_pass.as_mut().unwrap();
-        //if self.vox_changed {
+        if self.vox_changed {
             vox::build_vox_instances(
                 &self.ecs,
                 camera_z,
                 &vox_pass.vox_models,
                 &mut vox_pass.instance_buffer,
-                &mut self.chunk_models,
                 &mut self.vox_instances,
-                &self.chunks.frustrum
+                &self.chunks.frustrum,
+                &self.chunks
             );
             self.vox_changed = false;
-        //}
+        }
 
         vox_pass.render(
             depth_id,
