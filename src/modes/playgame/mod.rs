@@ -159,9 +159,9 @@ impl PlayGame {
         }
 
         let running_str = match self.run_state {
-            RunState::Paused => im_str!("Paused ### RunMenu"),
-            RunState::OneStep => im_str!("Single-Step ### RunMenu"),
-            RunState::Running => im_str!("Running ### RunMenu"),
+            RunState::Paused => im_str!("\u{f017} Paused ### RunMenu"),
+            RunState::OneStep => im_str!("\u{f017} Single-Step ### RunMenu"),
+            RunState::Running => im_str!("\u{f017} Running ### RunMenu"),
         };
 
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
@@ -171,13 +171,13 @@ impl PlayGame {
             if let Some(menu) = imgui.begin_menu(running_str, true) {
                 match self.run_state {
                     RunState::Paused => {
-                        if MenuItem::new(im_str!("Unpause"))
+                        if MenuItem::new(im_str!("\u{f144} Unpause"))
                             .shortcut(im_str!("SPACE"))
                             .build(imgui) {
                                 self.run_state = RunState::Running;
                             }
 
-                        if MenuItem::new(im_str!("Single Step"))
+                        if MenuItem::new(im_str!("\u{f051} Single Step"))
                             .shortcut(im_str!("."))
                             .build(imgui) {
                                 self.run_state = RunState::OneStep;
@@ -185,13 +185,13 @@ impl PlayGame {
                         menu.end(imgui);
                     }
                     RunState::Running => {
-                        if MenuItem::new(im_str!("Pause"))
+                        if MenuItem::new(im_str!("\u{f28b} Pause"))
                             .shortcut(im_str!("SPACE"))
                             .build(imgui) {
                                 self.run_state = RunState::Paused;
                             }
 
-                        if MenuItem::new(im_str!("Single Step"))
+                        if MenuItem::new(im_str!("\u{f051} Single Step"))
                             .shortcut(im_str!("."))
                             .build(imgui) {
                                 self.run_state = RunState::OneStep;
@@ -199,7 +199,7 @@ impl PlayGame {
                         menu.end(imgui);
                     }
                     RunState::OneStep => {
-                        if MenuItem::new(im_str!("Pause"))
+                        if MenuItem::new(im_str!("\u{f28b} Pause"))
                             .shortcut(im_str!("SPACE"))
                             .build(imgui) {
                                 self.run_state = RunState::Paused;
