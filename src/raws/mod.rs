@@ -3,6 +3,7 @@ pub use formats::*;
 use formats::{load_biomes, load_materials};
 use parking_lot::RwLock;
 mod material_map;
+pub use material_map::MappedTexture;
 use crate::modes::loader_progress;
 
 pub struct Raws {

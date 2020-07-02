@@ -1,8 +1,9 @@
 use crate::planet::REGION_WIDTH;
 use crate::utils::idxmap;
 use std::collections::HashMap;
+use crate::raws::MappedTexture;
 
-pub type CubeMap = HashMap<usize, usize>;
+pub type CubeMap = HashMap<usize, MappedTexture>;
 
 pub fn greedy_cubes(cube_index: &mut CubeMap, layer: &mut Vec<f32>, element_count: &mut u32) {
     loop {
@@ -61,7 +62,7 @@ pub fn greedy_floors(cube_index: &mut CubeMap, layer: &mut Vec<f32>, element_cou
     }
 }
 
-fn grow_right(cube_index: &mut CubeMap, idx: usize, mat: usize) -> usize {
+fn grow_right(cube_index: &mut CubeMap, idx: usize, mat: MappedTexture) -> usize {
     let mut width = 1;
     let mut candidate_idx = idx + 1;
 
@@ -74,7 +75,7 @@ fn grow_right(cube_index: &mut CubeMap, idx: usize, mat: usize) -> usize {
     width
 }
 
-fn grow_down(cube_index: &mut CubeMap, idx: usize, width: usize, mat: usize) -> usize {
+fn grow_down(cube_index: &mut CubeMap, idx: usize, width: usize, mat: MappedTexture) -> usize {
     let mut height = 1;
     let mut candidate_idx = idx + REGION_WIDTH;
     'outer: loop {

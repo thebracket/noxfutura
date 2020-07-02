@@ -178,7 +178,7 @@ impl PlayGame {
                             }
 
                         if MenuItem::new(im_str!("\u{f051} Single Step"))
-                            .shortcut(im_str!("."))
+                            .shortcut(im_str!("/"))
                             .build(imgui) {
                                 self.run_state = RunState::OneStep;
                             }
@@ -192,7 +192,7 @@ impl PlayGame {
                             }
 
                         if MenuItem::new(im_str!("\u{f051} Single Step"))
-                            .shortcut(im_str!("."))
+                            .shortcut(im_str!("/"))
                             .build(imgui) {
                                 self.run_state = RunState::OneStep;
                             }
@@ -252,7 +252,7 @@ impl PlayGame {
                             RunState::OneStep => RunState::Paused
                         }
                     }
-                    VirtualKeyCode::Period => {
+                    VirtualKeyCode::Slash => {
                         self.run_state = RunState::OneStep;
                     }
                     VirtualKeyCode::Left => pos.x -= 1,

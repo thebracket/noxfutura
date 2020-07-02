@@ -4,13 +4,13 @@ layout(location=0) in vec3 a_position;
 layout(location=1) in float a_normal;
 layout(location=2) in vec2 a_uv;
 layout(location=3) in float a_material;
+layout(location=4) in vec3 a_tint;
 
-layout(location=0) out vec3 v_normal;
-layout(location=1) out vec3 v_frag_pos;
-layout(location=2) out vec3 v_world_pos;
-layout(location=3) out vec2 v_uv;
-layout(location=4) out float v_material;
-layout(location=5) out mat3 v_tbn;
+layout(location=0) out vec3 v_tint;
+layout(location=1) out vec3 v_world_pos;
+layout(location=2) out vec2 v_uv;
+layout(location=3) out float v_material;
+layout(location=4) out mat3 v_tbn;
 
 layout(set=0, binding=0) 
 uniform Uniforms {
@@ -55,10 +55,9 @@ const mat3 TBN[6] = mat3[6](
 
 void main() {
     gl_Position = u_view_proj * vec4(a_position, 1.0);
-    v_normal = normal_lut[int(a_normal)];
-    v_frag_pos  = gl_Position.xyz;
     v_world_pos = a_position;
     v_uv = a_uv;
     v_material = a_material;
     v_tbn = TBN[int(a_normal)];
+    v_tint = a_tint;
 }

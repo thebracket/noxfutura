@@ -1,11 +1,10 @@
 #version 450
 
-layout(location=0) in vec3 v_normal;
-layout(location=1) in vec3 v_frag_pos;
-layout(location=2) in vec3 v_world_pos;
-layout(location=3) in vec2 v_uv;
-layout(location=4) in float v_material;
-layout(location=5) in mat3 v_tbn;
+layout(location=0) in vec3 v_tint;
+layout(location=1) in vec3 v_world_pos;
+layout(location=2) in vec2 v_uv;
+layout(location=3) in float v_material;
+layout(location=4) in mat3 v_tbn;
 
 layout(location=0) out vec4 f_color;
 layout(location=1) out vec4 f_normal;
@@ -52,7 +51,7 @@ void main() {
     vec3 normal = normalize(v_tbn * tex_normal);
     vec3 pbr = sample_material(mat_base + 2, uv).rgb;
 
-    f_color = terrain_color;
+    f_color = terrain_color * vec4(v_tint, 1.0);
     f_normal = vec4(normal, 1.0);
     f_pbr = vec4(
         pbr.r, // AO

@@ -23,9 +23,9 @@ impl BlockRenderPass {
         let terrain_textures = TextureArray::blank().unwrap();
 
         // Initialize the vertex buffer for cube geometry
-        let mut vb = VertexBuffer::<f32>::new(&[3, 1, 2, 1]);
+        let mut vb = VertexBuffer::<f32>::new(&[3, 1, 2, 1, 3]);
         let mut tmp = 0;
-        crate::utils::add_floor_geometry(&mut vb.data, &mut tmp, 1.0, 1.0, 1.0, 1.0, 1.0, 0);
+        crate::utils::add_floor_geometry(&mut vb.data, &mut tmp, 1.0, 1.0, 1.0, 1.0, 1.0, crate::raws::MappedTexture{texture: 0, tint: (1.0, 1.0, 1.0)});
         vb.build(wgpu::BufferUsage::VERTEX);
 
         loader_progress(0.4, "Building chunk rendering", false);
