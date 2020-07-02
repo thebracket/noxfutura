@@ -1,4 +1,4 @@
-use super::{gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms, Camera, ChunkModel};
+use super::{gbuffer::GBuffer, texarray::TextureArray, uniforms::Uniforms, Camera};
 use crate::engine::VertexBuffer;
 use crate::engine::DEVICE_CONTEXT;
 use crate::modes::loader_progress;

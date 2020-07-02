@@ -58,12 +58,14 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         ComponentRegistration::of::<Identity>(),
         ComponentRegistration::of::<Light>(),
         ComponentRegistration::of::<FieldOfView>(),
+        ComponentRegistration::of::<Initiative>(),
     ];
     let tag_registrations = vec![
         TagRegistration::of::<Cordex>(),
         TagRegistration::of::<Building>(),
         TagRegistration::of::<Item>(),
         TagRegistration::of::<Sentient>(),
+        TagRegistration::of::<MyTurn>(),
     ];
     (comp_registrations, tag_registrations)
 }
