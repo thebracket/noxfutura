@@ -36,7 +36,7 @@ pub struct ItemDef {
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum ItemDefType {
-    Component
+    Component, ToolChopping, ToolDigging, ToolFarming
 }
 
 pub fn load_items() -> Items {

@@ -6,6 +6,46 @@
             item_type: [ Component ],
             vox: "wood_logs",
             description: "Uncut wood from a felled tree."
-        )
+        ),
+
+        ItemDef(
+            tag: "personal_survival_shelter_kit",
+            name: "Personal Survival Shelter Kit",
+            description: "A folded-up personal shelter kit, known in non-corporate parlance as a camping set: a tent, bedroll and sleeping bag.",
+            item_type: [ Component ],
+            vox: "tent_kit"
+        ),
+
+        ItemDef(
+            tag:"camp_fire_kit",
+            name: "Camping Fire Kit",
+            description: "A plastic campfire, powered by a tiny nuclear reactor. Ideal for your off-world vacation.",
+            item_type: [ Component ],
+            vox: "campfire_kit"
+        ),
+
+        ItemDef(
+            tag:"fire_axe",
+            name: "Fire Axe",
+            description: "A simple axe. It has the word FIRE burned into it.",
+            item_type: [ ToolChopping ],
+            vox: "axe"
+        ),
+
+        ItemDef(
+            tag:"pickaxe",
+            name: "Pickaxe",
+            description: "A simple pickaxe, ideal for digging holes.",
+            item_type: [ ToolDigging ],
+            vox: "pick"
+        ),
+
+        ItemDef(
+            tag:"hoe",
+            name: "Hoe",
+            description: "A garden hoe, used for clearing soil ready for planting.",
+            item_type: [ ToolFarming ],
+            vox: "pick"
+        ),
     ]
 )
