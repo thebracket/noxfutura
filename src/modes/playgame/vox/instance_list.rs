@@ -3,6 +3,9 @@ use crate::engine::VertexBuffer;
 use crate::modes::playgame::vox::VoxBuffer;
 use crate::modes::playgame::ChunkModel;
 use legion::prelude::*;
+use super::super::frustrum::Frustrum;
+
+const FRUSTRUM_CHECK_RANGE : f32 = 2.0;
 
 pub fn build_vox_instances(
     ecs: &World,
@@ -10,10 +13,12 @@ pub fn build_vox_instances(
     vox_models: &VoxBuffer,
     instance_buffer: &mut VertexBuffer<f32>,
     chunk_models: &[ChunkModel],
-) -> Vec<(u32, u32, i32)> {
+    vox_instances: &mut Vec<(u32, u32, i32)>,
+    frustrum: &Frustrum
+) {
     // Instances builder
     instance_buffer.clear();
-    let mut vox_instances = Vec::new();
+    vox_instances.clear();
     let query = <(
         Read<Position>,
         Read<VoxelModel>,
@@ -22,7 +27,7 @@ pub fn build_vox_instances(
     )>::query();
     let mut n = 0;
     for (pos, vm, dims, tint) in query.iter(&ecs) {
-        if pos.z <= camera_z {
+        if pos.z <= camera_z && frustrum.check_sphere(&(pos.x as f32, pos.y as f32, pos.z as f32).into(), FRUSTRUM_CHECK_RANGE) {
             let first = vox_models.offsets[vm.index].0;
             let last = vox_models.offsets[vm.index].1;
             vox_instances.push((first, last, n));
@@ -47,7 +52,7 @@ pub fn build_vox_instances(
     // Composite Models
     let query = <(Read<Position>, Read<CompositeRender>)>::query();
     for (pos, composite) in query.iter(&ecs) {
-        if pos.z <= camera_z {
+        if pos.z <= camera_z&& frustrum.check_sphere(&(pos.x as f32, pos.y as f32, pos.z as f32).into(), FRUSTRUM_CHECK_RANGE) {
             for vm in composite.layers.iter() {
                 let first = vox_models.offsets[vm.model].0;
                 let last = vox_models.offsets[vm.model].1;
@@ -66,7 +71,7 @@ pub fn build_vox_instances(
 
     // Terrain chunk models
     for m in chunk_models {
-        if m.z <= camera_z {
+        if m.z <= camera_z&& frustrum.check_sphere(&(m.x as f32, m.y as f32, m.z as f32).into(), FRUSTRUM_CHECK_RANGE) {
             let first = vox_models.offsets[m.id].0;
             let last = vox_models.offsets[m.id].1;
             vox_instances.push((first, last, n));
@@ -80,6 +85,4 @@ pub fn build_vox_instances(
     if !vox_instances.is_empty() {
         instance_buffer.update_buffer();
     }
-
-    vox_instances
 }

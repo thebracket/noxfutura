@@ -161,7 +161,6 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
             Event::RedrawRequested(_) => {
                 let frame = renderpass::get_frame(&mut swap_chain);
 
-                last_frame = imgui.io_mut().update_delta_time(last_frame);
                 platform
                     .prepare_frame(imgui.io_mut(), &window)
                     .expect("Failed to prepare frame");

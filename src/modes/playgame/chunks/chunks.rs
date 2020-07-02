@@ -8,7 +8,7 @@ use ultraviolet::Mat4;
 
 pub struct Chunks {
     chunks: Vec<Chunk>,
-    frustrum: Frustrum,
+    pub frustrum: Frustrum,
     visible_chunks: Vec<(f32, usize)>,
 }
 

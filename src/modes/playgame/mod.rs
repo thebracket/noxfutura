@@ -34,6 +34,8 @@ pub struct PlayGame {
     sunlight_pass: Option<SunlightPass>,
     vox_pass: Option<VoxRenderPass>,
     chunk_models: Vec<ChunkModel>,
+    vox_instances: Vec<(u32, u32, i32)>,
+    vox_changed: bool,
 
     // Game stuff that doesn't belong here
     rebuild_geometry: bool,
@@ -60,6 +62,8 @@ impl PlayGame {
             scheduler: None,
             paused_scheduler: None,
             run_state: RunState::Paused,
+            vox_instances: Vec::new(),
+            vox_changed: true
         }
     }
 
@@ -303,9 +307,9 @@ impl PlayGame {
         sun_pos: Vec3,
     ) {
         let pass = self.rpass.as_mut().unwrap();
-        if pass.vb.len() > 0 {
-            pass.vb.update_buffer();
-        }
+        //if pass.vb.len() > 0 {
+        //    pass.vb.update_buffer();
+        //}
 
         // Render terrain building the initial chunk models list
         self.chunk_models.clear();
@@ -319,20 +323,25 @@ impl PlayGame {
 
         // Build the voxel instance list
         let vox_pass = self.vox_pass.as_mut().unwrap();
-        let vox_instances = vox::build_vox_instances(
-            &self.ecs,
-            camera_z,
-            &vox_pass.vox_models,
-            &mut vox_pass.instance_buffer,
-            &mut self.chunk_models,
-        );
+        //if self.vox_changed {
+            vox::build_vox_instances(
+                &self.ecs,
+                camera_z,
+                &vox_pass.vox_models,
+                &mut vox_pass.instance_buffer,
+                &mut self.chunk_models,
+                &mut self.vox_instances,
+                &self.chunks.frustrum
+            );
+            self.vox_changed = false;
+        //}
 
         vox_pass.render(
             depth_id,
             frame,
             &pass.gbuffer,
             &pass.uniform_bind_group,
-            &vox_instances,
+            &self.vox_instances,
         );
 
         // Render z-buffer and g-buffer to 1st pass lighting
