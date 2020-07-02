@@ -150,28 +150,6 @@ impl PlayGame {
     fn user_interface(&mut self, frame_time: u128, imgui: &Ui) -> Vec3 {
         let mut sun_pos = Vec3::zero();
 
-        if let Some(menu_bar) = imgui.begin_main_menu_bar() {
-            if let Some(menu) = imgui.begin_menu(im_str!("Test"), true) {
-                MenuItem::new(im_str!("Test Item")).build(imgui);
-                menu.end(imgui);
-            }
-            menu_bar.end(imgui);
-        }
-
-        //imgui.spacing();
-
-        /*let title = format!(
-            "Playing. Frame time: {} ms. FPS: {}.",
-            frame_time,
-            imgui.io().framerate
-        );
-        let title_tmp = ImString::new(title);
-        let window = imgui::Window::new(&title_tmp);
-        window
-            .collapsed(true, Condition::Always)
-            .size([300.0, 100.0], Condition::Always)
-            .build(imgui, || {});*/
-
         // Obtain info to display
         let mut hud_time = String::new();
         let query = <Read<Calendar>>::query();
@@ -179,7 +157,78 @@ impl PlayGame {
             hud_time = c.get_date_time();
             sun_pos = c.calculate_sun_moon();
         }
-        let hud_time_im = ImString::new(hud_time);
+
+        let running_str = match self.run_state {
+            RunState::Paused => im_str!("Paused ### RunMenu"),
+            RunState::OneStep => im_str!("Single-Step ### RunMenu"),
+            RunState::Running => im_str!("Running ### RunMenu"),
+        };
+
+        if let Some(menu_bar) = imgui.begin_main_menu_bar() {
+            if let Some(menu) = imgui.begin_menu(running_str, true) {
+                match self.run_state {
+                    RunState::Paused => {
+                        if MenuItem::new(im_str!("Unpause"))
+                            .shortcut(im_str!("SPACE"))
+                            .build(imgui) {
+                                self.run_state = RunState::Running;
+                            }
+
+                        if MenuItem::new(im_str!("Single Step"))
+                            .shortcut(im_str!("."))
+                            .build(imgui) {
+                                self.run_state = RunState::OneStep;
+                            }
+                        menu.end(imgui);
+                    }
+                    RunState::Running => {
+                        if MenuItem::new(im_str!("Pause"))
+                            .shortcut(im_str!("SPACE"))
+                            .build(imgui) {
+                                self.run_state = RunState::Paused;
+                            }
+
+                        if MenuItem::new(im_str!("Single Step"))
+                            .shortcut(im_str!("."))
+                            .build(imgui) {
+                                self.run_state = RunState::OneStep;
+                            }
+                        menu.end(imgui);
+                    }
+                    RunState::OneStep => {
+                        if MenuItem::new(im_str!("Pause"))
+                            .shortcut(im_str!("SPACE"))
+                            .build(imgui) {
+                                self.run_state = RunState::Paused;
+                            }
+                        menu.end(imgui);
+                    }
+                }
+            }
+
+            let hud_time_im = ImString::new(hud_time);
+            let status_size = imgui.calc_text_size(&hud_time_im, false, 0.0);
+            imgui.same_line(imgui.window_content_region_width() - (status_size[0] + 10.0));
+            imgui.text(hud_time_im);
+
+            menu_bar.end(imgui);
+        }
+
+        //imgui.spacing();
+
+        let title = format!(
+            "Playing. Frame time: {} ms. FPS: {}. ### FPS",
+            frame_time,
+            imgui.io().framerate
+        );
+        let title_tmp = ImString::new(title);
+        let window = imgui::Window::new(&title_tmp);
+        window
+            .collapsed(true, Condition::FirstUseEver)
+            .size([300.0, 100.0], Condition::FirstUseEver)
+            .movable(true)
+            .position([0.0, 20.0], Condition::FirstUseEver)
+            .build(imgui, || {});
 
         sun_pos
     }
@@ -193,6 +242,16 @@ impl PlayGame {
             let cam = &mut pass.camera;
             if let Some(keycode) = keycode {
                 match keycode {
+                    VirtualKeyCode::Space => {
+                        self.run_state = match self.run_state {
+                            RunState::Paused => RunState::Running,
+                            RunState::Running => RunState::Paused,
+                            RunState::OneStep => RunState::Paused
+                        }
+                    }
+                    VirtualKeyCode::Period => {
+                        self.run_state = RunState::OneStep;
+                    }
                     VirtualKeyCode::Left => pos.x -= 1,
                     VirtualKeyCode::Right => pos.x += 1,
                     VirtualKeyCode::Up => pos.y -= 1,
@@ -282,9 +341,11 @@ impl PlayGame {
     }
 
     fn run_systems(&mut self) {
-        self.scheduler
-            .as_mut()
-            .unwrap()
-            .execute(&mut self.ecs, &mut self.ecs_resources);
+        if self.run_state != RunState::Paused {
+            self.scheduler
+                .as_mut()
+                .unwrap()
+                .execute(&mut self.ecs, &mut self.ecs_resources);
+        }
     }
 }
