@@ -1,5 +1,6 @@
 use crate::components::*;
 use legion::prelude::*;
+use crate::modes::playgame::shared_state::RNG;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("initiative")
@@ -9,7 +10,8 @@ pub fn build() -> Box<dyn Schedulable> {
                 i.initiative -= 1;
                 if i.initiative + i.modifier < 1 {
                     // Re-roll initiative
-                    i.initiative = 10; // TODO: Make random!
+                    i.initiative = RNG.lock().roll_dice(2, 6);
+                    // TODO: Add dex bonus and everything else
 
                     // Reset modifiers
                     i.modifier = 0;
