@@ -11,8 +11,6 @@ lazy_static = "1.4.0"
 parking_lot = "0.11.0"
 wgpu = { version = "0.5.0" }
 imgui = "0.4.0"
-imgui-wgpu = "0.7.0"
-imgui-winit-support = { version = "0.4", default-features = false, features = [ "winit-22" ] }
 winit = { version = "0.22.2", features = ["web-sys"] }
 bytemuck = "1.2.0"
 image = "0.23.6"

@@ -1387,8 +1387,6 @@ dependencies = [
  "glsl-to-spirv",
  "image",
  "imgui",
- "imgui-wgpu",
- "imgui-winit-support",
  "lazy_static",
  "parking_lot 0.11.0",
  "wgpu",
