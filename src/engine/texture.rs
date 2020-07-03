@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use image::GenericImageView;
 
 pub struct Texture {

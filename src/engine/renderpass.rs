@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 pub fn get_frame(swap_chain: &mut wgpu::SwapChain) -> wgpu::SwapChainOutput {
     swap_chain
         .get_next_texture()

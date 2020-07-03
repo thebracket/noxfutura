@@ -11,7 +11,6 @@ use winit::{
 mod shader;
 mod vertex_buffer;
 pub use vertex_buffer::VertexBuffer;
-mod camera;
 mod context;
 pub mod texture;
 pub use context::Context;

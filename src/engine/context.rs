@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use super::shader::Shader;
 use super::texture::Texture;
 

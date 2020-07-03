@@ -44,7 +44,7 @@ Inflector = "0.11.4" # You just had to be clever with a capital letter
 opt-level = 1
 
 [profile.release]
-incremental = true
+#incremental = true
 
 #[profile.release]
 #lto = true

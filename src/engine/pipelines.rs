@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use super::texture;
 use super::Context;
 

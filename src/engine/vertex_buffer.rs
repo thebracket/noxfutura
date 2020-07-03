@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 pub struct VertexBuffer<T>
 where
     T: bytemuck::Pod,
