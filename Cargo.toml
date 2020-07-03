@@ -26,7 +26,6 @@ bracket-color = { version = "0.8.1", features = ["rex", "serde"] }
 lazy_static = "1.4.0"
 parking_lot = "0.11.0"
 serde = { version = "1.0.114" }
-ron = "0.6.0"
 miniz_oxide = "0.4.0"
 bincode = "1.3.1"
 zerocopy = "0.3.0"
