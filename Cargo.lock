@@ -1345,6 +1345,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "nox_planet"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "bracket-color",
+ "bracket-geometry",
+ "bracket-noise",
+ "bracket-random",
+ "byteorder",
+ "flate2",
+ "lazy_static",
+ "legion",
+ "miniz_oxide 0.4.0",
+ "nox_components",
+ "nox_raws",
+ "nox_wgpu_utils",
+ "parking_lot 0.11.0",
+ "serde",
+ "ultraviolet",
+]
+
+[[package]]
 name = "nox_raws"
 version = "0.1.0"
 dependencies = [
@@ -1354,6 +1376,23 @@ dependencies = [
  "parking_lot 0.11.0",
  "ron",
  "serde",
+]
+
+[[package]]
+name = "nox_wgpu_utils"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "failure",
+ "glsl-to-spirv",
+ "image",
+ "imgui",
+ "imgui-wgpu",
+ "imgui-winit-support",
+ "lazy_static",
+ "parking_lot 0.11.0",
+ "wgpu",
+ "winit",
 ]
 
 [[package]]
@@ -1381,7 +1420,9 @@ dependencies = [
  "legion",
  "miniz_oxide 0.4.0",
  "nox_components",
+ "nox_planet",
  "nox_raws",
+ "nox_wgpu_utils",
  "parking_lot 0.11.0",
  "rayon",
  "serde",

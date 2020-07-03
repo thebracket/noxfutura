@@ -1,8 +1,8 @@
 use super::resources::SharedResources;
-use crate::planet::*;
 use imgui::*;
 use legion::prelude::*;
 use nox_components::*;
+use nox_planet::*;
 use winit::event::VirtualKeyCode;
 mod loadstate;
 use crate::engine::uniforms::UniformBlock;
@@ -70,7 +70,7 @@ impl PlayGame {
     pub fn load(&mut self) {
         *LOAD_STATE.lock() = LoadState::Loading;
         std::thread::spawn(|| {
-            let lg = crate::planet::load_game();
+            let lg = nox_planet::load_game();
             *LOAD_STATE.lock() = LoadState::Loaded { game: lg };
         });
     }

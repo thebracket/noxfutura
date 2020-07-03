@@ -1,5 +1,5 @@
 use crate::engine::DEVICE_CONTEXT;
-use crate::planet::REGION_TILES_COUNT;
+use nox_planet::REGION_TILES_COUNT;
 use zerocopy::AsBytes as _;
 
 pub struct TerrainLights {

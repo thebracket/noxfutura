@@ -3,7 +3,6 @@ extern crate lazy_static;
 
 mod engine;
 pub mod modes;
-pub mod planet;
 pub mod systems;
 pub mod utils;
 

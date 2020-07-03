@@ -1,8 +1,8 @@
 use super::resources::SharedResources;
 use crate::engine::uniforms::UniformBlock;
 use crate::engine::DEVICE_CONTEXT;
-use crate::modes::WORLDGEN_RENDER;
 use imgui::*;
+use nox_planet::WORLDGEN_RENDER;
 use ultraviolet::{
     mat::Mat4,
     vec::{Vec3, Vec4},
@@ -86,7 +86,7 @@ impl PlanetGen2 {
             .always_auto_resize(true)
             .collapsible(false)
             .build(ui, || {
-                ui.text(ImString::new(crate::planet::get_worldgen_status()));
+                ui.text(ImString::new(nox_planet::get_worldgen_status()));
             });
     }
 
@@ -138,7 +138,7 @@ impl PlanetGen2 {
             context.queue.submit(&[encoder.finish()]);
         }
 
-        if crate::planet::PLANET_BUILD.lock().done {
+        if nox_planet::PLANET_BUILD.lock().done {
             return super::ProgramMode::MainMenu;
         }
 

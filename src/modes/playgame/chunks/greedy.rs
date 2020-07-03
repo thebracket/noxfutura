@@ -1,5 +1,4 @@
-use crate::planet::REGION_WIDTH;
-use crate::utils::idxmap;
+use nox_planet::{idxmap, REGION_WIDTH};
 use nox_raws::MappedTexture;
 use std::collections::HashMap;
 

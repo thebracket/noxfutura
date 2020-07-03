@@ -1,4 +1,4 @@
-use crate::planet::RampDirection;
+use nox_planet::RampDirection;
 use nox_raws::MappedTexture;
 
 pub fn add_ramp_geometry(

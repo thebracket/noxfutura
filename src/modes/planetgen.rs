@@ -1,10 +1,10 @@
 use super::resources::SharedResources;
-use crate::planet::PlanetParams;
 use bracket_random::prelude::*;
 use imgui::*;
+use nox_planet::PlanetParams;
 
 pub struct PlanetGen {
-    params: crate::planet::PlanetParams,
+    params: PlanetParams,
 }
 
 impl PlanetGen {
@@ -45,7 +45,7 @@ impl PlanetGen {
             );
             ui.checkbox(im_str!("Extra Noise Level"), &mut self.params.extra_noise);
             if ui.button(im_str!("Build Planet"), [400.0, 50.0]) {
-                crate::planet::start_building_planet(self.params.clone());
+                nox_planet::start_building_planet(self.params.clone());
                 result = super::ProgramMode::PlanetGen2;
             }
         });

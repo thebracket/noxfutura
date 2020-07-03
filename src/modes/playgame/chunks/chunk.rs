@@ -2,8 +2,8 @@ use super::super::ChunkModel;
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
-use crate::planet::{Region, StairsType, TileType};
-use crate::utils::{add_floor_geometry, add_ramp_geometry, mapidx};
+use crate::utils::{add_floor_geometry, add_ramp_geometry};
+use nox_planet::{mapidx, Region, StairsType, TileType};
 use nox_raws::{MappedTexture, RAWS};
 use ultraviolet::Vec3;
 

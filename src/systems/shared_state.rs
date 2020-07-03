@@ -1,5 +1,5 @@
-use crate::planet::Region;
 use bracket_random::prelude::RandomNumberGenerator;
+use nox_planet::Region;
 use parking_lot::{Mutex, RwLock};
 
 lazy_static! {

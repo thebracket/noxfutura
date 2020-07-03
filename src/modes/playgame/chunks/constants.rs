@@ -1,4 +1,4 @@
-use crate::planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use nox_planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 
 pub const CHUNK_SIZE: usize = 8;
 pub const CHUNK_WIDTH: usize = REGION_WIDTH as usize / CHUNK_SIZE;
