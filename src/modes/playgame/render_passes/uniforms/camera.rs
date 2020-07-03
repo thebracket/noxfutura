@@ -1,4 +1,4 @@
-use crate::components::*;
+use nox_components::*;
 use ultraviolet::Mat4;
 use ultraviolet::Vec3;
 

@@ -1,5 +1,5 @@
-use crate::components::*;
 use legion::prelude::*;
+use nox_components::*;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("endturn")

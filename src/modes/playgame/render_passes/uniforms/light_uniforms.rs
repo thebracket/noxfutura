@@ -1,8 +1,8 @@
-use crate::components::*;
 use crate::engine::uniforms::UniformBlock;
 use crate::planet::Region;
 use crate::systems::REGION;
 use legion::prelude::*;
+use nox_components::*;
 use rayon::prelude::*;
 use ultraviolet::Vec3;
 

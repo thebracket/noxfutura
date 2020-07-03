@@ -1,9 +1,9 @@
 use super::super::chunks::Chunks;
 use super::super::frustrum::Frustrum;
-use crate::components::*;
 use crate::engine::VertexBuffer;
 use crate::modes::playgame::vox::VoxBuffer;
 use legion::prelude::*;
+use nox_components::*;
 
 const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
 

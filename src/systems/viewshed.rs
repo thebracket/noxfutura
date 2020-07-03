@@ -1,8 +1,8 @@
-use crate::components::*;
 use crate::planet::{Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use crate::systems::REGION;
 use crate::utils::mapidx;
 use legion::prelude::*;
+use nox_components::*;
 use ultraviolet::Vec3;
 
 pub fn build() -> Box<dyn Schedulable> {

@@ -1,7 +1,7 @@
-use crate::components::*;
 use crate::planet::REGION_WIDTH;
 use bracket_geometry::prelude::Point;
 use legion::prelude::*;
+use nox_components::*;
 
 pub fn add_game_components(world: &mut World, hm: &[u8], crash_site: Point) {
     world.insert(

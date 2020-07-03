@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 nox_raws = { path = "nox_raws" }
+nox_components = { path = "nox_components" }
 
 wgpu = { version = "0.5.0" }
 winit = { version = "0.22.2", features = ["web-sys"] }
@@ -52,5 +53,6 @@ opt-level = 1
 
 [workspace]
 members = [
-    "nox_raws"
+    "nox_raws",
+    "nox_components"
 ]

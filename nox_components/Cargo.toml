@@ -1,0 +1,20 @@
+[package]
+name = "nox_components"
+version = "0.1.0"
+authors = ["Herbert Wolverson <herberticus@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+legion = { git = "https://github.com/TomGillen/legion", features = [ "serialize" ]}
+type-uuid = "0.1"
+erased-serde = "0.3"
+uuid = { version = "0.8", features = ["v4"] }
+serde = { version = "1.0.114" }
+ron = "0.6.0"
+bracket-random = { version = "0.8.0", default-features = false }
+nox_raws = { path = "../nox_raws" }
+lazy_static = "1.4.0"
+parking_lot = "0.11.0"
+ultraviolet = "0.4.6"

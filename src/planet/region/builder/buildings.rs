@@ -1,8 +1,8 @@
-use crate::components::*;
 use crate::planet::{Region, StairsType, TileType};
 use crate::utils::{ground_z, mapidx, rex::*};
 use bracket_geometry::prelude::*;
 use legion::prelude::*;
+use nox_components::*;
 use nox_raws::get_material_by_tag;
 use std::fs::File;
 

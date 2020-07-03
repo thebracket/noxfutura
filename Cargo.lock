@@ -1328,6 +1328,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "nox_components"
+version = "0.1.0"
+dependencies = [
+ "bracket-random",
+ "erased-serde",
+ "lazy_static",
+ "legion",
+ "nox_raws",
+ "parking_lot 0.11.0",
+ "ron",
+ "serde",
+ "type-uuid",
+ "ultraviolet",
+ "uuid",
+]
+
+[[package]]
 name = "nox_raws"
 version = "0.1.0"
 dependencies = [
@@ -1363,6 +1380,7 @@ dependencies = [
  "lazy_static",
  "legion",
  "miniz_oxide 0.4.0",
+ "nox_components",
  "nox_raws",
  "parking_lot 0.11.0",
  "rayon",

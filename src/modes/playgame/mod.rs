@@ -1,8 +1,8 @@
 use super::resources::SharedResources;
-use crate::components::*;
 use crate::planet::*;
 use imgui::*;
 use legion::prelude::*;
+use nox_components::*;
 use winit::event::VirtualKeyCode;
 mod loadstate;
 use crate::engine::uniforms::UniformBlock;
@@ -83,7 +83,7 @@ impl PlayGame {
             LoadState::Loaded { game } => {
                 self.planet = Some(game.planet);
                 *REGION.write() = game.current_region;
-                self.ecs = crate::components::deserialize_world(game.ecs_text);
+                self.ecs = nox_components::deserialize_world(game.ecs_text);
 
                 let mut loader_lock = crate::modes::loader::LOADER.write();
                 self.rpass = loader_lock.rpass.take();

@@ -1,7 +1,7 @@
-use crate::components::*;
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
 use legion::prelude::*;
+use nox_components::*;
 use nox_raws::*;
 
 pub fn spawn_settlers(
@@ -98,7 +98,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
         }
     };
 
-    let species = crate::components::Species {
+    let species = nox_components::Species {
         gender,
         gender_identity,
         sexuality,
@@ -182,7 +182,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             _ => &profession_def.clothing.female,
         },
     };
-    use crate::components::spawner::spawn_clothing_from_raws_worn;
+    use nox_components::spawner::spawn_clothing_from_raws_worn;
 
     for c in clothing_list.iter() {
         let spawned = spawn_clothing_from_raws_worn(ecs, &c.tag, settler_id, rng);

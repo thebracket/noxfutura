@@ -1,6 +1,6 @@
-use crate::components::*;
 use crate::systems::RNG;
 use legion::prelude::*;
+use nox_components::*;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("initiative")

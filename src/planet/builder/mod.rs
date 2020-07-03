@@ -95,7 +95,7 @@ fn save_world(region: Region, world: legion::prelude::World) {
     save_world(SavedGame {
         planet: pclone,
         current_region: region,
-        ecs_text: crate::components::serialize_world(&world),
+        ecs_text: nox_components::serialize_world(&world),
     });
 }
 
