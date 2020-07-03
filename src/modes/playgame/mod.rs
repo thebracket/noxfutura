@@ -12,10 +12,8 @@ pub mod vox;
 use vox::VoxBuffer;
 mod render_passes;
 pub use render_passes::*;
-mod systems;
 use ultraviolet::Vec3;
-mod shared_state;
-pub use shared_state::*;
+use crate::systems;
 
 #[derive(PartialEq, Copy, Clone)]
 enum RunState {
@@ -78,6 +76,7 @@ impl PlayGame {
     }
 
     pub fn finish_loading(&mut self) {
+        use crate::systems::REGION;
         println!("Finishing load");
         let locker = LOAD_STATE.lock().clone();
         match locker {

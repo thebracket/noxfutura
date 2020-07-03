@@ -1,5 +1,5 @@
 use crate::components::*;
-use crate::modes::playgame::REGION;
+use crate::systems::REGION;
 use crate::planet::{Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use crate::utils::mapidx;
 use legion::prelude::*;

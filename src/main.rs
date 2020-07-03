@@ -7,6 +7,7 @@ pub mod modes;
 pub mod planet;
 pub mod raws;
 pub mod utils;
+pub mod systems;
 
 fn main() {
     engine::main_loop();

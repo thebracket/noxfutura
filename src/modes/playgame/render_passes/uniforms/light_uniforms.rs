@@ -1,6 +1,6 @@
 use crate::components::*;
 use crate::engine::uniforms::UniformBlock;
-use crate::modes::playgame::REGION;
+use crate::systems::REGION;
 use crate::planet::Region;
 use legion::prelude::*;
 use rayon::prelude::*;
