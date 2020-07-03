@@ -35,7 +35,7 @@ impl LoaderState {
             LOADER
                 .write()
                 .update(0.01, "Starting to load things", false);
-            crate::raws::load_raws();
+            nox_raws::load_raws();
             let rpass = BlockRenderPass::new();
             let vox_pass = VoxRenderPass::new(&rpass.uniform_bind_group_layout);
             let sunlight_pass = SunlightPass::new();

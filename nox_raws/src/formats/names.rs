@@ -1,4 +1,3 @@
-use crate::components::GenderIdentity;
 use bracket_random::prelude::RandomNumberGenerator;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -19,19 +18,11 @@ impl Names {
         }
     }
 
-    pub fn random_settler_name(
-        &self,
-        rng: &mut RandomNumberGenerator,
-        gender: GenderIdentity,
-    ) -> String {
+    pub fn random_settler_name(&self, rng: &mut RandomNumberGenerator, male: bool) -> String {
         use inflector::Inflector;
-        let first_source = match gender {
-            GenderIdentity::Male => &self.male_first,
-            GenderIdentity::Female => &self.female_first,
-            GenderIdentity::Neutral => match rng.range(1, 2) {
-                1 => &self.male_first,
-                _ => &self.female_first,
-            },
+        let first_source = match male {
+            true => &self.male_first,
+            false => &self.female_first,
         };
         let first_name = rng
             .random_slice_entry(first_source)

@@ -3,8 +3,8 @@ use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::planet::{Region, StairsType, TileType};
-use crate::raws::MappedTexture;
 use crate::utils::{add_floor_geometry, add_ramp_geometry, mapidx};
+use nox_raws::{MappedTexture, RAWS};
 use ultraviolet::Vec3;
 
 pub struct Chunk {
@@ -89,7 +89,7 @@ impl Chunk {
                             if region.revealed[idx] {
                                 match region.tile_types[idx] {
                                     TileType::Solid => {
-                                        let mat = crate::raws::RAWS
+                                        let mat = RAWS
                                             .read()
                                             .matmap
                                             .get(region.material_idx[idx])
@@ -98,7 +98,7 @@ impl Chunk {
                                     }
                                     TileType::TreeTrunk => {
                                         // bark
-                                        let mat = crate::raws::RAWS.read().matmap.bark_id;
+                                        let mat = RAWS.read().matmap.bark_id;
                                         cubes.insert(
                                             idx,
                                             MappedTexture {
@@ -109,7 +109,7 @@ impl Chunk {
                                     }
                                     TileType::TreeFoliage => {
                                         // leaf
-                                        let mat = crate::raws::RAWS.read().matmap.leaf_id;
+                                        let mat = RAWS.read().matmap.leaf_id;
                                         cubes.insert(
                                             idx,
                                             MappedTexture {
@@ -123,20 +123,16 @@ impl Chunk {
                                             region.vegetation_type_id[idx]
                                         {
                                             MappedTexture {
-                                                texture: crate::raws::RAWS.read().matmap.grass_id,
+                                                texture: RAWS.read().matmap.grass_id,
                                                 tint: (1.0, 1.0, 1.0),
                                             }
                                         } else {
-                                            crate::raws::RAWS
-                                                .read()
-                                                .matmap
-                                                .get(region.material_idx[idx])
-                                                .floor
+                                            RAWS.read().matmap.get(region.material_idx[idx]).floor
                                         };
                                         floors.insert(idx, mat);
                                     }
                                     TileType::Ramp { direction } => {
-                                        let mat = crate::raws::RAWS
+                                        let mat = RAWS
                                             .read()
                                             .matmap
                                             .get(region.material_idx[idx])
@@ -158,7 +154,7 @@ impl Chunk {
                                             StairsType::UpDown => "stairs_updown",
                                         };
                                         self.chunk_models.push(ChunkModel {
-                                            id: crate::raws::RAWS.read().vox.get_model_idx(tag),
+                                            id: RAWS.read().vox.get_model_idx(tag),
                                             x: x + self.base.0,
                                             y: y + self.base.1,
                                             z: z + self.base.2,
@@ -171,7 +167,7 @@ impl Chunk {
                                 let wl = region.water_level[idx];
                                 if wl > 0 {
                                     let mat = MappedTexture {
-                                        texture: crate::raws::RAWS.read().matmap.water_id,
+                                        texture: RAWS.read().matmap.water_id,
                                         tint: (1.0, 1.0, 1.0),
                                     };
                                     add_floor_geometry(

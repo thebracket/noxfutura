@@ -1,8 +1,8 @@
 mod calendar;
 mod endturn;
 mod initiative;
-mod viewshed;
 mod shared_state;
+mod viewshed;
 pub use shared_state::*;
 
 use legion::prelude::*;

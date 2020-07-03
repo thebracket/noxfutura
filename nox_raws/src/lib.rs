@@ -1,10 +1,14 @@
+#[macro_use]
+extern crate lazy_static;
+
 mod formats;
 pub use formats::*;
 use formats::{load_biomes, load_materials};
 use parking_lot::RwLock;
 mod material_map;
-use crate::modes::loader_progress;
 pub use material_map::MappedTexture;
+mod blocktype;
+pub use blocktype::BlockType;
 
 pub struct Raws {
     pub biomes: Biomes,
@@ -38,25 +42,15 @@ impl Raws {
     }
 
     fn load(&mut self) {
-        loader_progress(0.01, "Loading Biome Data", false);
         self.biomes = load_biomes();
-        loader_progress(0.02, "Loading Material Data", false);
         self.materials = load_materials();
-        loader_progress(0.03, "Loading Plant Data", false);
         self.plants = load_plants();
-        loader_progress(0.04, "Loading Voxel Data", false);
         self.vox = load_vox();
-        loader_progress(0.05, "Loading Building Data", false);
         self.buildings = load_buildings();
-        loader_progress(0.06, "Loading Species Data", false);
         self.species = load_species();
-        loader_progress(0.07, "Loading Name Data", false);
         self.names = load_names();
-        loader_progress(0.08, "Loading Profession Data", false);
         self.professions = load_professions();
-        loader_progress(0.09, "Loading Clothing Data", false);
         self.clothing = load_clothing();
-        loader_progress(0.091, "Loading Item Data", false);
         self.items = load_items();
     }
 }

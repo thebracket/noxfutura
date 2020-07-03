@@ -1,5 +1,4 @@
 use super::{set_worldgen_status, PLANET_BUILD};
-use crate::modes::WORLDGEN_RENDER;
 use crate::planet::{
     planet_idx, Biome, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH,
 };
@@ -137,9 +136,10 @@ fn biome_membership(planet: &mut Planet, idx: usize) -> BiomeCounts {
 }
 
 fn find_possible_biomes(membership: &BiomeCounts, biome: &Biome) -> Vec<(usize, i32)> {
+    use nox_raws::RAWS;
     let mut result: Vec<(usize, i32)> = Vec::new();
 
-    let raws = crate::raws::RAWS.read();
+    let raws = RAWS.read();
     for (i, biome) in raws.biomes.areas.iter().enumerate().filter(|(_, b)| {
         biome.mean_temperature >= b.min_temp
             && biome.mean_temperature <= b.max_temp

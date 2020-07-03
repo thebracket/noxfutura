@@ -136,7 +136,7 @@ impl TextureArray {
 
         loader_progress(0.25, "Mapping Materials", false);
         {
-            let mut rawlock = crate::raws::RAWS.write();
+            let mut rawlock = nox_raws::RAWS.write();
             let mats = rawlock.materials.materials.clone();
             rawlock.matmap.build(&matmap, &mats);
         }

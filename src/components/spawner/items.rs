@@ -1,6 +1,6 @@
 use crate::components::*;
-use crate::raws::*;
 use legion::prelude::*;
+use nox_raws::*;
 
 pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
     let raws = RAWS.read();

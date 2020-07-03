@@ -1,4 +1,4 @@
-use crate::planet::BlockType;
+use crate::blocktype::BlockType;
 use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
 use std::fs::File;

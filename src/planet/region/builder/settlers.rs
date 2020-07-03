@@ -2,6 +2,7 @@ use crate::components::*;
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
 use legion::prelude::*;
+use nox_raws::*;
 
 pub fn spawn_settlers(
     ecs: &mut World,
@@ -34,7 +35,7 @@ pub fn spawn_settlers(
 }
 
 fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: usize, z: usize) {
-    let species_def = crate::raws::RAWS.read().species.species[0].clone();
+    let species_def = RAWS.read().species.species[0].clone();
 
     let gender = if rng.roll_dice(1, 20) < 11 {
         Gender::Male
@@ -97,7 +98,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
         }
     };
 
-    let species = Species {
+    let species = crate::components::Species {
         gender,
         gender_identity,
         sexuality,
@@ -117,7 +118,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
         hair_style,
     };
 
-    let rlock = crate::raws::RAWS.read();
+    let rlock = RAWS.read();
     let mut composite = CompositeRender { layers: Vec::new() };
     composite.layers.push(VoxLayer {
         model: rlock.vox.get_model_idx("person_base"),
@@ -138,10 +139,19 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
         });
     }
 
+    let gender_for_name = match species.gender_identity {
+        GenderIdentity::Male => true,
+        GenderIdentity::Female => false,
+        _ => {
+            if rng.range(0, 1) == 0 {
+                true
+            } else {
+                false
+            }
+        }
+    };
     let name = Name {
-        name: rlock
-            .names
-            .random_settler_name(rng, species.gender_identity),
+        name: rlock.names.random_settler_name(rng, gender_for_name),
     };
 
     let profession_def = rng

@@ -1,12 +1,12 @@
 use super::{super::TileType, Region};
 use crate::planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
-use crate::raws::*;
 use crate::utils::mapidx;
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;
+use nox_raws::*;
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
-    let mlock = crate::raws::RAWS.read();
+    let mlock = RAWS.read();
     mlock
         .materials
         .materials
@@ -18,7 +18,7 @@ fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
 }
 
 fn get_soil_indices() -> Vec<usize> {
-    let mlock = crate::raws::RAWS.read();
+    let mlock = RAWS.read();
     mlock
         .materials
         .materials

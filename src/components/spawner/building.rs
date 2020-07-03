@@ -2,9 +2,9 @@ use crate::components::*;
 use legion::prelude::*;
 
 pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) -> usize {
-    use crate::raws::*;
+    use nox_raws::*;
     let mut result = 0;
-    let rlock = crate::raws::RAWS.read();
+    let rlock = RAWS.read();
     if let Some(building_def) = rlock.buildings.building_by_tag(tag) {
         let dims = if let Some(dims) = building_def.dimensions {
             Dimensions {

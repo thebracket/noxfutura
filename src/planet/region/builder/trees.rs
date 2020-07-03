@@ -1,8 +1,8 @@
 use crate::planet::{Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
-use crate::raws::*;
 use crate::utils::{ground_z, mapidx};
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
+use nox_raws::*;
 use parking_lot::RwLock;
 
 lazy_static! {

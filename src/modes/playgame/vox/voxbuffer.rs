@@ -1,7 +1,7 @@
 use super::greedy::*;
 use super::modelsize::*;
 use crate::engine::VertexBuffer;
-use crate::raws::*;
+use nox_raws::*;
 use std::collections::HashMap;
 
 pub struct VoxBuffer {

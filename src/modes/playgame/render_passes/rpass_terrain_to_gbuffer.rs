@@ -33,7 +33,7 @@ impl BlockRenderPass {
             1.0,
             1.0,
             1.0,
-            crate::raws::MappedTexture {
+            nox_raws::MappedTexture {
                 texture: 0,
                 tint: (1.0, 1.0, 1.0),
             },

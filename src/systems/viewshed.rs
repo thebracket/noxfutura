@@ -1,6 +1,6 @@
 use crate::components::*;
-use crate::systems::REGION;
 use crate::planet::{Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use crate::systems::REGION;
 use crate::utils::mapidx;
 use legion::prelude::*;
 use ultraviolet::Vec3;

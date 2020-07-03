@@ -1,5 +1,4 @@
-mod blocktype;
-pub use blocktype::BlockType;
+pub use nox_raws::BlockType;
 mod block;
 pub use block::Block;
 mod biome;

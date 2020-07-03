@@ -1,6 +1,6 @@
 use crate::planet::{Region, TileType, REGION_HEIGHT, REGION_WIDTH};
-use crate::raws::get_material_by_tag;
 use crate::utils::{ground_z, mapidx};
+use nox_raws::get_material_by_tag;
 
 pub fn build_beaches(region: &mut Region) {
     let yellow_sand = get_material_by_tag("Yellow Sand").expect("Yellow Sand not found");

@@ -1,6 +1,6 @@
 use crate::planet::REGION_WIDTH;
-use crate::raws::MappedTexture;
 use crate::utils::idxmap;
+use nox_raws::MappedTexture;
 use std::collections::HashMap;
 
 pub type CubeMap = HashMap<usize, MappedTexture>;

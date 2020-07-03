@@ -1,7 +1,7 @@
 use crate::planet::{Region, TileType, REGION_HEIGHT, REGION_WIDTH};
-use crate::raws::*;
 use crate::utils::{ground_z, mapidx};
 use bracket_random::prelude::RandomNumberGenerator;
+use nox_raws::*;
 
 pub fn grow_plants(region: &mut Region, mean_temperature: i8, rng: &mut RandomNumberGenerator) {
     let rlock = RAWS.read();
