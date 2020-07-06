@@ -276,10 +276,10 @@ impl BlockRenderPass {
             rpass.set_bind_group(0, &self.uniform_bind_group, &[]);
             rpass.set_bind_group(1, &self.terrain_bind_group, &[]);
 
-            if self.vb.len() > 0 {
+            /*if self.vb.len() > 0 {
                 rpass.set_vertex_buffer(0, &self.vb.buffer.as_ref().unwrap(), 0, 0);
                 rpass.draw(0..self.vb.len(), 0..1);
-            }
+            }*/
 
             for chunk in chunks.visible_chunks() {
                 let buffer = chunk.maybe_render_chunk(camera_z);
