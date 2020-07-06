@@ -44,10 +44,15 @@ impl LightUniforms {
         }
     }
 
+    pub fn update_partial(&mut self, sun_pos: &Vec3, camera_pos: &Vec3) {
+        self.camera_position = vec_to_float(camera_pos);
+        self.lights[0].pos = [sun_pos.x, sun_pos.y, sun_pos.z, 512.0];
+        self.lights[0].color = [10.0, 10.0, 10.0, 1.0];
+    }
+
     pub fn update(&mut self, ecs: &World, sun_pos: Vec3, camera_pos: Vec3, light_bits: &mut [u32]) {
         self.camera_position = vec_to_float(&camera_pos);
         self.lights[0].pos = [sun_pos.x, sun_pos.y, sun_pos.z, 512.0];
-        //self.lights[0].pos = [ 0.0, 512.0, 0.0, 512.0 ];
         self.lights[0].color = [10.0, 10.0, 10.0, 1.0];
 
         self.lights.iter_mut().skip(1).for_each(|l| {

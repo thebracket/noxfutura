@@ -210,6 +210,9 @@ impl SunlightPass {
                 .update(ecs, sun_pos, camera_pos, &mut self.lighting_map.flags);
             self.uniforms.update_buffer(&self.uniform_buf);
             self.lighting_map.update_buffer();
+        } else {
+            self.uniforms.update_partial(&sun_pos, &camera_pos);
+            self.uniforms.update_buffer(&self.uniform_buf);
         }
 
         let mut ctx = DEVICE_CONTEXT.write();
