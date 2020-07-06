@@ -4,40 +4,76 @@ use crate::engine::VertexBuffer;
 use crate::modes::playgame::vox::VoxBuffer;
 use legion::prelude::*;
 use nox_components::*;
+use std::collections::HashMap;
 
 const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
 
-pub fn build_vox_instances(
+#[derive(Debug)]
+pub struct VMRender {
+    position: [f32; 3],
+    tint: [f32; 3]
+}
+
+#[derive(Debug)]
+pub struct VMInstances {
+    instances: HashMap<usize, Vec<VMRender>>
+}
+
+impl VMInstances {
+    pub fn new() -> Self {
+        Self{
+            instances: HashMap::new()
+        }
+    }
+
+    fn add(&mut self, model_id : usize, position: [f32; 3], tint: [f32; 3]) {
+        if let Some(vmi) = self.instances.get_mut(&model_id) {
+            vmi.push(
+                VMRender{
+                    position,
+                    tint
+                }
+            );
+        } else {
+            self.instances.insert(model_id, 
+                vec![
+                    VMRender{
+                        position,
+                        tint
+                    }
+                ]
+            );
+        }
+    }
+}
+
+pub fn build_vox_instances2(
     ecs: &World,
     camera_z: usize,
     vox_models: &VoxBuffer,
     instance_buffer: &mut VertexBuffer<f32>,
-    vox_instances: &mut Vec<(u32, u32, i32)>,
+    vox_instances: &mut Vec<(u32, u32, u32)>,
     frustrum: &Frustrum,
     chunks: &Chunks,
 ) {
-    // Instances builder
+    let mut instances = VMInstances::new();
     instance_buffer.clear();
     vox_instances.clear();
+
+    // Models from the ECS
     let query = <(
         Read<Position>,
         Read<VoxelModel>,
         Read<Dimensions>,
         Read<Tint>,
     )>::query();
-    let mut n = 0;
-    for (pos, vm, dims, tint) in query.iter(&ecs) {
-        if pos.z <= camera_z
-            && frustrum.check_sphere(
+    query.iter(ecs).for_each(|(pos, model, dims, tint)| {
+        if pos.z <= camera_z &&
+            frustrum.check_sphere(
                 &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
                 FRUSTRUM_CHECK_RANGE,
             )
         {
-            let first = vox_models.offsets[vm.index].0;
-            let last = vox_models.offsets[vm.index].1;
-            vox_instances.push((first, last, n));
-            n += 1;
-
             let mut x = pos.x as f32;
             let mut y = pos.y as f32;
             let z = pos.z as f32;
@@ -49,14 +85,17 @@ pub fn build_vox_instances(
                 y -= 1.0;
             }
 
-            instance_buffer.add3(x, z, y);
-            instance_buffer.add3(tint.color.0, tint.color.1, tint.color.2);
+            instances.add(
+                model.index, 
+                [x, z, y], 
+                [tint.color.0, tint.color.1, tint.color.2]
+            );
         }
-    }
+    });
 
-    // Composite Models
+    // Composite builder
     let query = <(Read<Position>, Read<CompositeRender>)>::query();
-    for (pos, composite) in query.iter(&ecs) {
+    query.iter(ecs).for_each(|(pos, composite)| {
         if pos.z <= camera_z
             && frustrum.check_sphere(
                 &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
@@ -64,46 +103,38 @@ pub fn build_vox_instances(
             )
         {
             for vm in composite.layers.iter() {
-                let first = vox_models.offsets[vm.model].0;
-                let last = vox_models.offsets[vm.model].1;
-                vox_instances.push((first, last, n));
-                n += 1;
-
                 let x = pos.x as f32;
                 let y = pos.y as f32;
                 let z = pos.z as f32;
 
-                instance_buffer.add3(x, z, y);
-                instance_buffer.add3(vm.tint.0, vm.tint.1, vm.tint.2);
+                instances.add(vm.model, [x, z, y], [vm.tint.0, vm.tint.1, vm.tint.2]);
             }
         }
-    }
+    });
 
-    // Terrain chunk models
+    // Terrain chunks builder
     chunks.visible_chunks().iter().for_each(|c| {
         for m in c.chunk_models.iter() {
-            let first = vox_models.offsets[m.id].0;
-            let last = vox_models.offsets[m.id].1;
-            vox_instances.push((first, last, n));
-            n += 1;
-
-            instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
-            instance_buffer.add3(1.0, 1.0, 1.0);
+            instances.add(m.id, [m.x as f32, m.z as f32, m.y as f32], [1.0, 1.0, 1.0]);
         }
     });
-    /*
-    for m in chunk_models {
-        if m.z <= camera_z&& frustrum.check_sphere(&(m.x as f32, m.y as f32, m.z as f32).into(), FRUSTRUM_CHECK_RANGE) {
-            let first = vox_models.offsets[m.id].0;
-            let last = vox_models.offsets[m.id].1;
-            vox_instances.push((first, last, n));
-            n += 1;
 
-            instance_buffer.add3(m.x as f32, m.z as f32, m.y as f32);
-            instance_buffer.add3(1.0, 1.0, 1.0);
-        }
-    }*/
+    // Build the instanced data
+    instances.instances.iter().for_each(|i| {
+        vox_instances.push(
+            (
+                vox_models.offsets[*i.0].0,
+                vox_models.offsets[*i.0].1,
+                i.1.len() as u32
+            )
+        );
+        i.1.iter().for_each(|vm| {
+            instance_buffer.add_slice(&vm.position);
+            instance_buffer.add_slice(&vm.tint);
+        });
+    });
 
+    // Push the buffer update
     if !vox_instances.is_empty() {
         instance_buffer.update_buffer();
     }

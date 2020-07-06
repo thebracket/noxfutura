@@ -31,7 +31,7 @@ pub struct PlayGame {
     rpass: Option<BlockRenderPass>,
     sunlight_pass: Option<SunlightPass>,
     vox_pass: Option<VoxRenderPass>,
-    vox_instances: Vec<(u32, u32, i32)>,
+    vox_instances: Vec<(u32, u32, u32)>,
     vox_changed: bool,
     lights_changed: bool,
     first_run: bool,
@@ -326,7 +326,7 @@ impl PlayGame {
         // Build the voxel instance list
         let vox_pass = self.vox_pass.as_mut().unwrap();
         if self.vox_changed {
-            vox::build_vox_instances(
+            vox::build_vox_instances2(
                 &self.ecs,
                 camera_z,
                 &vox_pass.vox_models,

@@ -130,7 +130,7 @@ impl VoxRenderPass {
         _frame: &wgpu::SwapChainOutput,
         gbuffer: &GBuffer,
         uniform_bg: &wgpu::BindGroup,
-        vox_instances: &Vec<(u32, u32, i32)>,
+        vox_instances: &Vec<(u32, u32, u32)>,
     ) {
         // Render code
         let mut ctx = DEVICE_CONTEXT.write();
@@ -189,8 +189,10 @@ impl VoxRenderPass {
 
             // Render
             if !vox_instances.is_empty() {
-                for (count, i) in vox_instances.iter().enumerate() {
-                    rpass.draw(i.0..i.1, count as u32..count as u32 + 1);
+                let mut count = 0;
+                for i in vox_instances.iter() {
+                    rpass.draw(i.0..i.1, count as u32..count as u32 + i.2 as u32);
+                    count += i.2;
                 }
             }
         }
