@@ -47,6 +47,8 @@ impl VMInstances {
     }
 }
 
+const LAYERS_DOWN : usize = 10;
+
 pub fn build_vox_instances2(
     ecs: &World,
     camera_z: usize,
@@ -67,13 +69,15 @@ pub fn build_vox_instances2(
         Read<Dimensions>,
         Read<Tint>,
     )>::query();
-    query.iter(ecs).for_each(|(pos, model, dims, tint)| {
-        if pos.z <= camera_z &&
-            frustrum.check_sphere(
+    query
+        .iter(ecs)
+        .filter(|(pos, _, _, _)| {
+            pos.z > camera_z-LAYERS_DOWN && pos.z <= camera_z && frustrum.check_sphere(
                 &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
                 FRUSTRUM_CHECK_RANGE,
             )
-        {
+        })
+        .for_each(|(pos, model, dims, tint)| {
             let mut x = pos.x as f32;
             let mut y = pos.y as f32;
             let z = pos.z as f32;
@@ -91,17 +95,20 @@ pub fn build_vox_instances2(
                 [tint.color.0, tint.color.1, tint.color.2]
             );
         }
-    });
+    );
 
     // Composite builder
     let query = <(Read<Position>, Read<CompositeRender>)>::query();
-    query.iter(ecs).for_each(|(pos, composite)| {
-        if pos.z <= camera_z
-            && frustrum.check_sphere(
-                &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
-                FRUSTRUM_CHECK_RANGE,
-            )
-        {
+    query
+        .iter(ecs)
+        .filter(|(pos, _)| {
+            pos.z > camera_z - LAYERS_DOWN && pos.z <= camera_z
+                && frustrum.check_sphere(
+                    &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
+                    FRUSTRUM_CHECK_RANGE,
+                )
+        })
+        .for_each(|(pos, composite)| {
             for vm in composite.layers.iter() {
                 let x = pos.x as f32;
                 let y = pos.y as f32;
@@ -110,14 +117,21 @@ pub fn build_vox_instances2(
                 instances.add(vm.model, [x, z, y], [vm.tint.0, vm.tint.1, vm.tint.2]);
             }
         }
-    });
+    );
 
     // Terrain chunks builder
-    chunks.visible_chunks().iter().for_each(|c| {
-        for m in c.chunk_models.iter() {
-            instances.add(m.id, [m.x as f32, m.z as f32, m.y as f32], [1.0, 1.0, 1.0]);
+    chunks.visible_chunks()
+        .iter()
+        .for_each(|c| {
+            c.chunk_models
+                .iter()
+                .filter(|m| m.z > camera_z - LAYERS_DOWN && m.z <= camera_z)
+                .for_each(|m| {
+                    instances.add(m.id, [m.x as f32, m.z as f32, m.y as f32], [1.0, 1.0, 1.0]);
+                }
+            );
         }
-    });
+    );
 
     // Build the instanced data
     instances.instances.iter().for_each(|i| {
