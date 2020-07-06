@@ -183,7 +183,8 @@ fn pick_random_biome(
 }
 
 fn name_biome(biome: &Biome) -> String {
-    let mut result = String::from("Nameless");
+    // TODO: Incomplete
+    let result = String::from("Nameless");
     let mut adjectives: Vec<String> = Vec::new();
 
     // Location-based

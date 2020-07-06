@@ -11,7 +11,7 @@ pub fn build_heightmap_from_noise(
     hm: &mut Vec<u8>,
     crash_site: Point,
     perlin_seed: u64,
-    variance: u8,
+    _variance: u8,
 ) {
     use crate::noise_helper::*;
 
