@@ -45,7 +45,7 @@ void main() {
         clamp(fract(v_uv.y), 0.01, 0.99) * 256.0
     );
 
-    vec4 terrain_color = sample_material(mat_base, uv);
+    vec4 terrain_color = sample_material_exact(mat_base, uv);
     vec3 tex_normal = sample_material(mat_base + 1, uv).rgb;
     tex_normal = normalize(tex_normal * 2.0 - 1.0);
     vec3 normal = normalize(v_tbn * tex_normal);
