@@ -13,6 +13,6 @@ layout(location=3) out vec4 f_coords;
 void main() {
     f_color = vec4(v_tint, 1.0);
     f_normal = vec4(v_normal, 1.0);
-    f_coords = vec4(v_world_pos, 1.0);
+    f_coords = vec4(v_world_pos / 256.0, 1.0);
     f_pbr = vec4(1.0, 1.0, 0.0, 0.0);
 }

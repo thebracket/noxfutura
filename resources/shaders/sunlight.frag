@@ -111,20 +111,20 @@ vec3 GameLight(float far_plane, vec3 albedo, vec3 N, vec3 V, vec3 F0, float roug
 }
 
 int mapidx(vec3 position) {
-    int zc = int(position.y);
-    int yc = int(position.z);
-    int xc = int(position.x);
+    int zc = int(round(position.y));
+    int yc = int(round(position.z));
+    int xc = int(round(position.x));
     return (zc * 256 * 256) + (yc * 256) + xc;
 }
 
 void main() {
-    vec3 albedo = pow(texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb, vec3(2.2));
-    vec3 position = texture(sampler2D(t_coords, s_coords), v_tex_coords).rgb;
-    vec3 normal = normalize(texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb);
+    vec3 albedo = texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb;
+    vec3 position = texture(sampler2D(t_coords, s_coords), v_tex_coords).rgb * 256.0;
+    vec3 normal = texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb;
 
     vec3 material_lookup = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).rgb;
     float ao = material_lookup.r;
-    float rough = 1.0 - material_lookup.g;
+    float rough = material_lookup.g;
     float metal = material_lookup.b;
 
     vec3 V = normalize(camera_position.xyz - position);
@@ -145,11 +145,12 @@ void main() {
 
         }
     }
-    light_output += vec3(0.3) * albedo * ao; // Ambient component
+    light_output += vec3(0.1) * albedo * ao; // Ambient component
 
     // Map it - remove when layering
     //light_output = light_output / (light_output + vec3(1.0));
     //light_output = pow(light_output, vec3(1.0/2.2));
 
     f_color = vec4(light_output, 1.0);
+    //f_color = vec4(position / 256.0, 1.0); // For debugging texture reads
 }

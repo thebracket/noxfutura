@@ -11,7 +11,7 @@ pub fn add_floor_geometry(
     material_index: MappedTexture,
 ) {
     let tint = material_index.tint;
-    let mi = material_index.texture as f32 / 255.0;
+    let mi = material_index.texture as f32;
     let x0 = x;
     let x1 = x0 + w;
     let y0 = z - 0.1;

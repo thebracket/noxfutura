@@ -18,7 +18,7 @@ pub fn add_ramp_geometry(
             x,
             y,
             z,
-            material_index.texture as f32 / 255.0,
+            material_index.texture as f32,
             tint,
         ),
         RampDirection::SouthNorth => south_north(
@@ -27,7 +27,7 @@ pub fn add_ramp_geometry(
             x,
             y,
             z,
-            material_index.texture as f32 / 255.0,
+            material_index.texture as f32,
             tint,
         ),
         RampDirection::EastWest => east_west(
@@ -36,7 +36,7 @@ pub fn add_ramp_geometry(
             x,
             y,
             z,
-            material_index.texture as f32 / 255.0,
+            material_index.texture as f32,
             tint,
         ),
         RampDirection::WestEast => west_east(
@@ -45,7 +45,7 @@ pub fn add_ramp_geometry(
             x,
             y,
             z,
-            material_index.texture as f32 / 255.0,
+            material_index.texture as f32,
             tint,
         ), //_ => {}
     }

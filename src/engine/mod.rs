@@ -15,10 +15,10 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
 
     let adapter = wgpu::Adapter::request(
         &wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::Default,
+            power_preference: wgpu::PowerPreference::HighPerformance,
             compatible_surface: Some(&surface),
         },
-        wgpu::BackendBit::PRIMARY,
+        wgpu::BackendBit::VULKAN,
     )
     .await
     .unwrap();
@@ -26,7 +26,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     let (device, queue) = adapter
         .request_device(&wgpu::DeviceDescriptor {
             extensions: wgpu::Extensions {
-                anisotropic_filtering: false,
+                anisotropic_filtering: true,
             },
             limits: wgpu::Limits::default(),
         })

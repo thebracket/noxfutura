@@ -84,7 +84,7 @@ impl LightUniforms {
                 ];
                 self.lights[index].pos = [
                     pos.x as f32 + 0.5,
-                    pos.z as f32 + 0.5,
+                    pos.z as f32 + 0.2,
                     pos.y as f32 + 0.5,
                     light.radius as f32,
                 ];

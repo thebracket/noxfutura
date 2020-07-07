@@ -9,8 +9,9 @@ layout(location=4) in vec3 a_tint;
 layout(location=0) out vec3 v_tint;
 layout(location=1) out vec3 v_world_pos;
 layout(location=2) out vec2 v_uv;
-layout(location=3) out float v_material;
-layout(location=4) out mat3 v_tbn;
+layout(location=3) out int v_material;
+layout(location=4) flat out mat3 v_tbn;
+layout(location=10) out vec3 v_normal;
 
 layout(set=0, binding=0) 
 uniform Uniforms {
@@ -57,7 +58,8 @@ void main() {
     gl_Position = u_view_proj * vec4(a_position, 1.0);
     v_world_pos = a_position;
     v_uv = a_uv;
-    v_material = a_material;
+    v_material = int(a_material);
     v_tbn = TBN[int(a_normal)];
     v_tint = a_tint;
+    v_normal = normal_lut[int(a_normal)];
 }

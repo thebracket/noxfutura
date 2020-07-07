@@ -224,9 +224,9 @@ impl TextureArray {
             address_mode_w: wgpu::AddressMode::Repeat,
             mag_filter: wgpu::FilterMode::Nearest,
             min_filter: wgpu::FilterMode::Nearest,
-            mipmap_filter: wgpu::FilterMode::Nearest,
-            lod_min_clamp: -100.0,
-            lod_max_clamp: 100.0,
+            mipmap_filter: wgpu::FilterMode::Linear,
+            lod_min_clamp: 0.0,
+            lod_max_clamp: 7.0,
             compare: wgpu::CompareFunction::Always,
         });
 
@@ -244,7 +244,7 @@ impl TextureArray {
 use image::*;
 
 fn load_image_levels(base: &DynamicImage) -> Vec<ImageBuffer<Rgba<u8>, Vec<u8>>> {
-    const TEX_FILTER: imageops::FilterType = imageops::FilterType::Triangle;
+    const TEX_FILTER: imageops::FilterType = imageops::FilterType::Lanczos3;
     const TS: u32 = TEXTURE_SIZE as u32;
 
     let mut result_optional: [(usize, Option<ImageBuffer<Rgba<u8>, Vec<u8>>>); 8] = [
