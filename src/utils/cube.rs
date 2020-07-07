@@ -16,7 +16,7 @@ pub fn add_cube_geometry(
     let x0 = x;
     let x1 = x0 + w;
     let y0 = z;
-    let y1 = y0 + d - 0.02;
+    let y1 = y0 + d;
     let z0 = y;
     let z1 = z0 + h;
 

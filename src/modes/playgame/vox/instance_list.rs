@@ -47,7 +47,7 @@ impl VMInstances {
     }
 }
 
-const LAYERS_DOWN : usize = 10;
+const LAYERS_DOWN : usize = 20;
 
 pub fn build_vox_instances2(
     ecs: &World,
