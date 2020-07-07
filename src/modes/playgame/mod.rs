@@ -20,6 +20,7 @@ enum RunState {
     Paused,
     OneStep,
     Running,
+    FullSpeed
 }
 
 pub struct PlayGame {
@@ -42,6 +43,8 @@ pub struct PlayGame {
     scheduler: Option<Schedule>,
     paused_scheduler: Option<Schedule>,
     run_state: RunState,
+
+    time_accumulator: u128
 }
 
 impl PlayGame {
@@ -64,6 +67,7 @@ impl PlayGame {
             vox_changed: true,
             lights_changed: true,
             first_run: true,
+            time_accumulator: 0
         }
     }
 
@@ -126,7 +130,7 @@ impl PlayGame {
             self.update_geometry();
         }
 
-        self.run_systems();
+        self.run_systems(frame_time);
 
         let sun_pos = self.user_interface(frame_time, imgui);
         self.render(camera_z, depth_id, frame, &sun_pos);
@@ -168,57 +172,40 @@ impl PlayGame {
 
         let running_str = match self.run_state {
             RunState::Paused => im_str!("\u{f017} Paused ### RunMenu"),
-            RunState::OneStep => im_str!("\u{f017} Single-Step ### RunMenu"),
-            RunState::Running => im_str!("\u{f017} Running ### RunMenu"),
+            RunState::OneStep => im_str!("\u{f051} Single-Step ### RunMenu"),
+            RunState::Running => im_str!("\u{f144} Running ### RunMenu"),
+            RunState::FullSpeed => im_str!("\u{f04e} Max Speed ### RunMenu"),
         };
 
         if let Some(menu_bar) = imgui.begin_main_menu_bar() {
             MenuItem::new(im_str!("\u{f135} Nox Futura ### NFMain")).build(imgui);
 
             if let Some(menu) = imgui.begin_menu(running_str, true) {
-                match self.run_state {
-                    RunState::Paused => {
-                        if MenuItem::new(im_str!("\u{f144} Unpause"))
-                            .shortcut(im_str!("SPACE"))
-                            .build(imgui)
-                        {
-                            self.run_state = RunState::Running;
-                        }
-
-                        if MenuItem::new(im_str!("\u{f051} Single Step"))
-                            .shortcut(im_str!("/"))
-                            .build(imgui)
-                        {
-                            self.run_state = RunState::OneStep;
-                        }
-                        menu.end(imgui);
-                    }
-                    RunState::Running => {
-                        if MenuItem::new(im_str!("\u{f28b} Pause"))
-                            .shortcut(im_str!("SPACE"))
-                            .build(imgui)
-                        {
-                            self.run_state = RunState::Paused;
-                        }
-
-                        if MenuItem::new(im_str!("\u{f051} Single Step"))
-                            .shortcut(im_str!("/"))
-                            .build(imgui)
-                        {
-                            self.run_state = RunState::OneStep;
-                        }
-                        menu.end(imgui);
-                    }
-                    RunState::OneStep => {
-                        if MenuItem::new(im_str!("\u{f28b} Pause"))
-                            .shortcut(im_str!("SPACE"))
-                            .build(imgui)
-                        {
-                            self.run_state = RunState::Paused;
-                        }
-                        menu.end(imgui);
-                    }
+                if MenuItem::new(im_str!("\u{f017} Pause"))
+                    .shortcut(im_str!("SPACE"))
+                    .build(imgui)
+                {
+                    self.run_state = RunState::Paused;
                 }
+                if MenuItem::new(im_str!("\u{f051} Single_Step"))
+                    .shortcut(im_str!("`"))
+                    .build(imgui)
+                {
+                    self.run_state = RunState::OneStep;
+                }
+                if MenuItem::new(im_str!("\u{f144} Normal Speed"))
+                    .shortcut(im_str!("1"))
+                    .build(imgui)
+                {
+                    self.run_state = RunState::Running;
+                }
+                if MenuItem::new(im_str!("\u{f04e} Max Speed"))
+                    .shortcut(im_str!("2"))
+                    .build(imgui)
+                {
+                    self.run_state = RunState::FullSpeed;
+                }
+                menu.end(imgui);
             }
 
             let hud_time_im = ImString::new(hud_time);
@@ -257,14 +244,10 @@ impl PlayGame {
             let cam = &mut pass.camera;
             if let Some(keycode) = keycode {
                 match keycode {
-                    VirtualKeyCode::Space => {
-                        self.run_state = match self.run_state {
-                            RunState::Paused => RunState::Running,
-                            RunState::Running => RunState::Paused,
-                            RunState::OneStep => RunState::Paused,
-                        };
-                        camera_changed = false;
-                    }
+                    VirtualKeyCode::Space => { self.run_state = RunState::Paused; camera_changed = false; }
+                    VirtualKeyCode::Grave => { self.run_state = RunState::OneStep; camera_changed = false; }
+                    VirtualKeyCode::Key1 => { self.run_state = RunState::Running; camera_changed = false; }
+                    VirtualKeyCode::Key2 => { self.run_state = RunState::FullSpeed; camera_changed = false; }
                     VirtualKeyCode::Slash => {
                         self.run_state = RunState::OneStep;
                         camera_changed = false;
@@ -359,17 +342,30 @@ impl PlayGame {
         self.lights_changed = false;
     }
 
-    fn run_systems(&mut self) {
-        if self.run_state != RunState::Paused {
-            self.scheduler
-                .as_mut()
-                .unwrap()
-                .execute(&mut self.ecs, &mut self.ecs_resources);
-        } else {
-            self.paused_scheduler
-                .as_mut()
-                .unwrap()
-                .execute(&mut self.ecs, &mut self.ecs_resources);
+    fn run_systems(&mut self, frame_time: u128) {
+        match self.run_state {
+            RunState::Paused => {
+                self.paused_scheduler
+                    .as_mut()
+                    .unwrap()
+                    .execute(&mut self.ecs, &mut self.ecs_resources);
+            }
+            RunState::FullSpeed => {
+                self.scheduler
+                    .as_mut()
+                    .unwrap()
+                    .execute(&mut self.ecs, &mut self.ecs_resources);
+            }
+            RunState::Running | RunState::OneStep => {
+                self.time_accumulator += frame_time;
+                if self.time_accumulator > 33 {
+                    self.time_accumulator = 0;
+                    self.scheduler
+                        .as_mut()
+                        .unwrap()
+                        .execute(&mut self.ecs, &mut self.ecs_resources);
+                }
+            }
         }
     }
 }
