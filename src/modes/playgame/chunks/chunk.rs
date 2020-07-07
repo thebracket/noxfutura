@@ -48,6 +48,40 @@ impl Chunk {
         }
     }
 
+    fn calc_material(&self, idx: usize, region: &Region) -> MappedTexture {
+        if region.flag(idx, Region::CONSTRUCTED) {
+            RAWS
+                .read()
+                .matmap
+                .get(region.material_idx[idx])
+                .constructed
+
+        } else {
+            RAWS
+                .read()
+                .matmap
+                .get(region.material_idx[idx])
+                .texture
+        }
+    }
+
+    fn calc_floor_material(&self, idx: usize, region: &Region) -> MappedTexture {
+        if region.flag(idx, Region::CONSTRUCTED) {
+            RAWS
+                .read()
+                .matmap
+                .get(region.material_idx[idx])
+                .floor_constructed
+
+        } else {
+            RAWS
+                .read()
+                .matmap
+                .get(region.material_idx[idx])
+                .floor
+        }
+    }
+
     pub fn rebuild(&mut self, region: &Region) {
         if !self.dirty {
             return;
@@ -89,12 +123,7 @@ impl Chunk {
                             if region.revealed[idx] {
                                 match region.tile_types[idx] {
                                     TileType::Solid => {
-                                        let mat = RAWS
-                                            .read()
-                                            .matmap
-                                            .get(region.material_idx[idx])
-                                            .texture;
-                                        cubes.insert(idx, mat);
+                                        cubes.insert(idx, self.calc_material(idx, region));
                                     }
                                     TileType::TreeTrunk => {
                                         // bark
@@ -127,16 +156,12 @@ impl Chunk {
                                                 tint: (1.0, 1.0, 1.0),
                                             }
                                         } else {
-                                            RAWS.read().matmap.get(region.material_idx[idx]).floor
+                                            self.calc_floor_material(idx, region)
                                         };
                                         floors.insert(idx, mat);
                                     }
                                     TileType::Ramp { direction } => {
-                                        let mat = RAWS
-                                            .read()
-                                            .matmap
-                                            .get(region.material_idx[idx])
-                                            .texture;
+                                        let mat = self.calc_material(idx, region);
                                         add_ramp_geometry(
                                             &mut self.vb.data,
                                             &mut self.element_count[z],

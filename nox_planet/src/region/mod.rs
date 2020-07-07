@@ -61,4 +61,5 @@ impl Region {
     // Flags
     pub const SOLID: u8 = 1;
     pub const OUTSIDE: u8 = 2;
+    pub const CONSTRUCTED: u8 = 4;
 }

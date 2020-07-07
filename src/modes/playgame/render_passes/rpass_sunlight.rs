@@ -199,7 +199,7 @@ impl SunlightPass {
     pub fn render(
         &mut self,
         frame: &wgpu::SwapChainOutput,
-        sun_pos: Vec3,
+        sun_pos: &(Vec3, Vec3),
         camera_pos: Vec3,
         ecs: &World,
         gbuffer: &GBuffer,
@@ -211,7 +211,7 @@ impl SunlightPass {
             self.uniforms.update_buffer(&self.uniform_buf);
             self.lighting_map.update_buffer();
         } else {
-            self.uniforms.update_partial(&sun_pos, &camera_pos);
+            self.uniforms.update_partial(sun_pos, &camera_pos);
             self.uniforms.update_buffer(&self.uniform_buf);
         }
 

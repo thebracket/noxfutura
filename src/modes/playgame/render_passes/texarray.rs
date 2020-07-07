@@ -244,7 +244,7 @@ impl TextureArray {
 use image::*;
 
 fn load_image_levels(base: &DynamicImage) -> Vec<ImageBuffer<Rgba<u8>, Vec<u8>>> {
-    const TEX_FILTER: imageops::FilterType = imageops::FilterType::Lanczos3;
+    const TEX_FILTER: imageops::FilterType = imageops::FilterType::Triangle;
     const TS: u32 = TEXTURE_SIZE as u32;
 
     let mut result_optional: [(usize, Option<ImageBuffer<Rgba<u8>, Vec<u8>>>); 8] = [

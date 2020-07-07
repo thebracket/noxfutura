@@ -129,7 +129,7 @@ impl PlayGame {
         self.run_systems();
 
         let sun_pos = self.user_interface(frame_time, imgui);
-        self.render(camera_z, depth_id, frame, sun_pos);
+        self.render(camera_z, depth_id, frame, &sun_pos);
         super::ProgramMode::PlayGame
     }
 
@@ -155,8 +155,8 @@ impl PlayGame {
         self.rebuild_geometry = false;
     }
 
-    fn user_interface(&mut self, frame_time: u128, imgui: &Ui) -> Vec3 {
-        let mut sun_pos = Vec3::zero();
+    fn user_interface(&mut self, frame_time: u128, imgui: &Ui) -> (Vec3, Vec3) {
+        let mut sun_pos = (Vec3::zero(), Vec3::zero());
 
         // Obtain info to display
         let mut hud_time = String::new();
@@ -317,7 +317,7 @@ impl PlayGame {
         camera_z: usize,
         depth_id: usize,
         frame: &wgpu::SwapChainOutput,
-        sun_pos: Vec3,
+        sun_pos: &(Vec3, Vec3),
     ) {
         let pass = self.rpass.as_mut().unwrap();
         // Render terrain building the initial chunk models list
@@ -350,7 +350,7 @@ impl PlayGame {
         let pass2 = self.sunlight_pass.as_mut().unwrap();
         pass2.render(
             frame,
-            sun_pos.into(),
+            sun_pos,
             pass.camera.eye,
             &self.ecs,
             &pass.gbuffer,
