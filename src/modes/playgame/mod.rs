@@ -140,7 +140,7 @@ impl PlayGame {
         if rf.models_changed { self.vox_changed = true; }
         if rf.terrain_changed { self.rebuild_geometry = true; }
 
-        let sun_pos = self.user_interface(frame_time, imgui);
+        let sun_pos = self.user_interface(frame_time, imgui, mouse_world_pos);
         self.render(camera_z, depth_id, frame, &sun_pos);
         super::ProgramMode::PlayGame
     }
@@ -167,7 +167,7 @@ impl PlayGame {
         self.rebuild_geometry = false;
     }
 
-    fn user_interface(&mut self, frame_time: u128, imgui: &Ui) -> (Vec3, Vec3) {
+    fn user_interface(&mut self, frame_time: u128, imgui: &Ui, mouse_world_pos: &(usize, usize, usize)) -> (Vec3, Vec3) {
         let mut sun_pos = (Vec3::zero(), Vec3::zero());
 
         // Obtain info to display
@@ -226,6 +226,7 @@ impl PlayGame {
 
         //imgui.spacing();
 
+        // FPS window
         let title = format!(
             "Playing. Frame time: {} ms. FPS: {}. ### FPS",
             frame_time,
@@ -239,6 +240,27 @@ impl PlayGame {
             .movable(true)
             .position([0.0, 20.0], Condition::FirstUseEver)
             .build(imgui, || {});
+
+        // temporary tooltip system
+        let mut toolstring = String::new();
+        <(Read<Name>, Read<Position>, Read<Identity>)>::query()
+            .iter(&self.ecs)
+            .filter(| (_, pos, _)| pos.x == mouse_world_pos.0 && pos.y == mouse_world_pos.1 && pos.z == mouse_world_pos.2 )
+            .for_each(|(name, _, identity)| {
+                toolstring += &format!("{} #{}\n", name.name, identity.id);
+            }
+        );
+        if !toolstring.is_empty() {
+            let info = ImString::new(toolstring);
+            imgui::Window::new(im_str!("### tooltip"))
+                .no_decoration()
+                .always_auto_resize(true)
+                .collapsed(true, Condition::Always)
+                .position(imgui.io().mouse_pos, Condition::Always)
+                .build(imgui, || {
+                    imgui.text(info);
+                });
+        }
 
         sun_pos
     }

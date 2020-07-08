@@ -172,8 +172,8 @@ fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::Textur
                                 .for_each(|f| {
                                     mouse_world_pos = (
                                         f32::floor(f[0] * 256.0) as usize,
-                                        f32::floor(f[1] * 256.0) as usize,
                                         f32::floor(f[2] * 256.0) as usize,
+                                        f32::floor(f[1] * 256.0) as usize,
                                     );
                                 }
                             );
