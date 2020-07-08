@@ -69,6 +69,7 @@ impl<'a> Program {
         depth_id: usize,
         imgui: &imgui::Ui,
         keycode: Option<winit::event::VirtualKeyCode>,
+        mouse_world_pos: &(usize, usize, usize)
     ) -> bool {
         match self.mode {
             ProgramMode::Loader => self.mode = self.loader.tick(&self.resources, frame, imgui),
@@ -109,6 +110,7 @@ impl<'a> Program {
                     depth_id,
                     keycode,
                     self.last_frame.elapsed().as_millis(),
+                    mouse_world_pos
                 );
             }
             ProgramMode::Quit => return false,
@@ -116,5 +118,9 @@ impl<'a> Program {
 
         self.last_frame = Instant::now();
         true
+    }
+
+    pub fn get_mouse_buffer(&self) -> Option<&wgpu::Buffer> {
+        self.play.get_mouse_buffer()
     }
 }

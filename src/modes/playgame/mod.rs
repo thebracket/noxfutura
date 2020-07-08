@@ -124,7 +124,9 @@ impl PlayGame {
         depth_id: usize,
         keycode: Option<VirtualKeyCode>,
         frame_time: u128,
+        mouse_world_pos: &(usize, usize, usize)
     ) -> super::ProgramMode {
+        //println!("{:?}", mouse_world_pos);
         let camera_z = self.camera_control(&keycode);
 
         if self.rebuild_geometry {
@@ -346,6 +348,7 @@ impl PlayGame {
             self.lights_changed,
         );
         self.lights_changed = false;
+        pass.gbuffer.copy_mouse_buffer();
     }
 
     fn run_systems(&mut self, frame_time: u128) {
@@ -372,6 +375,14 @@ impl PlayGame {
                         .execute(&mut self.ecs, &mut self.ecs_resources);
                 }
             }
+        }
+    }
+
+    pub fn get_mouse_buffer(&self) -> Option<&wgpu::Buffer> {
+        if let Some(pass) = &self.rpass {
+            return Some(&pass.gbuffer.mouse_buffer);
+        } else {
+            return None;
         }
     }
 }

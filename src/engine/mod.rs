@@ -9,28 +9,30 @@ use winit::{
     window::Window,
 };
 
-async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
+fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::TextureFormat) {
+    use futures::executor::block_on;
+
     let size = window.inner_size();
     let surface = wgpu::Surface::create(&window);
 
-    let adapter = wgpu::Adapter::request(
+    let adapter = block_on(wgpu::Adapter::request(
         &wgpu::RequestAdapterOptions {
             power_preference: wgpu::PowerPreference::HighPerformance,
             compatible_surface: Some(&surface),
         },
         wgpu::BackendBit::VULKAN,
     )
-    .await
+    )
     .unwrap();
 
-    let (device, queue) = adapter
+    let (device, queue) = block_on(adapter
         .request_device(&wgpu::DeviceDescriptor {
             extensions: wgpu::Extensions {
                 anisotropic_filtering: true,
             },
             limits: wgpu::Limits::default(),
         })
-        .await;
+    );
 
     let mut ctx = DEVICE_CONTEXT.write();
     *ctx = Some(nox_wgpu_utils::Context::new(
@@ -105,6 +107,7 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
     program.init();
 
     let mut keycode: Option<winit::event::VirtualKeyCode> = None;
+    let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -138,13 +141,45 @@ async fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::
                 platform
                     .prepare_frame(imgui.io_mut(), &window)
                     .expect("Failed to prepare frame");
+                let mouse_position = imgui.io().mouse_pos;
                 let ui = imgui.frame();
 
-                let should_continue = program.tick(&frame, depth_id, &ui, keycode);
+                let should_continue = program.tick(&frame, depth_id, &ui, keycode, &mouse_world_pos);
                 if !should_continue {
                     *control_flow = ControlFlow::Exit;
                 }
                 keycode = None;
+
+                // Mouse buffer insanity
+                if let Some(buf) = program.get_mouse_buffer() {
+                    let mut context_lock = DEVICE_CONTEXT.write();
+                    let context = context_lock.as_mut().unwrap();
+
+                    let mx = mouse_position[0] as u32;
+                    let my = mouse_position[1] as u32;
+                    let mouse_index = (my * context.size.width) + mx;
+
+                    let size = context.size.width as u64 * context.size.height as u64 * 4 * std::mem::size_of::<f32>() as u64;
+                    let future = buf.map_read(0, size);
+                    context.device.poll(wgpu::Maintain::Wait);
+                    let mapping = futures::executor::block_on(future);
+                    if let Ok(mapping) = mapping {
+                        unsafe {
+                            mapping
+                                .as_slice()
+                                .align_to::<[f32; 4]>()
+                                .1.iter().skip(mouse_index as usize).take(1)
+                                .for_each(|f| {
+                                    mouse_world_pos = (
+                                        f32::floor(f[0] * 256.0) as usize,
+                                        f32::floor(f[1] * 256.0) as usize,
+                                        f32::floor(f[2] * 256.0) as usize,
+                                    );
+                                }
+                            );
+                        }
+                    }
+                }
 
                 // ImGui
                 {
@@ -194,5 +229,6 @@ pub fn main_loop() {
     let event_loop = EventLoop::new();
     let window = winit::window::Window::new(&event_loop).unwrap();
     // Temporarily avoid srgb formats for the swapchain on the web
-    futures::executor::block_on(run(event_loop, window, wgpu::TextureFormat::Bgra8UnormSrgb));
+    //futures::executor::block_on(run(event_loop, window, wgpu::TextureFormat::Bgra8UnormSrgb));
+    run(event_loop, window, wgpu::TextureFormat::Bgra8UnormSrgb);
 }
