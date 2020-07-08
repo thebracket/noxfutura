@@ -21,7 +21,7 @@ impl RenderFlags {
     }
 }
 
-pub fn get_render_flags() -> renderflags::RenderFlags {
+pub fn get_render_flags() -> RenderFlags {
     use super::backends::RENDER_FLAGS;
     RENDER_FLAGS.lock().clone()
 }

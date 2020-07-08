@@ -18,11 +18,13 @@ impl VoxRenderPass {
         vox_models.load();
 
         // Instance buffer
-        let mut instance_buffer = VertexBuffer::<f32>::new(&[3, 3]);
+        let mut instance_buffer = VertexBuffer::<f32>::new(&[3, 3, 1]);
         instance_buffer.attributes[0].shader_location = 3;
         instance_buffer.attributes[1].shader_location = 4;
+        instance_buffer.attributes[2].shader_location = 5;
         instance_buffer.add3(128., 256., 128.);
         instance_buffer.add3(128., 128., 128.);
+        instance_buffer.add(0.0);
         instance_buffer.build(wgpu::BufferUsage::VERTEX);
 
         // Initialize camera and uniforms

@@ -31,6 +31,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
                 dims,
                 crate::VoxelModel {
                     index: rlock.vox.get_model_idx(&building_def.vox),
+                    rotation_radians: 0.0
                 },
                 Description {
                     desc: building_def.description.clone(),

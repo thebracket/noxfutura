@@ -11,7 +11,8 @@ const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
 #[derive(Debug)]
 pub struct VMRender {
     position: [f32; 3],
-    tint: [f32; 3]
+    tint: [f32; 3],
+    rotation: f32
 }
 
 #[derive(Debug)]
@@ -26,12 +27,13 @@ impl VMInstances {
         }
     }
 
-    fn add(&mut self, model_id : usize, position: [f32; 3], tint: [f32; 3]) {
+    fn add(&mut self, model_id : usize, position: [f32; 3], tint: [f32; 3], rotation: f32) {
         if let Some(vmi) = self.instances.get_mut(&model_id) {
             vmi.push(
                 VMRender{
                     position,
-                    tint
+                    tint,
+                    rotation
                 }
             );
         } else {
@@ -39,7 +41,8 @@ impl VMInstances {
                 vec![
                     VMRender{
                         position,
-                        tint
+                        tint,
+                        rotation
                     }
                 ]
             );
@@ -92,7 +95,8 @@ pub fn build_vox_instances2(
             instances.add(
                 model.index, 
                 [x, z, y], 
-                [tint.color.0, tint.color.1, tint.color.2]
+                [tint.color.0, tint.color.1, tint.color.2],
+                model.rotation_radians
             );
         }
     );
@@ -114,7 +118,12 @@ pub fn build_vox_instances2(
                 let y = pos.y as f32;
                 let z = pos.z as f32;
 
-                instances.add(vm.model, [x, z, y], [vm.tint.0, vm.tint.1, vm.tint.2]);
+                instances.add(
+                    vm.model, 
+                    [x, z, y], 
+                    [vm.tint.0, vm.tint.1, vm.tint.2],
+                    composite.rotation
+                );
             }
         }
     );
@@ -127,7 +136,7 @@ pub fn build_vox_instances2(
                 .iter()
                 .filter(|m| m.z > camera_z - LAYERS_DOWN && m.z <= camera_z)
                 .for_each(|m| {
-                    instances.add(m.id, [m.x as f32, m.z as f32, m.y as f32], [1.0, 1.0, 1.0]);
+                    instances.add(m.id, [m.x as f32, m.z as f32, m.y as f32], [1.0, 1.0, 1.0], 0.0);
                 }
             );
         }
@@ -145,6 +154,7 @@ pub fn build_vox_instances2(
         i.1.iter().for_each(|vm| {
             instance_buffer.add_slice(&vm.position);
             instance_buffer.add_slice(&vm.tint);
+            instance_buffer.add(vm.rotation);
         });
     });
 

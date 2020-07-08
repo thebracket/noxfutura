@@ -11,4 +11,5 @@ pub struct VoxLayer {
 #[uuid = "fc422f00-9a1b-4d48-9d77-f620d880b439"]
 pub struct CompositeRender {
     pub layers: Vec<VoxLayer>,
+    pub rotation: f32
 }
