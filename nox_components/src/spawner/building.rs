@@ -57,6 +57,11 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
                 ecs.add_component(entity, FieldOfView::new(*radius))
                     .expect("Unable to add field-of-view");
             }
+
+            if let BuildingProvides::Storage = provides {
+                //println!("Added storage capacity");
+                ecs.add_component(entity, Storage{}).expect("Unable to add storage");
+            }
         }
 
         println!("Added building data: {}", tag);

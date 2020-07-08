@@ -64,6 +64,7 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         ComponentRegistration::of::<FieldOfView>(),
         ComponentRegistration::of::<Initiative>(),
         ComponentRegistration::of::<MyTurn>(),
+        ComponentRegistration::of::<Storage>(),
     ];
     let tag_registrations = vec![
         TagRegistration::of::<Cordex>(),

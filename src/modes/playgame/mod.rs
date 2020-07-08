@@ -244,10 +244,18 @@ impl PlayGame {
         // temporary tooltip system
         let mut toolstring = String::new();
         <(Read<Name>, Read<Position>, Read<Identity>)>::query()
-            .iter(&self.ecs)
-            .filter(| (_, pos, _)| pos.x == mouse_world_pos.0 && pos.y == mouse_world_pos.1 && pos.z == mouse_world_pos.2 )
-            .for_each(|(name, _, identity)| {
+            .iter_entities(&self.ecs)
+            .filter(| (_, (_, pos, _))| pos.x == mouse_world_pos.0 && pos.y == mouse_world_pos.1 && pos.z == mouse_world_pos.2 )
+            .for_each(|(entity, (name, _, identity))| {
                 toolstring += &format!("{} #{}\n", name.name, identity.id);
+
+                <(Read<Name>, Read<ItemStored>)>::query()
+                    .iter(&self.ecs)
+                    .filter(|(_, store)| store.container == identity.id )
+                    .for_each(|(name, _)| {
+                        toolstring += &format!(" - {}\n", name.name);
+                    }
+                );
             }
         );
         if !toolstring.is_empty() {
@@ -255,7 +263,7 @@ impl PlayGame {
             imgui::Window::new(im_str!("### tooltip"))
                 .no_decoration()
                 .always_auto_resize(true)
-                .collapsed(true, Condition::Always)
+                .collapsed(false, Condition::Always)
                 .position(imgui.io().mouse_pos, Condition::Always)
                 .build(imgui, || {
                     imgui.text(info);
