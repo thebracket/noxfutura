@@ -14,6 +14,7 @@ mod render_passes;
 use crate::systems;
 pub use render_passes::*;
 use ultraviolet::Vec3;
+use crate::messaging;
 
 #[derive(PartialEq, Copy, Clone)]
 enum RunState {
@@ -130,7 +131,12 @@ impl PlayGame {
             self.update_geometry();
         }
 
+        messaging::reset();
         self.run_systems(frame_time);
+        let rf = messaging::get_render_flags();
+        if rf.lights_changed { self.lights_changed = true; }
+        if rf.models_changed { self.vox_changed = true; }
+        if rf.terrain_changed { self.rebuild_geometry = true; }
 
         let sun_pos = self.user_interface(frame_time, imgui);
         self.render(camera_z, depth_id, frame, &sun_pos);
