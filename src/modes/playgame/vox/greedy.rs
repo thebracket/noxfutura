@@ -1,9 +1,24 @@
 use super::modelsize::ModelSize;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 pub type VoxMap = HashMap<u32, u8>;
 
 pub fn greedy_cubes(cube_index: &mut VoxMap, output: &mut Vec<f32>, size: &ModelSize) {
+    let invisible = cube_index
+        .iter()
+        .filter(|(idx,_)| {
+            cube_index.contains_key(&(*idx-1)) &&
+            cube_index.contains_key(&(*idx+1)) &&
+            cube_index.contains_key(&(*idx-size.x)) &&
+            cube_index.contains_key(&(*idx+size.x)) &&
+            cube_index.contains_key(&(*idx+(size.x * size.x))) &&
+            cube_index.contains_key(&(*idx-(size.x * size.x)))
+        })
+        .map(|(idx, _)| *idx)
+        .collect::<HashSet<u32>>();
+    //println!("Invisibility cull: {}", invisible.len());
+    cube_index.retain(|idx, _|  !invisible.contains(idx));
+
     loop {
         let min_iter = cube_index.keys().min();
         if min_iter.is_none() {
