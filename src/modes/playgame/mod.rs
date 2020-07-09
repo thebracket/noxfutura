@@ -249,6 +249,14 @@ impl PlayGame {
             .for_each(|(entity, (name, _, identity))| {
                 toolstring += &format!("{} #{}\n", name.name, identity.id);
 
+                <Read<Description>>::query()
+                    .iter_entities(&self.ecs)
+                    .filter(|(e,_)| *e == entity)
+                    .for_each(|(_,d)| {
+                        toolstring += &format!("{}\n", d.desc);
+                    }
+                );
+
                 <(Read<Name>, Read<ItemStored>)>::query()
                     .iter(&self.ecs)
                     .filter(|(_, store)| store.container == identity.id )
@@ -262,11 +270,11 @@ impl PlayGame {
             let info = ImString::new(toolstring);
             imgui::Window::new(im_str!("### tooltip"))
                 .no_decoration()
-                .always_auto_resize(true)
+                .size([300.0, 200.0], Condition::Always)
                 .collapsed(false, Condition::Always)
                 .position(imgui.io().mouse_pos, Condition::Always)
                 .build(imgui, || {
-                    imgui.text(info);
+                    imgui.text_wrapped(&info);
                 });
         }
 
