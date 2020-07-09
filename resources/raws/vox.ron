@@ -160,5 +160,7 @@
         VoxelModel( tag:"grass", file:"grass" ),
         VoxelModel( tag:"daisy", file:"daisy" ),
         VoxelModel( tag:"heather", file:"heather" ),
+
+        VoxelModel( tag:"rampnew", file:"rampnew" ),
     ]
 )

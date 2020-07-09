@@ -3,7 +3,7 @@ use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::utils::{add_floor_geometry, add_ramp_geometry};
-use nox_planet::{mapidx, Region, StairsType, TileType};
+use nox_planet::{mapidx, Region, StairsType, TileType, RampDirection};
 use nox_raws::{MappedTexture, RAWS};
 use ultraviolet::Vec3;
 
@@ -152,15 +152,19 @@ impl Chunk {
                                     }
                                     TileType::Ramp { direction } => {
                                         let mat = self.calc_material(idx, region);
-                                        add_ramp_geometry(
-                                            &mut self.vb.data,
-                                            &mut self.element_count[z],
-                                            direction,
-                                            x as f32 + self.base.0 as f32,
-                                            y as f32 + self.base.1 as f32,
-                                            z as f32 + self.base.2 as f32,
-                                            mat,
-                                        );
+                                        self.chunk_models.push(ChunkModel {
+                                            id: RAWS.read().vox.get_model_idx("rampnew"),
+                                            x: x + self.base.0,
+                                            y: y + self.base.1,
+                                            z: z + self.base.2,
+                                            rotation: match direction {
+                                                RampDirection::NorthSouth => 3.14159,
+                                                RampDirection::SouthNorth => 0.0,
+                                                RampDirection::WestEast => 1.5708,
+                                                RampDirection::EastWest => 4.71239
+                                            },
+                                            tint: [mat.tint.0, mat.tint.1, mat.tint.2]
+                                        });
                                     }
                                     TileType::Stairs { direction } => {
                                         let tag = match direction {
@@ -173,6 +177,8 @@ impl Chunk {
                                             x: x + self.base.0,
                                             y: y + self.base.1,
                                             z: z + self.base.2,
+                                            rotation: 0.0,
+                                            tint: [1.0, 1.0, 1.0]
                                         });
                                     }
                                     _ => {}

@@ -136,7 +136,12 @@ pub fn build_vox_instances2(
                 .iter()
                 .filter(|m| m.z > camera_z - LAYERS_DOWN && m.z <= camera_z)
                 .for_each(|m| {
-                    instances.add(m.id, [m.x as f32, m.z as f32, m.y as f32], [1.0, 1.0, 1.0], 0.0);
+                    instances.add(
+                        m.id, 
+                        [m.x as f32, m.z as f32, m.y as f32], 
+                        m.tint, 
+                        m.rotation
+                    );
                 }
             );
         }
