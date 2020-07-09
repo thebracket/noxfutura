@@ -7,7 +7,8 @@ pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
         for y in ship_loc.y - 3..ship_loc.y + 4 {
             let z = ground_z(region, x as usize, y as usize);
             let idx = mapidx(x as usize, y as usize, z as usize);
-            region.vegetation_type_id[idx] = None;
+            //region.vegetation_type_id[idx] = None;
+            //TODO: Clear plants
             if region.tree_id[idx] > 0 {
                 // Tree needs destruction
                 let target_tree = region.tree_id[idx];

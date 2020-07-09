@@ -28,6 +28,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     let mut rng = RandomNumberGenerator::seeded(
         planet.perlin_seed + planet_idx(crash_site.x as usize, crash_site.y as usize) as u64,
     );
+    println!("BUILDING FOR: {:?}", biome.biome_type);
 
     set_worldgen_status("Establishing ground altitude");
     let mut hm = heightmap::build_empty_heightmap();
@@ -70,7 +71,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     game_components::add_game_components(&mut world, &hm, crash_site);
 
     set_worldgen_status("Seeding the lawn");
-    plants::grow_plants(region, biome.mean_temperature, &mut rng);
+    plants::grow_plants(region, &mut world, biome.mean_temperature, &mut rng);
 
     set_worldgen_status("Crashing the ship");
     let ship_loc = Point::new(128, 128);

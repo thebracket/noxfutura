@@ -78,7 +78,6 @@ fn add_construction(
     let idx = mapidx(x, y, z);
     region.tile_types[idx] = TileType::Floor;
     region.material_idx[idx] = plasteel;
-    region.vegetation_type_id[idx] = None;
     region.set_flag(idx, Region::CONSTRUCTED);
     if solid {
         region.set_flag(idx, Region::SOLID);

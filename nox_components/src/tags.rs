@@ -15,3 +15,7 @@ pub struct Item {}
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "d21ed260-2438-417e-8701-6fb276c4ba09"]
 pub struct Sentient {}
+
+#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
+#[uuid = "64e4419f-908a-4de8-80eb-17008f572f7c"]
+pub struct Vegetation {}

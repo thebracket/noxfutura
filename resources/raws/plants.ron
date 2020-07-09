@@ -1,21 +1,30 @@
 (
     plants : [
         PlantDef(
+            tag: "grass",
             name: "Grass",
+            description: "Common grass",
             harvest: [ "Hay" ],
-            min_hardiness: 1, max_hardiness: 13, soil_quality: 0
+            min_hardiness: 1, max_hardiness: 13, soil_quality: 0,
+            vox: "grass"
         ),
 
         PlantDef(
+            tag: "daisy",
             name: "Daisy",
+            description: "A pretty white flower",
             harvest: [ ],
-            min_hardiness: 5, max_hardiness: 8, soil_quality: 2
+            min_hardiness: 5, max_hardiness: 8, soil_quality: 2,
+            vox: "daisy"
         ),
 
         PlantDef(
+            tag: "heather",
             name: "Heather",
+            description: "Purple flowered, wirey plant common to colder climates",
             harvest: [ ],
-            min_hardiness: 3, max_hardiness: 7, soil_quality: 2
+            min_hardiness: 3, max_hardiness: 7, soil_quality: 2,
+            vox: "heather"
         ),
     ]
 )

@@ -156,5 +156,9 @@
         VoxelModel( tag:"gate_nor", file:"gate_nor" ),
         VoxelModel( tag:"gate_xor", file:"gate_xor" ),
         VoxelModel( tag:"support", file:"support" ),
+
+        VoxelModel( tag:"grass", file:"grass" ),
+        VoxelModel( tag:"daisy", file:"daisy" ),
+        VoxelModel( tag:"heather", file:"heather" ),
     ]
 )

@@ -148,17 +148,7 @@ impl Chunk {
                                         );
                                     }
                                     TileType::Floor => {
-                                        let mat = if let Some(_plant_idx) =
-                                            region.vegetation_type_id[idx]
-                                        {
-                                            MappedTexture {
-                                                texture: RAWS.read().matmap.grass_id,
-                                                tint: (1.0, 1.0, 1.0),
-                                            }
-                                        } else {
-                                            self.calc_floor_material(idx, region)
-                                        };
-                                        floors.insert(idx, mat);
+                                        floors.insert(idx, self.calc_floor_material(idx, region));
                                     }
                                     TileType::Ramp { direction } => {
                                         let mat = self.calc_material(idx, region);

@@ -11,6 +11,16 @@ impl Plants {
         Self { plants: Vec::new() }
     }
 
+    pub fn plant_by_tag(&self, tag: &str) -> Option<&PlantDef> {
+        for b in self.plants.iter() {
+            if b.tag == tag {
+                return Some(b);
+            }
+        }
+        println!("Unable to find plant tag: {}", tag);
+        None
+    }
+
     pub fn plants_by_hardiness_and_soil_quality(
         &self,
         temperature_c: i8,
@@ -37,11 +47,14 @@ impl Plants {
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PlantDef {
+    pub tag: String,
     pub name: String,
+    pub description: String,
     pub harvest: Vec<String>,
     pub min_hardiness: u8,
     pub max_hardiness: u8,
     pub soil_quality: u8,
+    pub vox: String
 }
 
 pub fn load_plants() -> Plants {

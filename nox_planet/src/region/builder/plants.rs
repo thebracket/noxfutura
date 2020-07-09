@@ -1,8 +1,10 @@
 use crate::{ground_z, mapidx, Region, TileType, REGION_HEIGHT, REGION_WIDTH};
 use bracket_random::prelude::RandomNumberGenerator;
 use nox_raws::*;
+use legion::prelude::*;
+use nox_components::spawner::spawn_plant;
 
-pub fn grow_plants(region: &mut Region, mean_temperature: i8, rng: &mut RandomNumberGenerator) {
+pub fn grow_plants(region: &mut Region, ecs: &mut World, mean_temperature: i8, rng: &mut RandomNumberGenerator) {
     let rlock = RAWS.read();
 
     for y in 0..REGION_HEIGHT {
@@ -25,7 +27,7 @@ pub fn grow_plants(region: &mut Region, mean_temperature: i8, rng: &mut RandomNu
                     if (rng.roll_dice(1, 15) as u8) <= soil_quality {
                         let chosen_plant = rng.random_slice_entry(&available_plants);
                         if let Some(plant_idx) = chosen_plant {
-                            region.vegetation_type_id[idx] = Some(*plant_idx);
+                            spawn_plant(ecs, &RAWS.read().plants.plants[*plant_idx].tag, x, y, z);
                         } else {
                             println!("Rejecting because no plant type was received");
                         }
