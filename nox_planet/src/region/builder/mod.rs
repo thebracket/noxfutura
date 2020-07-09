@@ -78,7 +78,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     let crash_z = buildings::build_escape_pod(region, &ship_loc, &mut world);
 
     set_worldgen_status("Trees");
-    trees::plant_trees(region, &biome_info, &mut rng);
+    trees::plant_trees(region, &biome_info, &mut rng, &mut world);
 
     set_worldgen_status("Blight");
     set_worldgen_status("Trail of debris");

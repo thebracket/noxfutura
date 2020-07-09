@@ -5,7 +5,6 @@ pub fn set_flags(region: &mut Region) {
         match tt {
             TileType::SemiMoltenRock => region.set_flag(idx, Region::SOLID),
             TileType::Solid => region.set_flag(idx, Region::SOLID),
-            TileType::TreeTrunk => region.set_flag(idx, Region::SOLID),
             TileType::Wall => region.set_flag(idx, Region::SOLID),
             TileType::Window => region.set_flag(idx, Region::SOLID),
             _ => {}

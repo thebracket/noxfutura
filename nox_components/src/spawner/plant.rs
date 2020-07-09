@@ -30,3 +30,28 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
         println!("Cannot find plant to spawn: {}", tag);
     }
 }
+
+pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize) {
+    let rlock = RAWS.read();
+    ecs.insert(
+        (Vegetation {},),
+        vec![(
+            Identity::new(),
+            Name {
+                name: "Tree".to_string()
+            },
+            Dimensions{ width: 3, height: 3 },
+            crate::VoxelModel {
+                index: rlock.vox.get_model_idx("tree"),
+                rotation_radians: 0.0
+            },
+            Description {
+                desc: "A tree".to_string(),
+            },
+            Position { x, y, z },
+            Tint {
+                color: (1.0, 1.0, 1.0),
+            },
+        )],
+    );
+}

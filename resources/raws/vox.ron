@@ -162,5 +162,6 @@
         VoxelModel( tag:"heather", file:"heather" ),
 
         VoxelModel( tag:"rampnew", file:"rampnew" ),
+        VoxelModel( tag:"tree", file:"tree" ),
     ]
 )

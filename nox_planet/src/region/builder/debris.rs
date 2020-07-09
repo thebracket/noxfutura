@@ -9,7 +9,7 @@ pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
             let idx = mapidx(x as usize, y as usize, z as usize);
             //region.vegetation_type_id[idx] = None;
             //TODO: Clear plants
-            if region.tree_id[idx] > 0 {
+            /*if region.tree_id[idx] > 0 {
                 // Tree needs destruction
                 let target_tree = region.tree_id[idx];
                 let mut num_logs = 0;
@@ -28,7 +28,7 @@ pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
                         ecs, "wood_log", x as usize, y as usize, z as usize,
                     );
                 }
-            }
+            }*/
         }
     }
 }

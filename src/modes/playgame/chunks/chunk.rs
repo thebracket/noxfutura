@@ -125,28 +125,6 @@ impl Chunk {
                                     TileType::Solid => {
                                         cubes.insert(idx, self.calc_material(idx, region));
                                     }
-                                    TileType::TreeTrunk => {
-                                        // bark
-                                        let mat = RAWS.read().matmap.bark_id;
-                                        cubes.insert(
-                                            idx,
-                                            MappedTexture {
-                                                texture: mat,
-                                                tint: (1.0, 1.0, 1.0),
-                                            },
-                                        );
-                                    }
-                                    TileType::TreeFoliage => {
-                                        // leaf
-                                        let mat = RAWS.read().matmap.leaf_id;
-                                        cubes.insert(
-                                            idx,
-                                            MappedTexture {
-                                                texture: mat,
-                                                tint: (1.0, 1.0, 1.0),
-                                            },
-                                        );
-                                    }
                                     TileType::Floor => {
                                         floors.insert(idx, self.calc_floor_material(idx, region));
                                     }
