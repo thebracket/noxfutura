@@ -127,7 +127,7 @@ impl PlayGame {
         mouse_world_pos: &(usize, usize, usize)
     ) -> super::ProgramMode {
         //println!("{:?}", mouse_world_pos);
-        let camera_z = self.camera_control(&keycode);
+        let camera_z = self.camera_control(&keycode, imgui);
 
         if self.rebuild_geometry {
             self.update_geometry();
@@ -176,47 +176,51 @@ impl PlayGame {
         sun_pos
     }
 
-    fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>) -> usize {
+    fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>, imgui: &Ui) -> usize {
         let mut result = 0;
         let pass = self.rpass.as_mut().unwrap();
         let query = <(Write<Position>, Write<CameraOptions>)>::query();
         let mut camera_changed = true;
         for (mut pos, mut camopts) in query.iter_mut(&mut self.ecs) {
             let cam = &mut pass.camera;
-            if let Some(keycode) = keycode {
-                match keycode {
-                    VirtualKeyCode::Space => { self.run_state = RunState::Paused; camera_changed = false; }
-                    VirtualKeyCode::Grave => { self.run_state = RunState::OneStep; camera_changed = false; }
-                    VirtualKeyCode::Key1 => { self.run_state = RunState::Running; camera_changed = false; }
-                    VirtualKeyCode::Key2 => { self.run_state = RunState::FullSpeed; camera_changed = false; }
-                    VirtualKeyCode::Slash => {
-                        self.run_state = RunState::OneStep;
-                        camera_changed = false;
-                    }
-                    VirtualKeyCode::Left => pos.x -= 1,
-                    VirtualKeyCode::Right => pos.x += 1,
-                    VirtualKeyCode::Up => pos.y -= 1,
-                    VirtualKeyCode::Down => pos.y += 1,
-                    VirtualKeyCode::Comma => {
-                        pos.z += 1;
-                    }
-                    VirtualKeyCode::Period => {
-                        pos.z -= 1;
-                    }
-                    VirtualKeyCode::Minus => camopts.zoom_level -= 1,
-                    VirtualKeyCode::Add => camopts.zoom_level += 1,
-                    VirtualKeyCode::Tab => match camopts.mode {
-                        CameraMode::TopDown => camopts.mode = CameraMode::Front,
-                        CameraMode::Front => camopts.mode = CameraMode::DiagonalNW,
-                        CameraMode::DiagonalNW => camopts.mode = CameraMode::DiagonalNE,
-                        CameraMode::DiagonalNE => camopts.mode = CameraMode::DiagonalSW,
-                        CameraMode::DiagonalSW => camopts.mode = CameraMode::DiagonalSE,
-                        CameraMode::DiagonalSE => camopts.mode = CameraMode::TopDown,
-                    },
-                    _ => camera_changed = false,
-                }
-            } else {
+            if imgui.io().want_capture_keyboard {
                 camera_changed = false;
+            } else {
+                if let Some(keycode) = keycode {
+                    match keycode {
+                        VirtualKeyCode::Space => { self.run_state = RunState::Paused; camera_changed = false; }
+                        VirtualKeyCode::Grave => { self.run_state = RunState::OneStep; camera_changed = false; }
+                        VirtualKeyCode::Key1 => { self.run_state = RunState::Running; camera_changed = false; }
+                        VirtualKeyCode::Key2 => { self.run_state = RunState::FullSpeed; camera_changed = false; }
+                        VirtualKeyCode::Slash => {
+                            self.run_state = RunState::OneStep;
+                            camera_changed = false;
+                        }
+                        VirtualKeyCode::Left => pos.x -= 1,
+                        VirtualKeyCode::Right => pos.x += 1,
+                        VirtualKeyCode::Up => pos.y -= 1,
+                        VirtualKeyCode::Down => pos.y += 1,
+                        VirtualKeyCode::Comma => {
+                            pos.z += 1;
+                        }
+                        VirtualKeyCode::Period => {
+                            pos.z -= 1;
+                        }
+                        VirtualKeyCode::Minus => camopts.zoom_level -= 1,
+                        VirtualKeyCode::Add => camopts.zoom_level += 1,
+                        VirtualKeyCode::Tab => match camopts.mode {
+                            CameraMode::TopDown => camopts.mode = CameraMode::Front,
+                            CameraMode::Front => camopts.mode = CameraMode::DiagonalNW,
+                            CameraMode::DiagonalNW => camopts.mode = CameraMode::DiagonalNE,
+                            CameraMode::DiagonalNE => camopts.mode = CameraMode::DiagonalSW,
+                            CameraMode::DiagonalSW => camopts.mode = CameraMode::DiagonalSE,
+                            CameraMode::DiagonalSE => camopts.mode = CameraMode::TopDown,
+                        },
+                        _ => camera_changed = false,
+                    }
+                } else {
+                    camera_changed = false;
+                }
             }
             if camera_changed | self.first_run {
                 let size = crate::engine::get_window_size();
