@@ -1,4 +1,3 @@
-use crate::systems::RNG;
 use legion::prelude::*;
 use nox_components::*;
 
@@ -8,12 +7,11 @@ pub fn build() -> Box<dyn Schedulable> {
         .with_query(<Read<Calendar>>::query())
         .build(|_, ecs, _, (actors, calendars)| {
             let hour = calendars.iter(ecs).nth(0).unwrap().hour as usize;
-            actors.iter_mut(ecs)
+            actors
+                .iter_mut(ecs)
                 .filter(|(turn, _)| turn.active)
-                .for_each(|(mut turn, schedule) | {
+                .for_each(|(mut turn, schedule)| {
                     turn.shift = schedule.hours[hour];
-                }
-            );
-        }
-    )
+                });
+        })
 }

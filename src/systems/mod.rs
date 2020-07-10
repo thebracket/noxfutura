@@ -1,9 +1,9 @@
 mod calendar;
 mod endturn;
 mod initiative;
+mod settler_scheduler;
 mod shared_state;
 mod viewshed;
-mod settler_scheduler;
 pub use shared_state::*;
 mod ui;
 pub use ui::*;
