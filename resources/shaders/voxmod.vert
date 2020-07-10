@@ -10,6 +10,7 @@ layout(location=5) in float i_rot;
 layout(location=0) out vec3 v_normal;
 layout(location=1) out vec3 v_world_pos;
 layout(location=2) out vec3 v_tint;
+layout(location=3) out vec3 v_model_pos;
 
 layout(set=0, binding=0) 
 uniform Uniforms {

@@ -71,5 +71,5 @@ void main() {
         pbr.b, // Metal
         0.0
     );
-    f_coords = vec4(v_world_pos / 256.0, 1.0);
+    f_coords = vec4(v_world_pos, 1.0);
 }

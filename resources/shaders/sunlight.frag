@@ -119,7 +119,7 @@ int mapidx(vec3 position) {
 
 void main() {
     vec3 albedo = texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb;
-    vec3 position = texture(sampler2D(t_coords, s_coords), v_tex_coords).rgb * 256.0;
+    vec3 position = texture(sampler2D(t_coords, s_coords), v_tex_coords).rgb;
     vec3 normal = texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb;
 
     vec3 material_lookup = texture(sampler2D(t_pbr, s_pbr), v_tex_coords).rgb;
