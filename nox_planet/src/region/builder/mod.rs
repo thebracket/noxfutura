@@ -28,7 +28,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     let mut rng = RandomNumberGenerator::seeded(
         planet.perlin_seed + planet_idx(crash_site.x as usize, crash_site.y as usize) as u64,
     );
-    println!("BUILDING FOR: {:?}", biome.biome_type);
+    println!("BUILDING FOR: {:?}", RAWS.read().biomes.areas[biome.biome_type].name);
 
     set_worldgen_status("Establishing ground altitude");
     let mut hm = heightmap::build_empty_heightmap();

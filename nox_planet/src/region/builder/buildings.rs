@@ -83,6 +83,15 @@ fn add_construction(
         region.set_flag(idx, Region::SOLID);
     }
 
+    // Remove any vegetation
+    let newtile_pt = Position{x, y, z};
+    let veg_list_delete = <Read<Position>>::query().filter(tag::<Vegetation>())
+        .iter_entities_mut(ecs)
+        .filter(|(_, pos)| **pos == newtile_pt )
+        .map(|(entity, _)| entity)
+        .collect::<Vec<Entity>>();
+    veg_list_delete.iter().for_each(|e| { ecs.delete(*e); });
+
     match name {
         "ship_wall" => {
             region.tile_types[idx] = TileType::Solid;
