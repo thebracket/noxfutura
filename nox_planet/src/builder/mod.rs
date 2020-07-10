@@ -117,7 +117,6 @@ fn find_crash_site() -> Point {
             && bt != BlockType::Marsh
             && bt != BlockType::Coastal
             && h > PLANET_BUILD.lock().planet.water_height
-            && PLANET_BUILD.lock().planet.landblocks[pidx].temperature > 5
         {
             println!("{:?}", bt);
             break;
