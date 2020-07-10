@@ -207,7 +207,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
     }
 
     ecs.insert(
-        (Building {},),
+        (Sentient {}, ),
         vec![(
             id,
             Dimensions {
@@ -228,6 +228,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             MyTurn {
                 active: false,
                 shift: ScheduleTime::Work,
+                order: WorkOrder::None
             },
             WorkSchedule::new(match x % 3 {
                 0 => Shift::Day,

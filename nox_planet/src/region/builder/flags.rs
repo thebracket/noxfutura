@@ -25,4 +25,17 @@ pub fn set_flags(region: &mut Region) {
             }
         }
     }
+
+    for y in 0..REGION_HEIGHT {
+        for x in 0..REGION_WIDTH {
+            for z in (0..REGION_DEPTH).rev() {
+                let idx = mapidx(x, y, z);
+                if y>0 && region.flag(idx - REGION_WIDTH, Region::SOLID) { region.set_flag(idx, Region::CAN_GO_NORTH) }
+                if y<REGION_HEIGHT-1 && region.flag(idx + REGION_WIDTH, Region::SOLID) { region.set_flag(idx, Region::CAN_GO_SOUTH) }
+                if x<REGION_WIDTH-1 && region.flag(idx +1, Region::SOLID) { region.set_flag(idx, Region::CAN_GO_EAST) }
+                if x>0 && region.flag(idx -1, Region::SOLID) { region.set_flag(idx, Region::CAN_GO_WEST) }
+                // TODO: Handle stairs and ramps
+            }
+        }
+    }
 }

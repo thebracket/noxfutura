@@ -4,5 +4,6 @@ use crate::prelude::*;
 #[uuid = "38236c84-14c8-4dad-a378-db9855b18858"]
 pub struct MyTurn {
     pub active: bool,
-    pub shift: super::ScheduleTime,
+    pub shift: crate::ScheduleTime,
+    pub order: crate::WorkOrder
 }
