@@ -1,6 +1,8 @@
+mod rpass_cursors;
 mod rpass_sunlight;
 mod rpass_terrain_to_gbuffer;
 mod rpass_vox_to_gbuffer;
+pub use rpass_cursors::*;
 pub use rpass_sunlight::*;
 pub use rpass_terrain_to_gbuffer::*;
 pub use rpass_vox_to_gbuffer::*;

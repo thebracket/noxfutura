@@ -39,6 +39,7 @@ pub struct PlayGame {
     rpass: Option<BlockRenderPass>,
     sunlight_pass: Option<SunlightPass>,
     vox_pass: Option<VoxRenderPass>,
+    cursor_pass: Option<CursorPass>,
     vox_instances: Vec<(u32, u32, u32)>,
     vox_changed: bool,
     lights_changed: bool,
@@ -62,6 +63,7 @@ impl PlayGame {
             planet: None,
             rpass: None,
             sunlight_pass: None,
+            cursor_pass: None,
             rebuild_geometry: true,
             ecs: universe.create_world(),
             ecs_resources: Resources::default(),
@@ -100,6 +102,7 @@ impl PlayGame {
                 self.rpass = loader_lock.rpass.take();
                 self.sunlight_pass = loader_lock.sun_render.take();
                 self.vox_pass = loader_lock.vpass.take();
+                self.cursor_pass = loader_lock.cpass.take();
 
                 self.scheduler = Some(systems::build_scheduler());
                 self.paused_scheduler = Some(systems::paused_scheduler());
@@ -234,7 +237,9 @@ impl PlayGame {
                             camera_changed = false;
                         }
                         VirtualKeyCode::T => {
-                            self.run_state = RunState::Design{mode: DesignMode::Lumberjack };
+                            self.run_state = RunState::Design {
+                                mode: DesignMode::Lumberjack,
+                            };
                             camera_changed = false;
                         }
                         VirtualKeyCode::Left => pos.x -= 1,
@@ -327,6 +332,16 @@ impl PlayGame {
         );
         self.lights_changed = false;
         pass.gbuffer.copy_mouse_buffer();
+
+        // Render cursors
+        let cpass = self.cursor_pass.as_mut().unwrap();
+        cpass.render(
+            depth_id,
+            frame,
+            &pass.uniform_bind_group,
+            &self.run_state,
+            &self.ecs,
+        );
     }
 
     fn run_systems(&mut self, frame_time: u128) {

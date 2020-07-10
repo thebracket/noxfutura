@@ -16,6 +16,7 @@ pub struct LoaderState {
     pub rpass: Option<BlockRenderPass>,
     pub sun_render: Option<SunlightPass>,
     pub vpass: Option<VoxRenderPass>,
+    pub cpass: Option<CursorPass>,
 }
 
 impl LoaderState {
@@ -27,6 +28,7 @@ impl LoaderState {
             rpass: None,
             sun_render: None,
             vpass: None,
+            cpass: None,
         }
     }
 
@@ -39,11 +41,13 @@ impl LoaderState {
             let rpass = BlockRenderPass::new();
             let vox_pass = VoxRenderPass::new(&rpass.uniform_bind_group_layout);
             let sunlight_pass = SunlightPass::new();
+            let cpass = CursorPass::new(&rpass.uniform_bind_group_layout);
 
             let mut lock = LOADER.write();
             lock.rpass = Some(rpass);
             lock.sun_render = Some(sunlight_pass);
             lock.vpass = Some(vox_pass);
+            lock.cpass = Some(cpass);
             std::mem::drop(lock);
             LOADER.write().update(1.00, "Built all the things", true);
         });
