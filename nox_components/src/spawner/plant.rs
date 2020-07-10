@@ -10,12 +10,16 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
             vec![(
                 Identity::new(),
                 Name {
-                    name: plant.name.clone()
+                    name: plant.name.clone(),
                 },
-                Dimensions{ width: 1, height: 1, depth: 1 },
+                Dimensions {
+                    width: 1,
+                    height: 1,
+                    depth: 1,
+                },
                 crate::VoxelModel {
                     index: rlock.vox.get_model_idx(&plant.vox),
-                    rotation_radians: 0.0
+                    rotation_radians: 0.0,
                 },
                 Description {
                     desc: plant.description.clone(),
@@ -38,12 +42,16 @@ pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize) {
         vec![(
             Identity::new(),
             Name {
-                name: "Tree".to_string()
+                name: "Tree".to_string(),
             },
-            Dimensions{ width: 3, height: 3, depth: 3 },
+            Dimensions {
+                width: 3,
+                height: 3,
+                depth: 3,
+            },
             crate::VoxelModel {
                 index: rlock.vox.get_model_idx("tree"),
-                rotation_radians: 0.0
+                rotation_radians: 0.0,
             },
             Description {
                 desc: "A tree".to_string(),

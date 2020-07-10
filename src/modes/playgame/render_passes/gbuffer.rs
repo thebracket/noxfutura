@@ -5,7 +5,7 @@ pub struct GBuffer {
     pub normal: GBufferTarget,
     pub pbr: GBufferTarget,
     pub coords: GBufferTarget,
-    pub mouse_buffer: wgpu::Buffer
+    pub mouse_buffer: wgpu::Buffer,
 }
 
 impl GBuffer {
@@ -17,17 +17,19 @@ impl GBuffer {
         let pbr = GBufferTarget::make_texture("PBR", swap_format);
         let coords = GBufferTarget::make_texture("Coords", wgpu::TextureFormat::Rgba32Float);
 
-        let mouse_buffer =
-        {
+        let mouse_buffer = {
             let mut ctx_lock = DEVICE_CONTEXT.write();
             let context = ctx_lock.as_mut().unwrap();
 
-            let size = context.size.width as u64 * context.size.height as u64 * 4 * std::mem::size_of::<f32>() as u64;
+            let size = context.size.width as u64
+                * context.size.height as u64
+                * 4
+                * std::mem::size_of::<f32>() as u64;
 
-            context.device.create_buffer(&wgpu::BufferDescriptor{
+            context.device.create_buffer(&wgpu::BufferDescriptor {
                 size,
                 usage: wgpu::BufferUsage::MAP_READ | wgpu::BufferUsage::COPY_DST,
-                label: None
+                label: None,
             })
         };
 
@@ -36,18 +38,19 @@ impl GBuffer {
             normal,
             pbr,
             coords,
-            mouse_buffer
+            mouse_buffer,
         }
     }
 
     pub fn copy_mouse_buffer(&self) {
-
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
         //let size = context.size.width as u64 * context.size.height as u64 * 4 * std::mem::size_of::<f32>() as u64;
 
         let command_buffer = {
-            let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor{ label: None});
+            let mut encoder = context
+                .device
+                .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
             encoder.copy_texture_to_buffer(
                 wgpu::TextureCopyView {
                     texture: &self.coords.texture,
@@ -58,7 +61,9 @@ impl GBuffer {
                 wgpu::BufferCopyView {
                     buffer: &self.mouse_buffer,
                     offset: 0,
-                    bytes_per_row: context.size.width as u32 * 4 * std::mem::size_of::<f32>() as u32,
+                    bytes_per_row: context.size.width as u32
+                        * 4
+                        * std::mem::size_of::<f32>() as u32,
                     rows_per_image: 0,
                 },
                 self.coords.extent,
@@ -74,7 +79,7 @@ pub struct GBufferTarget {
     pub view: wgpu::TextureView,
     pub sampler: wgpu::Sampler,
     pub dimensions: (usize, usize, usize),
-    pub extent: wgpu::Extent3d
+    pub extent: wgpu::Extent3d,
 }
 
 impl GBufferTarget {
@@ -95,7 +100,9 @@ impl GBufferTarget {
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format,
-            usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT | wgpu::TextureUsage::COPY_SRC,
+            usage: wgpu::TextureUsage::SAMPLED
+                | wgpu::TextureUsage::OUTPUT_ATTACHMENT
+                | wgpu::TextureUsage::COPY_SRC,
         });
 
         let view = texture.create_default_view();
@@ -117,7 +124,7 @@ impl GBufferTarget {
             view,
             sampler,
             dimensions: (context.size.width as usize, context.size.height as usize, 1),
-            extent: size
+            extent: size,
         }
     }
 }

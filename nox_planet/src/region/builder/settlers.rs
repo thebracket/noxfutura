@@ -119,7 +119,10 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
     };
 
     let rlock = RAWS.read();
-    let mut composite = CompositeRender { layers: Vec::new(), rotation: 0.0 };
+    let mut composite = CompositeRender {
+        layers: Vec::new(),
+        rotation: 0.0,
+    };
     composite.layers.push(VoxLayer {
         model: rlock.vox.get_model_idx("person_base"),
         tint: species.skin_color,
@@ -210,7 +213,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             Dimensions {
                 width: 1,
                 height: 1,
-                depth: 1
+                depth: 1,
             },
             Position { x, y, z },
             species,

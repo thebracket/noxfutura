@@ -50,7 +50,13 @@ impl LightUniforms {
         self.lights[0].color = [sun_pos.1.x, sun_pos.1.y, sun_pos.1.z, 1.0];
     }
 
-    pub fn update(&mut self, ecs: &World, sun_pos: &(Vec3, Vec3), camera_pos: Vec3, light_bits: &mut [u32]) {
+    pub fn update(
+        &mut self,
+        ecs: &World,
+        sun_pos: &(Vec3, Vec3),
+        camera_pos: Vec3,
+        light_bits: &mut [u32],
+    ) {
         self.camera_position = vec_to_float(&camera_pos);
         self.lights[0].pos = [sun_pos.0.x, sun_pos.0.y, sun_pos.0.z, 512.0];
         self.lights[0].color = [sun_pos.1.x, sun_pos.1.y, sun_pos.1.z, 1.0];

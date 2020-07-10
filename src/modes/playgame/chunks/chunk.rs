@@ -3,7 +3,7 @@ use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::utils::add_floor_geometry;
-use nox_planet::{mapidx, Region, StairsType, TileType, RampDirection};
+use nox_planet::{mapidx, RampDirection, Region, StairsType, TileType};
 use nox_raws::{MappedTexture, RAWS};
 use ultraviolet::Vec3;
 
@@ -50,35 +50,20 @@ impl Chunk {
 
     fn calc_material(&self, idx: usize, region: &Region) -> MappedTexture {
         if region.flag(idx, Region::CONSTRUCTED) {
-            RAWS
-                .read()
-                .matmap
-                .get(region.material_idx[idx])
-                .constructed
-
+            RAWS.read().matmap.get(region.material_idx[idx]).constructed
         } else {
-            RAWS
-                .read()
-                .matmap
-                .get(region.material_idx[idx])
-                .texture
+            RAWS.read().matmap.get(region.material_idx[idx]).texture
         }
     }
 
     fn calc_floor_material(&self, idx: usize, region: &Region) -> MappedTexture {
         if region.flag(idx, Region::CONSTRUCTED) {
-            RAWS
-                .read()
+            RAWS.read()
                 .matmap
                 .get(region.material_idx[idx])
                 .floor_constructed
-
         } else {
-            RAWS
-                .read()
-                .matmap
-                .get(region.material_idx[idx])
-                .floor
+            RAWS.read().matmap.get(region.material_idx[idx]).floor
         }
     }
 
@@ -139,9 +124,9 @@ impl Chunk {
                                                 RampDirection::NorthSouth => 3.14159,
                                                 RampDirection::SouthNorth => 0.0,
                                                 RampDirection::WestEast => 1.5708,
-                                                RampDirection::EastWest => 4.71239
+                                                RampDirection::EastWest => 4.71239,
                                             },
-                                            tint: [mat.tint.0, mat.tint.1, mat.tint.2]
+                                            tint: [mat.tint.0, mat.tint.1, mat.tint.2],
                                         });
                                     }
                                     TileType::Stairs { direction } => {
@@ -156,7 +141,7 @@ impl Chunk {
                                             y: y + self.base.1,
                                             z: z + self.base.2,
                                             rotation: 0.0,
-                                            tint: [1.0, 1.0, 1.0]
+                                            tint: [1.0, 1.0, 1.0],
                                         });
                                     }
                                     _ => {}

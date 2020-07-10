@@ -11,9 +11,9 @@ use planetgen::PlanetGen;
 mod planetgen2;
 use planetgen2::PlanetGen2;
 mod playgame;
+pub use playgame::RunState;
 use playgame::{LoadState, PlayGame, LOAD_STATE};
 use std::time::Instant;
-pub use playgame::RunState;
 
 pub enum ProgramMode {
     Loader,
@@ -70,7 +70,7 @@ impl<'a> Program {
         depth_id: usize,
         imgui: &imgui::Ui,
         keycode: Option<winit::event::VirtualKeyCode>,
-        mouse_world_pos: &(usize, usize, usize)
+        mouse_world_pos: &(usize, usize, usize),
     ) -> bool {
         match self.mode {
             ProgramMode::Loader => self.mode = self.loader.tick(&self.resources, frame, imgui),
@@ -111,7 +111,7 @@ impl<'a> Program {
                     depth_id,
                     keycode,
                     self.last_frame.elapsed().as_millis(),
-                    mouse_world_pos
+                    mouse_world_pos,
                 );
             }
             ProgramMode::Quit => return false,

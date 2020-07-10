@@ -11,17 +11,17 @@ mod chunks;
 pub mod vox;
 use vox::VoxBuffer;
 mod render_passes;
+use crate::messaging;
 use crate::systems;
 pub use render_passes::*;
 use ultraviolet::Vec3;
-use crate::messaging;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum RunState {
     Paused,
     OneStep,
     Running,
-    FullSpeed
+    FullSpeed,
 }
 
 pub struct PlayGame {
@@ -45,7 +45,7 @@ pub struct PlayGame {
     paused_scheduler: Option<Schedule>,
     run_state: RunState,
 
-    time_accumulator: u128
+    time_accumulator: u128,
 }
 
 impl PlayGame {
@@ -68,7 +68,7 @@ impl PlayGame {
             vox_changed: true,
             lights_changed: true,
             first_run: true,
-            time_accumulator: 0
+            time_accumulator: 0,
         }
     }
 
@@ -124,7 +124,7 @@ impl PlayGame {
         depth_id: usize,
         keycode: Option<VirtualKeyCode>,
         frame_time: u128,
-        mouse_world_pos: &(usize, usize, usize)
+        mouse_world_pos: &(usize, usize, usize),
     ) -> super::ProgramMode {
         //println!("{:?}", mouse_world_pos);
         let camera_z = self.camera_control(&keycode, imgui);
@@ -136,9 +136,15 @@ impl PlayGame {
         messaging::reset();
         self.run_systems(frame_time);
         let rf = messaging::get_render_flags();
-        if rf.lights_changed { self.lights_changed = true; }
-        if rf.models_changed { self.vox_changed = true; }
-        if rf.terrain_changed { self.rebuild_geometry = true; }
+        if rf.lights_changed {
+            self.lights_changed = true;
+        }
+        if rf.models_changed {
+            self.vox_changed = true;
+        }
+        if rf.terrain_changed {
+            self.rebuild_geometry = true;
+        }
 
         let sun_pos = self.user_interface(frame_time, imgui, mouse_world_pos);
         self.render(camera_z, depth_id, frame, &sun_pos);
@@ -167,7 +173,12 @@ impl PlayGame {
         self.rebuild_geometry = false;
     }
 
-    fn user_interface(&mut self, frame_time: u128, imgui: &Ui, mouse_world_pos: &(usize, usize, usize)) -> (Vec3, Vec3) {
+    fn user_interface(
+        &mut self,
+        frame_time: u128,
+        imgui: &Ui,
+        mouse_world_pos: &(usize, usize, usize),
+    ) -> (Vec3, Vec3) {
         use crate::systems::{draw_main_menu, draw_tooltips, fps_display};
         let sun_pos = draw_main_menu(&self.ecs, &mut self.run_state, imgui);
         fps_display(imgui, frame_time);
@@ -188,10 +199,22 @@ impl PlayGame {
             } else {
                 if let Some(keycode) = keycode {
                     match keycode {
-                        VirtualKeyCode::Space => { self.run_state = RunState::Paused; camera_changed = false; }
-                        VirtualKeyCode::Grave => { self.run_state = RunState::OneStep; camera_changed = false; }
-                        VirtualKeyCode::Key1 => { self.run_state = RunState::Running; camera_changed = false; }
-                        VirtualKeyCode::Key2 => { self.run_state = RunState::FullSpeed; camera_changed = false; }
+                        VirtualKeyCode::Space => {
+                            self.run_state = RunState::Paused;
+                            camera_changed = false;
+                        }
+                        VirtualKeyCode::Grave => {
+                            self.run_state = RunState::OneStep;
+                            camera_changed = false;
+                        }
+                        VirtualKeyCode::Key1 => {
+                            self.run_state = RunState::Running;
+                            camera_changed = false;
+                        }
+                        VirtualKeyCode::Key2 => {
+                            self.run_state = RunState::FullSpeed;
+                            camera_changed = false;
+                        }
                         VirtualKeyCode::Slash => {
                             self.run_state = RunState::OneStep;
                             camera_changed = false;

@@ -1,11 +1,11 @@
-use ultraviolet::Vec3;
+use crate::modes::RunState;
 use imgui::*;
 use legion::prelude::*;
 use nox_components::*;
-use crate::modes::RunState;
+use ultraviolet::Vec3;
 
 // Returns the sun position/color, since we look there anyway
-pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui)  -> (Vec3, Vec3) { 
+pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec3, Vec3) {
     let mut sun_pos = (Vec3::zero(), Vec3::zero());
     // Obtain info to display
     let mut hud_time = String::new();

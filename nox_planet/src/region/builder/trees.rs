@@ -1,15 +1,20 @@
 use crate::{ground_z, mapidx, Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
+use legion::prelude::*;
 use nox_raws::*;
 use parking_lot::RwLock;
-use legion::prelude::*;
 
 lazy_static! {
     static ref TREE_COUNTER: RwLock<usize> = RwLock::new(1);
 }
 
-pub fn plant_trees(region: &mut Region, biome: &BiomeType, rng: &mut RandomNumberGenerator, ecs: &mut World) {
+pub fn plant_trees(
+    region: &mut Region,
+    biome: &BiomeType,
+    rng: &mut RandomNumberGenerator,
+    ecs: &mut World,
+) {
     let mut d_chance = 0;
     let mut e_chance = 0;
     for t in biome.trees.iter() {
@@ -48,7 +53,6 @@ pub fn plant_trees(region: &mut Region, biome: &BiomeType, rng: &mut RandomNumbe
                         if die_roll < d_chance {
                             //plant_deciduous(x, y, z, rng, region);
                             nox_components::spawner::spawn_tree(ecs, x, y, z)
-
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
                             if die_roll < e_chance {
@@ -72,5 +76,3 @@ fn can_see_sky(region: &Region, x: usize, y: usize, z: usize) -> bool {
     }
     true
 }
-
-

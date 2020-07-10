@@ -21,18 +21,15 @@ fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::Textur
             compatible_surface: Some(&surface),
         },
         wgpu::BackendBit::VULKAN,
-    )
-    )
+    ))
     .unwrap();
 
-    let (device, queue) = block_on(adapter
-        .request_device(&wgpu::DeviceDescriptor {
-            extensions: wgpu::Extensions {
-                anisotropic_filtering: true,
-            },
-            limits: wgpu::Limits::default(),
-        })
-    );
+    let (device, queue) = block_on(adapter.request_device(&wgpu::DeviceDescriptor {
+        extensions: wgpu::Extensions {
+            anisotropic_filtering: true,
+        },
+        limits: wgpu::Limits::default(),
+    }));
 
     let mut ctx = DEVICE_CONTEXT.write();
     *ctx = Some(nox_wgpu_utils::Context::new(
@@ -144,7 +141,8 @@ fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::Textur
                 let mouse_position = imgui.io().mouse_pos;
                 let ui = imgui.frame();
 
-                let should_continue = program.tick(&frame, depth_id, &ui, keycode, &mouse_world_pos);
+                let should_continue =
+                    program.tick(&frame, depth_id, &ui, keycode, &mouse_world_pos);
                 if !should_continue {
                     *control_flow = ControlFlow::Exit;
                 }
@@ -159,7 +157,10 @@ fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::Textur
                     let my = mouse_position[1] as u32;
                     let mouse_index = (my * context.size.width) + mx;
 
-                    let size = context.size.width as u64 * context.size.height as u64 * 4 * std::mem::size_of::<f32>() as u64;
+                    let size = context.size.width as u64
+                        * context.size.height as u64
+                        * 4
+                        * std::mem::size_of::<f32>() as u64;
                     let future = buf.map_read(0, size);
                     context.device.poll(wgpu::Maintain::Wait);
                     let mapping = futures::executor::block_on(future);
@@ -168,15 +169,17 @@ fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::Textur
                             mapping
                                 .as_slice()
                                 .align_to::<[f32; 4]>()
-                                .1.iter().skip(mouse_index as usize).take(1)
+                                .1
+                                .iter()
+                                .skip(mouse_index as usize)
+                                .take(1)
                                 .for_each(|f| {
                                     mouse_world_pos = (
                                         f32::floor(f[0]) as usize,
                                         f32::floor(f[2]) as usize,
                                         f32::floor(f[1]) as usize,
                                     );
-                                }
-                            );
+                                });
                         }
                     }
                 }

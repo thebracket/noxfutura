@@ -5,5 +5,5 @@ use crate::prelude::*;
 pub struct Dimensions {
     pub width: i32,
     pub height: i32,
-    pub depth: i32
+    pub depth: i32,
 }

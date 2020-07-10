@@ -17,5 +17,5 @@ pub struct ChunkModel {
     pub y: usize,
     pub z: usize,
     pub rotation: f32,
-    pub tint: [f32; 3]
+    pub tint: [f32; 3],
 }

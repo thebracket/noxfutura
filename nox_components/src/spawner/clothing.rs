@@ -27,7 +27,10 @@ pub fn spawn_clothing_from_raws_worn(
                 Description {
                     desc: cd.description,
                 },
-                crate::VoxelModel { index, rotation_radians: 0.0 },
+                crate::VoxelModel {
+                    index,
+                    rotation_radians: 0.0,
+                },
                 Tint { color },
             )],
         );

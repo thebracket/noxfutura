@@ -1,16 +1,16 @@
 #[derive(Copy, Clone)]
 pub struct RenderFlags {
-    pub lights_changed : bool,
-    pub models_changed : bool,
-    pub terrain_changed : bool
+    pub lights_changed: bool,
+    pub models_changed: bool,
+    pub terrain_changed: bool,
 }
 
 impl RenderFlags {
     pub fn new() -> Self {
         Self {
-            lights_changed : false,
-            models_changed : false,
-            terrain_changed : false
+            lights_changed: false,
+            models_changed: false,
+            terrain_changed: false,
         }
     }
 

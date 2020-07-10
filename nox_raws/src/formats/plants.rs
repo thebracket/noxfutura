@@ -54,7 +54,7 @@ pub struct PlantDef {
     pub min_hardiness: u8,
     pub max_hardiness: u8,
     pub soil_quality: u8,
-    pub vox: String
+    pub vox: String,
 }
 
 pub fn load_plants() -> Plants {

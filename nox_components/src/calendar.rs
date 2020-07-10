@@ -53,12 +53,12 @@ impl Calendar {
         if self.hour < 6 || self.hour > 18 {
             (
                 (0.5, 0.3, 0.2).into(), // Position
-                (0.5, 0.5, 1.0).into() // Color
+                (0.5, 0.5, 1.0).into(), // Color
             )
         } else {
             (
-                (x, y, 0.2).into(), // Position
-                (10.0, 9.0, 8.0).into() // Color
+                (x, y, 0.2).into(),      // Position
+                (10.0, 9.0, 8.0).into(), // Color
             )
         }
     }

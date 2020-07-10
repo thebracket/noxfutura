@@ -12,45 +12,42 @@ const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
 pub struct VMRender {
     position: [f32; 3],
     tint: [f32; 3],
-    rotation: f32
+    rotation: f32,
 }
 
 #[derive(Debug)]
 pub struct VMInstances {
-    instances: HashMap<usize, Vec<VMRender>>
+    instances: HashMap<usize, Vec<VMRender>>,
 }
 
 impl VMInstances {
     pub fn new() -> Self {
-        Self{
-            instances: HashMap::new()
+        Self {
+            instances: HashMap::new(),
         }
     }
 
-    fn add(&mut self, model_id : usize, position: [f32; 3], tint: [f32; 3], rotation: f32) {
+    fn add(&mut self, model_id: usize, position: [f32; 3], tint: [f32; 3], rotation: f32) {
         if let Some(vmi) = self.instances.get_mut(&model_id) {
-            vmi.push(
-                VMRender{
+            vmi.push(VMRender {
+                position,
+                tint,
+                rotation,
+            });
+        } else {
+            self.instances.insert(
+                model_id,
+                vec![VMRender {
                     position,
                     tint,
-                    rotation
-                }
-            );
-        } else {
-            self.instances.insert(model_id, 
-                vec![
-                    VMRender{
-                        position,
-                        tint,
-                        rotation
-                    }
-                ]
+                    rotation,
+                }],
             );
         }
     }
 }
 
-const LAYERS_DOWN : usize = 50;
+const LAYERS_DOWN: usize = 50;
 
 pub fn build_vox_instances2(
     ecs: &World,
@@ -75,10 +72,12 @@ pub fn build_vox_instances2(
     query
         .iter(ecs)
         .filter(|(pos, _, _, _)| {
-            pos.z > camera_z-LAYERS_DOWN && pos.z <= camera_z && frustrum.check_sphere(
-                &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
-                FRUSTRUM_CHECK_RANGE,
-            )
+            pos.z > camera_z - LAYERS_DOWN
+                && pos.z <= camera_z
+                && frustrum.check_sphere(
+                    &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
+                    FRUSTRUM_CHECK_RANGE,
+                )
         })
         .for_each(|(pos, model, dims, tint)| {
             let mut x = pos.x as f32;
@@ -93,20 +92,20 @@ pub fn build_vox_instances2(
             }
 
             instances.add(
-                model.index, 
-                [x, z, y], 
+                model.index,
+                [x, z, y],
                 [tint.color.0, tint.color.1, tint.color.2],
-                model.rotation_radians
+                model.rotation_radians,
             );
-        }
-    );
+        });
 
     // Composite builder
     let query = <(Read<Position>, Read<CompositeRender>)>::query();
     query
         .iter(ecs)
         .filter(|(pos, _)| {
-            pos.z > camera_z - LAYERS_DOWN && pos.z <= camera_z
+            pos.z > camera_z - LAYERS_DOWN
+                && pos.z <= camera_z
                 && frustrum.check_sphere(
                     &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
                     FRUSTRUM_CHECK_RANGE,
@@ -119,43 +118,36 @@ pub fn build_vox_instances2(
                 let z = pos.z as f32;
 
                 instances.add(
-                    vm.model, 
-                    [x, z, y], 
+                    vm.model,
+                    [x, z, y],
                     [vm.tint.0, vm.tint.1, vm.tint.2],
-                    composite.rotation
+                    composite.rotation,
                 );
             }
-        }
-    );
+        });
 
     // Terrain chunks builder
-    chunks.visible_chunks()
-        .iter()
-        .for_each(|c| {
-            c.chunk_models
-                .iter()
-                .filter(|m| m.z > camera_z - LAYERS_DOWN && m.z <= camera_z)
-                .for_each(|m| {
-                    instances.add(
-                        m.id, 
-                        [m.x as f32, m.z as f32, m.y as f32], 
-                        m.tint, 
-                        m.rotation
-                    );
-                }
-            );
-        }
-    );
+    chunks.visible_chunks().iter().for_each(|c| {
+        c.chunk_models
+            .iter()
+            .filter(|m| m.z > camera_z - LAYERS_DOWN && m.z <= camera_z)
+            .for_each(|m| {
+                instances.add(
+                    m.id,
+                    [m.x as f32, m.z as f32, m.y as f32],
+                    m.tint,
+                    m.rotation,
+                );
+            });
+    });
 
     // Build the instanced data
     instances.instances.iter().for_each(|i| {
-        vox_instances.push(
-            (
-                vox_models.offsets[*i.0].0,
-                vox_models.offsets[*i.0].1,
-                i.1.len() as u32
-            )
-        );
+        vox_instances.push((
+            vox_models.offsets[*i.0].0,
+            vox_models.offsets[*i.0].1,
+            i.1.len() as u32,
+        ));
         i.1.iter().for_each(|vm| {
             instance_buffer.add_slice(&vm.position);
             instance_buffer.add_slice(&vm.tint);

@@ -1,10 +1,15 @@
 use crate::{ground_z, mapidx, Region, TileType, REGION_HEIGHT, REGION_WIDTH};
 use bracket_random::prelude::RandomNumberGenerator;
-use nox_raws::*;
 use legion::prelude::*;
 use nox_components::spawner::spawn_plant;
+use nox_raws::*;
 
-pub fn grow_plants(region: &mut Region, ecs: &mut World, mean_temperature: i8, rng: &mut RandomNumberGenerator) {
+pub fn grow_plants(
+    region: &mut Region,
+    ecs: &mut World,
+    mean_temperature: i8,
+    rng: &mut RandomNumberGenerator,
+) {
     let rlock = RAWS.read();
 
     for y in 0..REGION_HEIGHT {

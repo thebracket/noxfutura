@@ -10,13 +10,13 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
             Dimensions {
                 width: dims.0 as i32,
                 height: dims.1 as i32,
-                depth: dims.2 as i32
+                depth: dims.2 as i32,
             }
         } else {
             Dimensions {
                 width: 1,
                 height: 1,
-                depth: 1
+                depth: 1,
             }
         };
 
@@ -33,7 +33,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
                 dims,
                 crate::VoxelModel {
                     index: rlock.vox.get_model_idx(&building_def.vox),
-                    rotation_radians: 0.0
+                    rotation_radians: 0.0,
                 },
                 Description {
                     desc: building_def.description.clone(),
@@ -62,7 +62,8 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
 
             if let BuildingProvides::Storage = provides {
                 //println!("Added storage capacity");
-                ecs.add_component(entity, Storage{}).expect("Unable to add storage");
+                ecs.add_component(entity, Storage {})
+                    .expect("Unable to add storage");
             }
         }
 
