@@ -17,7 +17,8 @@ pub fn build() -> Box<dyn Schedulable> {
                     i.modifier = 0;
 
                     // Apply the my turn tag
-                    t.0 = true;
+                    t.active = true;
+                    t.shift = ScheduleTime::Work;
                 }
             });
         })

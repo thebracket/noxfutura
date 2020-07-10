@@ -6,7 +6,7 @@ pub fn build() -> Box<dyn Schedulable> {
         .with_query(<Write<MyTurn>>::query())
         .build(|_, ecs, _, turn| {
             turn.iter_mut(ecs).for_each(|mut t| {
-                t.0 = false;
+                t.active = false;
             });
         })
 }

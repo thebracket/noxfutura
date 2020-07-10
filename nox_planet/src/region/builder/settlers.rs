@@ -225,7 +225,14 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             attr,
             FieldOfView::new(8),
             Initiative::new(),
-            MyTurn(false),
+            MyTurn{active: false, shift: ScheduleTime::Work},
+            WorkSchedule::new(
+                match x % 3 {
+                    0 => Shift::Day,
+                    1 => Shift::Night,
+                    _ => Shift::Morning,
+                }
+            )
         )],
     );
 

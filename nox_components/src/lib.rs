@@ -3,8 +3,6 @@ extern crate lazy_static;
 
 mod tags;
 pub use tags::*;
-mod calendar;
-pub use calendar::*;
 mod species;
 pub use species::*;
 mod spatial;
@@ -21,6 +19,8 @@ mod identity;
 pub use identity::*;
 mod field_of_view;
 pub use field_of_view::*;
+mod temporal;
+pub use temporal::*;
 
 pub mod spawner;
 
@@ -65,6 +65,7 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         ComponentRegistration::of::<Initiative>(),
         ComponentRegistration::of::<MyTurn>(),
         ComponentRegistration::of::<Storage>(),
+        ComponentRegistration::of::<WorkSchedule>(),
     ];
     let tag_registrations = vec![
         TagRegistration::of::<Cordex>(),
