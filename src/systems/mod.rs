@@ -4,6 +4,8 @@ mod initiative;
 mod shared_state;
 mod viewshed;
 pub use shared_state::*;
+mod ui;
+pub use ui::*;
 
 use legion::prelude::*;
 

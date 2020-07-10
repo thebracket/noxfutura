@@ -13,6 +13,7 @@ use planetgen2::PlanetGen2;
 mod playgame;
 use playgame::{LoadState, PlayGame, LOAD_STATE};
 use std::time::Instant;
+pub use playgame::RunState;
 
 pub enum ProgramMode {
     Loader,
