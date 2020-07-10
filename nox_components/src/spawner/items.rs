@@ -26,6 +26,7 @@ pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: u
                 Dimensions {
                     width: 1,
                     height: 1,
+                    depth: 1
                 },
             )],
         );
@@ -59,6 +60,7 @@ pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) {
                 Dimensions {
                     width: 1,
                     height: 1,
+                    depth: 1
                 },
             )],
         );
@@ -91,6 +93,7 @@ pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) {
                 Dimensions {
                     width: 1,
                     height: 1,
+                    depth: 1
                 },
             )],
         );

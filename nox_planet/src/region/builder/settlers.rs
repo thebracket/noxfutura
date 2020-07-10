@@ -210,6 +210,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             Dimensions {
                 width: 1,
                 height: 1,
+                depth: 1
             },
             Position { x, y, z },
             species,

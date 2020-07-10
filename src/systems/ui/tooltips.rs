@@ -3,13 +3,15 @@ use legion::prelude::*;
 use imgui::*;
 
 fn point_in_model(pos: &Position, dims: &Dimensions, point: &(usize, usize, usize)) -> bool {
-    if dims.width == 1 && dims.height == 1 {
+    if dims.width == 1 && dims.height == 1 && dims.depth == 1 {
         point.0 == pos.x && point.1 == pos.y && point.2 == pos.z
     } else if dims.width == 3 && dims.height == 3 {
         for x in pos.x - 1 .. pos.x + dims.width as usize - 1 {
             for y in pos.y - 1 .. pos.y + dims.height as usize - 1 {
-                if point.0 == x && point.1 == y && point.2 == pos.z {
-                    return true;
+                for z in pos.z .. pos.z + dims.depth as usize {
+                    if point.0 == x && point.1 == y && point.2 == z {
+                        return true;
+                    }
                 }
             }
         }
@@ -17,8 +19,10 @@ fn point_in_model(pos: &Position, dims: &Dimensions, point: &(usize, usize, usiz
     } else {
         for x in pos.x .. pos.x + dims.width as usize {
             for y in pos.y .. pos.y + dims.height as usize {
-                if point.0 == x && point.1 == y && point.2 == pos.z {
-                    return true;
+                for z in pos.z .. pos.z + dims.depth as usize {
+                    if point.0 == x && point.1 == y && point.2 == z {
+                        return true;
+                    }
                 }
             }
         }

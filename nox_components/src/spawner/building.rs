@@ -10,11 +10,13 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
             Dimensions {
                 width: dims.0 as i32,
                 height: dims.1 as i32,
+                depth: dims.2 as i32
             }
         } else {
             Dimensions {
                 width: 1,
                 height: 1,
+                depth: 1
             }
         };
 
