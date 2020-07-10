@@ -193,7 +193,7 @@ impl PlayGame {
         if let RunState::Design{mode} = self.run_state {
             match mode {
                 DesignMode::Lumberjack => {
-                    lumberjack_display(imgui);
+                    lumberjack_display(imgui, &self.ecs, mouse_world_pos);
                 }
             }
         }

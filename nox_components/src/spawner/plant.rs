@@ -38,7 +38,7 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
 pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize) {
     let rlock = RAWS.read();
     ecs.insert(
-        (Vegetation {},),
+        (Tree {},),
         vec![(
             Identity::new(),
             Name {

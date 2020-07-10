@@ -2,7 +2,7 @@ use imgui::*;
 use legion::prelude::*;
 use nox_components::*;
 
-fn point_in_model(pos: &Position, dims: &Dimensions, point: &(usize, usize, usize)) -> bool {
+pub fn point_in_model(pos: &Position, dims: &Dimensions, point: &(usize, usize, usize)) -> bool {
     if dims.width == 1 && dims.height == 1 && dims.depth == 1 {
         point.0 == pos.x && point.1 == pos.y && point.2 == pos.z
     } else if dims.width == 3 && dims.height == 3 {
