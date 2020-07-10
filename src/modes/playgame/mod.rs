@@ -185,10 +185,18 @@ impl PlayGame {
         imgui: &Ui,
         mouse_world_pos: &(usize, usize, usize),
     ) -> (Vec3, Vec3) {
-        use crate::systems::{draw_main_menu, draw_tooltips, fps_display};
+        use crate::systems::{draw_main_menu, draw_tooltips, fps_display, lumberjack_display};
         let sun_pos = draw_main_menu(&self.ecs, &mut self.run_state, imgui);
         fps_display(imgui, frame_time);
         draw_tooltips(&self.ecs, mouse_world_pos, imgui);
+
+        if let RunState::Design{mode} = self.run_state {
+            match mode {
+                DesignMode::Lumberjack => {
+                    lumberjack_display(imgui);
+                }
+            }
+        }
 
         sun_pos
     }

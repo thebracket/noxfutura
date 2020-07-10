@@ -1,6 +1,7 @@
 use imgui::*;
 
 pub fn fps_display(imgui: &Ui, frame_time: u128) {
+    let sz = crate::engine::DEVICE_CONTEXT.read().as_ref().unwrap().size;
     let title = format!(
         "Playing. Frame time: {} ms. FPS: {}. ### FPS",
         frame_time,
@@ -12,6 +13,6 @@ pub fn fps_display(imgui: &Ui, frame_time: u128) {
         .collapsed(true, Condition::FirstUseEver)
         .size([300.0, 100.0], Condition::FirstUseEver)
         .movable(true)
-        .position([0.0, 20.0], Condition::FirstUseEver)
+        .position([0.0, sz.height as f32 - 20.0], Condition::FirstUseEver)
         .build(imgui, || {});
 }
