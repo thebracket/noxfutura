@@ -233,6 +233,10 @@ impl PlayGame {
                             self.run_state = RunState::OneStep;
                             camera_changed = false;
                         }
+                        VirtualKeyCode::T => {
+                            self.run_state = RunState::Design{mode: DesignMode::Lumberjack };
+                            camera_changed = false;
+                        }
                         VirtualKeyCode::Left => pos.x -= 1,
                         VirtualKeyCode::Right => pos.x += 1,
                         VirtualKeyCode::Up => pos.y -= 1,
