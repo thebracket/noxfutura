@@ -9,5 +9,5 @@ layout(set = 1, binding = 1) uniform sampler s_cursor;
 
 void main() {
     vec3 color = texture(sampler2D(t_cursor, s_cursor), v_tex_coords).rgb;
-    f_color = vec4(color, 0.1);
+    f_color = vec4(color, 0.3);
 }
