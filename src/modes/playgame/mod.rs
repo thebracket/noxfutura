@@ -18,7 +18,7 @@ use ultraviolet::Vec3;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum DesignMode {
-    Lumberjack
+    Lumberjack,
 }
 
 #[derive(PartialEq, Copy, Clone)]
@@ -27,7 +27,7 @@ pub enum RunState {
     OneStep,
     Running,
     FullSpeed,
-    Design{ mode: DesignMode }
+    Design { mode: DesignMode },
 }
 
 pub struct PlayGame {
@@ -190,7 +190,7 @@ impl PlayGame {
         fps_display(imgui, frame_time);
         draw_tooltips(&self.ecs, mouse_world_pos, imgui);
 
-        if let RunState::Design{mode} = self.run_state {
+        if let RunState::Design { mode } = self.run_state {
             match mode {
                 DesignMode::Lumberjack => {
                     lumberjack_display(imgui, &self.ecs, mouse_world_pos);

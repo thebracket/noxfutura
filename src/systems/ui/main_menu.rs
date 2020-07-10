@@ -1,4 +1,4 @@
-use crate::modes::{RunState, DesignMode};
+use crate::modes::{DesignMode, RunState};
 use imgui::*;
 use legion::prelude::*;
 use nox_components::*;
@@ -58,7 +58,9 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec
                 .shortcut(im_str!("T"))
                 .build(imgui)
             {
-                *run_state = RunState::Design{mode: DesignMode::Lumberjack};
+                *run_state = RunState::Design {
+                    mode: DesignMode::Lumberjack,
+                };
             }
             menu.end(imgui);
         }

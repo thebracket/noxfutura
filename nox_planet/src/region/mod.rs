@@ -16,7 +16,7 @@ pub struct Region {
     pub revealed: Vec<bool>,
     pub water_level: Vec<u8>,
     flags: Vec<u8>,
-    pub designated_trees: HashSet<usize>
+    pub designated_trees: HashSet<usize>,
 }
 
 impl Region {
@@ -30,7 +30,7 @@ impl Region {
             revealed: vec![false; REGION_TILES_COUNT],
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u8; REGION_TILES_COUNT],
-            designated_trees: HashSet::new()
+            designated_trees: HashSet::new(),
         }
     }
 
@@ -44,7 +44,7 @@ impl Region {
             revealed: vec![false; REGION_TILES_COUNT],
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u8; REGION_TILES_COUNT],
-            designated_trees: HashSet::new()
+            designated_trees: HashSet::new(),
         }
     }
 
