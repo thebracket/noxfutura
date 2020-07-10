@@ -44,7 +44,7 @@ impl GBuffer {
 
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
-        let size = context.size.width as u64 * context.size.height as u64 * 4 * std::mem::size_of::<f32>() as u64;
+        //let size = context.size.width as u64 * context.size.height as u64 * 4 * std::mem::size_of::<f32>() as u64;
 
         let command_buffer = {
             let mut encoder = context.device.create_command_encoder(&wgpu::CommandEncoderDescriptor{ label: None});
