@@ -2,12 +2,38 @@ use nox_components::*;
 use legion::prelude::*;
 use imgui::*;
 
+fn point_in_model(pos: &Position, dims: &Dimensions, point: &(usize, usize, usize)) -> bool {
+    if dims.width == 1 && dims.height == 1 {
+        point.0 == pos.x && point.1 == pos.y && point.2 == pos.z
+    } else if dims.width == 3 && dims.height == 3 {
+        for x in pos.x - 1 .. pos.x + dims.width as usize - 1 {
+            for y in pos.y - 1 .. pos.y + dims.height as usize - 1 {
+                if point.0 == x && point.1 == y && point.2 == pos.z {
+                    return true;
+                }
+            }
+        }
+        false
+    } else {
+        for x in pos.x .. pos.x + dims.width as usize {
+            for y in pos.y .. pos.y + dims.height as usize {
+                if point.0 == x && point.1 == y && point.2 == pos.z {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+}
+
 pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui: &Ui) {
     let mut toolstring = String::new();
-        <(Read<Name>, Read<Position>, Read<Identity>)>::query()
+        <(Read<Name>, Read<Position>, Read<Identity>, Read<Dimensions>)>::query()
             .iter_entities(&ecs)
-            .filter(| (_, (_, pos, _))| pos.x == mouse_world_pos.0 && pos.y == mouse_world_pos.1 && pos.z == mouse_world_pos.2 )
-            .for_each(|(entity, (name, _, identity))| {
+            .filter(| (_, (_, pos, _, dims))| {
+                point_in_model(pos, dims, mouse_world_pos)
+            })
+            .for_each(|(entity, (name, _, identity, _))| {
                 toolstring += &format!("{} #{}\n", name.name, identity.id);
 
                 <Read<Description>>::query()
