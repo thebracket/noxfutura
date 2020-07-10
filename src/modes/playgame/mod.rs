@@ -17,11 +17,17 @@ pub use render_passes::*;
 use ultraviolet::Vec3;
 
 #[derive(PartialEq, Copy, Clone)]
+pub enum DesignMode {
+    Lumberjack
+}
+
+#[derive(PartialEq, Copy, Clone)]
 pub enum RunState {
     Paused,
     OneStep,
     Running,
     FullSpeed,
+    Design{ mode: DesignMode }
 }
 
 pub struct PlayGame {
@@ -313,12 +319,6 @@ impl PlayGame {
 
     fn run_systems(&mut self, frame_time: u128) {
         match self.run_state {
-            RunState::Paused => {
-                self.paused_scheduler
-                    .as_mut()
-                    .unwrap()
-                    .execute(&mut self.ecs, &mut self.ecs_resources);
-            }
             RunState::FullSpeed => {
                 self.scheduler
                     .as_mut()
@@ -334,6 +334,12 @@ impl PlayGame {
                         .unwrap()
                         .execute(&mut self.ecs, &mut self.ecs_resources);
                 }
+            }
+            _ => {
+                self.paused_scheduler
+                    .as_mut()
+                    .unwrap()
+                    .execute(&mut self.ecs, &mut self.ecs_resources);
             }
         }
     }

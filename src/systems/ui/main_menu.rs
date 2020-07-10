@@ -1,4 +1,4 @@
-use crate::modes::RunState;
+use crate::modes::{RunState, DesignMode};
 use imgui::*;
 use legion::prelude::*;
 use nox_components::*;
@@ -16,10 +16,10 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec
     }
 
     let running_str = match run_state {
-        RunState::Paused => im_str!("\u{f017} Paused ### RunMenu"),
         RunState::OneStep => im_str!("\u{f051} Single-Step ### RunMenu"),
         RunState::Running => im_str!("\u{f144} Running ### RunMenu"),
         RunState::FullSpeed => im_str!("\u{f04e} Max Speed ### RunMenu"),
+        _ => im_str!("\u{f017} Paused ### RunMenu"),
     };
 
     if let Some(menu_bar) = imgui.begin_main_menu_bar() {
@@ -49,6 +49,16 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec
                 .build(imgui)
             {
                 *run_state = RunState::FullSpeed;
+            }
+            menu.end(imgui);
+        }
+
+        if let Some(menu) = imgui.begin_menu(im_str!("\u{f1b3} Design"), true) {
+            if MenuItem::new(im_str!("\u{f1bb} Lumberjack"))
+                .shortcut(im_str!("T"))
+                .build(imgui)
+            {
+                *run_state = RunState::Design{mode: DesignMode::Lumberjack};
             }
             menu.end(imgui);
         }
