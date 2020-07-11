@@ -162,7 +162,7 @@ impl CursorPass {
             <(Read<Position>, Read<Identity>)>::query()
                 .filter(tag::<Tree>())
                 .iter(ecs)
-                .filter(|(_, id)| rlock.designated_trees.contains(&id.id))
+                .filter(|(_, id)| rlock.jobs_board.get_trees().contains(&id.id))
                 .for_each(|(pos, _)| {
                     add_cube_geometry(
                         &mut self.vb.data,

@@ -4,7 +4,8 @@ mod tiletype;
 pub use tiletype::*;
 mod builder;
 pub use builder::*;
-use std::collections::HashSet;
+mod jobs;
+use jobs::JobsBoard;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Region {
@@ -16,7 +17,7 @@ pub struct Region {
     pub revealed: Vec<bool>,
     pub water_level: Vec<u8>,
     flags: Vec<u16>,
-    pub designated_trees: HashSet<usize>,
+    pub jobs_board : JobsBoard
 }
 
 impl Region {
@@ -30,7 +31,7 @@ impl Region {
             revealed: vec![false; REGION_TILES_COUNT],
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
-            designated_trees: HashSet::new(),
+            jobs_board: JobsBoard::new()
         }
     }
 
@@ -44,7 +45,7 @@ impl Region {
             revealed: vec![false; REGION_TILES_COUNT],
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
-            designated_trees: HashSet::new(),
+            jobs_board: JobsBoard::new()
         }
     }
 
