@@ -57,8 +57,7 @@ impl Region {
     }
 
     pub fn clear_flag(&mut self, idx: usize, flag: u16) {
-        // TODO
-        //self.flags[idx] = self.flags[idx] & !flag;
+        self.flags[idx] = self.flags[idx] & !flag;
     }
 
     pub fn reset_all_flags(&mut self) {
