@@ -5,6 +5,8 @@ mod settler_scheduler;
 mod shared_state;
 mod viewshed;
 mod leisure_shift;
+mod work_shift;
+mod sleep_shift;
 mod move_randomly;
 pub use shared_state::*;
 mod ui;
@@ -21,6 +23,8 @@ pub fn build_scheduler() -> Schedule {
         .add_system(settler_scheduler::build())
         .flush()
         .add_system(leisure_shift::build())
+        .add_system(work_shift::build())
+        .add_system(sleep_shift::build())
         .flush()
         .add_system(move_randomly::build())
         .flush()
