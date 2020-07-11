@@ -56,6 +56,15 @@ impl Region {
         self.flags[idx] = self.flags[idx] | flag;
     }
 
+    pub fn clear_flag(&mut self, idx: usize, flag: u16) {
+        // TODO
+        //self.flags[idx] = self.flags[idx] & !flag;
+    }
+
+    pub fn reset_all_flags(&mut self) {
+        self.flags.iter_mut().for_each(|f| *f = 0);
+    }
+
     // Flags
     pub const SOLID: u16 = 1;
     pub const OUTSIDE: u16 = 2;
@@ -66,4 +75,5 @@ impl Region {
     pub const CAN_GO_WEST: u16 = 64;
     pub const CAN_GO_UP: u16 = 128;
     pub const CAN_GO_DOWN: u16 = 256;
+    pub const CAN_STAND_HERE: u16 = 512;
 }

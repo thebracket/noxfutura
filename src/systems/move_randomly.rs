@@ -41,12 +41,14 @@ pub fn build() -> Box<dyn Schedulable> {
                     },
 
                     5 => if REGION.read().flag(idx, Region::CAN_GO_UP) {
+                        println!("UP");
                         Position{ x: original_position.x, y: original_position.y, z:original_position.z - 1 }
                     } else {
                         original_position
                     },
 
                     _ => if REGION.read().flag(idx, Region::CAN_GO_DOWN) {
+                        println!("DOWN");
                         Position{ x: original_position.x, y: original_position.y, z:original_position.z + 1 }
                     } else {
                         original_position

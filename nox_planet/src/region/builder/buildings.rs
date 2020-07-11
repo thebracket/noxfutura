@@ -29,7 +29,7 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World
                         match glyph.ch {
                             219 => add_construction(region, mx, my, mz, "ship_wall", true, ecs),
                             87 => add_construction(region, mx, my, mz, "ship_window", true, ecs),
-                            176 => add_construction(region, mx, my, mz, "ship_floor", true, ecs),
+                            176 => add_construction(region, mx, my, mz, "ship_floor", false, ecs),
                             88 => add_construction(region, mx, my, mz, "ship_updown", false, ecs),
                             60 => add_construction(region, mx, my, mz, "ship_up", false, ecs),
                             62 => add_construction(region, mx, my, mz, "ship_down", false, ecs),
