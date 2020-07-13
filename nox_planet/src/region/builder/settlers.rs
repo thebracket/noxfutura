@@ -185,7 +185,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
             _ => &profession_def.clothing.female,
         },
     };
-    use nox_components::spawner::spawn_clothing_from_raws_worn;
+    use crate::spawner::spawn_clothing_from_raws_worn;
 
     for c in clothing_list.iter() {
         let spawned = spawn_clothing_from_raws_worn(ecs, &c.tag, settler_id, rng);

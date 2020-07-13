@@ -1,7 +1,7 @@
 use crate::{ground_z, mapidx, Region, TileType, REGION_HEIGHT, REGION_WIDTH};
 use bracket_random::prelude::RandomNumberGenerator;
 use legion::prelude::*;
-use nox_components::spawner::spawn_plant;
+use crate::spawner::spawn_plant;
 use nox_raws::*;
 
 pub fn grow_plants(

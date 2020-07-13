@@ -52,7 +52,7 @@ pub fn plant_trees(
                         let mut die_roll = rng.roll_dice(1, 1000);
                         if die_roll < d_chance {
                             //plant_deciduous(x, y, z, rng, region);
-                            nox_components::spawner::spawn_tree(ecs, x, y, z)
+                            crate::spawner::spawn_tree(ecs, x, y, z)
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
                             if die_roll < e_chance {

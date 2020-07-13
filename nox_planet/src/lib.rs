@@ -28,6 +28,8 @@ mod planet_render;
 pub use planet_render::*;
 mod rex;
 pub use rex::*;
+mod spawner;
+pub use spawner::*;
 
 pub const WORLD_HEIGHT: usize = 90;
 pub const WORLD_WIDTH: usize = 180;
