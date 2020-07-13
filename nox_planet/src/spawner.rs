@@ -28,6 +28,7 @@ fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Opti
                 );
             }
 
+            println!("Adding tool to list. {:?}", tool.usage);
             region.jobs_board.add_tool(item_id, claimed, tool.usage, effective_location);
         }
     );
@@ -53,6 +54,7 @@ pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: u
 }
 
 pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize, region: &mut Region) {
+    println!("Container spawn");
     if let Some(id) = nox_components::spawner::spawn_item_in_container(ecs, tag, container) {
         add_tool_info(ecs, id, region, None);
     }

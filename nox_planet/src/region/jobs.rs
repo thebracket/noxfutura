@@ -80,10 +80,12 @@ impl JobsBoard {
     }
 
     pub fn find_and_claim_tool(&mut self, tool_type: ToolType, user_id: usize) -> Option<usize> {
+        println!("There are {} tools", self.tool_ownership.len());
         let maybe_target_tool = self.tool_ownership.iter()
             .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == tool_type)
             .map(|(id, tool)| (*id, tool.effective_location) )
             .nth(0);
+        println!("Claim state: {:?}", maybe_target_tool);
 
         if let Some((id, effective_location)) = maybe_target_tool {
             self.tool_ownership.get_mut(&id).as_mut().unwrap().claimed = Some(user_id);

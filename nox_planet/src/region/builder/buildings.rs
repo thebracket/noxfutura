@@ -129,12 +129,12 @@ fn add_construction(
         }
         "storage_locker" => {
             let storage_id = add_building(region, "storage_locker", x, y, z, ecs);
-            spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id);
-            spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id);
-            spawner::spawn_item_in_container(ecs, "camp_fire_kit", storage_id);
-            spawner::spawn_item_in_container(ecs, "fire_axe", storage_id);
-            spawner::spawn_item_in_container(ecs, "pickaxe", storage_id);
-            spawner::spawn_item_in_container(ecs, "hoe", storage_id);
+            crate::spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id, region);
+            crate::spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id, region);
+            crate::spawner::spawn_item_in_container(ecs, "camp_fire_kit", storage_id, region);
+            crate::spawner::spawn_item_in_container(ecs, "fire_axe", storage_id, region);
+            crate::spawner::spawn_item_in_container(ecs, "pickaxe", storage_id, region);
+            crate::spawner::spawn_item_in_container(ecs, "hoe", storage_id, region);
         }
         "cordex" => {
             add_building(region, "cordex", x, y, z, ecs);
@@ -168,5 +168,5 @@ fn add_building(
     z: usize,
     ecs: &mut World,
 ) -> usize {
-    spawner::spawn_building(ecs, tag, x, y, z)
+    crate::spawner::spawn_building(ecs, tag, x, y, z)
 }
