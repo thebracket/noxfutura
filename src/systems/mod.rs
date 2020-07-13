@@ -8,6 +8,7 @@ mod leisure_shift;
 mod work_shift;
 mod sleep_shift;
 mod move_randomly;
+mod lumberjack;
 pub use shared_state::*;
 mod ui;
 pub use ui::*;
@@ -26,6 +27,7 @@ pub fn build_scheduler() -> Schedule {
         .add_system(work_shift::build())
         .add_system(sleep_shift::build())
         .flush()
+        .add_system(lumberjack::build())
         .add_system(move_randomly::build())
         .flush()
         .add_system(endturn::build())
