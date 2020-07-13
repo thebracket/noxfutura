@@ -144,6 +144,7 @@ impl PlayGame {
 
         messaging::reset();
         self.run_systems(frame_time);
+        crate::messaging::apply_jobs_queue(&mut self.ecs);
         let rf = messaging::get_render_flags();
         if rf.lights_changed {
             self.lights_changed = true;

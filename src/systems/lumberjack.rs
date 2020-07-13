@@ -2,11 +2,11 @@ use legion::prelude::*;
 use nox_components::*;
 use crate::systems::REGION;
 use bracket_pathfinding::prelude::a_star_search;
-use nox_planet::{mapidx, idxmap};
+use nox_planet::mapidx;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("lumberjack")
-        .with_query(<(Write<MyTurn>, Write<Position>, Read<Identity>)>::query())
+        .with_query(<(Read<MyTurn>, Read<Position>, Read<Identity>)>::query())
         .build(|_, ecs, _, actors| {
             // Look for a job to do
             actors
@@ -19,10 +19,8 @@ pub fn build() -> Box<dyn Schedulable> {
                         _ => false
                     }
                 })
-                .for_each(|(mut turn, mut pos, id)| {
-                    turn.order = WorkOrder::None;
-
-                    if let JobType::FellTree{ tree_id, tree_pos, step } = &mut turn.job {
+                .for_each(|(turn, pos, id)| {
+                    if let JobType::FellTree{ tree_id, tree_pos, step } = &turn.job {
                         match step {
                             LumberjackSteps::FindAxe => {
                                 let mut rlock = REGION.write();
@@ -35,30 +33,34 @@ pub fn build() -> Box<dyn Schedulable> {
                                     );
                                     if !path.success {
                                         println!("No path to tool available - abandoning lumberjacking");
-                                        rlock.jobs_board.restore_job(&turn.job);
-                                        turn.job = JobType::None;
+                                        crate::messaging::cancel_job(id.id);
                                     } else {
-                                        *step = LumberjackSteps::TravelToAxe{ path: path.steps  };
+                                        crate::messaging::job_changed(id.id, 
+                                            JobType::FellTree{
+                                                tree_id: *tree_id,
+                                                tree_pos: *tree_pos,
+                                                step: LumberjackSteps::TravelToAxe{ path: path.steps  }
+                                            }
+                                        );
                                     }
                                 } else {
                                     println!("No tool available - abandoning lumberjacking");
-                                    rlock.jobs_board.restore_job(&turn.job);
-                                    turn.job = JobType::None;
+                                    crate::messaging::cancel_job(id.id);
                                 }
 
                             }
                             LumberjackSteps::TravelToAxe{path} => {
                                 if path.len() > 1 {
-                                    let next_pos = path[0];
-                                    let (nx, ny, nz) = idxmap(next_pos);
-                                    path.remove(0);
-                                    pos.x = nx;
-                                    pos.y = ny;
-                                    pos.z = nz;
-                                    crate::messaging::vox_moved();
+                                    crate::messaging::follow_job_path(id.id);
                                 } else {
                                     println!("We're adjacent to the target item now. Pretending we picked it up");
-                                    *step = LumberjackSteps::FindTree{  };
+                                    crate::messaging::job_changed(id.id, 
+                                        JobType::FellTree{
+                                            tree_id: *tree_id,
+                                            tree_pos: *tree_pos,
+                                            step: LumberjackSteps::FindTree{  }
+                                        }
+                                    );
                                 }
                             }
                             LumberjackSteps::FindTree{} => {
@@ -70,35 +72,35 @@ pub fn build() -> Box<dyn Schedulable> {
                                     &*rlock
                                 );
                                 if path.success {
-                                    *step = LumberjackSteps::TravelToTree{ path: path.steps }
+                                    crate::messaging::job_changed(id.id,
+                                        JobType::FellTree{
+                                            tree_id: *tree_id,
+                                            tree_pos: *tree_pos,
+                                            step: LumberjackSteps::TravelToTree{ path: path.steps }
+                                        }
+                                    );
                                 } else {
                                     println!("No path to tree available - abandoning lumberjacking");
-                                    let mut rlock = REGION.write();
-                                    // TODO: Drop the tool
-                                    rlock.jobs_board.restore_job(&turn.job);
-                                    turn.job = JobType::None;
+                                    crate::messaging::cancel_job(id.id);
                                 }
                             }
                             LumberjackSteps::TravelToTree{path} => {
                                 if path.len() > 1 {
-                                    let next_pos = path[0];
-                                    let (nx, ny, nz) = idxmap(next_pos);
-                                    path.remove(0);
-                                    pos.x = nx;
-                                    pos.y = ny;
-                                    pos.z = nz;
-                                    crate::messaging::vox_moved();
+                                    crate::messaging::follow_job_path(id.id);
                                 } else {
                                     println!("We're adjacent to the target item now. Pretending we did something");
-                                    *step = LumberjackSteps::ChopTree{  };
+                                    crate::messaging::job_changed(id.id,
+                                        JobType::FellTree{
+                                            tree_id: *tree_id,
+                                            tree_pos: *tree_pos,
+                                            step: LumberjackSteps::ChopTree{  }
+                                        }
+                                    );
                                 }
                             }
                             LumberjackSteps::ChopTree{} => {
                                 println!("Done with chopping.");
-                                    let mut rlock = REGION.write();
-                                    // TODO: Drop the tool
-                                    rlock.jobs_board.restore_job(&turn.job);
-                                    turn.job = JobType::None;
+                                crate::messaging::conclude_job(id.id);
                             }
                             _ => println!("Warning - LumberJack fell through with no steps.")
                         }

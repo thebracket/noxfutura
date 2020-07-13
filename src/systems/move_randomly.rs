@@ -6,11 +6,11 @@ use nox_planet::{Region, mapidx};
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("move_randomly")
-        .with_query(<(Write<Position>, Read<MyTurn>)>::query())
+        .with_query(<(Write<Position>, Read<MyTurn>, Read<Identity>)>::query())
         .build(|_, ecs, _, actors| {
             actors.iter_mut(ecs)
-            .filter(|(_, turn)| turn.active && turn.order == WorkOrder::MoveRandomly)
-            .for_each(|(mut pos, _)| {
+            .filter(|(_, turn, _)| turn.active && turn.order == WorkOrder::MoveRandomly)
+            .for_each(|(pos, _, id)| {
                 let original_position = pos.clone();
                 let roll = RNG.lock().range(1, 6);
                 let idx = mapidx(pos.x, pos.y, pos.z);
@@ -55,10 +55,7 @@ pub fn build() -> Box<dyn Schedulable> {
                     }
                 };
 
-                /*pos.x = destination.x;
-                pos.y = destination.y;
-                pos.z = destination.z;*/ // Renable me
-                crate::messaging::vox_moved();
+                crate::messaging::entity_moved(id.id, &destination);
             });
         }
     )
