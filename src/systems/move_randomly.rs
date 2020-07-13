@@ -55,9 +55,9 @@ pub fn build() -> Box<dyn Schedulable> {
                     }
                 };
 
-                pos.x = destination.x;
+                /*pos.x = destination.x;
                 pos.y = destination.y;
-                pos.z = destination.z;
+                pos.z = destination.z;*/ // Renable me
                 crate::messaging::vox_moved();
             });
         }

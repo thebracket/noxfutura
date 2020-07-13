@@ -6,6 +6,9 @@ mod builder;
 pub use builder::*;
 mod jobs;
 use jobs::JobsBoard;
+use bracket_algorithm_traits::prelude::*;
+use bracket_geometry::prelude::*;
+use crate::{idxmap};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Region {
@@ -76,4 +79,27 @@ impl Region {
     pub const CAN_GO_UP: u16 = 128;
     pub const CAN_GO_DOWN: u16 = 256;
     pub const CAN_STAND_HERE: u16 = 512;
+}
+
+impl BaseMap for Region {
+    fn get_available_exits(&self, idx: usize) -> SmallVec<[(usize, f32); 10]> {
+        let mut exits = SmallVec::<[(usize, f32); 10]>::new();
+
+        if self.flag(idx, Region::CAN_GO_NORTH) { exits.push((idx - REGION_WIDTH, 1.0)) }
+        if self.flag(idx, Region::CAN_GO_SOUTH) { exits.push((idx + REGION_WIDTH, 1.0)) }
+        if self.flag(idx, Region::CAN_GO_WEST) { exits.push((idx - 1, 1.0)) }
+        if self.flag(idx, Region::CAN_GO_EAST) { exits.push((idx + 1, 1.0)) }
+        if self.flag(idx, Region::CAN_GO_UP) { exits.push((idx + (REGION_WIDTH * REGION_HEIGHT), 1.0)) }
+        if self.flag(idx, Region::CAN_GO_DOWN) { exits.push((idx - (REGION_WIDTH * REGION_HEIGHT), 1.0)) }
+
+        exits
+    }
+
+    fn get_pathing_distance(&self, idx1: usize, idx2: usize) -> f32 {
+        let (sx,sy,sz) = idxmap(idx1);
+        let (ex, ey, ez) = idxmap(idx2);
+        let pt1 = Point3::new(sx as i32, sy as i32, sz as i32);
+        let pt2 = Point3::new(ex as i32, ey as i32, ez as i32);
+        DistanceAlg::Pythagoras.distance3d(pt1, pt2)
+    }
 }

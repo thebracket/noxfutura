@@ -169,6 +169,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "bracket-algorithm-traits"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bec021d386ba4c891ee752738869465aa679b5902c6bcc93ca55532d9a33ab73"
+dependencies = [
+ "bracket-geometry",
+ "smallvec",
+]
+
+[[package]]
 name = "bracket-color"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -195,6 +205,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f6b1235bcf925e1ed541da32902abe9ea2313ed388cd6b39038d5bb4b39f611f"
 dependencies = [
  "bracket-random",
+]
+
+[[package]]
+name = "bracket-pathfinding"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cbd1eeaabc58017f4708c451924db6140fd148ab64f4cb6d433fb0c193cd6733"
+dependencies = [
+ "bracket-algorithm-traits",
+ "bracket-geometry",
+ "smallvec",
 ]
 
 [[package]]
@@ -1349,6 +1370,7 @@ name = "nox_planet"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "bracket-algorithm-traits",
  "bracket-color",
  "bracket-geometry",
  "bracket-noise",
@@ -1398,9 +1420,11 @@ name = "noxfutura"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "bracket-algorithm-traits",
  "bracket-color",
  "bracket-geometry",
  "bracket-noise",
+ "bracket-pathfinding",
  "bracket-random",
  "bytemuck",
  "byteorder",
