@@ -1,6 +1,6 @@
 use super::renderflags::RenderFlags;
 use parking_lot::Mutex;
-use super::JobStep;
+use super::{JobStep, WorldChange};
 
 lazy_static! {
     pub static ref RENDER_FLAGS: Mutex<RenderFlags> = Mutex::new(RenderFlags::new());
@@ -8,4 +8,8 @@ lazy_static! {
 
 lazy_static! {
     pub static ref JOBS_QUEUE: Mutex<Vec<JobStep>> = Mutex::new(Vec::new());
+}
+
+lazy_static! {
+    pub static ref WORLD_QUEUE: Mutex<Vec<WorldChange>> = Mutex::new(Vec::new());
 }

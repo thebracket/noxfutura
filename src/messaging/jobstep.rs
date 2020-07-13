@@ -57,7 +57,7 @@ pub fn apply_jobs_queue(ecs: &mut World) {
                         match &mut turn.job {
                             JobType::FellTree{ step, .. } => {
                                 let path = match step {
-                                    LumberjackSteps::TravelToAxe{path} => Some(path),
+                                    LumberjackSteps::TravelToAxe{path, ..} => Some(path),
                                     LumberjackSteps::TravelToTree{path} => Some(path),
                                     _ => { None }
                                 };

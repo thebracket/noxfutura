@@ -25,7 +25,7 @@ pub fn build() -> Box<dyn Schedulable> {
                             LumberjackSteps::FindAxe => {
                                 let mut rlock = REGION.write();
                                 let maybe_tool_pos = rlock.jobs_board.find_and_claim_tool(ToolType::Chopping, id.id);
-                                if let Some(tool_pos) = maybe_tool_pos {
+                                if let Some((tool_id, tool_pos)) = maybe_tool_pos {
                                     let path = a_star_search(
                                         mapidx(pos.x, pos.y, pos.z), 
                                         tool_pos, 
@@ -39,7 +39,7 @@ pub fn build() -> Box<dyn Schedulable> {
                                             JobType::FellTree{
                                                 tree_id: *tree_id,
                                                 tree_pos: *tree_pos,
-                                                step: LumberjackSteps::TravelToAxe{ path: path.steps  }
+                                                step: LumberjackSteps::TravelToAxe{ path: path.steps, tool_id  }
                                             }
                                         );
                                     }
@@ -49,7 +49,7 @@ pub fn build() -> Box<dyn Schedulable> {
                                 }
 
                             }
-                            LumberjackSteps::TravelToAxe{path} => {
+                            LumberjackSteps::TravelToAxe{path, tool_id} => {
                                 if path.len() > 1 {
                                     crate::messaging::follow_job_path(id.id);
                                 } else {
@@ -58,10 +58,20 @@ pub fn build() -> Box<dyn Schedulable> {
                                         JobType::FellTree{
                                             tree_id: *tree_id,
                                             tree_pos: *tree_pos,
-                                            step: LumberjackSteps::FindTree{  }
+                                            step: LumberjackSteps::CollectAxe{ tool_id: *tool_id  }
                                         }
                                     );
                                 }
+                            }
+                            LumberjackSteps::CollectAxe{ tool_id } => {
+                                crate::messaging::equip_tool(id.id, *tool_id);
+                                crate::messaging::job_changed(id.id, 
+                                    JobType::FellTree{
+                                        tree_id: *tree_id,
+                                        tree_pos: *tree_pos,
+                                        step: LumberjackSteps::FindTree{}
+                                    }
+                                );
                             }
                             LumberjackSteps::FindTree{} => {
                                 println!("Tree pos: {}", tree_pos);
@@ -99,10 +109,9 @@ pub fn build() -> Box<dyn Schedulable> {
                                 }
                             }
                             LumberjackSteps::ChopTree{} => {
-                                println!("Done with chopping.");
+                                crate::messaging::chop_tree(id.id, *tree_id);
                                 crate::messaging::conclude_job(id.id);
                             }
-                            _ => println!("Warning - LumberJack fell through with no steps.")
                         }
                     } else {
                         panic!("Not doing a lumberjack job but wound up in the LJ system!");

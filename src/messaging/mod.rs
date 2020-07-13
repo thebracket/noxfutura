@@ -5,6 +5,9 @@ use nox_components::{Position, JobType};
 mod jobstep;
 use jobstep::JobStep;
 pub use jobstep::apply_jobs_queue;
+mod items;
+use items::WorldChange;
+pub use items::apply_world_queue;
 
 pub use renderflags::get_render_flags;
 
@@ -46,12 +49,15 @@ pub fn follow_job_path(id: usize) {
     );
 }
 
-/*
-pub fn equip_tool(id:usize, tool_id: usize) {
 
+pub fn equip_tool(id: usize, tool_id: usize) {
+    WORLD_QUEUE.lock().push(
+        WorldChange::EquipItem{ id, tool_id }
+    );
 }
 
-pub fn chop_tree(id:usize, tree_id: usize) {
-
+pub fn chop_tree(id: usize, tree_id: usize) {
+    WORLD_QUEUE.lock().push(
+        WorldChange::TreeChop{ id, tree_id }
+    );
 }
-*/
