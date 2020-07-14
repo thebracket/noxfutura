@@ -1,7 +1,7 @@
-use legion::prelude::*;
-use bracket_random::prelude::RandomNumberGenerator;
-use nox_components::*;
 use crate::Region;
+use bracket_random::prelude::RandomNumberGenerator;
+use legion::prelude::*;
+use nox_components::*;
 use nox_spatial::mapidx;
 
 fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {
@@ -12,19 +12,27 @@ fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Opti
             let mut effective_location = 0;
 
             if claimed.is_none() {
-                <(Read<Position>, Read<Identity>)>::query().iter(ecs)
+                <(Read<Position>, Read<Identity>)>::query()
+                    .iter(ecs)
                     .filter(|(_, pid)| pid.id == item_id)
-                    .for_each(|(pos, _)| effective_location = pos.effective_location(ecs)
-                );
+                    .for_each(|(pos, _)| effective_location = pos.effective_location(ecs));
             }
 
             println!("Adding tool to list. {:?}", tool.usage);
-            region.jobs_board.add_tool(item_id, claimed, tool.usage, effective_location);
-        }
-    );
+            region
+                .jobs_board
+                .add_tool(item_id, claimed, tool.usage, effective_location);
+        });
 }
 
-pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) -> usize {
+pub fn spawn_building(
+    ecs: &mut World,
+    tag: &str,
+    x: usize,
+    y: usize,
+    z: usize,
+    region_idx: usize,
+) -> usize {
     nox_components::spawner::spawn_building(ecs, tag, mapidx(x, y, z), region_idx)
 }
 
@@ -37,8 +45,17 @@ pub fn spawn_clothing_from_raws_worn(
     nox_components::spawner::spawn_clothing_from_raws_worn(ecs, tag, wearer, rng)
 }
 
-pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region: &mut Region) {
-    if let Some(id) = nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx) {
+pub fn spawn_item_on_ground(
+    ecs: &mut World,
+    tag: &str,
+    x: usize,
+    y: usize,
+    z: usize,
+    region: &mut Region,
+) {
+    if let Some(id) =
+        nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx)
+    {
         add_tool_info(ecs, id, region, None);
     }
 }

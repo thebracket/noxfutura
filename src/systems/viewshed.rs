@@ -2,8 +2,8 @@ use crate::systems::REGION;
 use legion::prelude::*;
 use nox_components::*;
 use nox_planet::{Region, TileType};
-use ultraviolet::Vec3;
 use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use ultraviolet::Vec3;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("calendar")

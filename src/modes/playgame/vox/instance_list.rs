@@ -63,21 +63,14 @@ pub fn build_vox_instances2(
     vox_instances.clear();
 
     // Models from the ECS
-    let query = <(
-        Read<Position>,
-        Read<VoxelModel>,
-        Read<Tint>,
-    )>::query();
+    let query = <(Read<Position>, Read<VoxelModel>, Read<Tint>)>::query();
     query
         .iter(ecs)
         .filter(|(pos, _, _)| {
             if let Some(pt) = pos.as_point3_only_tile() {
                 pt.z as usize > camera_z - LAYERS_DOWN
                     && pt.z as usize <= camera_z
-                    && frustrum.check_sphere(
-                        &pos.as_vec3(),
-                        FRUSTRUM_CHECK_RANGE,
-                    )
+                    && frustrum.check_sphere(&pos.as_vec3(), FRUSTRUM_CHECK_RANGE)
             } else {
                 false
             }

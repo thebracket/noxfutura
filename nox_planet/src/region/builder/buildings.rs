@@ -1,9 +1,9 @@
 use crate::{ground_z, rex::*, Region, StairsType, TileType};
-use nox_spatial::mapidx;
 use bracket_geometry::prelude::*;
 use legion::prelude::*;
 use nox_components::*;
 use nox_raws::get_material_by_tag;
+use nox_spatial::mapidx;
 use std::fs::File;
 
 fn load_ship() -> XpFile {
@@ -129,8 +129,18 @@ fn add_construction(
         }
         "storage_locker" => {
             let storage_id = add_building(region, "storage_locker", x, y, z, ecs);
-            crate::spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id, region);
-            crate::spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id, region);
+            crate::spawner::spawn_item_in_container(
+                ecs,
+                "personal_survival_shelter_kit",
+                storage_id,
+                region,
+            );
+            crate::spawner::spawn_item_in_container(
+                ecs,
+                "personal_survival_shelter_kit",
+                storage_id,
+                region,
+            );
             crate::spawner::spawn_item_in_container(ecs, "camp_fire_kit", storage_id, region);
             crate::spawner::spawn_item_in_container(ecs, "fire_axe", storage_id, region);
             crate::spawner::spawn_item_in_container(ecs, "pickaxe", storage_id, region);

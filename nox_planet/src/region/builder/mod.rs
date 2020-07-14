@@ -1,8 +1,8 @@
 use super::{Planet, Region};
 use crate::{planet_idx, set_worldgen_status};
-use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
+use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 mod beaches;
 mod buildings;
 mod debris;

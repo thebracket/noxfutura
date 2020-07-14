@@ -4,5 +4,5 @@ use crate::prelude::*;
 #[uuid = "b5339d8c-eb62-44e6-b3d0-a87c2157dd81"]
 pub enum WorkOrder {
     None,
-    MoveRandomly
+    MoveRandomly,
 }

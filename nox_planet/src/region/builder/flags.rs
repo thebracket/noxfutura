@@ -1,4 +1,4 @@
-use crate::{Region, TileType, StairsType};
+use crate::{Region, StairsType, TileType};
 use nox_spatial::*;
 
 pub fn set_flags(region: &mut Region) {
@@ -9,7 +9,7 @@ pub fn set_flags(region: &mut Region) {
             TileType::Solid => region.set_flag(idx, Region::SOLID),
             TileType::Wall => region.set_flag(idx, Region::SOLID),
             TileType::Window => region.set_flag(idx, Region::SOLID),
-            _ => { }
+            _ => {}
         }
     }
 
@@ -37,25 +37,23 @@ pub fn set_flags(region: &mut Region) {
                 let mut can_stand = false;
                 if !region.flag(idx, Region::SOLID) {
                     match region.tile_types[idx] {
-                        TileType::Floor | TileType::Ramp{..} | TileType::Stairs{..} => {
+                        TileType::Floor | TileType::Ramp { .. } | TileType::Stairs { .. } => {
                             can_stand = true;
                         }
                         _ => {}
                     }
-                    if z < REGION_DEPTH-1 {
-                        let down_idx = mapidx(x, y, z+1);
+                    if z < REGION_DEPTH - 1 {
+                        let down_idx = mapidx(x, y, z + 1);
                         match region.tile_types[down_idx] {
-                            TileType::Solid | TileType::Ramp{..} => { 
+                            TileType::Solid | TileType::Ramp { .. } => {
                                 can_stand = true;
                             }
-                            TileType::Stairs{direction} => {
-                                match direction {
-                                    StairsType::Up | StairsType::UpDown => {
-                                        can_stand = true;
-                                    }
-                                    _ => {}
+                            TileType::Stairs { direction } => match direction {
+                                StairsType::Up | StairsType::UpDown => {
+                                    can_stand = true;
                                 }
-                            }
+                                _ => {}
+                            },
                             _ => {}
                         }
                     }
@@ -73,20 +71,39 @@ pub fn set_flags(region: &mut Region) {
             for z in 0..REGION_DEPTH {
                 let idx = mapidx(x, y, z);
                 if !region.flag(idx, Region::SOLID) {
-                    if y>0 && region.flag(idx - REGION_WIDTH, Region::CAN_STAND_HERE) { region.set_flag(idx, Region::CAN_GO_NORTH) }
-                    if y<REGION_HEIGHT-1 && region.flag(idx + REGION_WIDTH, Region::CAN_STAND_HERE) { region.set_flag(idx, Region::CAN_GO_SOUTH) }
-                    if x<REGION_WIDTH-1 && region.flag(idx +1, Region::CAN_STAND_HERE) { region.set_flag(idx, Region::CAN_GO_EAST) }
-                    if x>0 && region.flag(idx -1, Region::CAN_STAND_HERE) { region.set_flag(idx, Region::CAN_GO_WEST) }
+                    if y > 0 && region.flag(idx - REGION_WIDTH, Region::CAN_STAND_HERE) {
+                        region.set_flag(idx, Region::CAN_GO_NORTH)
+                    }
+                    if y < REGION_HEIGHT - 1
+                        && region.flag(idx + REGION_WIDTH, Region::CAN_STAND_HERE)
+                    {
+                        region.set_flag(idx, Region::CAN_GO_SOUTH)
+                    }
+                    if x < REGION_WIDTH - 1 && region.flag(idx + 1, Region::CAN_STAND_HERE) {
+                        region.set_flag(idx, Region::CAN_GO_EAST)
+                    }
+                    if x > 0 && region.flag(idx - 1, Region::CAN_STAND_HERE) {
+                        region.set_flag(idx, Region::CAN_GO_WEST)
+                    }
 
                     // TODO: Handle stairs and ramps properly
                     match region.tile_types[idx] {
-                        TileType::Ramp{..} => {
+                        TileType::Ramp { .. } => {
                             region.set_flag(idx, Region::CAN_GO_UP);
-                            region.set_flag(idx - (REGION_WIDTH * REGION_HEIGHT), Region::CAN_GO_DOWN);
+                            region.set_flag(
+                                idx - (REGION_WIDTH * REGION_HEIGHT),
+                                Region::CAN_GO_DOWN,
+                            );
                         }
-                        TileType::Stairs{direction: StairsType::Up} => region.set_flag(idx, Region::CAN_GO_UP),
-                        TileType::Stairs{direction: StairsType::Down} => region.set_flag(idx, Region::CAN_GO_DOWN),
-                        TileType::Stairs{direction: StairsType::UpDown} => {
+                        TileType::Stairs {
+                            direction: StairsType::Up,
+                        } => region.set_flag(idx, Region::CAN_GO_UP),
+                        TileType::Stairs {
+                            direction: StairsType::Down,
+                        } => region.set_flag(idx, Region::CAN_GO_DOWN),
+                        TileType::Stairs {
+                            direction: StairsType::UpDown,
+                        } => {
                             region.set_flag(idx, Region::CAN_GO_DOWN);
                             region.set_flag(idx, Region::CAN_GO_UP);
                         }

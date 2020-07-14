@@ -2,8 +2,8 @@ use super::{set_worldgen_status, PLANET_BUILD};
 use crate::{planet_idx, Biome, BlockType, Planet};
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
-use std::collections::HashMap;
 use nox_spatial::{WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
+use std::collections::HashMap;
 
 type BiomeCounts = HashMap<BlockType, i32>;
 

@@ -10,19 +10,41 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
     let mut lines: Vec<(bool, String)> = Vec::new();
 
     use nox_planet::Region;
-    use nox_spatial::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, mapidx};
-    if mouse_world_pos.0 > 0 && mouse_world_pos.0 < REGION_WIDTH && mouse_world_pos.1 > 0 && mouse_world_pos.1 < REGION_HEIGHT && mouse_world_pos.2 > 0 && mouse_world_pos.2 < REGION_DEPTH {
+    use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+    if mouse_world_pos.0 > 0
+        && mouse_world_pos.0 < REGION_WIDTH
+        && mouse_world_pos.1 > 0
+        && mouse_world_pos.1 < REGION_HEIGHT
+        && mouse_world_pos.2 > 0
+        && mouse_world_pos.2 < REGION_DEPTH
+    {
         let idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
         let r = crate::systems::REGION.read();
         let mut l = String::new();
-        if r.flag(idx, Region::SOLID) { l += "SOLID|"; }
-        if r.flag(idx, Region::CAN_STAND_HERE) { l += "ST|"; }
-        if r.flag(idx, Region::CAN_GO_NORTH) { l += "N|"; }
-        if r.flag(idx, Region::CAN_GO_SOUTH) { l += "S|"; }
-        if r.flag(idx, Region::CAN_GO_EAST) { l += "E|"; }
-        if r.flag(idx, Region::CAN_GO_WEST) { l += "W|"; }
-        if r.flag(idx, Region::CAN_GO_UP) { l += "U|"; }
-        if r.flag(idx, Region::CAN_GO_DOWN) { l += "D|"; }
+        if r.flag(idx, Region::SOLID) {
+            l += "SOLID|";
+        }
+        if r.flag(idx, Region::CAN_STAND_HERE) {
+            l += "ST|";
+        }
+        if r.flag(idx, Region::CAN_GO_NORTH) {
+            l += "N|";
+        }
+        if r.flag(idx, Region::CAN_GO_SOUTH) {
+            l += "S|";
+        }
+        if r.flag(idx, Region::CAN_GO_EAST) {
+            l += "E|";
+        }
+        if r.flag(idx, Region::CAN_GO_WEST) {
+            l += "W|";
+        }
+        if r.flag(idx, Region::CAN_GO_UP) {
+            l += "U|";
+        }
+        if r.flag(idx, Region::CAN_GO_DOWN) {
+            l += "D|";
+        }
         if !l.is_empty() {
             lines.push((false, l));
         }

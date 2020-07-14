@@ -2,8 +2,8 @@ use crate::{
     noise_helper::{lat_to_y, lon_to_x},
     planet_idx, sphere_vertex, Block, BlockType,
 };
-use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use bracket_geometry::prelude::Degrees;
+use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use nox_wgpu_utils::VertexBuffer;
 
 pub type LatLonIdx = (f32, f32, usize);

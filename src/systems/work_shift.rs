@@ -1,6 +1,6 @@
+use crate::systems::REGION;
 use legion::prelude::*;
 use nox_components::*;
-use crate::systems::REGION;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("work")
@@ -9,7 +9,9 @@ pub fn build() -> Box<dyn Schedulable> {
             // Look for a job to do
             actors
                 .iter_mut(ecs)
-                .filter(|(turn, _, _)| turn.active && turn.shift == ScheduleTime::Work && turn.job == JobType::None)
+                .filter(|(turn, _, _)| {
+                    turn.active && turn.shift == ScheduleTime::Work && turn.job == JobType::None
+                })
                 .for_each(|(mut turn, pos, id)| {
                     turn.order = WorkOrder::None;
                     // todo: include more attributes
@@ -19,8 +21,6 @@ pub fn build() -> Box<dyn Schedulable> {
                     } else {
                         turn.order = WorkOrder::MoveRandomly;
                     }
-                }
-            );
-        }
-    )
+                });
+        })
 }

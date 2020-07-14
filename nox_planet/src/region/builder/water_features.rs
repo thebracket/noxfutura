@@ -2,8 +2,8 @@ use super::Region;
 use crate::{Planet, TileType};
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::RandomNumberGenerator;
-use std::collections::HashSet;
 use nox_spatial::*;
+use std::collections::HashSet;
 
 pub fn just_add_water(
     planet: &Planet,

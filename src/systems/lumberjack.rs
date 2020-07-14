@@ -1,7 +1,7 @@
-use legion::prelude::*;
-use nox_components::*;
 use crate::systems::REGION;
 use bracket_pathfinding::prelude::a_star_search;
+use legion::prelude::*;
+use nox_components::*;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("lumberjack")
@@ -26,15 +26,15 @@ pub fn build() -> Box<dyn Schedulable> {
                                 let maybe_tool_pos = rlock.jobs_board.find_and_claim_tool(ToolType::Chopping, id.id);
                                 if let Some((tool_id, tool_pos)) = maybe_tool_pos {
                                     let path = a_star_search(
-                                        pos.get_idx(), 
-                                        tool_pos, 
+                                        pos.get_idx(),
+                                        tool_pos,
                                         &*rlock
                                     );
                                     if !path.success {
                                         println!("No path to tool available - abandoning lumberjacking");
                                         crate::messaging::cancel_job(id.id);
                                     } else {
-                                        crate::messaging::job_changed(id.id, 
+                                        crate::messaging::job_changed(id.id,
                                             JobType::FellTree{
                                                 tree_id: *tree_id,
                                                 tree_pos: *tree_pos,
@@ -53,7 +53,7 @@ pub fn build() -> Box<dyn Schedulable> {
                                     crate::messaging::follow_job_path(id.id);
                                 } else {
                                     println!("We're adjacent to the target item now. Pretending we picked it up");
-                                    crate::messaging::job_changed(id.id, 
+                                    crate::messaging::job_changed(id.id,
                                         JobType::FellTree{
                                             tree_id: *tree_id,
                                             tree_pos: *tree_pos,
@@ -64,7 +64,7 @@ pub fn build() -> Box<dyn Schedulable> {
                             }
                             LumberjackSteps::CollectAxe{ tool_id } => {
                                 crate::messaging::equip_tool(id.id, *tool_id);
-                                crate::messaging::job_changed(id.id, 
+                                crate::messaging::job_changed(id.id,
                                     JobType::FellTree{
                                         tree_id: *tree_id,
                                         tree_pos: *tree_pos,

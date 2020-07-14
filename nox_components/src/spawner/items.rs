@@ -8,24 +8,52 @@ fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
         let id = Identity::new();
         let new_identity = id.id;
         let entity = ecs.insert(
-            (Item {}, ),
+            (Item {},),
             vec![(
                 id,
-                Name { name: item.name.clone() },
-                Description { desc: item.description.clone(), },
+                Name {
+                    name: item.name.clone(),
+                },
+                Description {
+                    desc: item.description.clone(),
+                },
                 crate::VoxelModel {
                     index: raws.vox.get_model_idx(&item.vox),
                     rotation_radians: 0.0,
                 },
-                Tint { color: (1.0, 1.0, 1.0) },
-            )]
-        )[0].clone();
+                Tint {
+                    color: (1.0, 1.0, 1.0),
+                },
+            )],
+        )[0]
+        .clone();
 
         for it in item.item_type.iter() {
-        match it {
-                ItemDefType::ToolChopping => ecs.add_component(entity, Tool{ usage: ToolType::Chopping }).expect("Fail to spawn component"),
-                ItemDefType::ToolDigging => ecs.add_component(entity, Tool{ usage: ToolType::Digging }).expect("Fail to spawn component"),
-                ItemDefType::ToolFarming => ecs.add_component(entity, Tool{ usage: ToolType::Farming }).expect("Fail to spawn component"),
+            match it {
+                ItemDefType::ToolChopping => ecs
+                    .add_component(
+                        entity,
+                        Tool {
+                            usage: ToolType::Chopping,
+                        },
+                    )
+                    .expect("Fail to spawn component"),
+                ItemDefType::ToolDigging => ecs
+                    .add_component(
+                        entity,
+                        Tool {
+                            usage: ToolType::Digging,
+                        },
+                    )
+                    .expect("Fail to spawn component"),
+                ItemDefType::ToolFarming => ecs
+                    .add_component(
+                        entity,
+                        Tool {
+                            usage: ToolType::Farming,
+                        },
+                    )
+                    .expect("Fail to spawn component"),
                 _ => {}
             }
         }
@@ -37,9 +65,17 @@ fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
     }
 }
 
-pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) -> Option<usize> {
+pub fn spawn_item_on_ground(
+    ecs: &mut World,
+    tag: &str,
+    x: usize,
+    y: usize,
+    z: usize,
+    region_idx: usize,
+) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, Position::with_tile(x, y, z, region_idx, (1,1,1))).expect("Failed to add component");
+        ecs.add_component(entity, Position::with_tile(x, y, z, region_idx, (1, 1, 1)))
+            .expect("Failed to add component");
         Some(id)
     } else {
         None
@@ -48,7 +84,8 @@ pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: u
 
 pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity,Position::stored(container)).expect("Failed to add component");
+        ecs.add_component(entity, Position::stored(container))
+            .expect("Failed to add component");
         Some(id)
     } else {
         None
@@ -57,7 +94,8 @@ pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) -> 
 
 pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, Position::worn(wearer)).expect("Failed to add component");
+        ecs.add_component(entity, Position::worn(wearer))
+            .expect("Failed to add component");
         Some(id)
     } else {
         None
@@ -66,7 +104,8 @@ pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) -> Option<usiz
 
 pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, Position::carried(wearer)).expect("Failed to add component");
+        ecs.add_component(entity, Position::carried(wearer))
+            .expect("Failed to add component");
         Some(id)
     } else {
         None

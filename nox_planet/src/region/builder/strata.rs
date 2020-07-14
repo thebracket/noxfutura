@@ -1,8 +1,8 @@
 use super::{super::TileType, Region};
-use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;
 use nox_raws::*;
+use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
     let mlock = RAWS.read();

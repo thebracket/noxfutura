@@ -3,8 +3,8 @@ use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
 use legion::prelude::*;
 use nox_raws::*;
-use parking_lot::RwLock;
 use nox_spatial::*;
+use parking_lot::RwLock;
 
 lazy_static! {
     static ref TREE_COUNTER: RwLock<usize> = RwLock::new(1);

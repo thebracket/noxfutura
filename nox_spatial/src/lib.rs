@@ -8,4 +8,3 @@ pub const REGION_WIDTH: usize = 256;
 pub const REGION_HEIGHT: usize = 256;
 pub const REGION_DEPTH: usize = 256;
 pub const REGION_TILES_COUNT: usize = (REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH) as usize;
-

@@ -9,7 +9,7 @@ pub fn spawn_settlers(
     rng: &mut RandomNumberGenerator,
     crash_site: &Point,
     crash_z: usize,
-    region_idx: usize
+    region_idx: usize,
 ) {
     let spawn_points = vec![
         (crash_site.x - 4, crash_site.y - 2, crash_z + 3),
@@ -31,12 +31,19 @@ pub fn spawn_settlers(
             spawn.0 as usize,
             spawn.1 as usize,
             spawn.2 as usize,
-            region_idx
+            region_idx,
         );
     }
 }
 
-fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: usize, z: usize, region_idx: usize) {
+fn spawn_settler(
+    ecs: &mut World,
+    rng: &mut RandomNumberGenerator,
+    x: usize,
+    y: usize,
+    z: usize,
+    region_idx: usize,
+) {
     let species_def = RAWS.read().species.species[0].clone();
 
     let gender = if rng.roll_dice(1, 20) < 11 {
@@ -209,7 +216,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
     }
 
     ecs.insert(
-        (Sentient {}, ),
+        (Sentient {},),
         vec![(
             id,
             Position::with_tile(x, y, z, region_idx, (1, 1, 1)),
@@ -226,7 +233,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
                 active: false,
                 shift: ScheduleTime::Work,
                 order: WorkOrder::None,
-                job: JobType::None
+                job: JobType::None,
             },
             WorkSchedule::new(match x % 3 {
                 0 => Shift::Day,

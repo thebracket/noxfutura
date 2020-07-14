@@ -5,8 +5,8 @@ use crate::engine::VertexBuffer;
 use crate::utils::add_floor_geometry;
 use nox_planet::{RampDirection, Region, StairsType, TileType};
 use nox_raws::{MappedTexture, RAWS};
-use ultraviolet::Vec3;
 use nox_spatial::mapidx;
+use ultraviolet::Vec3;
 
 pub struct Chunk {
     pub t: ChunkType,
