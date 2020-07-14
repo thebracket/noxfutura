@@ -63,7 +63,8 @@ pub fn build_vox_instances2(
     vox_instances.clear();
 
     // Models from the ECS
-    let query = <(Read<Position>, Read<VoxelModel>, Read<Tint>)>::query().filter(!tag::<PendingDeletion>());
+    let query =
+        <(Read<Position>, Read<VoxelModel>, Read<Tint>)>::query().filter(!tag::<PendingDeletion>());
     query
         .iter(ecs)
         .filter(|(pos, _, _)| {
@@ -97,7 +98,8 @@ pub fn build_vox_instances2(
         });
 
     // Composite builder
-    let query = <(Read<Position>, Read<CompositeRender>)>::query().filter(!tag::<PendingDeletion>());
+    let query =
+        <(Read<Position>, Read<CompositeRender>)>::query().filter(!tag::<PendingDeletion>());
     query
         .iter(ecs)
         .filter(|(pos, _)| {

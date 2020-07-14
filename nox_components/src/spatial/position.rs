@@ -116,7 +116,8 @@ impl Position {
             Location::Tile { idx } => idx,
             Location::Stored { container } => {
                 let idtag = IdentityTag(container);
-                <Read<Position>>::query().filter(tag_value(&idtag))
+                <Read<Position>>::query()
+                    .filter(tag_value(&idtag))
                     .iter(ecs)
                     .map(|pos| *pos)
                     .nth(0)
@@ -125,7 +126,8 @@ impl Position {
             }
             Location::Carried { by } => {
                 let idtag = IdentityTag(by);
-                <Read<Position>>::query().filter(tag_value(&idtag))
+                <Read<Position>>::query()
+                    .filter(tag_value(&idtag))
                     .iter(ecs)
                     .map(|pos| *pos)
                     .nth(0)
@@ -134,7 +136,8 @@ impl Position {
             }
             Location::Worn { by } => {
                 let idtag = IdentityTag(by);
-                <Read<Position>>::query().filter(tag_value(&idtag))
+                <Read<Position>>::query()
+                    .filter(tag_value(&idtag))
                     .iter(ecs)
                     .map(|pos| *pos)
                     .nth(0)
@@ -235,18 +238,18 @@ impl Position {
     }
 
     pub fn to_carried(&mut self, by: usize) {
-        self.loc = Location::Carried{ by };
+        self.loc = Location::Carried { by };
     }
 
     pub fn to_stored(&mut self, container: usize) {
-        self.loc = Location::Stored{ container };
+        self.loc = Location::Stored { container };
     }
 
     pub fn to_ground(&mut self, idx: usize) {
-        self.loc = Location::Tile{ idx };
+        self.loc = Location::Tile { idx };
     }
 
     pub fn to_worn(&mut self, by: usize) {
-        self.loc = Location::Worn{ by };
+        self.loc = Location::Worn { by };
     }
 }

@@ -51,7 +51,9 @@ fn grow_right(cube_index: &mut VoxMap, idx: u32, mat: u8) -> u32 {
     let mut width = 1;
     let mut candidate_idx = idx + 1;
 
-    while cube_index.contains_key(&(candidate_idx as i32)) && cube_index[&(candidate_idx as i32)] == mat {
+    while cube_index.contains_key(&(candidate_idx as i32))
+        && cube_index[&(candidate_idx as i32)] == mat
+    {
         cube_index.remove(&(candidate_idx as i32));
         width += 1;
         candidate_idx += 1;

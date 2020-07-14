@@ -16,17 +16,17 @@ pub fn apply_world_queue(ecs: &mut World) {
                 println!("Chop tree");
                 // TODO: Remove the tree from the region data
                 let treetag = IdentityTag(*tree_id);
-                let tree_entity = <Read<Position>>::query().filter(tag_value(&treetag))
+                let tree_entity = <Read<Position>>::query()
+                    .filter(tag_value(&treetag))
                     .iter_entities(ecs)
                     .map(|(e, pos)| (e, pos.get_idx()))
                     .nth(0)
-                    .unwrap()
-                ;
+                    .unwrap();
                 //ecs.delete(tree_entity.0); // Crashes
 
                 let mut rlock = crate::systems::REGION.write();
                 let (tx, ty, tz) = idxmap(tree_entity.1);
-                for _ in 0 .. crate::systems::RNG.lock().roll_dice(1, 6) {
+                for _ in 0..crate::systems::RNG.lock().roll_dice(1, 6) {
                     nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock);
                 }
                 super::vox_moved();
@@ -34,12 +34,12 @@ pub fn apply_world_queue(ecs: &mut World) {
 
             WorldChange::EquipItem { id, tool_id } => {
                 let itemtag = IdentityTag(*tool_id);
-                <Write<Position>>::query().filter(tag_value(&itemtag))
+                <Write<Position>>::query()
+                    .filter(tag_value(&itemtag))
                     .iter_mut(ecs)
                     .for_each(|mut pos| {
                         pos.to_carried(*id);
-                    }
-                );
+                    });
                 super::vox_moved();
             }
         }

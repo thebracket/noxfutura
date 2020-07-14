@@ -23,7 +23,8 @@ pub fn apply_jobs_queue(ecs: &mut World) {
             }
             JobStep::JobChanged { id, new_job } => {
                 let idtag = IdentityTag(*id);
-                <Write<MyTurn>>::query().filter(tag_value(&idtag))
+                <Write<MyTurn>>::query()
+                    .filter(tag_value(&idtag))
                     .iter_mut(ecs)
                     .for_each(|mut turn| {
                         turn.job = new_job.clone();
@@ -31,7 +32,8 @@ pub fn apply_jobs_queue(ecs: &mut World) {
             }
             JobStep::JobCancelled { id } => {
                 let idtag = IdentityTag(*id);
-                <Write<MyTurn>>::query().filter(tag_value(&idtag))
+                <Write<MyTurn>>::query()
+                    .filter(tag_value(&idtag))
                     .iter_mut(ecs)
                     .for_each(|mut turn| {
                         crate::systems::REGION
@@ -44,7 +46,8 @@ pub fn apply_jobs_queue(ecs: &mut World) {
             JobStep::JobConcluded { id } => {
                 println!("Job finished");
                 let idtag = IdentityTag(*id);
-                <Write<MyTurn>>::query().filter(tag_value(&idtag))
+                <Write<MyTurn>>::query()
+                    .filter(tag_value(&idtag))
                     .iter_mut(ecs)
                     .for_each(|mut turn| {
                         //TODO: Delete job
@@ -53,7 +56,8 @@ pub fn apply_jobs_queue(ecs: &mut World) {
             }
             JobStep::FollowJobPath { id } => {
                 let idtag = IdentityTag(*id);
-                <Write<MyTurn>>::query().filter(tag_value(&idtag))
+                <Write<MyTurn>>::query()
+                    .filter(tag_value(&idtag))
                     .iter_mut(ecs)
                     .for_each(|mut turn| match &mut turn.job {
                         JobType::FellTree { step, .. } => {
