@@ -227,4 +227,20 @@ impl Position {
             _ => false,
         }
     }
+
+    pub fn to_carried(&mut self, by: usize) {
+        self.loc = Location::Carried{ by };
+    }
+
+    pub fn to_stored(&mut self, container: usize) {
+        self.loc = Location::Stored{ container };
+    }
+
+    pub fn to_ground(&mut self, idx: usize) {
+        self.loc = Location::Tile{ idx };
+    }
+
+    pub fn to_worn(&mut self, by: usize) {
+        self.loc = Location::Worn{ by };
+    }
 }

@@ -97,7 +97,6 @@ pub fn build() -> Box<dyn Schedulable> {
                                 if path.len() > 1 {
                                     crate::messaging::follow_job_path(id.id);
                                 } else {
-                                    println!("We're adjacent to the target item now. Pretending we did something");
                                     crate::messaging::job_changed(id.id,
                                         JobType::FellTree{
                                             tree_id: *tree_id,

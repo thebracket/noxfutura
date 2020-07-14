@@ -42,6 +42,7 @@ pub fn apply_jobs_queue(ecs: &mut World) {
                     });
             }
             JobStep::JobConcluded { id } => {
+                println!("Job finished");
                 <(Read<Identity>, Write<MyTurn>)>::query()
                     .iter_mut(ecs)
                     .filter(|(jid, _)| jid.id == *id)
