@@ -25,11 +25,11 @@ impl VoxBuffer {
             let filename = format!("resources/vox/{}.vox", modelfile.file);
             let rawvox = dot_vox::load(&filename).unwrap();
 
-            let mut cubes: HashMap<u32, u8> = HashMap::new();
+            let mut cubes: HashMap<i32, u8> = HashMap::new();
             for model in rawvox.models.iter() {
                 let size = ModelSize::new(model.size);
                 for v in model.voxels.iter() {
-                    let idx = size.vidx(v);
+                    let idx = size.vidx(v) as i32;
                     cubes.insert(idx, v.i);
                 }
                 greedy_cubes(&mut cubes, &mut self.vertices.data, &size);
