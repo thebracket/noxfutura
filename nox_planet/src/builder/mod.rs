@@ -89,10 +89,10 @@ fn threaded_builder() {
 }
 
 fn save_world(region: Region, world: legion::prelude::World) {
-    use super::{save_world, SavedGame};
+    use super::SavedGame;
     set_worldgen_status("Saving the world. To disk, sadly.");
     let pclone = PLANET_BUILD.lock().planet.clone();
-    save_world(SavedGame {
+    super::save_world(SavedGame {
         planet: pclone,
         current_region: region,
         ecs_text: nox_components::serialize_world(&world),
@@ -100,7 +100,7 @@ fn save_world(region: Region, world: legion::prelude::World) {
 }
 
 fn find_crash_site() -> Point {
-    use super::{WORLD_HEIGHT, WORLD_WIDTH};
+    use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
     set_worldgen_status("Deciding where to crash");
     let seed = PLANET_BUILD.lock().planet.rng_seed;
     let mut rng = RandomNumberGenerator::seeded(seed);
@@ -117,6 +117,7 @@ fn find_crash_site() -> Point {
             && bt != BlockType::Marsh
             && bt != BlockType::Coastal
             && h > PLANET_BUILD.lock().planet.water_height
+            && PLANET_BUILD.lock().planet.landblocks[pidx].temperature > 5
         {
             println!("{:?}", bt);
             break;

@@ -10,6 +10,7 @@ edition = "2018"
 nox_raws = { path = "../nox_raws" }
 nox_components = { path = "../nox_components" }
 nox_wgpu_utils = { path = "../nox_wgpu_utils" }
+nox_spatial = { path = "../nox_spatial" }
 legion = { git = "https://github.com/TomGillen/legion", features = [ "serialize" ]}
 bracket-random = { version = "0.8.0", default-features = false }
 serde = { version = "1.0.114" }

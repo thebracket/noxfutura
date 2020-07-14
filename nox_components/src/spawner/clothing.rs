@@ -22,7 +22,7 @@ pub fn spawn_clothing_from_raws_worn(
             (Item {},),
             vec![(
                 Identity::new(),
-                ItemWorn { wearer },
+                Position::worn(wearer),
                 Name { name: cd.name },
                 Description {
                     desc: cd.description,

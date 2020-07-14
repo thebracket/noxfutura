@@ -1,5 +1,6 @@
-use crate::{ground_z, mapidx, Region, TileType, REGION_HEIGHT, REGION_WIDTH};
+use crate::{ground_z, Region, TileType};
 use nox_raws::get_material_by_tag;
+use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 
 pub fn build_beaches(region: &mut Region) {
     let yellow_sand = get_material_by_tag("Yellow Sand").expect("Yellow Sand not found");

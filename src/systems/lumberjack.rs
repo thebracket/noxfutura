@@ -2,7 +2,6 @@ use legion::prelude::*;
 use nox_components::*;
 use crate::systems::REGION;
 use bracket_pathfinding::prelude::a_star_search;
-use nox_planet::mapidx;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("lumberjack")
@@ -27,7 +26,7 @@ pub fn build() -> Box<dyn Schedulable> {
                                 let maybe_tool_pos = rlock.jobs_board.find_and_claim_tool(ToolType::Chopping, id.id);
                                 if let Some((tool_id, tool_pos)) = maybe_tool_pos {
                                     let path = a_star_search(
-                                        mapidx(pos.x, pos.y, pos.z), 
+                                        pos.get_idx(), 
                                         tool_pos, 
                                         &*rlock
                                     );
@@ -77,7 +76,7 @@ pub fn build() -> Box<dyn Schedulable> {
                                 println!("Tree pos: {}", tree_pos);
                                 let rlock = REGION.read();
                                 let path = a_star_search(
-                                    mapidx(pos.x, pos.y, pos.z),
+                                    pos.get_idx(),
                                     *tree_pos,
                                     &*rlock
                                 );

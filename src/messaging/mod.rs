@@ -1,13 +1,14 @@
 mod backends;
 mod renderflags;
 use backends::*;
-use nox_components::{Position, JobType};
+use nox_components::JobType;
 mod jobstep;
 use jobstep::JobStep;
 pub use jobstep::apply_jobs_queue;
 mod items;
 use items::WorldChange;
 pub use items::apply_world_queue;
+use bracket_geometry::prelude::Point3;
 
 pub use renderflags::get_render_flags;
 
@@ -19,7 +20,7 @@ pub fn vox_moved() {
     RENDER_FLAGS.lock().models_changed = true;
 }
 
-pub fn entity_moved(id: usize, end: &Position) {
+pub fn entity_moved(id: usize, end: &Point3) {
     JOBS_QUEUE.lock().push(
         JobStep::EntityMoved{ id, end: end.clone() }
     );

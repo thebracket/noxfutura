@@ -43,9 +43,9 @@ impl Planet {
 }
 
 pub fn planet_idx<N: Into<usize>>(x: N, y: N) -> usize {
-    use super::{WORLD_HEIGHT, WORLD_WIDTH};
+    use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
     let xc = x.into();
     let yc = y.into();
     debug_assert!(xc < WORLD_WIDTH && yc < WORLD_HEIGHT);
-    (super::WORLD_WIDTH * yc) + xc
+    (WORLD_WIDTH * yc) + xc
 }

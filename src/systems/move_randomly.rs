@@ -2,7 +2,7 @@ use legion::prelude::*;
 use nox_components::*;
 use crate::systems::RNG;
 use crate::systems::REGION;
-use nox_planet::{Region, mapidx};
+use nox_planet::Region;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("move_randomly")
@@ -11,50 +11,51 @@ pub fn build() -> Box<dyn Schedulable> {
             actors.iter_mut(ecs)
             .filter(|(_, turn, _)| turn.active && turn.order == WorkOrder::MoveRandomly)
             .for_each(|(pos, _, id)| {
-                let original_position = pos.clone();
                 let roll = RNG.lock().range(1, 6);
-                let idx = mapidx(pos.x, pos.y, pos.z);
+                let idx = pos.get_idx();
 
-                let destination = match roll {
+                let delta = match roll {
                     1 => if REGION.read().flag(idx, Region::CAN_GO_NORTH) {
-                        Position{ x: original_position.x, y: original_position.y - 1, z:original_position.z }
+                        (0, -1, 0)
                     } else {
-                        original_position
+                        (0, 0, 0)
                     },
 
                     2 => if REGION.read().flag(idx, Region::CAN_GO_SOUTH) {
-                        Position{ x: original_position.x, y: original_position.y + 1, z:original_position.z }
+                        (0, 1, 0)
                     } else {
-                        original_position
+                        (0, 0, 0)
                     },
 
                     3 => if REGION.read().flag(idx, Region::CAN_GO_EAST) {
-                        Position{ x: original_position.x + 1, y: original_position.y, z:original_position.z }
+                        (1, 0, 0)
                     } else {
-                        original_position
+                        (0, 0, 0)
                     },
 
                     4 => if REGION.read().flag(idx, Region::CAN_GO_WEST) {
-                        Position{ x: original_position.x - 1, y: original_position.y, z:original_position.z }
+                        (-1, 0, 0)
                     } else {
-                        original_position
+                        (0, 0, 0)
                     },
 
                     5 => if REGION.read().flag(idx, Region::CAN_GO_UP) {
-                        println!("UP");
-                        Position{ x: original_position.x, y: original_position.y, z:original_position.z - 1 }
+                        (0, 0, 1)
                     } else {
-                        original_position
+                        (0, 0, 0)
                     },
 
                     _ => if REGION.read().flag(idx, Region::CAN_GO_DOWN) {
-                        println!("DOWN");
-                        Position{ x: original_position.x, y: original_position.y, z:original_position.z + 1 }
+                        (0, 0, -1)
                     } else {
-                        original_position
+                        (0, 0, 0)
                     }
                 };
 
+                let mut destination = pos.as_point3();
+                destination.x += delta.0;
+                destination.y += delta.1;
+                destination.z += delta.2;
                 crate::messaging::entity_moved(id.id, &destination);
             });
         }

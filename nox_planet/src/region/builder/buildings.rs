@@ -1,4 +1,5 @@
-use crate::{ground_z, mapidx, rex::*, Region, StairsType, TileType};
+use crate::{ground_z, rex::*, Region, StairsType, TileType};
+use nox_spatial::mapidx;
 use bracket_geometry::prelude::*;
 use legion::prelude::*;
 use nox_components::*;
@@ -84,11 +85,10 @@ fn add_construction(
     }
 
     // Remove any vegetation
-    let newtile_pt = Position { x, y, z };
     let veg_list_delete = <Read<Position>>::query()
         .filter(tag::<Vegetation>())
         .iter_entities_mut(ecs)
-        .filter(|(_, pos)| **pos == newtile_pt)
+        .filter(|(_, pos)| pos.exact_position(x, y, z))
         .map(|(entity, _)| entity)
         .collect::<Vec<Entity>>();
     veg_list_delete.iter().for_each(|e| {
@@ -161,12 +161,12 @@ fn add_construction(
 }
 
 fn add_building(
-    _region: &mut Region,
+    region: &mut Region,
     tag: &str,
     x: usize,
     y: usize,
     z: usize,
     ecs: &mut World,
 ) -> usize {
-    crate::spawner::spawn_building(ecs, tag, x, y, z)
+    crate::spawner::spawn_building(ecs, tag, x, y, z, region.world_idx)
 }

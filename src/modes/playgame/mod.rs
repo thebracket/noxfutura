@@ -244,16 +244,12 @@ impl PlayGame {
                             };
                             camera_changed = false;
                         }
-                        VirtualKeyCode::Left => pos.x -= 1,
-                        VirtualKeyCode::Right => pos.x += 1,
-                        VirtualKeyCode::Up => pos.y -= 1,
-                        VirtualKeyCode::Down => pos.y += 1,
-                        VirtualKeyCode::Comma => {
-                            pos.z += 1;
-                        }
-                        VirtualKeyCode::Period => {
-                            pos.z -= 1;
-                        }
+                        VirtualKeyCode::Left => pos.apply_delta(-1, 0, 0),
+                        VirtualKeyCode::Right => pos.apply_delta(1, 0, 0),
+                        VirtualKeyCode::Up => pos.apply_delta(0, -1, 0),
+                        VirtualKeyCode::Down => pos.apply_delta(0, 1, 0),
+                        VirtualKeyCode::Comma => pos.apply_delta(0, 0, 1),
+                        VirtualKeyCode::Period => pos.apply_delta(0, 0, -1),
                         VirtualKeyCode::Minus => camopts.zoom_level -= 1,
                         VirtualKeyCode::Add => camopts.zoom_level += 1,
                         VirtualKeyCode::Tab => match camopts.mode {
@@ -282,7 +278,7 @@ impl PlayGame {
                 self.first_run = false;
             }
 
-            result = pos.z;
+            result = pos.as_point3().z as usize;
         }
         result
     }

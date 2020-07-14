@@ -1,5 +1,6 @@
 use super::{Planet, Region};
-use crate::{planet_idx, set_worldgen_status, REGION_HEIGHT, REGION_WIDTH};
+use crate::{planet_idx, set_worldgen_status};
+use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
 mod beaches;
@@ -88,7 +89,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     debris::debris_trail(region, ship_loc, &mut world);
 
     set_worldgen_status("Settlers");
-    settlers::spawn_settlers(&mut world, &mut rng, &ship_loc, crash_z);
+    settlers::spawn_settlers(&mut world, &mut rng, &ship_loc, crash_z, region.world_idx);
 
     set_worldgen_status("Features");
     set_worldgen_status("Looking for the map");

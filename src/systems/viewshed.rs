@@ -1,8 +1,9 @@
 use crate::systems::REGION;
 use legion::prelude::*;
 use nox_components::*;
-use nox_planet::{mapidx, Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use nox_planet::{Region, TileType};
 use ultraviolet::Vec3;
+use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("calendar")
@@ -15,7 +16,7 @@ pub fn build() -> Box<dyn Schedulable> {
                     //println!("{:?}", fov);
                     fov.visible_tiles.clear();
                     let radius = fov.radius as i32;
-                    reveal(mapidx(pos.x, pos.y, pos.z), &mut *fov);
+                    reveal(pos.get_idx(), &mut *fov);
                     let radius_range = (0i32 - radius)..=radius;
                     for z in radius_range {
                         for i in (0i32 - radius)..=radius {
@@ -45,7 +46,7 @@ pub fn build() -> Box<dyn Schedulable> {
 #[inline(always)]
 fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i32) {
     let radius = fov.radius as f32;
-    let start: Vec3 = (pos.x as f32 + 0.5, pos.y as f32 + 0.5, pos.z as f32 + 0.5).into();
+    let start = pos.as_vec3() + Vec3::new(0.5, 0.5, 0.5);
     let end: Vec3 = (x as f32 + start.x, y as f32 + start.y, z as f32 + start.z).into();
     let mut blocked = false;
     let mut last_z = f32::floor(start.z) as i32;

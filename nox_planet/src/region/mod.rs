@@ -1,4 +1,5 @@
-pub use crate::{Planet, REGION_DEPTH, REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH};
+pub use crate::Planet;
+use nox_spatial::{REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH, idxmap};
 use serde::{Deserialize, Serialize};
 mod tiletype;
 pub use tiletype::*;
@@ -8,7 +9,6 @@ mod jobs;
 use jobs::JobsBoard;
 use bracket_algorithm_traits::prelude::*;
 use bracket_geometry::prelude::*;
-use crate::{idxmap};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Region {

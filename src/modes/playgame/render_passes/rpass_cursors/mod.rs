@@ -164,11 +164,12 @@ impl CursorPass {
                 .iter(ecs)
                 .filter(|(_, id)| rlock.jobs_board.get_trees().contains(&id.id))
                 .for_each(|(pos, _)| {
+                    let pt = pos.as_point3();
                     add_cube_geometry(
                         &mut self.vb.data,
-                        pos.x as f32,
-                        pos.y as f32,
-                        pos.z as f32,
+                        pt.x as f32,
+                        pt.y as f32,
+                        pt.z as f32,
                         3.0,
                         3.0,
                         3.0,

@@ -1,4 +1,4 @@
-use crate::{REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_WIDTH};
+use nox_spatial::{REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_WIDTH};
 
 pub(crate) fn lat_to_y(lat: f32) -> usize {
     let mut y = (((lat + 90.0) / 180.0) * WORLD_HEIGHT as f32) as usize;

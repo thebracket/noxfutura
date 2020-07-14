@@ -81,7 +81,8 @@ impl LightUniforms {
         let mut index = 1;
         let light_query = <(Read<Position>, Read<Light>, Read<FieldOfView>)>::query();
         light_query.iter(ecs).for_each(|(pos, light, fov)| {
-            if index < 32 && pos.z <= camera_pos.y as usize {
+            let pt = pos.as_point3();
+            if index < 32 && pt.z <= camera_pos.y as i32 {
                 self.lights[index].color = [
                     light.color.0 * LIGHT_BOOST,
                     light.color.1 * LIGHT_BOOST,
@@ -89,9 +90,9 @@ impl LightUniforms {
                     0.0,
                 ];
                 self.lights[index].pos = [
-                    pos.x as f32 + 0.5,
-                    pos.z as f32 + 0.4,
-                    pos.y as f32 + 0.5,
+                    pt.x as f32 + 0.5,
+                    pt.z as f32 + 0.4,
+                    pt.y as f32 + 0.5,
                     light.radius as f32,
                 ];
                 let bit = 1 << index;

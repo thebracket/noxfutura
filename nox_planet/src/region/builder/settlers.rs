@@ -9,6 +9,7 @@ pub fn spawn_settlers(
     rng: &mut RandomNumberGenerator,
     crash_site: &Point,
     crash_z: usize,
+    region_idx: usize
 ) {
     let spawn_points = vec![
         (crash_site.x - 4, crash_site.y - 2, crash_z + 3),
@@ -30,11 +31,12 @@ pub fn spawn_settlers(
             spawn.0 as usize,
             spawn.1 as usize,
             spawn.2 as usize,
+            region_idx
         );
     }
 }
 
-fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: usize, z: usize) {
+fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: usize, z: usize, region_idx: usize) {
     let species_def = RAWS.read().species.species[0].clone();
 
     let gender = if rng.roll_dice(1, 20) < 11 {
@@ -210,12 +212,7 @@ fn spawn_settler(ecs: &mut World, rng: &mut RandomNumberGenerator, x: usize, y: 
         (Sentient {}, ),
         vec![(
             id,
-            Dimensions {
-                width: 1,
-                height: 1,
-                depth: 1,
-            },
-            Position { x, y, z },
+            Position::with_tile(x, y, z, region_idx, (1, 1, 1)),
             species,
             composite,
             name,

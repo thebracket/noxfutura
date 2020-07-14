@@ -2,7 +2,7 @@ use crate::prelude::*;
 use legion::prelude::*;
 use nox_raws::*;
 
-pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
+pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) {
     let rlock = RAWS.read();
     if let Some(plant) = rlock.plants.plant_by_tag(tag) {
         ecs.insert(
@@ -12,11 +12,6 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
                 Name {
                     name: plant.name.clone(),
                 },
-                Dimensions {
-                    width: 1,
-                    height: 1,
-                    depth: 1,
-                },
                 crate::VoxelModel {
                     index: rlock.vox.get_model_idx(&plant.vox),
                     rotation_radians: 0.0,
@@ -24,7 +19,7 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
                 Description {
                     desc: plant.description.clone(),
                 },
-                Position { x, y, z },
+                Position::with_tile(x, y, z, region_idx, (1, 1, 1)),
                 Tint {
                     color: (1.0, 1.0, 1.0),
                 },
@@ -35,7 +30,7 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
     }
 }
 
-pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize) {
+pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usize) {
     let rlock = RAWS.read();
     ecs.insert(
         (Tree {},),
@@ -44,11 +39,6 @@ pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize) {
             Name {
                 name: "Tree".to_string(),
             },
-            Dimensions {
-                width: 3,
-                height: 3,
-                depth: 3,
-            },
             crate::VoxelModel {
                 index: rlock.vox.get_model_idx("tree"),
                 rotation_radians: 0.0,
@@ -56,7 +46,7 @@ pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize) {
             Description {
                 desc: "A tree".to_string(),
             },
-            Position { x, y, z },
+            Position::with_tile(x, y, z, region_idx, (3, 3, 3)),
             Tint {
                 color: (1.0, 1.0, 1.0),
             },

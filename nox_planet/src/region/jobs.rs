@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashSet, HashMap};
 use nox_components::*;
 use bracket_geometry::prelude::*;
-use crate::idxmap;
+use nox_spatial::idxmap;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct JobsBoard {
@@ -114,7 +114,7 @@ fn job_cost(pos: &Position, job: &JobType) -> f32 {
         JobType::FellTree{tree_pos, ..} => {
             let (tx, ty, tz) = idxmap(*tree_pos);
             DistanceAlg::Pythagoras.distance3d(
-                Point3::new(pos.x, pos.y, pos.z), 
+                pos.as_point3(), 
                 Point3::new(tx, ty, tz)
             )
         }

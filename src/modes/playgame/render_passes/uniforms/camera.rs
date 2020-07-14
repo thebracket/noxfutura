@@ -33,56 +33,26 @@ impl Camera {
     }
 
     pub fn update(&mut self, pos: &Position, opts: &CameraOptions, width: u32, height: u32) {
-        self.target = (pos.x as f32, pos.z as f32, pos.y as f32).into();
+        self.target= pos.as_vec3_glspace();
         self.aspect = width as f32 / height as f32;
         match opts.mode {
             CameraMode::TopDown => {
-                self.eye = (
-                    pos.x as f32,
-                    pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 + (opts.zoom_level as f32 / 3.0),
-                )
-                    .into();
+                self.eye = pos.as_vec3_glspace() + Vec3::new(0.0, opts.zoom_level as f32, opts.zoom_level as f32 / 3.0);
             }
             CameraMode::Front => {
-                self.eye = (
-                    pos.x as f32,
-                    pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 + 0.1,
-                )
-                    .into();
+                self.eye = pos.as_vec3_glspace() + Vec3::new(0.0, opts.zoom_level as f32, 0.1);
             }
             CameraMode::DiagonalNW => {
-                self.eye = (
-                    pos.x as f32 + opts.zoom_level as f32,
-                    pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 + opts.zoom_level as f32,
-                )
-                    .into();
+                self.eye = pos.as_vec3_glspace() + Vec3::new(opts.zoom_level as f32, opts.zoom_level as f32, opts.zoom_level as f32);
             }
             CameraMode::DiagonalNE => {
-                self.eye = (
-                    pos.x as f32 - opts.zoom_level as f32,
-                    pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 + opts.zoom_level as f32,
-                )
-                    .into();
+                self.eye = pos.as_vec3_glspace() + Vec3::new(-opts.zoom_level as f32, opts.zoom_level as f32, opts.zoom_level as f32);
             }
             CameraMode::DiagonalSW => {
-                self.eye = (
-                    pos.x as f32 + opts.zoom_level as f32,
-                    pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 - opts.zoom_level as f32,
-                )
-                    .into();
+                self.eye = pos.as_vec3_glspace() + Vec3::new(opts.zoom_level as f32, opts.zoom_level as f32, -opts.zoom_level as f32);
             }
             CameraMode::DiagonalSE => {
-                self.eye = (
-                    pos.x as f32 - opts.zoom_level as f32,
-                    pos.z as f32 + opts.zoom_level as f32,
-                    pos.y as f32 - opts.zoom_level as f32,
-                )
-                    .into();
+                self.eye = pos.as_vec3_glspace() + Vec3::new(-opts.zoom_level as f32, opts.zoom_level as f32, -opts.zoom_level as f32);
             }
         }
 

@@ -1,5 +1,5 @@
 use super::{super::TileType, Region};
-use crate::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;
 use nox_raws::*;

@@ -1,8 +1,9 @@
-use crate::{ground_z, mapidx, Region, TileType, REGION_HEIGHT, REGION_WIDTH};
+use crate::{ground_z, Region, TileType};
 use bracket_random::prelude::RandomNumberGenerator;
 use legion::prelude::*;
 use crate::spawner::spawn_plant;
 use nox_raws::*;
+use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 
 pub fn grow_plants(
     region: &mut Region,
@@ -32,7 +33,7 @@ pub fn grow_plants(
                     if (rng.roll_dice(1, 15) as u8) <= soil_quality {
                         let chosen_plant = rng.random_slice_entry(&available_plants);
                         if let Some(plant_idx) = chosen_plant {
-                            spawn_plant(ecs, &RAWS.read().plants.plants[*plant_idx].tag, x, y, z);
+                            spawn_plant(ecs, &RAWS.read().plants.plants[*plant_idx].tag, x, y, z, region.world_idx);
                         } else {
                             println!("Rejecting because no plant type was received");
                         }

@@ -1,5 +1,5 @@
-use crate::{mapidx, Region, TileType, StairsType, REGION_DEPTH, 
-    REGION_HEIGHT, REGION_WIDTH};
+use crate::{Region, TileType, StairsType};
+use nox_spatial::*;
 
 pub fn set_flags(region: &mut Region) {
     // Set the solid flag

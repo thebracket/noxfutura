@@ -1,9 +1,7 @@
 use super::noise_helper::*;
 use super::{set_worldgen_status, Block, BlockType, PLANET_BUILD};
-use crate::{
-    planet_idx, sphere_vertex, REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_TILES_COUNT,
-    WORLD_WIDTH,
-};
+use crate::{planet_idx, sphere_vertex};
+use nox_spatial::{REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 use bracket_geometry::prelude::Degrees;
 use bracket_noise::prelude::*;
 

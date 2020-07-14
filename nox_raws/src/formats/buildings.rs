@@ -35,7 +35,7 @@ pub struct BuildingDef {
     pub description: String,
     pub blocked: Option<String>,
     pub provides: Vec<BuildingProvides>,
-    pub dimensions: Option<(usize, usize, usize)>,
+    pub dimensions: Option<(i32, i32, i32)>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

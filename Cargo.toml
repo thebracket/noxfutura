@@ -9,6 +9,7 @@ nox_raws = { path = "nox_raws" }
 nox_components = { path = "nox_components" }
 nox_planet = { path = "nox_planet" }
 nox_wgpu_utils = { path = "nox_wgpu_utils" }
+nox_spatial = { path = "nox_spatial" }
 
 wgpu = { version = "0.5.0" }
 winit = { version = "0.22.2", features = ["web-sys"] }
@@ -59,5 +60,6 @@ members = [
     "nox_raws",
     "nox_components",
     "nox_planet",
-    "nox_wgpu_utils"
+    "nox_wgpu_utils",
+    "nox_spatial"
 ]

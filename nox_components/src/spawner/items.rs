@@ -18,11 +18,6 @@ fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
                     rotation_radians: 0.0,
                 },
                 Tint { color: (1.0, 1.0, 1.0) },
-                Dimensions {
-                    width: 1,
-                    height: 1,
-                    depth: 1,
-                },
             )]
         )[0].clone();
 
@@ -42,9 +37,9 @@ fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
     }
 }
 
-pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) -> Option<usize> {
+pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, Position { x, y, z }).expect("Failed to add component");
+        ecs.add_component(entity, Position::with_tile(x, y, z, region_idx, (1,1,1))).expect("Failed to add component");
         Some(id)
     } else {
         None
@@ -53,7 +48,7 @@ pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: u
 
 pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, ItemStored { container }).expect("Failed to add component");
+        ecs.add_component(entity,Position::stored(container)).expect("Failed to add component");
         Some(id)
     } else {
         None
@@ -62,7 +57,7 @@ pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) -> 
 
 pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, ItemWorn { wearer }).expect("Failed to add component");
+        ecs.add_component(entity, Position::worn(wearer)).expect("Failed to add component");
         Some(id)
     } else {
         None
@@ -71,7 +66,7 @@ pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) -> Option<usiz
 
 pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, ItemCarried { wearer }).expect("Failed to add component");
+        ecs.add_component(entity, Position::carried(wearer)).expect("Failed to add component");
         Some(id)
     } else {
         None

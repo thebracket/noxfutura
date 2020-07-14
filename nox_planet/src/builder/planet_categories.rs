@@ -1,6 +1,7 @@
 use super::{set_worldgen_status, PLANET_BUILD};
 use crate::WORLDGEN_RENDER;
-use crate::{planet_idx, BlockType, Planet, WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
+use crate::{planet_idx, BlockType, Planet};
+use nox_spatial::{WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 
 pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
     let mut count = 0usize;

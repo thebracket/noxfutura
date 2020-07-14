@@ -66,28 +66,32 @@ pub fn build_vox_instances2(
     let query = <(
         Read<Position>,
         Read<VoxelModel>,
-        Read<Dimensions>,
         Read<Tint>,
     )>::query();
     query
         .iter(ecs)
-        .filter(|(pos, _, _, _)| {
-            pos.z > camera_z - LAYERS_DOWN
-                && pos.z <= camera_z
-                && frustrum.check_sphere(
-                    &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
-                    FRUSTRUM_CHECK_RANGE,
-                )
+        .filter(|(pos, _, _)| {
+            if let Some(pt) = pos.as_point3_only_tile() {
+                pt.z as usize > camera_z - LAYERS_DOWN
+                    && pt.z as usize <= camera_z
+                    && frustrum.check_sphere(
+                        &pos.as_vec3(),
+                        FRUSTRUM_CHECK_RANGE,
+                    )
+            } else {
+                false
+            }
         })
-        .for_each(|(pos, model, dims, tint)| {
-            let mut x = pos.x as f32;
-            let mut y = pos.y as f32;
-            let z = pos.z as f32;
+        .for_each(|(pos, model, tint)| {
+            let pt = pos.as_point3();
+            let mut x = pt.x as f32;
+            let mut y = pt.y as f32;
+            let z = pt.z as f32;
 
-            if dims.width == 3 {
+            if pos.dimensions.0 == 3 {
                 x -= 1.0;
             }
-            if dims.height == 3 {
+            if pos.dimensions.1 == 3 {
                 y -= 1.0;
             }
 
@@ -104,22 +108,22 @@ pub fn build_vox_instances2(
     query
         .iter(ecs)
         .filter(|(pos, _)| {
-            pos.z > camera_z - LAYERS_DOWN
-                && pos.z <= camera_z
-                && frustrum.check_sphere(
-                    &(pos.x as f32, pos.y as f32, pos.z as f32).into(),
-                    FRUSTRUM_CHECK_RANGE,
-                )
+            if let Some(pt) = pos.as_point3_only_tile() {
+                pt.z as usize > camera_z - LAYERS_DOWN
+                    && pt.z as usize <= camera_z
+                    && frustrum.check_sphere(
+                        &(pt.x as f32, pt.y as f32, pt.z as f32).into(),
+                        FRUSTRUM_CHECK_RANGE,
+                    )
+            } else {
+                false
+            }
         })
         .for_each(|(pos, composite)| {
             for vm in composite.layers.iter() {
-                let x = pos.x as f32;
-                let y = pos.y as f32;
-                let z = pos.z as f32;
-
                 instances.add(
                     vm.model,
-                    [x, z, y],
+                    pos.as_xzy_f32(),
                     [vm.tint.0, vm.tint.1, vm.tint.2],
                     composite.rotation,
                 );

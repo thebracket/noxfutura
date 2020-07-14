@@ -1,9 +1,10 @@
 use nox_components::*;
 use legion::prelude::*;
 use std::collections::HashMap;
-use nox_planet::idxmap;
+use nox_spatial::idxmap;
+use bracket_geometry::prelude::Point3;
 pub enum JobStep {
-    EntityMoved{ id: usize, end: Position },
+    EntityMoved{ id: usize, end: Point3 },
     JobChanged{ id: usize, new_job: JobType },
     JobCancelled{ id: usize },
     JobConcluded{ id:usize },
@@ -13,12 +14,12 @@ pub enum JobStep {
 pub fn apply_jobs_queue(ecs: &mut World) {
     let mut jlock = super::JOBS_QUEUE.lock();
 
-    let mut movers = HashMap::new();
+    let mut movers : HashMap<usize, (usize, usize, usize)> = HashMap::new();
 
     jlock.iter().for_each(|js| {
         match js {
             JobStep::EntityMoved{ id, end } => {
-                movers.insert(id, *end);
+                movers.insert(*id, (end.x as usize, end.y as usize, end.z as usize));
             }
             JobStep::JobChanged{id, new_job} => {
                 <(Read<Identity>, Write<MyTurn>)>::query()
@@ -65,7 +66,7 @@ pub fn apply_jobs_queue(ecs: &mut World) {
                                     let destination = path[0];
                                     path.remove(0);
                                     let (x,y,z) = idxmap(destination);
-                                    movers.insert(id, Position{x,y,z});
+                                    movers.insert(*id, (x,y,z));
                                 }
                             }
                             _ => {}
@@ -82,9 +83,7 @@ pub fn apply_jobs_queue(ecs: &mut World) {
             .filter(|(id, _)| movers.contains_key(&id.id) )
             .for_each(|(id, mut pos)| {
                 if let Some(destination) = movers.get(&id.id) {
-                    pos.x = destination.x;
-                    pos.y = destination.y;
-                    pos.z = destination.z;
+                    pos.set_tile_loc(destination);
                 }
             }
         );

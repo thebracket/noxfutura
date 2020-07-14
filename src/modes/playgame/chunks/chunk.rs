@@ -3,9 +3,10 @@ use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::utils::add_floor_geometry;
-use nox_planet::{mapidx, RampDirection, Region, StairsType, TileType};
+use nox_planet::{RampDirection, Region, StairsType, TileType};
 use nox_raws::{MappedTexture, RAWS};
 use ultraviolet::Vec3;
+use nox_spatial::mapidx;
 
 pub struct Chunk {
     pub t: ChunkType,

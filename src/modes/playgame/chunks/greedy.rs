@@ -1,4 +1,4 @@
-use nox_planet::{idxmap, REGION_WIDTH};
+use nox_spatial::{idxmap, REGION_WIDTH};
 use nox_raws::MappedTexture;
 use std::collections::HashMap;
 

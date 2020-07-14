@@ -2,34 +2,6 @@ use imgui::*;
 use legion::prelude::*;
 use nox_components::*;
 
-pub fn point_in_model(pos: &Position, dims: &Dimensions, point: &(usize, usize, usize)) -> bool {
-    if dims.width == 1 && dims.height == 1 && dims.depth == 1 {
-        point.0 == pos.x && point.1 == pos.y && point.2 == pos.z
-    } else if dims.width == 3 && dims.height == 3 {
-        for x in pos.x - 1..pos.x + dims.width as usize - 1 {
-            for y in pos.y - 1..pos.y + dims.height as usize - 1 {
-                for z in pos.z..pos.z + dims.depth as usize {
-                    if point.0 == x && point.1 == y && point.2 == z {
-                        return true;
-                    }
-                }
-            }
-        }
-        false
-    } else {
-        for x in pos.x..pos.x + dims.width as usize {
-            for y in pos.y..pos.y + dims.height as usize {
-                for z in pos.z..pos.z + dims.depth as usize {
-                    if point.0 == x && point.1 == y && point.2 == z {
-                        return true;
-                    }
-                }
-            }
-        }
-        false
-    }
-}
-
 pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui: &Ui) {
     if imgui.io().want_capture_mouse {
         return;
@@ -37,7 +9,8 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
 
     let mut lines: Vec<(bool, String)> = Vec::new();
 
-    use nox_planet::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, mapidx, Region};
+    use nox_planet::Region;
+    use nox_spatial::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, mapidx};
     if mouse_world_pos.0 > 0 && mouse_world_pos.0 < REGION_WIDTH && mouse_world_pos.1 > 0 && mouse_world_pos.1 < REGION_HEIGHT && mouse_world_pos.2 > 0 && mouse_world_pos.2 < REGION_DEPTH {
         let idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
         let r = crate::systems::REGION.read();
@@ -55,10 +28,10 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
         }
     }
 
-    <(Read<Name>, Read<Position>, Read<Identity>, Read<Dimensions>)>::query()
+    <(Read<Name>, Read<Position>, Read<Identity>)>::query()
         .iter_entities(&ecs)
-        .filter(|(_, (_, pos, _, dims))| point_in_model(pos, dims, mouse_world_pos))
-        .for_each(|(entity, (name, _, identity, _))| {
+        .filter(|(_, (_, pos, _))| pos.contains_point(mouse_world_pos))
+        .for_each(|(entity, (name, _, identity))| {
             lines.push((true, format!("{}", name.name)));
 
             <Read<Description>>::query()
@@ -68,9 +41,9 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
                     lines.push((false, format!("{}", d.desc)));
                 });
 
-            <(Read<Name>, Read<ItemStored>)>::query()
+            <(Read<Name>, Read<Position>)>::query()
                 .iter(&ecs)
-                .filter(|(_, store)| store.container == identity.id)
+                .filter(|(_, store)| store.is_in_container(identity.id))
                 .for_each(|(name, _)| {
                     lines.push((false, format!(" - {}", name.name)));
                 });

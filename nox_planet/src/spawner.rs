@@ -1,7 +1,8 @@
 use legion::prelude::*;
 use bracket_random::prelude::RandomNumberGenerator;
 use nox_components::*;
-use crate::{Region, mapidx};
+use crate::Region;
+use nox_spatial::mapidx;
 
 fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {
     <(Read<Identity>, Read<Tool>)>::query()
@@ -13,18 +14,7 @@ fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Opti
             if claimed.is_none() {
                 <(Read<Position>, Read<Identity>)>::query().iter(ecs)
                     .filter(|(_, pid)| pid.id == item_id)
-                    .for_each(|(pos, _)| effective_location = mapidx(pos.x, pos.y, pos.z)
-                );
-
-                <(Read<ItemStored>, Read<Identity>)>::query().iter(ecs)
-                    .filter(|(_, pid)| pid.id == item_id)
-                    .for_each(|(store, _)| {
-                        // Find the parent position
-                        <(Read<Position>, Read<Identity>)>::query().iter(ecs)
-                            .filter(|(_, pid)| pid.id == store.container)
-                            .for_each(|(pos, _)| effective_location = mapidx(pos.x, pos.y, pos.z)
-                        );
-                    }
+                    .for_each(|(pos, _)| effective_location = pos.effective_location(ecs)
                 );
             }
 
@@ -34,8 +24,8 @@ fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Opti
     );
 }
 
-pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) -> usize {
-    nox_components::spawner::spawn_building(ecs, tag, x, y, z)
+pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) -> usize {
+    nox_components::spawner::spawn_building(ecs, tag, mapidx(x, y, z), region_idx)
 }
 
 pub fn spawn_clothing_from_raws_worn(
@@ -48,7 +38,7 @@ pub fn spawn_clothing_from_raws_worn(
 }
 
 pub fn spawn_item_on_ground(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region: &mut Region) {
-    if let Some(id) = nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z) {
+    if let Some(id) = nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx) {
         add_tool_info(ecs, id, region, None);
     }
 }
@@ -72,10 +62,10 @@ pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize, region: &mu
     }
 }
 
-pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) {
-    nox_components::spawner::spawn_plant(ecs, tag, x, y, z)
+pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) {
+    nox_components::spawner::spawn_plant(ecs, tag, x, y, z, region_idx)
 }
 
-pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize) {
-    nox_components::spawner::spawn_tree(ecs, x, y, z)
+pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usize) {
+    nox_components::spawner::spawn_tree(ecs, x, y, z, region_idx)
 }

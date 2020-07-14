@@ -35,7 +35,7 @@ impl Chunks {
     }
 
     pub fn on_camera_move(&mut self, camera_matrix: &Mat4, camera_position: &Position) {
-        let cp = Point3::new(camera_position.x, camera_position.y, camera_position.z);
+        let cp = camera_position.as_point3();
         self.frustrum.update(camera_matrix);
         self.visible_chunks = self
             .chunks

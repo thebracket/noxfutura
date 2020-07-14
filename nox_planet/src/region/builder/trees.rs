@@ -1,9 +1,10 @@
-use crate::{ground_z, mapidx, Region, TileType, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use crate::{ground_z, Region, TileType};
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
 use legion::prelude::*;
 use nox_raws::*;
 use parking_lot::RwLock;
+use nox_spatial::*;
 
 lazy_static! {
     static ref TREE_COUNTER: RwLock<usize> = RwLock::new(1);
@@ -52,7 +53,7 @@ pub fn plant_trees(
                         let mut die_roll = rng.roll_dice(1, 1000);
                         if die_roll < d_chance {
                             //plant_deciduous(x, y, z, rng, region);
-                            crate::spawner::spawn_tree(ecs, x, y, z)
+                            crate::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
                             if die_roll < e_chance {

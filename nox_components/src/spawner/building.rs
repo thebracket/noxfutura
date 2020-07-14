@@ -1,23 +1,15 @@
 use crate::prelude::*;
 use legion::prelude::*;
 
-pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) -> usize {
+pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: usize) -> usize {
     use nox_raws::*;
     let mut result = 0;
     let rlock = RAWS.read();
     if let Some(building_def) = rlock.buildings.building_by_tag(tag) {
         let dims = if let Some(dims) = building_def.dimensions {
-            Dimensions {
-                width: dims.0 as i32,
-                height: dims.1 as i32,
-                depth: dims.2 as i32,
-            }
+            dims
         } else {
-            Dimensions {
-                width: 1,
-                height: 1,
-                depth: 1,
-            }
+            (1, 1, 1)
         };
 
         let identity = Identity::new();
@@ -30,7 +22,6 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
                 Name {
                     name: building_def.name.clone(),
                 },
-                dims,
                 crate::VoxelModel {
                     index: rlock.vox.get_model_idx(&building_def.vox),
                     rotation_radians: 0.0,
@@ -38,7 +29,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize) 
                 Description {
                     desc: building_def.description.clone(),
                 },
-                Position { x, y, z },
+                Position::with_tile_idx(tile_idx, region_idx, dims),
                 Tint {
                     color: (1.0, 1.0, 1.0),
                 },
