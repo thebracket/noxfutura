@@ -12,13 +12,12 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
             (1, 1, 1)
         };
 
-        let identity = Identity::new();
-        result = identity.id;
+        let identity = IdentityTag::new();
+        result = identity.0;
 
         let entity = ecs.insert(
-            (Building {},),
+            (Building {}, identity),
             vec![(
-                identity,
                 Name {
                     name: building_def.name.clone(),
                 },

@@ -182,8 +182,8 @@ fn spawn_settler(
 
     let gi = species.gender_identity.clone();
 
-    let id = Identity::new();
-    let settler_id = id.id;
+    let id = IdentityTag::new();
+    let settler_id = id.0;
 
     // Spawning clothing and equipment goes here
     let clothing_list = match gi {
@@ -216,9 +216,8 @@ fn spawn_settler(
     }
 
     ecs.insert(
-        (Sentient {},),
+        (Sentient {}, id),
         vec![(
-            id,
             Position::with_tile(x, y, z, region_idx, (1, 1, 1)),
             species,
             composite,

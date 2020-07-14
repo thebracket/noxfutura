@@ -6,7 +6,7 @@ use nox_planet::Region;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("move_randomly")
-        .with_query(<(Write<Position>, Read<MyTurn>, Read<Identity>)>::query())
+        .with_query(<(Write<Position>, Read<MyTurn>, Tagged<IdentityTag>)>::query())
         .build(|_, ecs, _, actors| {
             actors
                 .iter_mut(ecs)
@@ -69,7 +69,7 @@ pub fn build() -> Box<dyn Schedulable> {
                     destination.x += delta.0;
                     destination.y += delta.1;
                     destination.z += delta.2;
-                    crate::messaging::entity_moved(id.id, &destination);
+                    crate::messaging::entity_moved(id.0, &destination);
                 });
         })
 }

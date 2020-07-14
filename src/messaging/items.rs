@@ -15,10 +15,10 @@ pub fn apply_world_queue(ecs: &mut World) {
             WorldChange::TreeChop { id: _, tree_id } => {
                 println!("Chop tree");
                 // TODO: Remove the tree from the region data
-                let tree_entity = <(Read<Identity>,Read<Position>)>::query().filter(tag::<Tree>())
+                let treetag = IdentityTag(*tree_id);
+                let tree_entity = <Read<Position>>::query().filter(tag_value(&treetag))
                     .iter_entities(ecs)
-                    .filter(|(_entity, (tid, _))| tid.id == *tree_id)
-                    .map(|(e, (_,pos))| (e, pos.get_idx()))
+                    .map(|(e, pos)| (e, pos.get_idx()))
                     .nth(0)
                     .unwrap()
                 ;
@@ -33,10 +33,10 @@ pub fn apply_world_queue(ecs: &mut World) {
             }
 
             WorldChange::EquipItem { id, tool_id } => {
-                <(Read<Identity>, Write<Position>)>::query()
+                let itemtag = IdentityTag(*tool_id);
+                <Write<Position>>::query().filter(tag_value(&itemtag))
                     .iter_mut(ecs)
-                    .filter(|(tid, _)| tid.id == *tool_id)
-                    .for_each(|(_, mut pos)| {
+                    .for_each(|mut pos| {
                         pos.to_carried(*id);
                     }
                 );

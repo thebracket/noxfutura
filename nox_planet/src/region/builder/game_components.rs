@@ -5,10 +5,9 @@ use nox_spatial::{REGION_WIDTH, WORLD_WIDTH};
 
 pub fn add_game_components(world: &mut World, hm: &[u8], crash_site: Point) {
     world.insert(
-        (Cordex {},),
+        (Cordex {}, IdentityTag::new()),
         (0..1).map(|_| {
             (
-                Identity::new(),
                 Position::with_tile(
                     128,
                     128,

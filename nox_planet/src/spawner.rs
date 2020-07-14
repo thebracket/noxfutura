@@ -5,20 +5,19 @@ use nox_components::*;
 use nox_spatial::mapidx;
 
 fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {
-    <(Read<Identity>, Read<Tool>)>::query()
+    let idtag = IdentityTag(item_id);
+    <Read<Tool>>::query().filter(tag_value(&idtag))
         .iter(ecs)
-        .filter(|(id, _)| id.id == item_id)
-        .for_each(|(_, tool)| {
+        .for_each(|tool| {
             let mut effective_location = 0;
 
             if claimed.is_none() {
-                <(Read<Position>, Read<Identity>)>::query()
+                <Read<Position>>::query().filter(tag_value(&idtag))
                     .iter(ecs)
-                    .filter(|(_, pid)| pid.id == item_id)
-                    .for_each(|(pos, _)| effective_location = pos.effective_location(ecs));
+                    .for_each(|pos| effective_location = pos.effective_location(ecs));
             }
 
-            println!("Adding tool to list. {:?}", tool.usage);
+            println!("Adding tool to list. {:?}, at {}", tool.usage, effective_location);
             region
                 .jobs_board
                 .add_tool(item_id, claimed, tool.usage, effective_location);

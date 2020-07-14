@@ -54,7 +54,6 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         ComponentRegistration::of::<CompositeRender>(),
         ComponentRegistration::of::<Tagline>(),
         ComponentRegistration::of::<Attributes>(),
-        ComponentRegistration::of::<Identity>(),
         ComponentRegistration::of::<Light>(),
         ComponentRegistration::of::<FieldOfView>(),
         ComponentRegistration::of::<Initiative>(),
@@ -70,6 +69,7 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         TagRegistration::of::<Vegetation>(),
         TagRegistration::of::<Tree>(),
         TagRegistration::of::<PendingDeletion>(),
+        TagRegistration::of::<IdentityTag>()
     ];
     (comp_registrations, tag_registrations)
 }

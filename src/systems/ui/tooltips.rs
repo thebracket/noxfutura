@@ -50,7 +50,7 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
         }
     }
 
-    <(Read<Name>, Read<Position>, Read<Identity>)>::query()
+    <(Read<Name>, Read<Position>, Tagged<IdentityTag>)>::query()
         .iter_entities(&ecs)
         .filter(|(_, (_, pos, _))| pos.contains_point(mouse_world_pos))
         .for_each(|(entity, (name, _, identity))| {
@@ -65,7 +65,7 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
 
             <(Read<Name>, Read<Position>)>::query()
                 .iter(&ecs)
-                .filter(|(_, store)| store.is_in_container(identity.id))
+                .filter(|(_, store)| store.is_in_container(identity.0))
                 .for_each(|(name, _)| {
                     lines.push((false, format!(" - {}", name.name)));
                 });

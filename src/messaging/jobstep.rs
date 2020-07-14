@@ -22,18 +22,18 @@ pub fn apply_jobs_queue(ecs: &mut World) {
                 movers.insert(*id, (end.x as usize, end.y as usize, end.z as usize));
             }
             JobStep::JobChanged { id, new_job } => {
-                <(Read<Identity>, Write<MyTurn>)>::query()
+                let idtag = IdentityTag(*id);
+                <Write<MyTurn>>::query().filter(tag_value(&idtag))
                     .iter_mut(ecs)
-                    .filter(|(jid, _)| jid.id == *id)
-                    .for_each(|(_, mut turn)| {
+                    .for_each(|mut turn| {
                         turn.job = new_job.clone();
                     });
             }
             JobStep::JobCancelled { id } => {
-                <(Read<Identity>, Write<MyTurn>)>::query()
+                let idtag = IdentityTag(*id);
+                <Write<MyTurn>>::query().filter(tag_value(&idtag))
                     .iter_mut(ecs)
-                    .filter(|(jid, _)| jid.id == *id)
-                    .for_each(|(_, mut turn)| {
+                    .for_each(|mut turn| {
                         crate::systems::REGION
                             .write()
                             .jobs_board
@@ -43,19 +43,19 @@ pub fn apply_jobs_queue(ecs: &mut World) {
             }
             JobStep::JobConcluded { id } => {
                 println!("Job finished");
-                <(Read<Identity>, Write<MyTurn>)>::query()
+                let idtag = IdentityTag(*id);
+                <Write<MyTurn>>::query().filter(tag_value(&idtag))
                     .iter_mut(ecs)
-                    .filter(|(jid, _)| jid.id == *id)
-                    .for_each(|(_, mut turn)| {
+                    .for_each(|mut turn| {
                         //TODO: Delete job
                         turn.job = JobType::None;
                     });
             }
             JobStep::FollowJobPath { id } => {
-                <(Read<Identity>, Write<MyTurn>)>::query()
+                let idtag = IdentityTag(*id);
+                <Write<MyTurn>>::query().filter(tag_value(&idtag))
                     .iter_mut(ecs)
-                    .filter(|(jid, _)| jid.id == *id)
-                    .for_each(|(_, mut turn)| match &mut turn.job {
+                    .for_each(|mut turn| match &mut turn.job {
                         JobType::FellTree { step, .. } => {
                             let path = match step {
                                 LumberjackSteps::TravelToAxe { path, .. } => Some(path),
@@ -77,11 +77,11 @@ pub fn apply_jobs_queue(ecs: &mut World) {
 
     if !movers.is_empty() {
         super::vox_moved();
-        <(Read<Identity>, Write<Position>)>::query()
+        <(Tagged<IdentityTag>, Write<Position>)>::query()
             .iter_mut(ecs)
-            .filter(|(id, _)| movers.contains_key(&id.id))
+            .filter(|(id, _)| movers.contains_key(&id.0))
             .for_each(|(id, mut pos)| {
-                if let Some(destination) = movers.get(&id.id) {
+                if let Some(destination) = movers.get(&id.0) {
                     pos.set_tile_loc(destination);
                 }
             });

@@ -159,10 +159,10 @@ impl CursorPass {
         if let RunState::Design { .. } = run_state {
             self.vb.clear();
             let rlock = crate::systems::REGION.read();
-            <(Read<Position>, Read<Identity>)>::query()
+            <(Read<Position>, Tagged<IdentityTag>)>::query()
                 .filter(tag::<Tree>())
                 .iter(ecs)
-                .filter(|(_, id)| rlock.jobs_board.get_trees().contains(&id.id))
+                .filter(|(_, id)| rlock.jobs_board.get_trees().contains(&id.0))
                 .for_each(|(pos, _)| {
                     let pt = pos.as_point3();
                     add_cube_geometry(

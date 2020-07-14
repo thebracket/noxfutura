@@ -114,27 +114,33 @@ impl Position {
         use legion::prelude::*;
         match self.loc {
             Location::Tile { idx } => idx,
-            Location::Stored { container } => <(Read<Identity>, Read<Position>)>::query()
-                .iter(ecs)
-                .filter(|(id, _)| id.id == container)
-                .map(|(_, pos)| *pos)
-                .nth(0)
-                .unwrap()
-                .effective_location(ecs),
-            Location::Carried { by } => <(Read<Identity>, Read<Position>)>::query()
-                .iter(ecs)
-                .filter(|(id, _)| id.id == by)
-                .map(|(_, pos)| *pos)
-                .nth(0)
-                .unwrap()
-                .effective_location(ecs),
-            Location::Worn { by } => <(Read<Identity>, Read<Position>)>::query()
-                .iter(ecs)
-                .filter(|(id, _)| id.id == by)
-                .map(|(_, pos)| *pos)
-                .nth(0)
-                .unwrap()
-                .effective_location(ecs),
+            Location::Stored { container } => {
+                let idtag = IdentityTag(container);
+                <Read<Position>>::query().filter(tag_value(&idtag))
+                    .iter(ecs)
+                    .map(|pos| *pos)
+                    .nth(0)
+                    .unwrap()
+                    .effective_location(ecs)
+            }
+            Location::Carried { by } => {
+                let idtag = IdentityTag(by);
+                <Read<Position>>::query().filter(tag_value(&idtag))
+                    .iter(ecs)
+                    .map(|pos| *pos)
+                    .nth(0)
+                    .unwrap()
+                    .effective_location(ecs)
+            }
+            Location::Worn { by } => {
+                let idtag = IdentityTag(by);
+                <Read<Position>>::query().filter(tag_value(&idtag))
+                    .iter(ecs)
+                    .map(|pos| *pos)
+                    .nth(0)
+                    .unwrap()
+                    .effective_location(ecs)
+            }
         }
     }
 

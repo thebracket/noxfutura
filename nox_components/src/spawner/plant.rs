@@ -6,9 +6,8 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
     let rlock = RAWS.read();
     if let Some(plant) = rlock.plants.plant_by_tag(tag) {
         ecs.insert(
-            (Vegetation {},),
+            (Vegetation {}, IdentityTag::new()),
             vec![(
-                Identity::new(),
                 Name {
                     name: plant.name.clone(),
                 },
@@ -33,9 +32,8 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
 pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usize) {
     let rlock = RAWS.read();
     ecs.insert(
-        (Tree {},),
+        (Tree {}, IdentityTag::new()),
         vec![(
-            Identity::new(),
             Name {
                 name: "Tree".to_string(),
             },
