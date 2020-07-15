@@ -26,6 +26,3 @@ pub struct Vegetation {}
 #[uuid = "dbd8944d-90b5-40d3-9519-a6253669c647"]
 pub struct Tree {}
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "d3c0b587-eb8c-430b-af89-db5ccf094940"]
-pub struct PendingDeletion {}

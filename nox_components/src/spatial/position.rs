@@ -80,6 +80,7 @@ impl Position {
         }
     }
 
+    #[inline(always)]
     pub fn as_point3(&self) -> Point3 {
         match &self.loc {
             Location::Tile { idx } => {
@@ -90,6 +91,7 @@ impl Position {
         }
     }
 
+    #[inline(always)]
     pub fn as_xzy_f32(&self) -> [f32; 3] {
         match &self.loc {
             Location::Tile { idx } => {
@@ -100,6 +102,7 @@ impl Position {
         }
     }
 
+    #[inline(always)]
     pub fn as_point3_only_tile(&self) -> Option<Point3> {
         match &self.loc {
             Location::Tile { idx } => {
@@ -147,12 +150,14 @@ impl Position {
         }
     }
 
+    #[inline]
     pub fn set_tile_loc(&mut self, pos: &(usize, usize, usize)) {
         self.loc = Location::Tile {
             idx: mapidx(pos.0, pos.1, pos.2),
         }
     }
 
+    #[inline]
     pub fn as_vec3(&self) -> ultraviolet::Vec3 {
         use ultraviolet::Vec3;
         match self.loc {
@@ -164,6 +169,7 @@ impl Position {
         }
     }
 
+    #[inline]
     pub fn as_vec3_glspace(&self) -> ultraviolet::Vec3 {
         use ultraviolet::Vec3;
         match self.loc {
@@ -175,6 +181,7 @@ impl Position {
         }
     }
 
+    #[inline]
     pub fn apply_delta(&mut self, dx: i32, dy: i32, dz: i32) {
         match &mut self.loc {
             Location::Tile { idx } => {
@@ -188,6 +195,7 @@ impl Position {
         }
     }
 
+    #[inline]
     pub fn contains_point(&self, point: &(usize, usize, usize)) -> bool {
         match &self.loc {
             Location::Tile { idx } => {
@@ -223,6 +231,7 @@ impl Position {
         }
     }
 
+    #[inline]
     pub fn get_idx(&self) -> usize {
         match &self.loc {
             Location::Tile { idx } => *idx,
@@ -230,6 +239,7 @@ impl Position {
         }
     }
 
+    #[inline]
     pub fn is_in_container(&self, container_id: usize) -> bool {
         match &self.loc {
             Location::Stored { container } => *container == container_id,
@@ -237,6 +247,7 @@ impl Position {
         }
     }
 
+    #[inline]
     pub fn is_carried(&self, by_id: usize) -> bool {
         match &self.loc {
             Location::Carried { by } => *by == by_id,
@@ -244,18 +255,22 @@ impl Position {
         }
     }
 
+    #[inline]
     pub fn to_carried(&mut self, by: usize) {
         self.loc = Location::Carried { by };
     }
 
+    #[inline]
     pub fn to_stored(&mut self, container: usize) {
         self.loc = Location::Stored { container };
     }
 
+    #[inline]
     pub fn to_ground(&mut self, idx: usize) {
         self.loc = Location::Tile { idx };
     }
 
+    #[inline]
     pub fn to_worn(&mut self, by: usize) {
         self.loc = Location::Worn { by };
     }

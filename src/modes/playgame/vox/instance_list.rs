@@ -64,7 +64,7 @@ pub fn build_vox_instances2(
 
     // Models from the ECS
     let query =
-        <(Read<Position>, Read<VoxelModel>, Read<Tint>)>::query().filter(!tag::<PendingDeletion>());
+        <(Read<Position>, Read<VoxelModel>, Read<Tint>)>::query();
     query
         .iter(ecs)
         .filter(|(pos, _, _)| {
@@ -77,21 +77,18 @@ pub fn build_vox_instances2(
             }
         })
         .for_each(|(pos, model, tint)| {
-            let pt = pos.as_point3();
-            let mut x = pt.x as f32;
-            let mut y = pt.y as f32;
-            let z = pt.z as f32;
+            let mut pt = pos.as_vec3();
 
             if pos.dimensions.0 == 3 {
-                x -= 1.0;
+                pt.x -= 1.0;
             }
             if pos.dimensions.1 == 3 {
-                y -= 1.0;
+                pt.y -= 1.0;
             }
 
             instances.add(
                 model.index,
-                [x, z, y],
+                [pt.x, pt.z, pt.y],
                 [tint.color.0, tint.color.1, tint.color.2],
                 model.rotation_radians,
             );
@@ -99,7 +96,7 @@ pub fn build_vox_instances2(
 
     // Composite builder
     let query =
-        <(Read<Position>, Read<CompositeRender>)>::query().filter(!tag::<PendingDeletion>());
+        <(Read<Position>, Read<CompositeRender>)>::query();
     query
         .iter(ecs)
         .filter(|(pos, _)| {
