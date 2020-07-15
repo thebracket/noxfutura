@@ -26,7 +26,6 @@ bracket-random = { version = "0.8.0", default-features = false }
 bracket-noise = "0.8.1"
 bracket-geometry = { version = "0.8.1", features = ["serde"] }
 bracket-color = { version = "0.8.1", features = ["rex", "serde"] }
-bracket-algorithm-traits = "0.8.1"
 lazy_static = "1.4.0"
 parking_lot = "0.11.0"
 serde = { version = "1.0.114" }
