@@ -9,8 +9,6 @@ pub fn build() -> Box<dyn Schedulable> {
         .with_query(<(Read<MyTurn>, Read<Position>, Tagged<IdentityTag>)>::query())
         .with_query(<Tagged<IdentityTag>>::query())
         .build(|commands, ecs, _, (actors, trees)| {
-            let mut trees_to_delete = HashSet::new();
-
             // Look for a job to do
             actors
                 .iter_mut(ecs)
@@ -111,9 +109,8 @@ pub fn build() -> Box<dyn Schedulable> {
                                 }
                             }
                             LumberjackSteps::ChopTree{} => {
-                                //crate::messaging::chop_tree(id.0, *tree_id);
-                                //crate::messaging::conclude_job(id.0);
-                                trees_to_delete.insert(*tree_id);
+                                crate::messaging::chop_tree(id.0, *tree_id);
+                                crate::messaging::conclude_job(id.0);
                             }
                         }
                     } else {
@@ -121,15 +118,6 @@ pub fn build() -> Box<dyn Schedulable> {
                     }
                 }
             );
-
-            // Clean up any trees
-            if !trees_to_delete.is_empty() {
-                trees.for_each_entities(ecs, |(e, id)| {
-                    if trees_to_delete.contains(&id.0) {
-                        commands.delete(e);
-                    }
-                });
-            }
         }
     )
 }

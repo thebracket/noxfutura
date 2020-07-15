@@ -18,15 +18,16 @@ pub fn apply_world_queue(ecs: &mut World) {
                 let treetag = IdentityTag(*tree_id);
                 let tree_pos = <Read<Position>>::query()
                     .filter(tag_value(&treetag))
-                    .iter(ecs)
-                    .map(|pos| pos.get_idx())
+                    .iter_entities(ecs)
+                    .map(|(e, pos)| (e, pos.get_idx()))
                     .nth(0)
                     .unwrap();
+                let (tx, ty, tz) = idxmap(tree_pos.1);
 
                 // Delete - crash?
+                ecs.delete(tree_pos.0);
 
                 let mut rlock = crate::systems::REGION.write();
-                let (tx, ty, tz) = idxmap(tree_pos);
                 for _ in 0..crate::systems::RNG.lock().roll_dice(1, 6) {
                     nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock);
                 }
