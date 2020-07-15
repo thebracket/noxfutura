@@ -107,7 +107,7 @@ impl LightUniforms {
     }
 }
 
-#[inline(always)]
+#[inline]
 fn vec_to_float(v: &Vec3) -> [f32; 4] {
     [v.x, v.y, v.z, 0.0]
 }

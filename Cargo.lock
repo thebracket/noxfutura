@@ -209,17 +209,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bracket-pathfinding"
-version = "0.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cbd1eeaabc58017f4708c451924db6140fd148ab64f4cb6d433fb0c193cd6733"
-dependencies = [
- "bracket-algorithm-traits",
- "bracket-geometry",
- "smallvec",
-]
-
-[[package]]
 name = "bracket-random"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1435,7 +1424,6 @@ dependencies = [
  "bracket-color",
  "bracket-geometry",
  "bracket-noise",
- "bracket-pathfinding",
  "bracket-random",
  "bytemuck",
  "byteorder",

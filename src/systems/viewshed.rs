@@ -43,7 +43,7 @@ pub fn build() -> Box<dyn Schedulable> {
         })
 }
 
-#[inline(always)]
+#[inline]
 fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i32) {
     let radius = fov.radius as f32;
     let start = pos.as_vec3() + Vec3::new(0.5, 0.5, 0.5);

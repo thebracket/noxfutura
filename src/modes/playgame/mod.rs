@@ -285,7 +285,7 @@ impl PlayGame {
         result
     }
 
-    #[inline(always)]
+    #[inline]
     fn render(
         &mut self,
         camera_z: usize,

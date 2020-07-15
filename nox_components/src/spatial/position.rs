@@ -71,7 +71,7 @@ impl Position {
         }
     }
 
-    #[inline(always)]
+    #[inline]
     pub fn exact_position(&self, x: usize, y: usize, z: usize) -> bool {
         let test_idx = mapidx(x, y, z);
         match &self.loc {
@@ -80,7 +80,7 @@ impl Position {
         }
     }
 
-    #[inline(always)]
+    #[inline]
     pub fn as_point3(&self) -> Point3 {
         match &self.loc {
             Location::Tile { idx } => {
@@ -91,7 +91,7 @@ impl Position {
         }
     }
 
-    #[inline(always)]
+    #[inline]
     pub fn as_xzy_f32(&self) -> [f32; 3] {
         match &self.loc {
             Location::Tile { idx } => {
@@ -102,7 +102,7 @@ impl Position {
         }
     }
 
-    #[inline(always)]
+    #[inline]
     pub fn as_point3_only_tile(&self) -> Option<Point3> {
         match &self.loc {
             Location::Tile { idx } => {

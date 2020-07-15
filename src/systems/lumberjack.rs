@@ -1,6 +1,6 @@
 use crate::messaging;
 use crate::systems::REGION;
-use bracket_pathfinding::prelude::a_star_search;
+use nox_planet::pathfinding::a_star_search;
 use legion::prelude::*;
 use nox_components::*;
 
