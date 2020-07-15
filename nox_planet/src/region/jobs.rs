@@ -25,7 +25,7 @@ impl JobsBoard {
             .all_jobs
             .iter()
             .enumerate()
-            .filter(|(_, j)| j.claimed.is_none())
+            .filter(|(_, j)| j.claimed.is_none() && self.is_possible(j))
             .map(|(i, j)| (i, job_cost(pos, &j.job)))
             .collect();
 
@@ -117,6 +117,20 @@ impl JobsBoard {
         }
 
         None
+    }
+
+    fn is_possible(&self, job: &JobBoardListing) -> bool {
+        match job.job {
+            JobType::FellTree{..} => {
+                let available_tools = self
+                    .tool_ownership
+                    .iter()
+                    .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == ToolType::Chopping)
+                    .count();
+                available_tools > 0
+            }
+            _ => true
+        }
     }
 
     pub fn relinquish_claim(&mut self, tool_id: usize) {
