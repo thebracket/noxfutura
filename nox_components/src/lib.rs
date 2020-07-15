@@ -69,6 +69,7 @@ fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>
         TagRegistration::of::<Vegetation>(),
         TagRegistration::of::<Tree>(),
         TagRegistration::of::<IdentityTag>(),
+        TagRegistration::of::<Terrain>(),
     ];
     (comp_registrations, tag_registrations)
 }

@@ -17,7 +17,6 @@ pub struct Chunk {
     vb: VertexBuffer<f32>,
     element_count: [u32; CHUNK_SIZE],
     pub center_pos: Vec3,
-    pub chunk_models: Vec<ChunkModel>,
 }
 
 impl Chunk {
@@ -45,7 +44,6 @@ impl Chunk {
                 (z * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,
             )
                 .into(),
-            chunk_models: Vec::new(),
         }
     }
 
@@ -72,7 +70,6 @@ impl Chunk {
         if !self.dirty {
             return;
         }
-        self.chunk_models.clear();
 
         let mut count_empty = 0;
         self.cells.iter().for_each(|idx| {
@@ -115,7 +112,7 @@ impl Chunk {
                                         floors.insert(idx, self.calc_floor_material(idx, region));
                                     }
                                     TileType::Ramp { direction } => {
-                                        let mat = self.calc_material(idx, region);
+                                        /*let mat = self.calc_material(idx, region);
                                         self.chunk_models.push(ChunkModel {
                                             id: RAWS.read().vox.get_model_idx("rampnew"),
                                             x: x + self.base.0,
@@ -128,10 +125,10 @@ impl Chunk {
                                                 RampDirection::EastWest => 4.71239,
                                             },
                                             tint: [mat.tint.0, mat.tint.1, mat.tint.2],
-                                        });
+                                        });*/
                                     }
                                     TileType::Stairs { direction } => {
-                                        let tag = match direction {
+                                        /*let tag = match direction {
                                             StairsType::Up => "stairs_up",
                                             StairsType::Down => "stairs_down",
                                             StairsType::UpDown => "stairs_updown",
@@ -143,7 +140,7 @@ impl Chunk {
                                             z: z + self.base.2,
                                             rotation: 0.0,
                                             tint: [1.0, 1.0, 1.0],
-                                        });
+                                        });*/
                                     }
                                     _ => {}
                                 }

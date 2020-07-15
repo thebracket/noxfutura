@@ -123,7 +123,7 @@ pub fn build_vox_instances2(
         });
 
     // Terrain chunks builder
-    chunks.visible_chunks().iter().for_each(|c| {
+    /*chunks.visible_chunks().iter().for_each(|c| {
         c.chunk_models
             .iter()
             .filter(|m| m.z > camera_z - LAYERS_DOWN && m.z <= camera_z)
@@ -135,7 +135,7 @@ pub fn build_vox_instances2(
                     m.rotation,
                 );
             });
-    });
+    });*/
 
     // Build the instanced data
     instances.instances.iter().for_each(|i| {

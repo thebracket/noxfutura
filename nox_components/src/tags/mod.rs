@@ -26,3 +26,6 @@ pub struct Vegetation {}
 #[uuid = "dbd8944d-90b5-40d3-9519-a6253669c647"]
 pub struct Tree {}
 
+#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
+#[uuid = "dbd8944d-90b5-40d3-9519-a6253669c646"]
+pub struct Terrain {}

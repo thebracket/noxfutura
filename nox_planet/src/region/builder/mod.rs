@@ -15,6 +15,7 @@ mod settlers;
 mod strata;
 mod trees;
 mod water_features;
+mod map_components;
 use legion::prelude::*;
 pub use primitive::Primitive;
 mod flags;
@@ -92,6 +93,10 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     settlers::spawn_settlers(&mut world, &mut rng, &ship_loc, crash_z, region.world_idx);
 
     set_worldgen_status("Features");
+
+    set_worldgen_status("Making perfectly nice things into entities");
+    map_components::transform_terrain_to_ecs(region, &mut world);
+
     set_worldgen_status("Looking for the map");
     flags::set_flags(region);
 
