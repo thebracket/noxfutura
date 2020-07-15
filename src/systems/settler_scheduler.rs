@@ -12,6 +12,7 @@ pub fn build() -> Box<dyn Schedulable> {
                 .filter(|(turn, _)| turn.active)
                 .for_each(|(mut turn, schedule)| {
                     turn.shift = schedule.hours[hour];
+                    turn.shift = ScheduleTime::Work;
                 });
         })
 }

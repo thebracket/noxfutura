@@ -97,6 +97,7 @@ impl PlayGame {
                 self.planet = Some(game.planet);
                 *REGION.write() = game.current_region;
                 self.ecs = nox_components::deserialize_world(game.ecs_text);
+                self.ecs.defrag(None);
 
                 let mut loader_lock = crate::modes::loader::LOADER.write();
                 self.rpass = loader_lock.rpass.take();
@@ -144,6 +145,7 @@ impl PlayGame {
 
         messaging::reset();
         self.run_systems(frame_time);
+        let mut commands = CommandBuffer::new(&self.ecs);
         crate::messaging::apply_jobs_queue(&mut self.ecs);
         crate::messaging::apply_world_queue(&mut self.ecs);
         let rf = messaging::get_render_flags();

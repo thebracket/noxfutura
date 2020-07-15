@@ -2,11 +2,15 @@ use crate::systems::REGION;
 use bracket_pathfinding::prelude::a_star_search;
 use legion::prelude::*;
 use nox_components::*;
+use std::collections::HashSet;
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("lumberjack")
         .with_query(<(Read<MyTurn>, Read<Position>, Tagged<IdentityTag>)>::query())
-        .build(|_, ecs, _, actors| {
+        .with_query(<Tagged<IdentityTag>>::query())
+        .build(|commands, ecs, _, (actors, trees)| {
+            let mut trees_to_delete = HashSet::new();
+
             // Look for a job to do
             actors
                 .iter_mut(ecs)
@@ -107,8 +111,9 @@ pub fn build() -> Box<dyn Schedulable> {
                                 }
                             }
                             LumberjackSteps::ChopTree{} => {
-                                crate::messaging::chop_tree(id.0, *tree_id);
-                                crate::messaging::conclude_job(id.0);
+                                //crate::messaging::chop_tree(id.0, *tree_id);
+                                //crate::messaging::conclude_job(id.0);
+                                trees_to_delete.insert(*tree_id);
                             }
                         }
                     } else {
@@ -116,6 +121,15 @@ pub fn build() -> Box<dyn Schedulable> {
                     }
                 }
             );
+
+            // Clean up any trees
+            if !trees_to_delete.is_empty() {
+                trees.for_each_entities(ecs, |(e, id)| {
+                    if trees_to_delete.contains(&id.0) {
+                        commands.delete(e);
+                    }
+                });
+            }
         }
     )
 }

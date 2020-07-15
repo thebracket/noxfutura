@@ -199,7 +199,7 @@ impl legion::serialize::ser::WorldSerializer for SerializeImpl {
         self.tag_types.get(&ty.0).is_some()
     }
     fn can_serialize_component(&self, ty: &ComponentTypeId, _meta: &ComponentMeta) -> bool {
-        self.comp_types.get(&ty.0).is_some()
+        self.comp_types.get(&ty.type_id()).is_some()
     }
     fn serialize_archetype_description<S: Serializer>(
         &self,
@@ -215,7 +215,7 @@ impl legion::serialize::ser::WorldSerializer for SerializeImpl {
         let components_to_serialize = archetype_desc
             .components()
             .iter()
-            .filter_map(|(ty, _)| self.comp_types.get(&ty.0))
+            .filter_map(|(ty, _)| self.comp_types.get(&ty.type_id()))
             .map(|reg| reg.uuid)
             .collect::<Vec<_>>();
         SerializedArchetypeDescription {
@@ -231,7 +231,7 @@ impl legion::serialize::ser::WorldSerializer for SerializeImpl {
         _component_meta: &ComponentMeta,
         components: &ComponentResourceSet,
     ) -> Result<S::Ok, S::Error> {
-        if let Some(reg) = self.comp_types.get(&component_type.0) {
+        if let Some(reg) = self.comp_types.get(&component_type.type_id()) {
             let result = RefCell::new(None);
             let serializer = RefCell::new(Some(serializer));
             {
@@ -324,7 +324,7 @@ impl legion::serialize::de::WorldDeserializer for DeserializeImpl {
         _component_meta: &ComponentMeta,
         get_next_storage_fn: &mut dyn FnMut() -> Option<(NonNull<u8>, usize)>,
     ) -> Result<(), <D as Deserializer<'de>>::Error> {
-        if let Some(reg) = self.comp_types.get(&component_type.0) {
+        if let Some(reg) = self.comp_types.get(&component_type.type_id()) {
             let mut erased = erased_serde::Deserializer::erase(deserializer);
             (reg.comp_deserialize_fn)(&mut erased, get_next_storage_fn)
                 .map_err(<<D as serde::Deserializer<'de>>::Error as serde::de::Error>::custom)?;
@@ -424,5 +424,8 @@ pub fn deserialize_world(raw: String) -> World {
         .unwrap();
 
     super::rebuild_identity(&deserialized_world);
-    deserialized_world
+
+    let mut new_world = universe.create_world();
+    new_world.move_from(deserialized_world);
+    new_world
 }

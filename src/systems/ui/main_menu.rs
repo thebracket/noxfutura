@@ -10,7 +10,7 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec
     // Obtain info to display
     let mut hud_time = String::new();
     let query = <Read<Calendar>>::query();
-    for c in query.iter(&ecs) {
+    for c in query.iter(ecs) {
         hud_time = c.get_date_time();
         sun_pos = c.calculate_sun_moon();
     }

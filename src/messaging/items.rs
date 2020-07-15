@@ -16,16 +16,17 @@ pub fn apply_world_queue(ecs: &mut World) {
                 println!("Chop tree");
                 // TODO: Remove the tree from the region data
                 let treetag = IdentityTag(*tree_id);
-                let tree_entity = <Read<Position>>::query()
+                let tree_pos = <Read<Position>>::query()
                     .filter(tag_value(&treetag))
-                    .iter_entities(ecs)
-                    .map(|(e, pos)| (e, pos.get_idx()))
+                    .iter(ecs)
+                    .map(|pos| pos.get_idx())
                     .nth(0)
                     .unwrap();
-                //ecs.delete(tree_entity.0); // Crashes
+
+                // Delete - crash?
 
                 let mut rlock = crate::systems::REGION.write();
-                let (tx, ty, tz) = idxmap(tree_entity.1);
+                let (tx, ty, tz) = idxmap(tree_pos);
                 for _ in 0..crate::systems::RNG.lock().roll_dice(1, 6) {
                     nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock);
                 }
