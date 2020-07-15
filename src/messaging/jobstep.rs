@@ -1,3 +1,4 @@
+use crate::systems::REGION;
 use bracket_geometry::prelude::Point3;
 use legion::prelude::*;
 use nox_components::*;
@@ -9,6 +10,8 @@ pub enum JobStep {
     JobCancelled { id: usize },
     JobConcluded { id: usize },
     FollowJobPath { id: usize },
+    DropItem { id: usize, location: usize },
+    RelinquishClaim { tool_id: usize },
 }
 
 pub fn apply_jobs_queue(ecs: &mut World) {
@@ -36,10 +39,7 @@ pub fn apply_jobs_queue(ecs: &mut World) {
                     .filter(tag_value(&idtag))
                     .iter_mut(ecs)
                     .for_each(|mut turn| {
-                        crate::systems::REGION
-                            .write()
-                            .jobs_board
-                            .restore_job(&turn.job);
+                        REGION.write().jobs_board.restore_job(&turn.job);
                         turn.job = JobType::None;
                     });
             }
@@ -50,7 +50,19 @@ pub fn apply_jobs_queue(ecs: &mut World) {
                     .filter(tag_value(&idtag))
                     .iter_mut(ecs)
                     .for_each(|mut turn| {
-                        //TODO: Delete job
+                        match &turn.job {
+                            JobType::FellTree {
+                                tree_id,
+                                tree_pos: _,
+                                step: _,
+                                tool_id: _,
+                            } => {
+                                // Un-designate the tree
+                                let mut rlock = REGION.write();
+                                rlock.jobs_board.remove_tree(&tree_id);
+                            }
+                            _ => {}
+                        }
                         turn.job = JobType::None;
                     });
             }
@@ -75,6 +87,18 @@ pub fn apply_jobs_queue(ecs: &mut World) {
                         }
                         _ => {}
                     });
+            }
+            JobStep::DropItem { id, location } => {
+                let idtag = IdentityTag(*id);
+                <Write<Position>>::query()
+                    .filter(tag_value(&idtag))
+                    .iter_mut(ecs)
+                    .for_each(|mut pos| {
+                        pos.to_ground(*location);
+                    });
+            }
+            JobStep::RelinquishClaim { tool_id } => {
+                REGION.write().jobs_board.relinquish_claim(*tool_id);
             }
         }
     });

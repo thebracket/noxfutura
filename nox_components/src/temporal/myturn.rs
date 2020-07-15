@@ -16,6 +16,7 @@ pub enum JobType {
     FellTree {
         tree_id: usize,
         tree_pos: usize,
+        tool_id: Option<usize>,
         step: LumberjackSteps,
     },
 }
@@ -24,8 +25,8 @@ pub enum JobType {
 #[uuid = "7733aa76-f2ff-4e91-835e-cf106def134f"]
 pub enum LumberjackSteps {
     FindAxe,
-    TravelToAxe { path: Vec<usize>, tool_id: usize },
-    CollectAxe { tool_id: usize },
+    TravelToAxe { path: Vec<usize> },
+    CollectAxe,
     FindTree,
     TravelToTree { path: Vec<usize> },
     ChopTree,

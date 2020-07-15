@@ -43,6 +43,14 @@ pub fn follow_job_path(id: usize) {
     JOBS_QUEUE.lock().push(JobStep::FollowJobPath { id });
 }
 
+pub fn drop_item(id: usize, location: usize) {
+    JOBS_QUEUE.lock().push(JobStep::DropItem { id, location });
+}
+
+pub fn relinquish_claim(tool_id: usize) {
+    JOBS_QUEUE.lock().push(JobStep::RelinquishClaim { tool_id });
+}
+
 pub fn equip_tool(id: usize, tool_id: usize) {
     WORLD_QUEUE
         .lock()

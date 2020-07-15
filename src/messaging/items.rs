@@ -24,7 +24,6 @@ pub fn apply_world_queue(ecs: &mut World) {
                     .unwrap();
                 let (tx, ty, tz) = idxmap(tree_pos.1);
 
-                // Delete - crash?
                 ecs.delete(tree_pos.0);
 
                 let mut rlock = crate::systems::REGION.write();

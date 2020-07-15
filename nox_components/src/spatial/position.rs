@@ -237,6 +237,13 @@ impl Position {
         }
     }
 
+    pub fn is_carried(&self, by_id: usize) -> bool {
+        match &self.loc {
+            Location::Carried { by } => *by == by_id,
+            _ => false,
+        }
+    }
+
     pub fn to_carried(&mut self, by: usize) {
         self.loc = Location::Carried { by };
     }
