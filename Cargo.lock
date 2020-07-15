@@ -1365,7 +1365,6 @@ name = "nox_planet"
 version = "0.1.0"
 dependencies = [
  "bincode",
- "bracket-algorithm-traits",
  "bracket-color",
  "bracket-geometry",
  "bracket-noise",
@@ -1381,6 +1380,7 @@ dependencies = [
  "nox_wgpu_utils",
  "parking_lot 0.11.0",
  "serde",
+ "smallvec",
  "ultraviolet",
 ]
 

@@ -1,18 +1,15 @@
-use bracket_algorithm_traits::prelude::BaseMap;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
-use std::convert::TryInto;
+use crate::Region;
 
 /// Bail out if the A* search exceeds this many steps.
 const MAX_ASTAR_STEPS: usize = 65536;
 
 /// Request an A-Star search. The start and end are specified as index numbers (compatible with your
 /// BaseMap implementation), and it requires access to your map so as to call distance and exit determinations.
-pub fn a_star_search<T>(start: T, end: T, map: &dyn BaseMap) -> NavigationPath
-where
-    T: TryInto<usize>,
+pub fn a_star_search(start: usize, end: usize, map: &Region) -> NavigationPath
 {
-    AStar::new(start.try_into().ok().unwrap(), end.try_into().ok().unwrap()).search(map)
+    AStar::new(start, end).search(map)
 }
 
 /// Holds the result of an A-Star navigation query.
@@ -101,12 +98,12 @@ impl AStar {
     }
 
     /// Wrapper to the BaseMap's distance function.
-    fn distance_to_end(&self, idx: usize, map: &dyn BaseMap) -> f32 {
+    fn distance_to_end(&self, idx: usize, map: &Region) -> f32 {
         map.get_pathing_distance(idx, self.end)
     }
 
     /// Adds a successor; if we're at the end, marks success.
-    fn add_successor(&mut self, q: Node, idx: usize, cost: f32, map: &dyn BaseMap) -> bool {
+    fn add_successor(&mut self, q: Node, idx: usize, cost: f32, map: &Region) -> bool {
         // Did we reach our goal?
         if idx == self.end {
             self.parents.insert(idx, q.idx);
@@ -160,7 +157,7 @@ impl AStar {
     }
 
     /// Performs an A-Star search
-    fn search(&mut self, map: &dyn BaseMap) -> NavigationPath {
+    fn search(&mut self, map: &Region) -> NavigationPath {
         let result = NavigationPath::new();
         while !self.open_list.is_empty() && self.step_counter < MAX_ASTAR_STEPS {
             self.step_counter += 1;

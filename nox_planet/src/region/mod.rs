@@ -6,9 +6,9 @@ pub use tiletype::*;
 mod builder;
 pub use builder::*;
 mod jobs;
-use bracket_algorithm_traits::prelude::*;
 use bracket_geometry::prelude::*;
 use jobs::JobsBoard;
+use smallvec::SmallVec;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Region {
@@ -79,10 +79,8 @@ impl Region {
     pub const CAN_GO_UP: u16 = 128;
     pub const CAN_GO_DOWN: u16 = 256;
     pub const CAN_STAND_HERE: u16 = 512;
-}
 
-impl BaseMap for Region {
-    fn get_available_exits(&self, idx: usize) -> SmallVec<[(usize, f32); 10]> {
+    pub(crate) fn get_available_exits(&self, idx: usize) -> SmallVec<[(usize, f32); 10]> {
         let mut exits = SmallVec::<[(usize, f32); 10]>::new();
 
         if self.flag(idx, Region::CAN_GO_NORTH) {
@@ -107,7 +105,7 @@ impl BaseMap for Region {
         exits
     }
 
-    fn get_pathing_distance(&self, idx1: usize, idx2: usize) -> f32 {
+    pub(crate) fn get_pathing_distance(&self, idx1: usize, idx2: usize) -> f32 {
         let (sx, sy, sz) = idxmap(idx1);
         let (ex, ey, ez) = idxmap(idx2);
         let pt1 = Point3::new(sx as i32, sy as i32, sz as i32);
