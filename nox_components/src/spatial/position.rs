@@ -2,9 +2,6 @@ use crate::prelude::*;
 use bracket_geometry::prelude::Point3;
 use nox_spatial::*;
 
-// Change to an enum and remove the storage/carried/etc options. Give helpful code.
-// ca3f2ce0-9c8e-4abe-a3c6-12098b1b016a
-
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "ca3f2ce0-9c8e-4abe-a3c6-12098b1b016a"]
 pub struct Position {
