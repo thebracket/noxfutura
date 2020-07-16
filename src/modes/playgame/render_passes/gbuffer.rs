@@ -12,10 +12,26 @@ impl GBuffer {
     pub fn new() -> Self {
         let swap_format = DEVICE_CONTEXT.read().as_ref().unwrap().swapchain_format;
 
-        let albedo = GBufferTarget::make_texture("Albedo", swap_format);
-        let normal = GBufferTarget::make_texture("Normal", wgpu::TextureFormat::Rgba32Float);
-        let pbr = GBufferTarget::make_texture("PBR", swap_format);
-        let coords = GBufferTarget::make_texture("Coords", wgpu::TextureFormat::Rgba32Float);
+        let albedo = GBufferTarget::make_texture(
+            "Albedo",
+            swap_format,
+            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT
+        );
+        let normal = GBufferTarget::make_texture(
+            "Normal",
+            wgpu::TextureFormat::Rgba32Float,
+            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT
+        );
+        let pbr = GBufferTarget::make_texture(
+            "PBR",
+            swap_format,
+            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT
+        );
+        let coords = GBufferTarget::make_texture(
+    "Coords",
+    wgpu::TextureFormat::Rgba32Float,
+            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT | wgpu::TextureUsage::COPY_SRC,
+        );
 
         let mouse_buffer = {
             let mut ctx_lock = DEVICE_CONTEXT.write();
@@ -45,7 +61,6 @@ impl GBuffer {
     pub fn copy_mouse_buffer(&self) {
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
-        //let size = context.size.width as u64 * context.size.height as u64 * 4 * std::mem::size_of::<f32>() as u64;
 
         let command_buffer = {
             let mut encoder = context
@@ -83,7 +98,7 @@ pub struct GBufferTarget {
 }
 
 impl GBufferTarget {
-    pub fn make_texture(label: &str, format: wgpu::TextureFormat) -> Self {
+    pub fn make_texture(label: &str, format: wgpu::TextureFormat, usage: wgpu::TextureUsage) -> Self {
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
 
@@ -100,9 +115,7 @@ impl GBufferTarget {
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format,
-            usage: wgpu::TextureUsage::SAMPLED
-                | wgpu::TextureUsage::OUTPUT_ATTACHMENT
-                | wgpu::TextureUsage::COPY_SRC,
+            usage
         });
 
         let view = texture.create_default_view();

@@ -3,7 +3,7 @@ use imgui::*;
 pub fn fps_display(imgui: &Ui, frame_time: u128) {
     let sz = crate::engine::DEVICE_CONTEXT.read().as_ref().unwrap().size;
     let title = format!(
-        "Playing. Frame time: {} ms. FPS: {}. ### FPS",
+        "Playing. Frame time: {:2} ms. FPS: {:.0}. ### FPS",
         frame_time,
         imgui.io().framerate
     );

@@ -50,7 +50,7 @@ opt-level = 1
 [profile.release]
 incremental = true
 #lto = "thin"
-#debug = true # Disable when not profiling
+debug = true # Disable when not profiling
 
 [workspace]
 members = [
