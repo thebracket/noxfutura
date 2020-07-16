@@ -1,4 +1,3 @@
-use super::super::chunks::Chunks;
 use super::super::frustrum::Frustrum;
 use crate::engine::VertexBuffer;
 use crate::modes::playgame::vox::VoxBuffer;
@@ -23,7 +22,7 @@ pub struct VMInstances {
 impl VMInstances {
     pub fn new() -> Self {
         Self {
-            instances: HashMap::new(),
+            instances: HashMap::with_capacity(200)
         }
     }
 
@@ -56,7 +55,6 @@ pub fn build_vox_instances2(
     instance_buffer: &mut VertexBuffer<f32>,
     vox_instances: &mut Vec<(u32, u32, u32)>,
     frustrum: &Frustrum,
-    chunks: &Chunks,
 ) {
     let mut instances = VMInstances::new();
     instance_buffer.clear();
@@ -121,21 +119,6 @@ pub fn build_vox_instances2(
                 );
             }
         });
-
-    // Terrain chunks builder
-    /*chunks.visible_chunks().iter().for_each(|c| {
-        c.chunk_models
-            .iter()
-            .filter(|m| m.z > camera_z - LAYERS_DOWN && m.z <= camera_z)
-            .for_each(|m| {
-                instances.add(
-                    m.id,
-                    [m.x as f32, m.z as f32, m.y as f32],
-                    m.tint,
-                    m.rotation,
-                );
-            });
-    });*/
 
     // Build the instanced data
     instances.instances.iter().for_each(|i| {

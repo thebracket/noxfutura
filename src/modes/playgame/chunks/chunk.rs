@@ -111,37 +111,6 @@ impl Chunk {
                                     TileType::Floor => {
                                         floors.insert(idx, self.calc_floor_material(idx, region));
                                     }
-                                    TileType::Ramp { direction } => {
-                                        /*let mat = self.calc_material(idx, region);
-                                        self.chunk_models.push(ChunkModel {
-                                            id: RAWS.read().vox.get_model_idx("rampnew"),
-                                            x: x + self.base.0,
-                                            y: y + self.base.1,
-                                            z: z + self.base.2,
-                                            rotation: match direction {
-                                                RampDirection::NorthSouth => 3.14159,
-                                                RampDirection::SouthNorth => 0.0,
-                                                RampDirection::WestEast => 1.5708,
-                                                RampDirection::EastWest => 4.71239,
-                                            },
-                                            tint: [mat.tint.0, mat.tint.1, mat.tint.2],
-                                        });*/
-                                    }
-                                    TileType::Stairs { direction } => {
-                                        /*let tag = match direction {
-                                            StairsType::Up => "stairs_up",
-                                            StairsType::Down => "stairs_down",
-                                            StairsType::UpDown => "stairs_updown",
-                                        };
-                                        self.chunk_models.push(ChunkModel {
-                                            id: RAWS.read().vox.get_model_idx(tag),
-                                            x: x + self.base.0,
-                                            y: y + self.base.1,
-                                            z: z + self.base.2,
-                                            rotation: 0.0,
-                                            tint: [1.0, 1.0, 1.0],
-                                        });*/
-                                    }
                                     _ => {}
                                 }
 

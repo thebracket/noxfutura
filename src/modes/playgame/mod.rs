@@ -72,7 +72,7 @@ impl PlayGame {
             scheduler: None,
             paused_scheduler: None,
             run_state: RunState::Paused,
-            vox_instances: Vec::new(),
+            vox_instances: Vec::with_capacity(200),
             vox_changed: true,
             lights_changed: true,
             first_run: true,
@@ -306,7 +306,6 @@ impl PlayGame {
                 &mut vox_pass.instance_buffer,
                 &mut self.vox_instances,
                 &self.chunks.frustrum,
-                &self.chunks,
             );
             self.vox_changed = false;
         }

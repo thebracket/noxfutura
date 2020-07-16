@@ -52,6 +52,7 @@ impl Region {
         }
     }
 
+    #[inline]
     pub fn flag(&self, idx: usize, flag: u16) -> bool {
         self.flags[idx] & flag > 0
     }
