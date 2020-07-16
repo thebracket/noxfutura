@@ -50,7 +50,8 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
         }
     }
 
-    <(Read<Name>, Read<Position>, Tagged<IdentityTag>)>::query()
+    // This is eating a ton of frame time!
+    /*<(Read<Name>, Read<Position>, Tagged<IdentityTag>)>::query()
         .iter_entities(ecs)
         .filter(|(_, (_, pos, _))| pos.contains_point(mouse_world_pos))
         .for_each(|(entity, (name, _, identity))| {
@@ -69,7 +70,8 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
                 .for_each(|(name, _)| {
                     lines.push((false, format!(" - {}", name.name)));
                 });
-        });
+        }
+    );*/
 
     if !lines.is_empty() {
         let im_lines: Vec<(bool, ImString)> = lines

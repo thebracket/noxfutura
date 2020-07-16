@@ -157,11 +157,10 @@ fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::Textur
                     let my = mouse_position[1] as u32;
                     let mouse_index = (my * context.size.width) + mx;
 
-                    let size = context.size.width as u64
-                        * context.size.height as u64
-                        * 4
-                        * std::mem::size_of::<f32>() as u64;
-                    let future = buf.map_read(0, size);
+                    let size = 4 * std::mem::size_of::<f32>() as u64;
+                    let mbuf_pixel = mouse_index as u64 * size;
+
+                    let future = buf.map_read(mbuf_pixel, size);
                     context.device.poll(wgpu::Maintain::Wait);
                     let mapping = futures::executor::block_on(future);
                     if let Ok(mapping) = mapping {
@@ -171,7 +170,7 @@ fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::Textur
                                 .align_to::<[f32; 4]>()
                                 .1
                                 .iter()
-                                .skip(mouse_index as usize)
+                                //.skip(mouse_index as usize)
                                 .take(1)
                                 .for_each(|f| {
                                     mouse_world_pos = (
