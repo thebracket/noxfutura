@@ -13,7 +13,7 @@ pub struct Chunk {
     pub idx: usize,
     pub base: (usize, usize, usize),
     cells: Vec<usize>,
-    dirty: bool,
+    pub dirty: bool,
     vb: VertexBuffer<f32>,
     element_count: [u32; CHUNK_SIZE],
     pub center_pos: Vec3,
@@ -70,6 +70,9 @@ impl Chunk {
         if !self.dirty {
             return;
         }
+        self.dirty = false;
+        self.vb.clear();
+        self.element_count = [0, 0, 0, 0, 0, 0, 0, 0];
 
         let mut count_empty = 0;
         self.cells.iter().for_each(|idx| {
@@ -108,14 +111,24 @@ impl Chunk {
                                     TileType::Solid => {
                                         cubes.insert(idx, self.calc_material(idx, region));
                                     }
-                                    TileType::Floor => {
-                                        floors.insert(idx, self.calc_floor_material(idx, region));
+                                    TileType::TreeTrunk{..} => {
+                                        cubes.insert(idx, MappedTexture{ texture: RAWS.read().matmap.bark_id, tint: (1.0, 1.0, 1.0) });
+                                    }
+                                    TileType::TreeFoliage{..} => {
+                                        cubes.insert(idx, MappedTexture{ texture: RAWS.read().matmap.leaf_id, tint: (1.0, 1.0, 1.0) });
+                                    }
+                                    TileType::Floor{plant} => {
+                                        if let Some(_plant) = plant {
+                                            floors.insert(idx, MappedTexture{ texture: RAWS.read().matmap.grass_id, tint: (1.0, 1.0, 1.0) });
+                                        } else {
+                                            floors.insert(idx, self.calc_floor_material(idx, region));
+                                        }
                                     }
                                     _ => {}
                                 }
 
                                 // Add water - temporarily here, it'll have to move
-                                let wl = region.water_level[idx];
+                                /*let wl = region.water_level[idx];
                                 if wl > 0 {
                                     let mat = MappedTexture {
                                         texture: RAWS.read().matmap.water_id,
@@ -131,7 +144,7 @@ impl Chunk {
                                         1.0,
                                         mat,
                                     )
-                                }
+                                }*/
                             }
                         }
                     }
@@ -152,6 +165,7 @@ impl Chunk {
 
         self.dirty = false;
         if self.vb.len() > 0 {
+            //println!("Updated buffer");
             self.vb.update_buffer();
         }
     }

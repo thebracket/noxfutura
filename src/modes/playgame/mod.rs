@@ -156,6 +156,7 @@ impl PlayGame {
         }
         if rf.terrain_changed {
             self.rebuild_geometry = true;
+            self.chunks.mark_dirty(&rf.dirty_tiles);
         }
 
         let sun_pos = self.user_interface(frame_time, imgui, mouse_world_pos);

@@ -1,4 +1,3 @@
-use crate::spawner::spawn_plant;
 use crate::{ground_z, Region, TileType};
 use bracket_random::prelude::RandomNumberGenerator;
 use legion::prelude::*;
@@ -17,7 +16,7 @@ pub fn grow_plants(
         for x in 0..REGION_WIDTH {
             let z = ground_z(region, x, y);
             let idx = mapidx(x, y, z);
-            if region.tile_types[idx] == TileType::Floor && region.water_level[idx] < 2 {
+            if region.is_floor(idx) && region.water_level[idx] < 2 {
                 let soil_quality = match rlock.materials.materials[region.material_idx[idx]].layer {
                     MaterialLayer::Sand => 1,
                     MaterialLayer::Soil { quality } => quality,
@@ -33,14 +32,15 @@ pub fn grow_plants(
                     if (rng.roll_dice(1, 15) as u8) <= soil_quality {
                         let chosen_plant = rng.random_slice_entry(&available_plants);
                         if let Some(plant_idx) = chosen_plant {
-                            spawn_plant(
+                            region.tile_types[mapidx(x, y, z)] = TileType::Floor{ plant: Some(*plant_idx) };
+                            /*spawn_plant(
                                 ecs,
                                 &RAWS.read().plants.plants[*plant_idx].tag,
                                 x,
                                 y,
                                 z,
                                 region.world_idx,
-                            );
+                            );*/
                         } else {
                             println!("Rejecting because no plant type was received");
                         }

@@ -199,7 +199,7 @@ pub fn set_water_tiles(region: &mut Region, water: &Vec<u8>, planet_water_level:
         for y in 0..REGION_HEIGHT {
             for x in 0..REGION_WIDTH {
                 let idx = mapidx(x, y, z);
-                if region.tile_types[idx] == TileType::Floor
+                if region.is_floor(idx)
                     || region.tile_types[idx] == TileType::Empty
                 {
                     let pool_idx = (y * REGION_WIDTH) + x;

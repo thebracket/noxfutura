@@ -22,6 +22,12 @@ pub fn vox_moved() {
     RENDER_FLAGS.lock().models_changed = true;
 }
 
+pub fn geometry_changed(idx: usize) {
+    let mut lock = RENDER_FLAGS.lock();
+    lock.terrain_changed = true;
+    lock.dirty_tiles.push(idx);
+}
+
 pub fn entity_moved(id: usize, end: &Point3) {
     JOBS_QUEUE.lock().push_back(JobStep::EntityMoved {
         id,

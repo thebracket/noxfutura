@@ -9,6 +9,8 @@ pub fn set_flags(region: &mut Region) {
             TileType::Solid => region.set_flag(idx, Region::SOLID),
             TileType::Wall => region.set_flag(idx, Region::SOLID),
             TileType::Window => region.set_flag(idx, Region::SOLID),
+            TileType::TreeFoliage{..} => region.set_flag(idx, Region::SOLID),
+            TileType::TreeTrunk{..} => region.set_flag(idx, Region::SOLID),
             _ => {}
         }
     }
@@ -37,7 +39,7 @@ pub fn set_flags(region: &mut Region) {
                 let mut can_stand = false;
                 if !region.flag(idx, Region::SOLID) {
                     match region.tile_types[idx] {
-                        TileType::Floor | TileType::Ramp { .. } | TileType::Stairs { .. } => {
+                        TileType::Floor{..} | TileType::Ramp { .. } | TileType::Stairs { .. } => {
                             can_stand = true;
                         }
                         _ => {}

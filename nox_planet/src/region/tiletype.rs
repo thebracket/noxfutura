@@ -4,12 +4,14 @@ use serde::{Deserialize, Serialize};
 pub enum TileType {
     Empty,
     Solid,
-    Floor,
+    Floor{ plant: Option<usize> },
     Wall,
     Ramp { direction: RampDirection },
     Stairs { direction: StairsType },
     SemiMoltenRock,
     Window,
+    TreeTrunk { tree_id: usize },
+    TreeFoliage { tree_id: usize }
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]

@@ -112,20 +112,28 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
         JobStep::TreeChop { id: _, tree_id } => {
             println!("Chop tree");
-            // TODO: Remove the tree from the region data
-            let treetag = IdentityTag(*tree_id);
-            let tree_pos = <Read<Position>>::query()
-                .filter(tag_value(&treetag))
-                .iter_entities(ecs)
-                .map(|(e, pos)| (e, pos.get_idx()))
-                .nth(0)
-                .unwrap();
-            let (tx, ty, tz) = idxmap(tree_pos.1);
-
-            ecs.delete(tree_pos.0);
-
+            use nox_planet::TileType;
             let mut rlock = crate::systems::REGION.write();
+            let mut tree_idx = std::usize::MAX;
+
+            let tid = tree_id;
+            rlock.tile_types.iter_mut().enumerate()
+                .filter(|(_, tt)| {
+                    match tt {
+                        TileType::TreeTrunk{tree_id} => *tree_id == *tid,
+                        TileType::TreeFoliage{tree_id} => *tree_id == *tid,
+                        _ => false
+                    }
+                })
+                .for_each(|(idx, tt)| {
+                    tree_idx = usize::min(tree_idx, idx);
+                    *tt = TileType::Empty;
+                    super::geometry_changed(idx);
+                })
+            ;
+
             for _ in 0..crate::systems::RNG.lock().roll_dice(1, 6) {
+                let (tx,ty,tz) = idxmap(tree_idx);
                 nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock);
             }
             super::vox_moved();

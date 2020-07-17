@@ -104,12 +104,13 @@ impl AStar {
 
     /// Adds a successor; if we're at the end, marks success.
     fn add_successor(&mut self, q: Node, idx: usize, cost: f32, map: &Region) -> bool {
+        let distance = self.distance_to_end(idx, map);
         // Did we reach our goal?
-        if idx == self.end {
+        if distance < 1.4 {
             self.parents.insert(idx, q.idx);
+            self.parents.insert(self.end, idx);
             true
         } else {
-            let distance = self.distance_to_end(idx, map);
             let s = Node {
                 idx,
                 f: distance + cost,

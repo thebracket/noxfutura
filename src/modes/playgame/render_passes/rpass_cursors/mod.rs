@@ -156,9 +156,35 @@ impl CursorPass {
         run_state: &RunState,
         ecs: &World,
     ) {
+        use nox_planet::TileType;
+        use nox_spatial::idxmap;
         if let RunState::Design { .. } = run_state {
             self.vb.clear();
             let rlock = crate::systems::REGION.read();
+            let tree_list = rlock.jobs_board.get_trees();
+            rlock.tile_types.iter().enumerate()
+            .filter(|(_,t)| {
+                match t {
+                    TileType::TreeFoliage{ tree_id } => tree_list.contains(tree_id),
+                    TileType::TreeTrunk{ tree_id} => tree_list.contains(tree_id),
+                    _ => false
+                }
+            })
+            .for_each(|(idx, _)| {
+                let (x,y,z) = idxmap(idx);
+                add_cube_geometry(
+                    &mut self.vb.data,
+                    x as f32,
+                    y as f32,
+                    z as f32,
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                );
+            });
+            std::mem::drop(rlock);
+            /*
             <(Read<Position>, Tagged<IdentityTag>)>::query()
                 .filter(tag::<Tree>())
                 .iter(ecs)
@@ -176,7 +202,7 @@ impl CursorPass {
                         1.0,
                     );
                 });
-            std::mem::drop(rlock);
+            std::mem::drop(rlock);*/
             if self.vb.len() == 0 {
                 return;
             }

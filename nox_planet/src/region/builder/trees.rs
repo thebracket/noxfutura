@@ -36,7 +36,7 @@ pub fn plant_trees(
             );
             let idx = mapidx(x, y, z);
             if crash_distance > 20.0
-                && region.tile_types[idx] == TileType::Floor
+                && region.is_floor(idx)
                 && region.water_level[idx] == 0
                 && can_see_sky(region, x, y, z)
             {
@@ -52,12 +52,14 @@ pub fn plant_trees(
                     if (rng.roll_dice(1, 10) as f32) <= quality {
                         let mut die_roll = rng.roll_dice(1, 1000);
                         if die_roll < d_chance {
-                            //plant_deciduous(x, y, z, rng, region);
-                            crate::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
+                            plant_deciduous(x, y, z, rng, region);
+                            //crate::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
                             if die_roll < e_chance {
                                 //plant_evergreen(x, y, z, rng, region);
+                                //crate::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
+                                plant_deciduous(x, y, z, rng, region);
                             }
                         }
                     }
@@ -65,6 +67,72 @@ pub fn plant_trees(
             }
         }
     }
+}
+
+#[derive(Debug, Clone)]
+struct Trunk {
+    x: usize,
+    y: usize,
+    z: usize,
+    depth : usize,
+    done: bool
+}
+
+fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, region: &mut Region) {
+    let tree_id = {
+        let mut tl = TREE_COUNTER.write();
+        *tl += 1;
+        tl
+    };
+
+    let tree_size = rng.roll_dice(2, 6) as usize;
+
+    // Grow the tree
+    let mut trunk = Vec::<Trunk>::new();
+    trunk.push(Trunk{ x, y, z, depth: 1, done: true });
+    trunk.push(Trunk{ x, y, z: z+1, depth: 1, done: false });
+    while trunk.iter().filter(|t| t.done == false).count() > 0 {
+        for i in 0..trunk.len() {
+            if !trunk[i].done {
+                trunk[i].done = true;
+
+                if trunk[i].depth < tree_size {
+                    let b = trunk[i].clone();
+                    match rng.range(0, 6) {
+                        0 => trunk.push(Trunk{ x: b.x-1, y: b.y, z: b.z, depth: b.depth, done: false }),
+                        1 => trunk.push(Trunk{ x: b.x+1, y: b.y, z: b.z, depth: b.depth, done: false }),
+                        2 => trunk.push(Trunk{ x: b.x, y: b.y-1, z: b.z, depth: b.depth, done: false }),
+                        3 => trunk.push(Trunk{ x: b.x, y: b.y+1, z: b.z, depth: b.depth, done: false }),
+                        _ => trunk.push(Trunk{ x: b.x, y: b.y, z: b.z + 1, depth: b.depth + 1, done: false })
+                    }
+                }
+            }
+        }
+    }
+    trunk.iter().for_each(|t| {
+        if t.x > 0 && t.x < REGION_WIDTH-1 && t.y > 0 && t.y < REGION_HEIGHT-1 && t.z > 0 && t.z < REGION_DEPTH-1 {
+            let idx = mapidx(t.x, t.y, t.z);
+            if region.tile_types[idx] == TileType::Empty {
+                region.tile_types[idx] = TileType::TreeTrunk{ tree_id: *tree_id };
+            }
+        }
+    });
+    trunk.iter().for_each(|t| {
+        if t.x > 1 && t.x < REGION_WIDTH-2 && t.y > 1 && t.y < REGION_HEIGHT-2 && t.z > 1 && t.z < REGION_DEPTH-2 {
+            for fx in t.x - 1..= t.x + 1 {
+                for fy in t.y - 1..= t.y + 1 {
+                    for fz in t.z ..= t.z + 1 {
+                        if t.depth > 2 && rng.roll_dice(1, 3) > 1 {
+                            let idx = mapidx(fx, fy, fz);
+                            if region.tile_types[idx] == TileType::Empty {
+                                region.tile_types[idx] = TileType::TreeFoliage{ tree_id: *tree_id };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 fn can_see_sky(region: &Region, x: usize, y: usize, z: usize) -> bool {

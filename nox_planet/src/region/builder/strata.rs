@@ -167,7 +167,7 @@ pub fn layer_cake(
 
             // Add a top floor
             let cell_idx = mapidx(x, y, z);
-            region.tile_types[cell_idx] = TileType::Floor;
+            region.tile_types[cell_idx] = TileType::Floor{ plant: None };
             let mat_idx = strata.map[cell_idx];
             region.material_idx[cell_idx] = *rng
                 .random_slice_entry(&soils)

@@ -11,6 +11,6 @@ pub fn chunk_idx(x: usize, y: usize, z: usize) -> usize {
     (z * CHUNK_HEIGHT * CHUNK_WIDTH) + (y * CHUNK_WIDTH) + x
 }
 
-//pub fn chunk_id_by_world(x: usize, y: usize, z: usize) -> usize {
-//    chunk_idx(x / CHUNK_SIZE, y / CHUNK_SIZE, z / CHUNK_SIZE)
-//}
+pub fn chunk_id_by_world(x: usize, y: usize, z: usize) -> usize {
+    chunk_idx(x / CHUNK_SIZE, y / CHUNK_SIZE, z / CHUNK_SIZE)
+}

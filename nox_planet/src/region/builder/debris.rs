@@ -1,23 +1,39 @@
-use crate::{ground_z, Region};
+use crate::{ground_z, Region, TileType};
 use bracket_geometry::prelude::Point;
 use legion::prelude::*;
-use nox_components::*;
-use nox_spatial::REGION_WIDTH;
+use nox_spatial::{ REGION_WIDTH, mapidx };
+use std::collections::HashSet;
 
 pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
+    let mut trees_to_remove = HashSet::new();
+
     for x in ship_loc.x - (REGION_WIDTH as i32 / 4)..ship_loc.x {
         for y in ship_loc.y - 3..ship_loc.y + 4 {
             let z = ground_z(region, x as usize, y as usize);
 
-            let veg_list_delete = <Read<Position>>::query()
-                .filter(tag::<Vegetation>())
-                .iter_entities_mut(ecs)
-                .filter(|(_, pos)| pos.exact_position(x as usize, y as usize, z))
-                .map(|(entity, _)| entity)
-                .collect::<Vec<Entity>>();
-            veg_list_delete.iter().for_each(|e| {
-                ecs.delete(*e);
-            });
+            let idx = mapidx(x as usize, y as usize, z);
+            match region.tile_types[idx] {
+                TileType::Floor{ plant } => {
+                    if plant.is_some() {
+                        region.tile_types[idx] = TileType::Floor{ plant: None };
+                    }
+                }
+                TileType::TreeTrunk { tree_id } => { trees_to_remove.insert(tree_id); }
+                TileType::TreeFoliage { tree_id } => { trees_to_remove.insert(tree_id); }
+                _ => {}
+            }
         }
     }
+
+    region.tile_types.iter_mut().for_each(|t| {
+        match t {
+            TileType::TreeTrunk { tree_id } => {
+                if trees_to_remove.contains(&tree_id) { *t = TileType::Empty; }
+            }
+            TileType::TreeFoliage { tree_id } => {
+                if trees_to_remove.contains(&tree_id) { *t = TileType::Empty; }
+            }
+            _ => {}
+        }
+    });
 }

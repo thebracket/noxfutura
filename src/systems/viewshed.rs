@@ -72,14 +72,13 @@ fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i3
                     reveal(idx, fov);
                 } else if fz < last_z {
                     // Check if we're trying to go through a floor
-                    if REGION.read().tile_types[idx] == TileType::Floor {
+                    if REGION.read().is_floor(idx) {
                         blocked = true;
                         reveal(idx, fov);
                     }
                 } else if z > last_z {
                     // Check if we're trying to go through a ceiling
-                    if REGION.read().tile_types[idx + (REGION_WIDTH * REGION_HEIGHT)]
-                        == TileType::Floor
+                    if REGION.read().is_floor(idx + (REGION_WIDTH * REGION_HEIGHT))
                     {
                         blocked = true;
                         reveal(idx, fov);

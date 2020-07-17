@@ -69,6 +69,13 @@ impl Region {
         self.flags.iter_mut().for_each(|f| *f = 0);
     }
 
+    pub fn is_floor(&self, idx: usize) -> bool {
+        match self.tile_types[idx] {
+            TileType::Floor{..} => true,
+            _ => false
+        }
+    }
+
     // Flags
     pub const SOLID: u16 = 1;
     pub const OUTSIDE: u16 = 2;
