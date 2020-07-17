@@ -9,6 +9,7 @@ mod jobs;
 use bracket_geometry::prelude::*;
 use jobs::JobsBoard;
 use smallvec::SmallVec;
+use std::collections::HashMap;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Region {
@@ -19,6 +20,7 @@ pub struct Region {
     pub biome_raw_idx: usize,
     pub revealed: Vec<bool>,
     pub water_level: Vec<u8>,
+    pub tree_bases: HashMap<usize, usize>,
     flags: Vec<u16>,
     pub jobs_board: JobsBoard,
 }
@@ -35,6 +37,7 @@ impl Region {
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
             jobs_board: JobsBoard::new(),
+            tree_bases: HashMap::new()
         }
     }
 
@@ -49,6 +52,7 @@ impl Region {
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
             jobs_board: JobsBoard::new(),
+            tree_bases: HashMap::new()
         }
     }
 
@@ -67,6 +71,10 @@ impl Region {
 
     pub fn reset_all_flags(&mut self) {
         self.flags.iter_mut().for_each(|f| *f = 0);
+    }
+
+    pub fn reset_flags(&mut self, idx: usize) {
+        self.flags[0] = 0;
     }
 
     pub fn is_floor(&self, idx: usize) -> bool {

@@ -128,7 +128,7 @@ impl Chunk {
                                 }
 
                                 // Add water - temporarily here, it'll have to move
-                                /*let wl = region.water_level[idx];
+                                let wl = region.water_level[idx];
                                 if wl > 0 {
                                     let mat = MappedTexture {
                                         texture: RAWS.read().matmap.water_id,
@@ -144,7 +144,7 @@ impl Chunk {
                                         1.0,
                                         mat,
                                     )
-                                }*/
+                                }
                             }
                         }
                     }

@@ -85,12 +85,13 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
         tl
     };
 
-    let tree_size = rng.roll_dice(2, 6) as usize;
+    let tree_size = rng.roll_dice(3, 6) as usize;
 
     // Grow the tree
     let mut trunk = Vec::<Trunk>::new();
     trunk.push(Trunk{ x, y, z, depth: 1, done: true });
-    trunk.push(Trunk{ x, y, z: z+1, depth: 1, done: false });
+    region.tree_bases.insert(*tree_id, mapidx(x, y, z));
+    trunk.push(Trunk{ x, y, z: z+1, depth: 2, done: false });
     while trunk.iter().filter(|t| t.done == false).count() > 0 {
         for i in 0..trunk.len() {
             if !trunk[i].done {
@@ -98,11 +99,11 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
 
                 if trunk[i].depth < tree_size {
                     let b = trunk[i].clone();
-                    match rng.range(0, 6) {
-                        0 => trunk.push(Trunk{ x: b.x-1, y: b.y, z: b.z, depth: b.depth, done: false }),
-                        1 => trunk.push(Trunk{ x: b.x+1, y: b.y, z: b.z, depth: b.depth, done: false }),
-                        2 => trunk.push(Trunk{ x: b.x, y: b.y-1, z: b.z, depth: b.depth, done: false }),
-                        3 => trunk.push(Trunk{ x: b.x, y: b.y+1, z: b.z, depth: b.depth, done: false }),
+                    match rng.range(0, usize::max(4, 14 - b.depth)) {
+                        0 => trunk.push(Trunk{ x: b.x-1, y: b.y, z: b.z, depth: b.depth + 1, done: false }),
+                        1 => trunk.push(Trunk{ x: b.x+1, y: b.y, z: b.z, depth: b.depth + 1, done: false }),
+                        2 => trunk.push(Trunk{ x: b.x, y: b.y-1, z: b.z, depth: b.depth + 1, done: false }),
+                        3 => trunk.push(Trunk{ x: b.x, y: b.y+1, z: b.z, depth: b.depth + 1, done: false }),
                         _ => trunk.push(Trunk{ x: b.x, y: b.y, z: b.z + 1, depth: b.depth + 1, done: false })
                     }
                 }
@@ -112,9 +113,7 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
     trunk.iter().for_each(|t| {
         if t.x > 0 && t.x < REGION_WIDTH-1 && t.y > 0 && t.y < REGION_HEIGHT-1 && t.z > 0 && t.z < REGION_DEPTH-1 {
             let idx = mapidx(t.x, t.y, t.z);
-            if region.tile_types[idx] == TileType::Empty {
-                region.tile_types[idx] = TileType::TreeTrunk{ tree_id: *tree_id };
-            }
+            region.tile_types[idx] = TileType::TreeTrunk{ tree_id: *tree_id };
         }
     });
     trunk.iter().for_each(|t| {

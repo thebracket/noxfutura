@@ -24,8 +24,9 @@ pub fn set_flags(region: &mut Region) {
                 if !blocked {
                     region.set_flag(idx, Region::OUTSIDE);
                 }
-                if region.flag(idx, Region::SOLID) {
-                    blocked = true;
+                match region.tile_types[idx] {
+                    TileType::Solid | TileType::SemiMoltenRock | TileType::Wall | TileType::Window => blocked = true,
+                    _ => {}
                 }
             }
         }
@@ -117,5 +118,108 @@ fn valid_exit(region: &Region, x: usize, y: usize, z:usize) -> bool {
         region.flag(idx, Region::CAN_STAND_HERE)
     } else {
         false
+    }
+}
+
+pub fn localized_flags(region: &mut Region, idx: usize) {
+    let (x,y,z) = idxmap(idx);
+
+    region.clear_flag(idx, Region::CAN_GO_DOWN);
+    region.clear_flag(idx, Region::CAN_GO_UP);
+    region.clear_flag(idx, Region::CAN_GO_NORTH);
+    region.clear_flag(idx, Region::CAN_GO_SOUTH);
+    region.clear_flag(idx, Region::CAN_GO_EAST);
+    region.clear_flag(idx, Region::CAN_GO_WEST);
+    region.clear_flag(idx, Region::CAN_STAND_HERE);
+    region.clear_flag(idx, Region::SOLID);
+    region.clear_flag(idx, Region::OUTSIDE);
+
+    // Solidity
+    match region.tile_types[idx] {
+        TileType::SemiMoltenRock => region.set_flag(idx, Region::SOLID),
+        TileType::Solid => region.set_flag(idx, Region::SOLID),
+        TileType::Wall => region.set_flag(idx, Region::SOLID),
+        TileType::Window => region.set_flag(idx, Region::SOLID),
+        TileType::TreeFoliage{..} => region.set_flag(idx, Region::SOLID),
+        TileType::TreeTrunk{..} => region.set_flag(idx, Region::SOLID),
+        _ => {}
+    }
+
+    // Outdoor lighting
+    let mut blocked = false;
+    for z in (0..REGION_DEPTH).rev() {
+        let idx = mapidx(x, y, z);
+        if !blocked {
+            region.set_flag(idx, Region::OUTSIDE);
+        }
+        match region.tile_types[idx] {
+            TileType::Solid | TileType::SemiMoltenRock | TileType::Wall | TileType::Window => blocked = true,
+            _ => {}
+        }
+    }
+
+    // Standing
+    let mut can_stand = false;
+    if !region.flag(idx, Region::SOLID) {
+        match region.tile_types[idx] {
+            TileType::Floor{..} | TileType::Stairs { .. } => {
+                can_stand = true;
+            }
+            TileType::Ramp { .. } => {
+                can_stand = true;
+                let up = mapidx(x, y, z+1);
+                region.set_flag(up, Region::CAN_STAND_HERE);
+            }
+            _ => {}
+        }
+        if z < REGION_DEPTH - 1 {
+            let down_idx = mapidx(x, y, z + 1);
+            match region.tile_types[down_idx] {
+                TileType::Solid | TileType::Ramp { .. } => {
+                    can_stand = true;
+                }
+                TileType::Stairs { direction } => match direction {
+                    StairsType::Up | StairsType::UpDown => {
+                        can_stand = true;
+                    }
+                    _ => {}
+                },
+                _ => {}
+            }
+        }
+    }
+    if can_stand {
+        region.set_flag(idx, Region::CAN_STAND_HERE);
+    }
+
+    // Navigation
+    if region.flag(idx, Region::CAN_STAND_HERE) {
+        if valid_exit(region, x-1, y, z) { region.set_flag(idx, Region::CAN_GO_WEST) }
+        if valid_exit(region, x+1, y, z) { region.set_flag(idx, Region::CAN_GO_EAST) }
+        if valid_exit(region, x, y-1, z) { region.set_flag(idx, Region::CAN_GO_NORTH) }
+        if valid_exit(region, x-1, y+1, z) { region.set_flag(idx, Region::CAN_GO_SOUTH) }
+
+        match region.tile_types[idx] {
+            TileType::Ramp { .. } => {
+                let up = mapidx(x, y, z+1);
+                region.set_flag(idx, Region::CAN_GO_UP);
+                region.set_flag(up, Region::CAN_GO_DOWN);
+                region.set_flag(idx, Region::CAN_STAND_HERE);
+            }
+
+            TileType::Stairs { direction: StairsType::Up, } => {
+                if valid_exit(region, x, y, z+1) { region.set_flag(idx, Region::CAN_GO_UP) }
+            }
+            TileType::Stairs { direction: StairsType::Down } => {
+                if valid_exit(region, x, y, z-1) { region.set_flag(idx, Region::CAN_GO_DOWN) }
+            }
+            TileType::Stairs {
+                direction: StairsType::UpDown,
+            } => {
+                if valid_exit(region, x, y, z+1) { region.set_flag(idx, Region::CAN_GO_UP) }
+                if valid_exit(region, x, y, z-1) { region.set_flag(idx, Region::CAN_GO_DOWN) }
+            }
+            _ => {}
+        }
     }
 }

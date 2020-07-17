@@ -5,18 +5,7 @@ use crate::systems::REGION;
 use nox_planet::TileType;
 
 fn find_tree_base(target: usize) -> usize {
-    let lowest = REGION.read().tile_types.iter().enumerate()
-        .filter(|(_,t)| {
-            match t {
-                TileType::TreeFoliage{ tree_id } => *tree_id == target,
-                TileType::TreeTrunk{ tree_id } => *tree_id == target,
-                _ => false
-            }
-        })
-        .map(|(i,_)| i)
-        .min();
-
-    lowest.unwrap()
+    REGION.read().tree_bases[&target]
 }
 
 pub fn lumberjack_display(imgui: &Ui, ecs: &World, mouse_world_pos: &(usize, usize, usize)) {

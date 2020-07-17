@@ -155,9 +155,25 @@ impl PlayGame {
             self.vox_changed = true;
         }
         if rf.terrain_changed {
+            use nox_spatial::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, idxmap, mapidx};
             self.rebuild_geometry = true;
             self.chunks.mark_dirty(&rf.dirty_tiles);
-            nox_planet::rebuild_flags(&mut crate::systems::REGION.write());
+            use std::collections::HashSet;
+            let mut tiles_to_flag = HashSet::<usize>::new();
+            rf.dirty_tiles.iter().for_each(|idx| {
+                tiles_to_flag.insert(*idx);
+                let (x,y,z) = idxmap(*idx);
+                if x > 0 { tiles_to_flag.insert(mapidx(x-1, y, z)); }
+                if x < REGION_WIDTH { tiles_to_flag.insert(mapidx(x+1, y, z)); }
+                if y > 0 { tiles_to_flag.insert(mapidx(x, y-1, z)); }
+                if y < REGION_HEIGHT { tiles_to_flag.insert(mapidx(x, y+1, z)); }
+                if z > 0 { tiles_to_flag.insert(mapidx(x, y, z-1)); }
+                if z < REGION_DEPTH { tiles_to_flag.insert(mapidx(x, y, z+1)); }
+            });
+            let mut rlock = crate::systems::REGION.write();
+            tiles_to_flag.iter().for_each(|idx| {
+                nox_planet::rebuild_flags(&mut rlock, *idx);
+            });
         }
 
         let sun_pos = self.user_interface(frame_time, imgui, mouse_world_pos);
