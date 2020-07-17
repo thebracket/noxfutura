@@ -133,9 +133,10 @@ impl JobsBoard {
         }
     }
 
-    pub fn relinquish_claim(&mut self, tool_id: usize) {
+    pub fn relinquish_claim(&mut self, tool_id: usize, tool_pos: usize) {
         if let Some(claim) = self.tool_ownership.get_mut(&tool_id) {
             claim.claimed = None;
+            claim.effective_location = tool_pos;
         }
     }
 

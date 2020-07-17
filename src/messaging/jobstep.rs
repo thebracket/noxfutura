@@ -12,7 +12,7 @@ pub enum JobStep {
     JobConcluded { id: usize },
     FollowJobPath { id: usize },
     DropItem { id: usize, location: usize },
-    RelinquishClaim { tool_id: usize },
+    RelinquishClaim { tool_id: usize, tool_pos: usize },
     EquipItem { id: usize, tool_id: usize },
     TreeChop { id: usize, tree_id: usize },
 }
@@ -107,8 +107,8 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     pos.to_ground(*location);
                 });
         }
-        JobStep::RelinquishClaim { tool_id } => {
-            REGION.write().jobs_board.relinquish_claim(*tool_id);
+        JobStep::RelinquishClaim { tool_id, tool_pos } => {
+            REGION.write().jobs_board.relinquish_claim(*tool_id, *tool_pos);
         }
         JobStep::TreeChop { id: _, tree_id } => {
             println!("Chop tree");

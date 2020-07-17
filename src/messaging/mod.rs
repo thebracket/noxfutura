@@ -56,8 +56,8 @@ pub fn drop_item(id: usize, location: usize) {
     JOBS_QUEUE.lock().push_back(JobStep::DropItem { id, location });
 }
 
-pub fn relinquish_claim(tool_id: usize) {
-    JOBS_QUEUE.lock().push_back(JobStep::RelinquishClaim { tool_id });
+pub fn relinquish_claim(tool_id: usize, tool_pos: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::RelinquishClaim { tool_id, tool_pos });
 }
 
 pub fn equip_tool(id: usize, tool_id: usize) {

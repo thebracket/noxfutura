@@ -41,7 +41,7 @@ pub fn build() -> Box<dyn Schedulable> {
                                             "No path to tool available - abandoning lumberjacking"
                                         );
                                         messaging::cancel_job(id.0);
-                                        messaging::relinquish_claim(tool_id);
+                                        messaging::relinquish_claim(tool_id, tool_pos);
                                     } else {
                                         messaging::job_changed(
                                             id.0,
@@ -108,7 +108,7 @@ pub fn build() -> Box<dyn Schedulable> {
                                     );
                                     messaging::cancel_job(id.0);
                                     if let Some(tool_id) = tool_id {
-                                        messaging::relinquish_claim(*tool_id);
+                                        messaging::relinquish_claim(*tool_id, pos.get_idx());
                                         messaging::drop_item(*tool_id, pos.get_idx());
                                     }
                                 }
@@ -132,7 +132,7 @@ pub fn build() -> Box<dyn Schedulable> {
                                 messaging::chop_tree(id.0, *tree_id);
                                 messaging::conclude_job(id.0);
                                 messaging::drop_item(tool_id.unwrap(), pos.get_idx());
-                                messaging::relinquish_claim(tool_id.unwrap());
+                                messaging::relinquish_claim(tool_id.unwrap(), pos.get_idx());
                             }
                         }
                     } else {
