@@ -12,7 +12,7 @@ pub fn build() -> Box<dyn Schedulable> {
                 .iter_mut(ecs)
                 .filter(|(_, turn, _)| turn.active && turn.order == WorkOrder::MoveRandomly)
                 .for_each(|(pos, _, id)| {
-                    let roll = RNG.lock().range(1, 6);
+                    let roll = RNG.lock().range(1, 7);
                     let idx = pos.get_idx();
 
                     let delta = match roll {

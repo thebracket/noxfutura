@@ -24,7 +24,9 @@ pub fn spawn_settlers(
         (crash_site.x, crash_site.y, crash_z + 3),
     ];
 
-    for spawn in spawn_points.iter() {
+    const N_SETTLERS: usize = 10000;
+    for i in 0..N_SETTLERS {
+        let spawn = &spawn_points[i % spawn_points.len()];
         spawn_settler(
             ecs,
             rng,
