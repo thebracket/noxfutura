@@ -26,6 +26,7 @@ pub fn geometry_changed(idx: usize) {
     let mut lock = RENDER_FLAGS.lock();
     lock.terrain_changed = true;
     lock.dirty_tiles.push(idx);
+    lock.lights_changed = true;
 }
 
 pub fn entity_moved(id: usize, end: &Point3) {

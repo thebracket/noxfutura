@@ -157,6 +157,7 @@ impl PlayGame {
         if rf.terrain_changed {
             self.rebuild_geometry = true;
             self.chunks.mark_dirty(&rf.dirty_tiles);
+            nox_planet::rebuild_flags(&mut crate::systems::REGION.write());
         }
 
         let sun_pos = self.user_interface(frame_time, imgui, mouse_world_pos);

@@ -20,6 +20,7 @@ use legion::prelude::*;
 pub use primitive::Primitive;
 mod flags;
 use nox_raws::RAWS;
+pub use flags::set_flags as rebuild_flags;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");

@@ -1,5 +1,5 @@
 pub use crate::Planet;
-use nox_spatial::{idxmap, REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH};
+use nox_spatial::{idxmap, mapidx, REGION_TILES_COUNT};
 use serde::{Deserialize, Serialize};
 mod tiletype;
 pub use tiletype::*;
@@ -91,23 +91,25 @@ impl Region {
     pub(crate) fn get_available_exits(&self, idx: usize) -> SmallVec<[(usize, f32); 10]> {
         let mut exits = SmallVec::<[(usize, f32); 10]>::new();
 
+        let (x, y, z) = idxmap(idx);
+
         if self.flag(idx, Region::CAN_GO_NORTH) {
-            exits.push((idx - REGION_WIDTH, 1.0))
+            exits.push((mapidx(x, y-1, z), 1.0))
         }
         if self.flag(idx, Region::CAN_GO_SOUTH) {
-            exits.push((idx + REGION_WIDTH, 1.0))
+            exits.push((mapidx(x, y+1, z), 1.0))
         }
         if self.flag(idx, Region::CAN_GO_WEST) {
-            exits.push((idx - 1, 1.0))
+            exits.push((mapidx(x-1, y, z), 1.0))
         }
         if self.flag(idx, Region::CAN_GO_EAST) {
-            exits.push((idx + 1, 1.0))
+            exits.push((mapidx(x+1, y, z), 1.0))
         }
         if self.flag(idx, Region::CAN_GO_UP) {
-            exits.push((idx + (REGION_WIDTH * REGION_HEIGHT), 1.0))
+            exits.push((mapidx(x, y, z+1), 1.0));
         }
         if self.flag(idx, Region::CAN_GO_DOWN) {
-            exits.push((idx - (REGION_WIDTH * REGION_HEIGHT), 1.0))
+            exits.push((mapidx(x, y, z-1), 1.0));
         }
 
         exits
