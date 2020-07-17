@@ -91,7 +91,14 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
     debris::debris_trail(region, ship_loc, &mut world);
 
     set_worldgen_status("Settlers");
-    settlers::spawn_settlers(&mut world, &mut rng, &ship_loc, crash_z, region.world_idx);
+    settlers::spawn_settlers(
+        &mut world, 
+        &mut rng, 
+        &ship_loc, 
+        crash_z, 
+        region.world_idx,
+        planet.starting_settlers as usize
+    );
 
     set_worldgen_status("Features");
 

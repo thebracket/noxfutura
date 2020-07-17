@@ -10,6 +10,7 @@ pub fn spawn_settlers(
     crash_site: &Point,
     crash_z: usize,
     region_idx: usize,
+    n_settlers: usize
 ) {
     let spawn_points = vec![
         (crash_site.x - 4, crash_site.y - 2, crash_z + 3),
@@ -24,8 +25,7 @@ pub fn spawn_settlers(
         (crash_site.x, crash_site.y, crash_z + 3),
     ];
 
-    const N_SETTLERS: usize = 10000;
-    for i in 0..N_SETTLERS {
+    for i in 0..n_settlers {
         let spawn = &spawn_points[i % spawn_points.len()];
         spawn_settler(
             ecs,
