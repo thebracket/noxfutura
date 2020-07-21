@@ -19,6 +19,7 @@ use cgmath::Vector3;
 #[derive(PartialEq, Copy, Clone)]
 pub enum DesignMode {
     Lumberjack,
+    Buildings
 }
 
 #[derive(PartialEq, Copy, Clone)]
@@ -209,7 +210,7 @@ impl PlayGame {
         imgui: &Ui,
         mouse_world_pos: &(usize, usize, usize),
     ) -> (Vector3<f32>, Vector3<f32>) {
-        use crate::systems::{draw_main_menu, draw_tooltips, fps_display, lumberjack_display};
+        use crate::systems::{draw_main_menu, draw_tooltips, fps_display, lumberjack_display, building_display};
         let sun_pos = draw_main_menu(&self.ecs, &mut self.run_state, imgui);
         fps_display(imgui, frame_time);
         draw_tooltips(&self.ecs, mouse_world_pos, imgui);
@@ -218,6 +219,9 @@ impl PlayGame {
             match mode {
                 DesignMode::Lumberjack => {
                     lumberjack_display(imgui, &self.ecs, mouse_world_pos);
+                }
+                DesignMode::Buildings => {
+                    building_display(imgui, &self.ecs, mouse_world_pos);
                 }
             }
         }

@@ -6,3 +6,5 @@ mod fps_display;
 pub use fps_display::*;
 mod design_lumberjack;
 pub use design_lumberjack::*;
+mod design_buildings;
+pub use design_buildings::*;

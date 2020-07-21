@@ -63,6 +63,14 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec
                     mode: DesignMode::Lumberjack,
                 };
             }
+            if MenuItem::new(im_str!("\u{f015} Buildings"))
+                .shortcut(im_str!("T"))
+                .build(imgui)
+            {
+                *run_state = RunState::Design {
+                    mode: DesignMode::Buildings,
+                };
+            }
             menu.end(imgui);
         }
 
