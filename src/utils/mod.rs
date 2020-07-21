@@ -6,3 +6,5 @@ mod region;
 pub use region::*;
 mod attrmods;
 pub use attrmods::*;
+mod ramps;
+pub use ramps::*;

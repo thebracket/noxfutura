@@ -7,6 +7,7 @@ use nox_planet::{RampDirection, Region, StairsType, TileType};
 use nox_raws::{MappedTexture, RAWS};
 use nox_spatial::mapidx;
 use cgmath::Vector3;
+use crate::utils::add_ramp_geometry;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -123,6 +124,18 @@ impl Chunk {
                                         } else {
                                             floors.insert(idx, self.calc_floor_material(idx, region));
                                         }
+                                    }
+                                    TileType::Ramp { direction } => {
+                                        let mat = self.calc_material(idx, region);
+                                        add_ramp_geometry(
+                                            &mut self.vb.data,
+                                            &mut self.element_count[z],
+                                            direction,
+                                            x as f32 + self.base.0 as f32,
+                                            y as f32 + self.base.1 as f32,
+                                            z as f32 + self.base.2 as f32,
+                                            mat,
+                                        );
                                     }
                                     _ => {}
                                 }
