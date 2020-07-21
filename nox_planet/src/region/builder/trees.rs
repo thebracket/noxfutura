@@ -78,6 +78,15 @@ struct Trunk {
     done: bool
 }
 
+fn check_collision(list: &[Trunk], x: usize, y:usize, z:usize) -> bool {
+    for l in list.iter() {
+        if l.x == x && l.y == y && l.z == z {
+            return false;
+        }
+    }
+    true
+}
+
 fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, region: &mut Region) {
     let tree_id = {
         let mut tl = TREE_COUNTER.write();
@@ -92,19 +101,51 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
     trunk.push(Trunk{ x, y, z, depth: 1, done: true });
     region.tree_bases.insert(*tree_id, mapidx(x, y, z));
     trunk.push(Trunk{ x, y, z: z+1, depth: 2, done: false });
-    while trunk.iter().filter(|t| t.done == false).count() > 0 {
+    let mut bailout_count = 0;
+    while trunk.iter().filter(|t| t.done == false).count() > 0 && bailout_count < 50 {
         for i in 0..trunk.len() {
             if !trunk[i].done {
                 trunk[i].done = true;
 
                 if trunk[i].depth < tree_size {
                     let b = trunk[i].clone();
-                    match rng.range(0, usize::max(4, 14 - b.depth)) {
-                        0 => trunk.push(Trunk{ x: b.x-1, y: b.y, z: b.z, depth: b.depth + 1, done: false }),
-                        1 => trunk.push(Trunk{ x: b.x+1, y: b.y, z: b.z, depth: b.depth + 1, done: false }),
-                        2 => trunk.push(Trunk{ x: b.x, y: b.y-1, z: b.z, depth: b.depth + 1, done: false }),
-                        3 => trunk.push(Trunk{ x: b.x, y: b.y+1, z: b.z, depth: b.depth + 1, done: false }),
-                        _ => trunk.push(Trunk{ x: b.x, y: b.y, z: b.z + 1, depth: b.depth + 1, done: false })
+                    let mut added = false;
+                    while !added && bailout_count < 50 {
+                        for _ in 0 .. rng.range(0, 4) {
+                            match rng.range(0, usize::max(4, 10 - b.depth)) {
+                                0 => {
+                                    if check_collision(&trunk, x-1, y, z) {
+                                        trunk.push(Trunk{ x: b.x-1, y: b.y, z: b.z, depth: b.depth + 1, done: false });
+                                        added = true;
+                                    }
+                                }
+                                1 => {
+                                    if check_collision(&trunk, x+1, y, z) {
+                                        trunk.push(Trunk{ x: b.x+1, y: b.y, z: b.z, depth: b.depth + 1, done: false });
+                                        added = true;
+                                    }
+                                }
+                                2 => {
+                                    if check_collision(&trunk, x, y-1, z) {
+                                        trunk.push(Trunk{ x: b.x, y: b.y-1, z: b.z, depth: b.depth + 1, done: false });
+                                        added = true;
+                                    }
+                                }
+                                3 => {
+                                    if check_collision(&trunk, x, y+1, z) {
+                                        trunk.push(Trunk{ x: b.x, y: b.y+1, z: b.z, depth: b.depth + 1, done: false });
+                                        added = true;
+                                    }
+                                }
+                                _ => {
+                                    if check_collision(&trunk, x-1, y, z+1) {
+                                        trunk.push(Trunk{ x: b.x, y: b.y, z: b.z + 1, depth: b.depth + 1, done: false });
+                                        added = true;
+                                    }
+                                }
+                            }
+                        }
+                        bailout_count += 1;
                     }
                 }
             }

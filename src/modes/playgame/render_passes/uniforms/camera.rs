@@ -1,6 +1,6 @@
 use nox_components::*;
 use ultraviolet::Mat4;
-use ultraviolet::Vec3;
+use ultraviolet::{Vec3, Vec4};
 
 pub struct Camera {
     pub eye: Vec3,
@@ -26,10 +26,18 @@ impl Camera {
     }
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {
+        #[cfg_attr(rustfmt, rustfmt_skip)]
+        let opengl_to_wgpu_matrix: Mat4 = Mat4::new(
+            Vec4::new(1.0, 0.0, 0.0, 0.0),
+            Vec4::new(0.0, 1.0, 0.0, 0.0),
+            Vec4::new(0.0, 0.0, 0.5, 0.0),
+            Vec4::new(0.0, 0.0, 0.5, 1.0),
+        );
+
+        use ultraviolet::projection::perspective_gl;
         let view = Mat4::look_at(self.eye, self.target, self.up);
-        let proj =
-            ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
-        proj * view
+        let proj = perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
+        opengl_to_wgpu_matrix * proj * view
     }
 
     pub fn update(&mut self, pos: &Position, opts: &CameraOptions, width: u32, height: u32) {

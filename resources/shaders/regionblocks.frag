@@ -50,6 +50,12 @@ vec4 sample_material_exact(int tex_index, vec2 uv) {
     //return vec4(tex_base + uv, 0.0, 1.0);
 }
 
+float LinearizeDepth()
+{
+  float z = gl_FragCoord.z;
+  return ((z + 1.0) / 2.0) / 256.0;
+}
+
 void main() {
     int mat_base = int(v_material);
     vec2 uv = vec2(
@@ -69,7 +75,7 @@ void main() {
         pbr.r, // AO
         pbr.g, // Rough
         pbr.b, // Metal
-        0.0
+        1.0
     );
-    f_coords = vec4(v_world_pos, 1.0);
+    f_coords = vec4(v_world_pos, gl_FragCoord.z);
 }

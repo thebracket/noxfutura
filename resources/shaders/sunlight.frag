@@ -118,7 +118,8 @@ int mapidx(vec3 position) {
 }
 
 void main() {
-    vec3 albedo = texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords).rgb;
+    vec4 bc = texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords);
+    vec3 albedo =bc.rgb;
     vec3 position = texture(sampler2D(t_coords, s_coords), v_tex_coords).rgb;
     vec3 normal = texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb;
 
@@ -151,6 +152,6 @@ void main() {
     //light_output = light_output / (light_output + vec3(1.0));
     //light_output = pow(light_output, vec3(1.0/2.2));
 
-    f_color = vec4(light_output, 1.0);
+    f_color = vec4(light_output, bc.a);
     //f_color = vec4(position / 256.0, 1.0); // For debugging texture reads
 }
