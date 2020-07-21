@@ -2,11 +2,12 @@ use crate::modes::{DesignMode, RunState};
 use imgui::*;
 use legion::prelude::*;
 use nox_components::*;
-use ultraviolet::Vec3;
+use cgmath::Vector3;
+use cgmath::num_traits::identities::Zero;
 
 // Returns the sun position/color, since we look there anyway
-pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec3, Vec3) {
-    let mut sun_pos = (Vec3::zero(), Vec3::zero());
+pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vector3<f32>, Vector3<f32>) {
+    let mut sun_pos = (Vector3::zero(), Vector3::zero());
     // Obtain info to display
     let mut hud_time = String::new();
     let query = <Read<Calendar>>::query();

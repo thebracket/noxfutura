@@ -3,7 +3,7 @@ use legion::prelude::*;
 use nox_components::*;
 use nox_planet::{Region, TileType};
 use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
-use ultraviolet::Vec3;
+use cgmath::{Vector3, InnerSpace};
 
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("calendar")
@@ -46,8 +46,8 @@ pub fn build() -> Box<dyn Schedulable> {
 #[inline]
 fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i32) {
     let radius = fov.radius as f32;
-    let start = pos.as_vec3() + Vec3::new(0.5, 0.5, 0.5);
-    let end: Vec3 = (x as f32 + start.x, y as f32 + start.y, z as f32 + start.z).into();
+    let start = pos.as_vec3() + Vector3::new(0.5, 0.5, 0.5);
+    let end: Vector3<f32> = (x as f32 + start.x, y as f32 + start.y, z as f32 + start.z).into();
     let mut blocked = false;
     let mut last_z = f32::floor(start.z) as i32;
     line_func_3d(start, end, |pos| {
@@ -58,7 +58,7 @@ fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i3
             && pos.z > 0.0
             && pos.z < REGION_DEPTH as f32
         {
-            let distance = (pos - start).abs().mag();
+            let distance = (pos - start).map(|n| n.abs()).magnitude();
             if distance < radius {
                 let idx = mapidx(pos.x as usize, pos.y as usize, pos.z as usize);
                 if !blocked {
@@ -91,10 +91,10 @@ fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i3
     });
 }
 
-fn line_func_3d<F: FnMut(Vec3)>(start: Vec3, end: Vec3, mut func: F) {
+fn line_func_3d<F: FnMut(Vector3<f32>)>(start: Vector3<f32>, end: Vector3<f32>, mut func: F) {
     //println!("{:?} -> {:?}", start, end);
     let mut pos = start.clone();
-    let length = (start - end).abs().mag();
+    let length = (start - end).map(|n| n.abs()).magnitude();
     //println!("{:?}", length);
     let step = (start - end) / length;
     for _ in 0..=f32::floor(length) as usize {

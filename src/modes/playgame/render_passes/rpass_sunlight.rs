@@ -3,7 +3,7 @@ use super::{LightUniforms, TerrainLights};
 use crate::engine::uniforms::UniformBlock;
 use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
 use legion::prelude::*;
-use ultraviolet::Vec3;
+use cgmath::Vector3;
 
 pub struct SunlightPass {
     pub vb: VertexBuffer<f32>,
@@ -199,8 +199,8 @@ impl SunlightPass {
     pub fn render(
         &mut self,
         frame: &wgpu::SwapChainOutput,
-        sun_pos: &(Vec3, Vec3),
-        camera_pos: Vec3,
+        sun_pos: &(Vector3<f32>, Vector3<f32>),
+        camera_pos: Vector3<f32>,
         ecs: &World,
         gbuffer: &GBuffer,
         lights_changed: bool,

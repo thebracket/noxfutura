@@ -4,7 +4,7 @@ use legion::prelude::*;
 use nox_components::*;
 use nox_planet::Region;
 use rayon::prelude::*;
-use ultraviolet::Vec3;
+use cgmath::Vector3;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -44,7 +44,7 @@ impl LightUniforms {
         }
     }
 
-    pub fn update_partial(&mut self, sun_pos: &(Vec3, Vec3), camera_pos: &Vec3) {
+    pub fn update_partial(&mut self, sun_pos: &(Vector3<f32>, Vector3<f32>), camera_pos: &Vector3<f32>) {
         self.camera_position = vec_to_float(camera_pos);
         self.lights[0].pos = [sun_pos.0.x, sun_pos.0.y, sun_pos.0.z, 512.0];
         self.lights[0].color = [sun_pos.1.x, sun_pos.1.y, sun_pos.1.z, 1.0];
@@ -53,8 +53,8 @@ impl LightUniforms {
     pub fn update(
         &mut self,
         ecs: &World,
-        sun_pos: &(Vec3, Vec3),
-        camera_pos: Vec3,
+        sun_pos: &(Vector3<f32>, Vector3<f32>),
+        camera_pos: Vector3<f32>,
         light_bits: &mut [u32],
     ) {
         self.camera_position = vec_to_float(&camera_pos);
@@ -108,6 +108,6 @@ impl LightUniforms {
 }
 
 #[inline]
-fn vec_to_float(v: &Vec3) -> [f32; 4] {
+fn vec_to_float(v: &Vector3<f32>) -> [f32; 4] {
     [v.x, v.y, v.z, 0.0]
 }

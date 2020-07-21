@@ -3,10 +3,7 @@ use crate::engine::uniforms::UniformBlock;
 use crate::engine::DEVICE_CONTEXT;
 use imgui::*;
 use nox_planet::WORLDGEN_RENDER;
-use ultraviolet::{
-    mat::Mat4,
-    vec::{Vec3, Vec4},
-};
+use cgmath::{Matrix4, Vector3, Vector4, SquareMatrix, Point3, EuclideanSpace};
 
 pub struct PlanetGen2 {
     planet_shader: usize,
@@ -151,7 +148,7 @@ impl PlanetGen2 {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 struct Uniforms {
-    view_proj: ultraviolet::mat::Mat4,
+    view_proj: Matrix4<f32>,
     rot_angle: f32,
 }
 
@@ -162,7 +159,7 @@ impl UniformBlock for Uniforms {}
 impl Uniforms {
     fn new() -> Self {
         Self {
-            view_proj: ultraviolet::mat::Mat4::identity(),
+            view_proj: Matrix4::identity(),
             rot_angle: 0.0,
         }
     }
@@ -174,21 +171,29 @@ impl Uniforms {
 }
 
 pub struct Camera {
-    eye: Vec3,
-    target: Vec3,
-    up: Vec3,
+    eye: Vector3<f32>,
+    target: Vector3<f32>,
+    up: Vector3<f32>,
     aspect: f32,
     fovy: f32,
     znear: f32,
     zfar: f32,
 }
 
+#[cfg_attr(rustfmt, rustfmt_skip)]
+const OPENGL_TO_WGPU_MATRIX: cgmath::Matrix4<f32> = cgmath::Matrix4::new(
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 0.5, 0.0,
+    0.0, 0.0, 0.5, 1.0,
+);
+
 impl Camera {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
             eye: (0.0, 2.0, 2.0).into(),
             target: (0.0, 0.0, 0.0).into(),
-            up: Vec3::unit_y(),
+            up: Vector3::unit_y(),
             aspect: width as f32 / height as f32,
             fovy: 0.785398,
             znear: 0.01,
@@ -196,18 +201,13 @@ impl Camera {
         }
     }
 
-    pub fn build_view_projection_matrix(&self) -> Mat4 {
-        #[cfg_attr(rustfmt, rustfmt_skip)]
-        let opengl_to_wgpu_matrix : Mat4 = Mat4::new(
-            Vec4::new(1.0, 0.0, 0.0, 0.0),
-            Vec4::new(0.0, 1.0, 0.0, 0.0),
-            Vec4::new(0.0, 0.0, 0.5, 0.0),
-            Vec4::new(0.0, 0.0, 0.5, 1.0),
+    pub fn build_view_projection_matrix(&self) -> Matrix4<f32> {
+        let view = Matrix4::look_at(
+            Point3::from_vec(self.eye),
+            Point3::from_vec(self.target),
+            self.up
         );
-
-        let view = Mat4::look_at(self.eye, self.target, self.up);
-        let proj =
-            ultraviolet::projection::perspective_gl(self.fovy, self.aspect, self.znear, self.zfar);
-        opengl_to_wgpu_matrix * proj * view
+        let proj = cgmath::perspective(cgmath::Rad(self.fovy), self.aspect, self.znear, self.zfar);
+        OPENGL_TO_WGPU_MATRIX * proj * view
     }
 }

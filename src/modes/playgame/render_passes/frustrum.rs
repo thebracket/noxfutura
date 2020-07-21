@@ -1,4 +1,4 @@
-use ultraviolet::{Mat4, Vec3, Vec4};
+use cgmath::{Matrix4, Vector3, Vector4};
 
 const LEFT: usize = 0;
 const RIGHT: usize = 1;
@@ -8,7 +8,7 @@ const BACK: usize = 4;
 const FRONT: usize = 5;
 
 pub struct Frustrum {
-    planes: [Vec4; 6],
+    planes: [Vector4<f32>; 6],
 }
 
 impl Frustrum {
@@ -25,7 +25,7 @@ impl Frustrum {
         }
     }
 
-    pub fn update(&mut self, matrix: &Mat4) {
+    pub fn update(&mut self, matrix: &Matrix4<f32>) {
         self.planes[LEFT].x = matrix[0].w + matrix[0].x;
         self.planes[LEFT].y = matrix[1].w + matrix[1].x;
         self.planes[LEFT].z = matrix[2].w + matrix[2].x;
@@ -62,7 +62,7 @@ impl Frustrum {
         });
     }
 
-    pub fn check_sphere(&self, pos: &Vec3, radius: f32) -> bool {
+    pub fn check_sphere(&self, pos: &Vector3<f32>, radius: f32) -> bool {
         for p in self.planes.iter() {
             if (p.x * pos.x) + (p.y * pos.z) + (p.z * pos.y) + p.w <= -radius {
                 return false;

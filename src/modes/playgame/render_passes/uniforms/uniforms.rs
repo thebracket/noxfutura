@@ -1,11 +1,11 @@
 use super::camera::Camera;
 use crate::engine::uniforms::UniformBlock;
-use ultraviolet::Mat4;
+use cgmath::{Matrix4, SquareMatrix};
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct Uniforms {
-    pub view_proj: Mat4,
+    pub view_proj: Matrix4<f32>,
 }
 
 unsafe impl bytemuck::Pod for Uniforms {}
@@ -15,7 +15,7 @@ impl UniformBlock for Uniforms {}
 impl Uniforms {
     pub fn new() -> Self {
         Self {
-            view_proj: ultraviolet::mat::Mat4::identity(),
+            view_proj: Matrix4::identity(),
         }
     }
 

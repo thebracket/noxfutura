@@ -21,7 +21,7 @@ imgui-winit-support = { version = "0.4", default-features = false, features = [ 
 bytemuck = "1.2.0"
 image = "0.23.6"
 failure = "0.1"
-ultraviolet = "0.4.6"
+cgmath = "0.17.0"
 bracket-random = { version = "0.8.0", default-features = false }
 bracket-noise = "0.8.1"
 bracket-geometry = { version = "0.8.1", features = ["serde"] }

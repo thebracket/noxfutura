@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use ultraviolet::Vec3;
+use cgmath::Vector3;
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "a6464855-c959-4eb3-be05-dec8301b06b8"]
@@ -37,7 +37,7 @@ impl Calendar {
         )
     }
 
-    pub fn calculate_sun_moon(&self) -> (Vec3, Vec3) {
+    pub fn calculate_sun_moon(&self) -> (Vector3<f32>, Vector3<f32>) {
         /*if self.hour < 6 || self.hour > 18 {
             return (0.0, 0.0, 0.0).into();
         }*/

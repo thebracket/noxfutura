@@ -6,7 +6,7 @@ use crate::utils::add_floor_geometry;
 use nox_planet::{RampDirection, Region, StairsType, TileType};
 use nox_raws::{MappedTexture, RAWS};
 use nox_spatial::mapidx;
-use ultraviolet::Vec3;
+use cgmath::Vector3;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -16,7 +16,7 @@ pub struct Chunk {
     pub dirty: bool,
     vb: VertexBuffer<f32>,
     element_count: [u32; CHUNK_SIZE],
-    pub center_pos: Vec3,
+    pub center_pos: Vector3<f32>,
 }
 
 impl Chunk {

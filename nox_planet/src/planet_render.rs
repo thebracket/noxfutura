@@ -5,6 +5,7 @@ use crate::{
 use bracket_geometry::prelude::Degrees;
 use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use nox_wgpu_utils::VertexBuffer;
+use cgmath::Vector3;
 
 pub type LatLonIdx = (f32, f32, usize);
 pub type LatLonQuad = [LatLonIdx; 6];
@@ -66,10 +67,11 @@ pub fn add_point(
     altitude: f32,
     color: &[f32; 4],
 ) {
+    use cgmath::InnerSpace;
     let sphere_coords = sphere_vertex(0.75 + altitude, Degrees::new(lat), Degrees::new(lon));
     vertex_buffer.add3(sphere_coords.0, sphere_coords.1, sphere_coords.2);
-    let mut normals = ultraviolet::Vec3::from(sphere_coords);
-    normals.normalize();
+    let mut normals = Vector3::from(sphere_coords);
+    normals = normals.normalize();
     vertex_buffer.add3(normals.x, normals.y, normals.z);
     vertex_buffer.add4(color[0], color[1], color[2], color[3]);
 }

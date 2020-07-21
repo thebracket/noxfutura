@@ -14,7 +14,7 @@ mod render_passes;
 use crate::messaging;
 use crate::systems;
 pub use render_passes::*;
-use ultraviolet::Vec3;
+use cgmath::Vector3;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum DesignMode {
@@ -208,7 +208,7 @@ impl PlayGame {
         frame_time: u128,
         imgui: &Ui,
         mouse_world_pos: &(usize, usize, usize),
-    ) -> (Vec3, Vec3) {
+    ) -> (Vector3<f32>, Vector3<f32>) {
         use crate::systems::{draw_main_menu, draw_tooltips, fps_display, lumberjack_display};
         let sun_pos = draw_main_menu(&self.ecs, &mut self.run_state, imgui);
         fps_display(imgui, frame_time);
@@ -308,7 +308,7 @@ impl PlayGame {
         camera_z: usize,
         depth_id: usize,
         frame: &wgpu::SwapChainOutput,
-        sun_pos: &(Vec3, Vec3),
+        sun_pos: &(Vector3<f32>, Vector3<f32>),
     ) {
         let pass = self.rpass.as_mut().unwrap();
         // Render terrain building the initial chunk models list

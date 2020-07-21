@@ -4,7 +4,7 @@ use crate::systems::REGION;
 use bracket_geometry::prelude::*;
 use nox_components::Position;
 use rayon::prelude::*;
-use ultraviolet::Mat4;
+use cgmath::Matrix4;
 
 pub struct Chunks {
     chunks: Vec<Chunk>,
@@ -42,7 +42,7 @@ impl Chunks {
         self.chunks.par_iter_mut().for_each(|c| c.rebuild(&rlock));
     }
 
-    pub fn on_camera_move(&mut self, camera_matrix: &Mat4, camera_position: &Position) {
+    pub fn on_camera_move(&mut self, camera_matrix: &Matrix4<f32>, camera_position: &Position) {
         let cp = camera_position.as_point3();
         self.frustrum.update(camera_matrix);
         self.visible_chunks = self

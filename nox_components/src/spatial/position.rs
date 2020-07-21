@@ -1,6 +1,7 @@
 use crate::prelude::*;
 use bracket_geometry::prelude::Point3;
 use nox_spatial::*;
+use cgmath::Vector3;
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "ca3f2ce0-9c8e-4abe-a3c6-12098b1b016a"]
@@ -155,26 +156,24 @@ impl Position {
     }
 
     #[inline]
-    pub fn as_vec3(&self) -> ultraviolet::Vec3 {
-        use ultraviolet::Vec3;
+    pub fn as_vec3(&self) -> Vector3<f32> {
         match self.loc {
             Location::Tile { idx } => {
                 let (x, y, z) = idxmap(idx);
-                Vec3::new(x as f32, y as f32, z as f32)
+                Vector3::new(x as f32, y as f32, z as f32)
             }
-            _ => Vec3::zero(),
+            _ => Vector3::new(0.0, 0.0, 0.0),
         }
     }
 
     #[inline]
-    pub fn as_vec3_glspace(&self) -> ultraviolet::Vec3 {
-        use ultraviolet::Vec3;
+    pub fn as_vec3_glspace(&self) -> Vector3<f32> {
         match self.loc {
             Location::Tile { idx } => {
                 let (x, y, z) = idxmap(idx);
-                Vec3::new(x as f32, z as f32, y as f32)
+                Vector3::new(x as f32, z as f32, y as f32)
             }
-            _ => Vec3::zero(),
+            _ => Vector3::new(0.0, 0.0, 0.0),
         }
     }
 
