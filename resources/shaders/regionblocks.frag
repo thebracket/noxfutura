@@ -77,5 +77,5 @@ void main() {
         pbr.b, // Metal
         1.0
     );
-    f_coords = vec4(v_world_pos, gl_FragCoord.z / gl_FragCoord.w);
+    f_coords = vec4(v_world_pos, gl_FragCoord.z);
 }
