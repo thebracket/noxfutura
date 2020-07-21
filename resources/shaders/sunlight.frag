@@ -223,7 +223,7 @@ void main() {
     // SSAO. Again.
     float SSAO = 0.0;
     const float kernelSize = 64.0;
-    const float radius = 0.005;
+    const float radius = 0.01;
     vec3 FragPos = vec3(v_tex_coords.xy, raw_pos.a);
     float occlusion = 0;
     for (int i=0; i<kernelSize; ++i) {
