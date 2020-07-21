@@ -18,3 +18,5 @@ mod clothing;
 pub use clothing::*;
 mod items;
 pub use items::*;
+mod reactions;
+pub use reactions::*;

@@ -1,0 +1,13 @@
+(
+    reactions: [
+        ReactionDef(
+            name: "Cut Wooden Logs into Blocks",
+            workshop: "sawmill",
+            difficulty: 10,
+            automatic: true,
+            skill: "Carpentry",
+            inputs: [ ReactionItem(tag: "wood_log", qty: 1) ],
+            outputs: [ ReactionItem(tag: "block", qty: 4 ), ReactionItem(tag: "wood_waste", qty: 2) ]
+        )
+    ]
+)

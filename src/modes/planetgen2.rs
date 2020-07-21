@@ -3,7 +3,7 @@ use crate::engine::uniforms::UniformBlock;
 use crate::engine::DEVICE_CONTEXT;
 use imgui::*;
 use nox_planet::WORLDGEN_RENDER;
-use cgmath::{Matrix4, Vector3, Vector4, SquareMatrix, Point3, EuclideanSpace};
+use cgmath::{Matrix4, Vector3, SquareMatrix, Point3, EuclideanSpace};
 
 pub struct PlanetGen2 {
     planet_shader: usize,
