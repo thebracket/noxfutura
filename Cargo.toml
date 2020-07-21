@@ -11,7 +11,7 @@ nox_planet = { path = "nox_planet" }
 nox_wgpu_utils = { path = "nox_wgpu_utils" }
 nox_spatial = { path = "nox_spatial" }
 
-wgpu = { version = "0.5.0" }
+wgpu = { version = "0.5.2" }
 winit = { version = "0.22.2", features = ["web-sys"] }
 futures = { version = "0.3" }
 glsl-to-spirv = "0.1.7"

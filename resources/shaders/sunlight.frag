@@ -148,6 +148,10 @@ void main() {
     }
     light_output += vec3(0.05) * albedo * ao; // Ambient component
 
+    float y_difference = 1.0 - ((camera_position.y - position.y) * 0.025);
+
+    light_output *= y_difference;
+
     // Map it - remove when layering
     //light_output = light_output / (light_output + vec3(1.0));
     //light_output = pow(light_output, vec3(1.0/2.2));
