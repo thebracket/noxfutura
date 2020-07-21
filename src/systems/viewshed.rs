@@ -17,9 +17,9 @@ pub fn build() -> Box<dyn Schedulable> {
                     fov.visible_tiles.clear();
                     let radius = fov.radius as i32;
                     reveal(pos.get_idx(), &mut *fov);
-                    let radius_range = (0i32 - radius)..=radius;
+                    let radius_range = (0i32 - radius)..radius;
                     for z in radius_range {
-                        for i in (0i32 - radius)..=radius {
+                        for i in (0i32 - radius)..radius {
                             internal_view_to(&*pos, &mut *fov, i as i32, radius as i32, z as i32);
                             internal_view_to(
                                 &*pos,

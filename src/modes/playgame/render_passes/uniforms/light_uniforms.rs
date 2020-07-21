@@ -77,7 +77,7 @@ impl LightUniforms {
         });
 
         // Index the lights
-        const LIGHT_BOOST: f32 = 5.0;
+        const LIGHT_BOOST: f32 = 10.0;
         let mut index = 1;
         let light_query = <(Read<Position>, Read<Light>, Read<FieldOfView>)>::query();
         light_query.iter(ecs).for_each(|(pos, light, fov)| {
@@ -91,7 +91,7 @@ impl LightUniforms {
                 ];
                 self.lights[index].pos = [
                     pt.x as f32 + 0.5,
-                    pt.z as f32 + 0.4,
+                    pt.z as f32 + 0.5,
                     pt.y as f32 + 0.5,
                     light.radius as f32,
                 ];

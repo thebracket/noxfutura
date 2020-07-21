@@ -100,7 +100,7 @@ vec3 CalculateLightOutput(vec3 albedo, vec3 N, vec3 V, vec3 F0, vec3 L, vec3 rad
 
 vec3 GameLight(float far_plane, vec3 albedo, vec3 N, vec3 V, vec3 F0, float roughness, float metallic, vec3 light_position, vec3 position, vec3 light_color, float distance) {
     vec3 L = far_plane < 512.0 ? normalize(light_position - position) : normalize(light_position);
-    float attenuation = far_plane > 64.0 ? 1.0 : 1.0 / (distance * 1.0);
+    float attenuation = far_plane > 64.0 ? 1.0 : 1.0 / (distance * 0.5);
     vec3 radiance = light_color * attenuation;
 
     // For simple light output calculation
@@ -204,7 +204,7 @@ void main() {
         uint flag = 1 << i;
 
         int idx = mapidx(position);
-        if ( (light_bits[idx] & flag) > 0 ) {
+        if ( (light_bits[idx] & flag) > 0 && (i==0 || int(lights[i].pos.y) == int(round(position.y - 0.4))) ) {
 
             float radius = lights[i].pos.a;
             float distance = distance(lights[i].pos.xyz, position);
