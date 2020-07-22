@@ -19,7 +19,7 @@ pub fn spawn_clothing_from_raws_worn(
         let color = get_color(rng.random_slice_entry(&cd.colors));
 
         ecs.insert(
-            (Item {}, IdentityTag::new()),
+            (Item {}, Tag(tag.to_string()), IdentityTag::new()),
             vec![(
                 Position::worn(wearer),
                 Name { name: cd.name },

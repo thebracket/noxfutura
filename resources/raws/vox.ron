@@ -13,6 +13,7 @@
         VoxelModel( tag:"ship_defense_turret", file:"turret" ),
         VoxelModel( tag:"axe", file:"simpleaxe" ),
         VoxelModel( tag:"campfire_kit", file:"crate-fakefire" ),
+        VoxelModel( tag:"tent_kit", file:"crate-tent" ),
         VoxelModel( tag:"tent", file:"tent" ),
         VoxelModel( tag:"sawmill", file:"sawmill" ),
         VoxelModel( tag:"block", file:"block" ),
@@ -46,6 +47,7 @@
         VoxelModel( tag:"mechanic", file:"mechanic" ),
         VoxelModel( tag:"tanner", file:"tanner" ),
         VoxelModel( tag:"charcoal", file:"charcoal" ),
+        VoxelModel( tag:"campfire_fake", file:"campfire-fake" ),
         VoxelModel( tag:"ant", file:"ant" ),
 
         VoxelModel( tag:"person_base", file:"person_base" ),

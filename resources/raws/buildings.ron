@@ -45,7 +45,7 @@
         BuildingDef(
             tag : "storage_locker",
             name : "Storage Locker",
-            components : [ BuildingComponent(item: "storage_locker", qty: 1) ],
+            components : [ BuildingComponent(item: "storage_locker_kit", qty: 1) ],
             skill : [ BuildingSkill(skill: "Construction", difficulty: 10) ],
             vox : "cabinet",
             description : "A ship-mounted storage locker, pre-shipped with enough to survive settling a new world.",
@@ -89,6 +89,26 @@
             skill : [ BuildingSkill(skill: "Construction", difficulty: 15) ],
             vox : "small_replicator",
             description : "A portable device that can convert energy into matter, according to pre-programmed recipes. This model is designed for field-trips and can make tea and sandwiches.",
+            provides : [ ]
+        ),
+
+        BuildingDef(
+            tag : "personal_survival_shelter",
+            name : "Tent",
+            components : [ BuildingComponent(item: "personal_survival_shelter_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 5) ],
+            vox : "tent",
+            description : "A tent, conveniently packaged in a crate. It is self-assembling.",
+            provides : [ ]
+        ),
+
+        BuildingDef(
+            tag : "fake_camp_fire",
+            name : "Nuclear Camp Fire",
+            components : [ BuildingComponent(item: "camp_fire_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 5) ],
+            vox : "campfire_fake",
+            description : "A portable camp fire, for the lazy camper. Combining a nuclear battery, fake fire effects and a marshmallow dispenser it is ideal for a camping trip.",
             provides : [ ]
         ),
 

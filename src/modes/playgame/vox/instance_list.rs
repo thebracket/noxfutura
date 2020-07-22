@@ -55,6 +55,8 @@ pub fn build_vox_instances2(
     instance_buffer: &mut VertexBuffer<f32>,
     vox_instances: &mut Vec<(u32, u32, u32)>,
     frustrum: &Frustrum,
+    mouse_world_pos: &(usize, usize, usize),
+    building_to_build: &Option<usize>
 ) {
     let mut instances = VMInstances::new();
     instance_buffer.clear();
@@ -118,7 +120,18 @@ pub fn build_vox_instances2(
                     composite.rotation,
                 );
             }
-        });
+        }
+    );
+
+    // Building Projects
+    if let Some(tag) = building_to_build {
+        instances.add(
+           *tag,
+            [ mouse_world_pos.0 as f32, mouse_world_pos.2 as f32, mouse_world_pos.1 as f32 ],
+            [0.5, 0.5, 0.5],
+            0.0
+        );
+    }
 
     // Build the instanced data
     instances.instances.iter().for_each(|i| {

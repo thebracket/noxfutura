@@ -5,10 +5,11 @@ use nox_raws::*;
 fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
     let raws = RAWS.read();
     if let Some(item) = raws.items.item_by_tag(tag) {
+        println!("Spawning item [{}]", tag);
         let id = IdentityTag::new();
         let new_identity = id.0;
         let entity = ecs.insert(
-            (Item {}, id),
+            (Item {}, Tag(tag.to_string()), id),
             vec![(
                 Name {
                     name: item.name.clone(),

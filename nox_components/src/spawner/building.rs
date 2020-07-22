@@ -6,6 +6,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
     let mut result = 0;
     let rlock = RAWS.read();
     if let Some(building_def) = rlock.buildings.building_by_tag(tag) {
+        println!("Spawning [{}]", tag);
         let dims = if let Some(dims) = building_def.dimensions {
             dims
         } else {
@@ -16,7 +17,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
         result = identity.0;
 
         let entity = ecs.insert(
-            (Building {}, identity),
+            (Building {}, Tag(tag.to_string()), identity),
             vec![(
                 Name {
                     name: building_def.name.clone(),

@@ -16,13 +16,13 @@ use crate::systems;
 pub use render_passes::*;
 use cgmath::Vector3;
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Clone)]
 pub enum DesignMode {
     Lumberjack,
-    Buildings
+    Buildings{ bidx: i32, vox: Option<usize> }
 }
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Clone)]
 pub enum RunState {
     Paused,
     OneStep,
@@ -178,7 +178,7 @@ impl PlayGame {
         }
 
         let sun_pos = self.user_interface(frame_time, imgui, mouse_world_pos);
-        self.render(camera_z, depth_id, frame, &sun_pos);
+        self.render(camera_z, depth_id, frame, &sun_pos, mouse_world_pos);
         super::ProgramMode::PlayGame
     }
 
@@ -215,13 +215,15 @@ impl PlayGame {
         fps_display(imgui, frame_time);
         draw_tooltips(&self.ecs, mouse_world_pos, imgui);
 
-        if let RunState::Design { mode } = self.run_state {
+        if let RunState::Design { mode } = &self.run_state {
             match mode {
                 DesignMode::Lumberjack => {
                     lumberjack_display(imgui, &self.ecs, mouse_world_pos);
                 }
-                DesignMode::Buildings => {
-                    building_display(imgui, &self.ecs, mouse_world_pos);
+                DesignMode::Buildings{bidx, ..} => {
+                    let (bidx, vox) = building_display(imgui, &self.ecs, mouse_world_pos, *bidx);
+                    self.run_state = RunState::Design { mode: DesignMode::Buildings{ bidx, vox } };
+                    self.vox_changed = true;
                 }
             }
         }
@@ -264,6 +266,12 @@ impl PlayGame {
                         VirtualKeyCode::T => {
                             self.run_state = RunState::Design {
                                 mode: DesignMode::Lumberjack,
+                            };
+                            camera_changed = false;
+                        }
+                        VirtualKeyCode::B => {
+                            self.run_state = RunState::Design {
+                                mode: DesignMode::Buildings{bidx: 0, vox: None},
                             };
                             camera_changed = false;
                         }
@@ -313,6 +321,7 @@ impl PlayGame {
         depth_id: usize,
         frame: &wgpu::SwapChainOutput,
         sun_pos: &(Vector3<f32>, Vector3<f32>),
+        mouse_world_pos: &(usize, usize, usize)
     ) {
         let pass = self.rpass.as_mut().unwrap();
         // Render terrain building the initial chunk models list
@@ -328,6 +337,14 @@ impl PlayGame {
                 &mut vox_pass.instance_buffer,
                 &mut self.vox_instances,
                 &self.chunks.frustrum,
+                mouse_world_pos,
+                match &self.run_state {
+                    RunState::Design{mode} => match mode {
+                        DesignMode::Buildings{ vox, ..} => vox,
+                        _ => &None
+                    }
+                    _ => &None
+                }
             );
             self.vox_changed = false;
         }

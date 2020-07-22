@@ -29,3 +29,7 @@ pub struct Tree {}
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "dbd8944d-90b5-40d3-9519-a6253669c646"]
 pub struct Terrain {}
+
+#[derive(TypeUuid, Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[uuid = "731843e2-3c02-47d9-9312-bbb0a8e75151"]
+pub struct Tag(pub String);

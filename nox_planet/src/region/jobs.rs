@@ -9,6 +9,7 @@ pub struct JobsBoard {
     designated_trees: HashSet<usize>,
     all_jobs: Vec<JobBoardListing>,
     tool_ownership: HashMap<usize, ToolClaim>,
+    component_ownership: HashMap<usize, ComponentClaim>
 }
 
 impl JobsBoard {
@@ -17,6 +18,7 @@ impl JobsBoard {
             designated_trees: HashSet::new(),
             all_jobs: Vec::new(),
             tool_ownership: HashMap::new(),
+            component_ownership: HashMap::new()
         }
     }
 
@@ -152,6 +154,10 @@ impl JobsBoard {
             }
         }
     }
+
+    pub fn is_component_claimed(&self, id: usize) -> bool {
+        self.component_ownership.contains_key(&id)
+    }
 }
 
 fn job_cost(pos: &Position, job: &JobType) -> f32 {
@@ -174,5 +180,11 @@ pub struct JobBoardListing {
 pub struct ToolClaim {
     pub claimed: Option<usize>,
     pub usage: ToolType,
+    pub effective_location: usize,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct ComponentClaim {
+    pub claimed_by: usize,
     pub effective_location: usize,
 }

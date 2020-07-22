@@ -64,11 +64,11 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec
                 };
             }
             if MenuItem::new(im_str!("\u{f015} Buildings"))
-                .shortcut(im_str!("T"))
+                .shortcut(im_str!("B"))
                 .build(imgui)
             {
                 *run_state = RunState::Design {
-                    mode: DesignMode::Buildings,
+                    mode: DesignMode::Buildings{ bidx: 0, vox: None },
                 };
             }
             menu.end(imgui);

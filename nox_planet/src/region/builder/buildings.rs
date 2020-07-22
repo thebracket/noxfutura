@@ -142,6 +142,7 @@ fn add_construction(
                 region,
             );
             crate::spawner::spawn_item_in_container(ecs, "camp_fire_kit", storage_id, region);
+            crate::spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id, region);
             crate::spawner::spawn_item_in_container(ecs, "fire_axe", storage_id, region);
             crate::spawner::spawn_item_in_container(ecs, "pickaxe", storage_id, region);
             crate::spawner::spawn_item_in_container(ecs, "hoe", storage_id, region);
