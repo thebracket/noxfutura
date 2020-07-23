@@ -3,6 +3,7 @@ mod endturn;
 mod initiative;
 mod leisure_shift;
 mod lumberjack;
+mod construct_buildings;
 mod move_randomly;
 mod settler_scheduler;
 mod shared_state;
@@ -28,6 +29,7 @@ pub fn build_scheduler() -> Schedule {
         .add_system(sleep_shift::build())
         .flush()
         .add_system(lumberjack::build())
+        .add_system(construct_buildings::build())
         .add_system(move_randomly::build())
         .flush()
         .add_system(endturn::build())

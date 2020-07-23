@@ -166,6 +166,10 @@ impl JobsBoard {
         });
     }
 
+    pub fn relinquish_component_for_building(&mut self, component_id: usize) {
+        self.component_ownership.remove(&component_id);
+    }
+
     pub fn add_building_job(&mut self, building_id: usize, building_pos: usize, comps: &[(usize, usize)]) {
         let components = comps
             .iter()

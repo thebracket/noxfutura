@@ -71,3 +71,11 @@ pub fn chop_tree(id: usize, tree_id: usize) {
         .lock()
         .push_back(JobStep::TreeChop { id, tree_id });
 }
+
+pub fn delete_item(id: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::DeleteItem{ id });
+}
+
+pub fn finish_building(building_id: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::FinishBuilding{ building_id });
+}

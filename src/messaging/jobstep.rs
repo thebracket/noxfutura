@@ -15,6 +15,8 @@ pub enum JobStep {
     RelinquishClaim { tool_id: usize, tool_pos: usize },
     EquipItem { id: usize, tool_id: usize },
     TreeChop { id: usize, tree_id: usize },
+    DeleteItem { id: usize },
+    FinishBuilding { building_id: usize }
 }
 
 pub fn apply_jobs_queue(ecs: &mut World) {
@@ -95,8 +97,22 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                             MOVER_LIST.lock().insert(*id, (x, y, z));
                         }
                     }
+                    JobType::ConstructBuilding {step, ..} => {
+                        let path = match step {
+                            BuildingSteps::TravelToComponent { path, .. } => Some(path),
+                            BuildingSteps::TravelToTBuilding { path, .. } => Some(path),
+                            _ => None,
+                        };
+                        if let Some(path) = path {
+                            let destination = path[0];
+                            path.remove(0);
+                            let (x, y, z) = idxmap(destination);
+                            MOVER_LIST.lock().insert(*id, (x, y, z));
+                        }
+                    }
                     _ => {}
-                });
+                }
+            );
         }
         JobStep::DropItem { id, location } => {
             let idtag = IdentityTag(*id);
@@ -148,6 +164,33 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     pos.to_carried(*id);
                 });
             super::vox_moved();
+        }
+
+        JobStep::DeleteItem { id} => {
+            let itemtag = IdentityTag(*id);
+            let i = <Read<Position>>::query()
+                .filter(tag_value(&itemtag))
+                .iter_entities(ecs)
+                .map(|(e, _)| e)
+                .nth(0);
+            if let Some(i) = i {
+                ecs.delete(i);
+            }
+            super::vox_moved();
+        }
+
+        JobStep::FinishBuilding { building_id } => {
+            let idtag = IdentityTag(*building_id);
+            let e = <Read<Position>>::query()
+                .filter(tag_value(&idtag))
+                .iter_entities(ecs)
+                .map(|(e, _)| e)
+                .nth(0);
+
+            if let Some(e) = e {
+                ecs.remove_tag::<Building>(e).expect("Failed to remove tag");
+                ecs.add_tag(e, Building{complete: true}).expect("Failed to add tag");
+            }
         }
     };
 

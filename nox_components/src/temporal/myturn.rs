@@ -42,9 +42,9 @@ pub enum LumberjackSteps {
 #[uuid = "5d17017a-d6ed-47fb-b6ec-86950539261d"]
 pub enum BuildingSteps {
     FindComponent,
-    TravelToComponent { path: Vec<usize> },
-    CollectComponent,
-    FindBuilding,
-    TravelToTBuilding { path: Vec<usize> },
+    TravelToComponent { path: Vec<usize>, component_id: usize },
+    CollectComponent { component_id: usize },
+    FindBuilding { component_id: usize },
+    TravelToTBuilding { path: Vec<usize>, component_id: usize },
     Construct,
 }
