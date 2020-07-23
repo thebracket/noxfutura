@@ -6,6 +6,7 @@ layout(location=2) in vec3 a_tint;
 layout(location=3) in vec3 i_position;
 layout(location=4) in vec3 i_tint;
 layout(location=5) in float i_rot;
+layout(location=6) in float i_grey;
 
 layout(location=0) out vec3 v_normal;
 layout(location=1) out vec3 v_world_pos;
@@ -48,5 +49,10 @@ void main() {
     v_normal = (vec4(normal_lut[int(a_normal)], 0.0) * rotation).xyz;
     gl_Position = u_view_proj * vec4(final_position, 1.0);
     v_world_pos = a_position + i_position;
-    v_tint = a_tint * i_tint;
+    if (i_grey > 0.0) {
+        float grey = dot(a_tint * i_tint, vec3(0.299, 0.587, 0.114));
+        v_tint = vec3(grey, grey, grey);
+    } else {
+            v_tint = a_tint * i_tint;
+    }
 }

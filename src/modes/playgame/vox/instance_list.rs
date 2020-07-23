@@ -12,6 +12,7 @@ pub struct VMRender {
     position: [f32; 3],
     tint: [f32; 3],
     rotation: f32,
+    greyscale: f32,
 }
 
 #[derive(Debug)]
@@ -26,12 +27,13 @@ impl VMInstances {
         }
     }
 
-    fn add(&mut self, model_id: usize, position: [f32; 3], tint: [f32; 3], rotation: f32) {
+    fn add(&mut self, model_id: usize, position: [f32; 3], tint: [f32; 3], rotation: f32, greyscale: f32) {
         if let Some(vmi) = self.instances.get_mut(&model_id) {
             vmi.push(VMRender {
                 position,
                 tint,
                 rotation,
+                greyscale
             });
         } else {
             self.instances.insert(
@@ -40,6 +42,7 @@ impl VMInstances {
                     position,
                     tint,
                     rotation,
+                    greyscale
                 }],
             );
         }
@@ -66,8 +69,8 @@ pub fn build_vox_instances2(
     let query =
         <(Read<Position>, Read<VoxelModel>, Read<Tint>)>::query();
     query
-        .iter(ecs)
-        .filter(|(pos, _, _)| {
+        .iter_entities(ecs)
+        .filter(|(_, (pos, _, _))| {
             if let Some(pt) = pos.as_point3_only_tile() {
                 pt.z as usize > camera_z - LAYERS_DOWN
                     && pt.z as usize <= camera_z
@@ -76,7 +79,7 @@ pub fn build_vox_instances2(
                 false
             }
         })
-        .for_each(|(pos, model, tint)| {
+        .for_each(|(entity, (pos, model, tint))| {
             let mut pt = pos.as_vec3();
 
             if pos.dimensions.0 == 3 {
@@ -91,6 +94,15 @@ pub fn build_vox_instances2(
                 [pt.x, pt.z, pt.y],
                 [tint.color.0, tint.color.1, tint.color.2],
                 model.rotation_radians,
+                if let Some(b) = ecs.get_tag::<Building>(entity) {
+                    if b.complete {
+                        0.0
+                    } else {
+                        1.0
+                    }
+                } else {
+                    0.0
+                }
             );
         });
 
@@ -118,6 +130,7 @@ pub fn build_vox_instances2(
                     pos.as_xzy_f32(),
                     [vm.tint.0, vm.tint.1, vm.tint.2],
                     composite.rotation,
+                    0.0
                 );
             }
         }
@@ -129,7 +142,8 @@ pub fn build_vox_instances2(
            *tag,
             [ mouse_world_pos.0 as f32, mouse_world_pos.2 as f32, mouse_world_pos.1 as f32 ],
             [0.5, 0.5, 0.5],
-            0.0
+            0.0,
+            1.0
         );
     }
 
@@ -144,6 +158,7 @@ pub fn build_vox_instances2(
             instance_buffer.add_slice(&vm.position);
             instance_buffer.add_slice(&vm.tint);
             instance_buffer.add(vm.rotation);
+            instance_buffer.add(vm.greyscale);
         });
     });
 

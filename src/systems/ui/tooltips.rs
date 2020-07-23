@@ -58,7 +58,7 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
             lines.push((true, format!("{}", name.name)));
             if let Some(binfo) = ecs.get_tag::<Building>(entity) {
                 if !binfo.complete {
-                    lines.push((false, "Building not yet completed".to_string()));
+                    lines.push((true, "Building not yet completed".to_string()));
                 }
             }
 
