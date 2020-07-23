@@ -47,8 +47,11 @@ pub fn build() -> Box<dyn Schedulable> {
                                         println!(
                                             "No path to component available - abandoning building"
                                         );
-                                        //messaging::cancel_job(id.0);
-                                        //messaging::relinquish_claim(tool_id, tool_pos);
+                                        messaging::cancel_job(id.0);
+                                        for c in components.iter() {
+                                            REGION.write().jobs_board.relinquish_component_for_building(c.1);
+                                        }
+                                        messaging::delete_building(*building_id);
                                     } else {
                                         // Path onwards
                                         messaging::job_changed(
@@ -133,8 +136,13 @@ pub fn build() -> Box<dyn Schedulable> {
                                         },
                                     );
                                 } else {
-                                    println!("No path to building")
+                                    println!("No path to building");
                                     // Cancel job
+                                    messaging::cancel_job(id.0);
+                                    for c in components.iter() {
+                                        REGION.write().jobs_board.relinquish_component_for_building(c.1);
+                                    }
+                                    messaging::delete_building(*building_id);
                                 }
                             }
                             BuildingSteps::TravelToTBuilding{ component_id, path } => {

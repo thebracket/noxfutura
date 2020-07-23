@@ -1,7 +1,7 @@
 use crate::systems::REGION;
 use legion::prelude::*;
 use nox_components::*;
-use nox_planet::{Region, TileType};
+use nox_planet::{Region};
 use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use cgmath::{Vector3, InnerSpace};
 

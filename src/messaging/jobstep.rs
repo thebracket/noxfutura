@@ -16,7 +16,8 @@ pub enum JobStep {
     EquipItem { id: usize, tool_id: usize },
     TreeChop { id: usize, tree_id: usize },
     DeleteItem { id: usize },
-    FinishBuilding { building_id: usize }
+    FinishBuilding { building_id: usize },
+    DeleteBuilding { building_id: usize }
 }
 
 pub fn apply_jobs_queue(ecs: &mut World) {
@@ -177,6 +178,20 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 ecs.delete(i);
             }
             super::vox_moved();
+        }
+
+        JobStep::DeleteBuilding { building_id } => {
+            let itemtag = IdentityTag(*builing_id);
+            let i = <Read<Position>>::query()
+                .filter(tag_value(&itemtag))
+                .iter_entities(ecs)
+                .map(|(e, _)| e)
+                .nth(0);
+            if let Some(i) = i {
+                ecs.delete(i);
+            }
+            super::vox_moved();
+            super::lighting_changed();
         }
 
         JobStep::FinishBuilding { building_id } => {

@@ -80,6 +80,10 @@ pub fn delete_item(id: usize) {
     JOBS_QUEUE.lock().push_back(JobStep::DeleteItem{ id });
 }
 
+pub fn delete_building(id: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::DeleteBuilding{ building_id });
+}
+
 pub fn finish_building(building_id: usize) {
     JOBS_QUEUE.lock().push_back(JobStep::FinishBuilding{ building_id });
 }

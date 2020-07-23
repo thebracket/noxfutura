@@ -312,8 +312,10 @@ impl PlayGame {
                 self.chunks.on_camera_move(&pass.uniforms.view_proj, &*pos);
                 pass.uniforms.update_buffer(&pass.uniform_buf);
                 self.vox_changed = true;
-                self.lights_changed = true;
-                self.first_run = false;
+                if self.first_run {
+                    self.lights_changed = true;
+                    self.first_run = false;
+                }
             }
 
             result = pos.as_point3().z as usize;
