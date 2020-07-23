@@ -181,7 +181,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
 
         JobStep::DeleteBuilding { building_id } => {
-            let itemtag = IdentityTag(*builing_id);
+            let itemtag = IdentityTag(*building_id);
             let i = <Read<Position>>::query()
                 .filter(tag_value(&itemtag))
                 .iter_entities(ecs)
@@ -191,7 +191,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 ecs.delete(i);
             }
             super::vox_moved();
-            super::lighting_changed();
+            super::lights_changed();
         }
 
         JobStep::FinishBuilding { building_id } => {
