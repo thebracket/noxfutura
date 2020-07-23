@@ -8,7 +8,7 @@ pub struct Cordex {}
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "0e020e07-aa20-4de3-ad60-f1b2364abfc3"]
-pub struct Building {}
+pub struct Building { pub complete: bool }
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 #[uuid = "3e878aaa-b147-4d6f-8a03-ce0acdb26191"]

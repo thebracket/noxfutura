@@ -56,6 +56,11 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
         .filter(|(_, (_, pos, _))| pos.contains_point(mouse_world_pos))
         .for_each(|(entity, (name, _, identity))| {
             lines.push((true, format!("{}", name.name)));
+            if let Some(binfo) = ecs.get_tag::<Building>(entity) {
+                if !binfo.complete {
+                    lines.push((false, "Building not yet completed".to_string()));
+                }
+            }
 
             <Read<Description>>::query()
                 .iter_entities(ecs)

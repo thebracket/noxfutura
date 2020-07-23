@@ -179,5 +179,5 @@ fn add_building(
     z: usize,
     ecs: &mut World,
 ) -> usize {
-    crate::spawner::spawn_building(ecs, tag, x, y, z, region.world_idx)
+    crate::spawner::spawn_building(ecs, tag, x, y, z, region.world_idx, true)
 }

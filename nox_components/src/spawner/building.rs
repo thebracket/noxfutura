@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use legion::prelude::*;
 
-pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: usize) -> usize {
+pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: usize, complete: bool) -> usize {
     use nox_raws::*;
     let mut result = 0;
     let rlock = RAWS.read();
@@ -17,7 +17,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
         result = identity.0;
 
         let entity = ecs.insert(
-            (Building {}, Tag(tag.to_string()), identity),
+            (Building { complete }, Tag(tag.to_string()), identity),
             vec![(
                 Name {
                     name: building_def.name.clone(),

@@ -221,7 +221,7 @@ impl PlayGame {
                     lumberjack_display(imgui, &self.ecs, mouse_world_pos);
                 }
                 DesignMode::Buildings{bidx, ..} => {
-                    let (bidx, vox) = building_display(imgui, &self.ecs, mouse_world_pos, *bidx);
+                    let (bidx, vox) = building_display(imgui, &mut self.ecs, mouse_world_pos, *bidx);
                     self.run_state = RunState::Design { mode: DesignMode::Buildings{ bidx, vox } };
                     self.vox_changed = true;
                 }
@@ -246,34 +246,41 @@ impl PlayGame {
                         VirtualKeyCode::Space => {
                             self.run_state = RunState::Paused;
                             camera_changed = false;
+                            self.vox_changed = true;
                         }
                         VirtualKeyCode::Grave => {
                             self.run_state = RunState::OneStep;
                             camera_changed = false;
+                            self.vox_changed = true;
                         }
                         VirtualKeyCode::Key1 => {
                             self.run_state = RunState::Running;
                             camera_changed = false;
+                            self.vox_changed = true;
                         }
                         VirtualKeyCode::Key2 => {
                             self.run_state = RunState::FullSpeed;
                             camera_changed = false;
+                            self.vox_changed = true;
                         }
                         VirtualKeyCode::Slash => {
                             self.run_state = RunState::OneStep;
                             camera_changed = false;
+                            self.vox_changed = true;
                         }
                         VirtualKeyCode::T => {
                             self.run_state = RunState::Design {
                                 mode: DesignMode::Lumberjack,
                             };
                             camera_changed = false;
+                            self.vox_changed = true;
                         }
                         VirtualKeyCode::B => {
                             self.run_state = RunState::Design {
                                 mode: DesignMode::Buildings{bidx: 0, vox: None},
                             };
                             camera_changed = false;
+                            self.vox_changed = true;
                         }
                         VirtualKeyCode::Left => pos.apply_delta(-1, 0, 0),
                         VirtualKeyCode::Right => pos.apply_delta(1, 0, 0),

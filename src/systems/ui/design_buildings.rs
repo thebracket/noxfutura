@@ -2,11 +2,11 @@ use imgui::*;
 use legion::prelude::*;
 use nox_spatial::mapidx;
 use crate::systems::REGION;
-use nox_planet::TileType;
+use nox_planet::*;
 use nox_components::*;
 use nox_raws::*;
 
-pub fn building_display(imgui: &Ui, ecs: &World, mouse_world_pos: &(usize, usize, usize), bidx: i32) -> (i32, Option<usize>) {
+pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, usize, usize), bidx: i32) -> (i32, Option<usize>) {
     let mut available_buildings = Vec::new();
 
     // Temporary code to figure out what buildings are possible
@@ -34,7 +34,8 @@ pub fn building_display(imgui: &Ui, ecs: &World, mouse_world_pos: &(usize, usize
                     b.tag.to_string(), 
                     ImString::new(b.name.to_string()),
                     ImString::new(b.description.to_string()),
-                    raws.vox.get_model_idx(&b.vox)
+                    raws.vox.get_model_idx(&b.vox),
+                    b.dimensions
                 )
             );
         }
@@ -69,10 +70,60 @@ pub fn building_display(imgui: &Ui, ecs: &World, mouse_world_pos: &(usize, usize
     if available_buildings.is_empty() {
         (bid, None)
     } else {
-        let btag = available_buildings[bid as usize].3;
+        let building_info = &available_buildings[bid as usize];
+        let btag = building_info.3;
+        let rtag = &building_info.0;
+        let dims = &building_info.4;
 
         // Determine build validity here
+        let mut occupied_tiles = Vec::new();
+        let (width, height) = if let Some(dims) = dims {
+            (dims.0, dims.1)
+        } else {
+            (1, 1)
+        };
 
-        (bid, Some(btag))
+        if width==1 && height==1 {
+            occupied_tiles.push(mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2));
+        }
+        // TODO: Other sizes
+
+        let mut can_build = true;
+        occupied_tiles.iter().for_each(|idx| {
+            if !region.flag(*idx, Region::CAN_STAND_HERE) {
+                can_build = false;
+            }
+            match &region.tile_types[*idx] {
+                TileType::Stairs{..} => { can_build = false; }
+                TileType::Ramp{..} => { can_build = false; }
+                _ => {}
+            }
+
+            // Check to see if the space if occupied
+            <Read<Position>>::query().filter(tag::<Building>()).iter(ecs).for_each(|p| {
+                if p.contains_point(&mouse_world_pos) {
+                    can_build = false;
+                }
+            });
+        });
+
+        if can_build {
+            if imgui.io().mouse_down[0] {
+                // Issue build order
+                nox_planet::spawn_building(
+                    ecs,
+                    &rtag,
+                    mouse_world_pos.0,
+                    mouse_world_pos.1,
+                    mouse_world_pos.2,
+                    region.world_idx,
+                    false
+                );
+            }
+
+            (bid, Some(btag))
+        } else {
+            (bid, None)
+        }
     }
 }
