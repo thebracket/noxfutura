@@ -22,6 +22,10 @@ pub fn vox_moved() {
     RENDER_FLAGS.lock().models_changed = true;
 }
 
+pub fn lights_changed() {
+    RENDER_FLAGS.lock().lights_changed = true;
+}
+
 pub fn geometry_changed(idx: usize) {
     let mut lock = RENDER_FLAGS.lock();
     lock.terrain_changed = true;

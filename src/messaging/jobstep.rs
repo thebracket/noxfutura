@@ -190,6 +190,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             if let Some(e) = e {
                 ecs.remove_tag::<Building>(e).expect("Failed to remove tag");
                 ecs.add_tag(e, Building{complete: true}).expect("Failed to add tag");
+                if let Some(mut l) = ecs.get_component_mut::<Light>(e) {
+                    l.enabled = true;
+                    super::lights_changed();
+                }
             }
         }
     };

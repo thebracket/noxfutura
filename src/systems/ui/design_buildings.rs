@@ -110,7 +110,7 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
         let world_idx = region.world_idx;
         std::mem::drop(region);
 
-        if can_build {
+        if can_build && !imgui.io().want_capture_mouse {
             if imgui.io().mouse_down[0] {
                 // Issue build order
                 let new_building_id = nox_planet::spawn_building(

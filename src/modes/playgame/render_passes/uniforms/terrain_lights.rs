@@ -7,7 +7,7 @@ pub struct TerrainLights {
     pub storage_buffer: wgpu::Buffer,
     pub bind_group_layout: wgpu::BindGroupLayout,
     pub bind_group: wgpu::BindGroup,
-    pub dirty: bool,
+    //pub dirty: bool,
 }
 
 impl TerrainLights {
@@ -71,14 +71,14 @@ impl TerrainLights {
             storage_buffer,
             bind_group_layout,
             bind_group,
-            dirty: true,
+            //dirty: true,
         }
     }
 
     pub fn update_buffer(&mut self) {
-        if !self.dirty {
+        /*if !self.dirty {
             return;
-        }
+        }*/
         let mut ctx = DEVICE_CONTEXT.write();
         let context = ctx.as_mut().unwrap();
         let size = (std::mem::size_of::<u32>() * REGION_TILES_COUNT) as wgpu::BufferAddress;
@@ -94,6 +94,6 @@ impl TerrainLights {
         encoder.copy_buffer_to_buffer(&staging_buffer, 0, &self.storage_buffer, 0, size);
         context.queue.submit(&[encoder.finish()]);
 
-        self.dirty = false;
+        //self.dirty = false;
     }
 }

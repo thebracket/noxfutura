@@ -5,4 +5,5 @@ use crate::prelude::*;
 pub struct Light {
     pub color: (f32, f32, f32),
     pub radius: usize,
+    pub enabled: bool
 }

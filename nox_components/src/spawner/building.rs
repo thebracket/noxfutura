@@ -44,6 +44,7 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
                     Light {
                         color: *color,
                         radius: *radius,
+                        enabled: complete
                     },
                 )
                 .expect("Unable to add light");

@@ -8,11 +8,14 @@ use cgmath::{Vector3, InnerSpace};
 pub fn build() -> Box<dyn Schedulable> {
     SystemBuilder::new("calendar")
         .with_query(<(Read<Position>, Write<FieldOfView>)>::query())
-        .build(|_, ecs, _, fov_list| {
+        .with_query(<Read<Light>>::query())
+        .build(|_, ecs, _, (fov_list, _)| {
+            let mut entities = Vec::new();
+
             fov_list
-                .iter_mut(ecs)
-                .filter(|(_, fov)| fov.is_dirty)
-                .for_each(|(pos, mut fov)| {
+                .iter_entities_mut(ecs)
+                .filter(|(_, (_, fov))| fov.is_dirty)
+                .for_each(|(entity, (pos, mut fov))| {
                     //println!("{:?}", fov);
                     fov.visible_tiles.clear();
                     let radius = fov.radius as i32;
@@ -39,8 +42,17 @@ pub fn build() -> Box<dyn Schedulable> {
                         }
                     }
                     fov.is_dirty = false;
-                });
-        })
+                    entities.push(entity);
+                }
+            );
+            entities.iter().for_each(|e| {
+                if ecs.get_component::<Light>(*e).is_some() {
+                    crate::messaging::lights_changed();
+                    println!("Lights changed");
+                }
+            })
+        }
+    )
 }
 
 #[inline]

@@ -82,7 +82,7 @@ impl LightUniforms {
         let light_query = <(Read<Position>, Read<Light>, Read<FieldOfView>)>::query();
         light_query.iter(ecs).for_each(|(pos, light, fov)| {
             let pt = pos.as_point3();
-            if index < 32 && pt.z <= camera_pos.y as i32 {
+            if index < 32 && pt.z <= camera_pos.y as i32 && light.enabled {
                 self.lights[index].color = [
                     light.color.0 * LIGHT_BOOST,
                     light.color.1 * LIGHT_BOOST,
@@ -98,10 +98,11 @@ impl LightUniforms {
                 let bit = 1 << index;
 
                 for idx in fov.visible_tiles.iter() {
+                    //println!("Setting visible tile for light {} at {}", index, idx);
                     light_bits[*idx] = light_bits[*idx] | bit;
                 }
+                index += 1;
             }
-            index += 1;
         });
         //println!("{:#?}", self.lights);
     }
