@@ -158,12 +158,41 @@ impl JobsBoard {
     pub fn is_component_claimed(&self, id: usize) -> bool {
         self.component_ownership.contains_key(&id)
     }
+
+    pub fn claim_component_for_building(&mut self, building_id: usize, component_id: usize, effective_location: usize) {
+        self.component_ownership.insert(component_id, ComponentClaim{
+            claimed_by_building: building_id,
+            effective_location
+        });
+    }
+
+    pub fn add_building_job(&mut self, building_id: usize, building_pos: usize, comps: &[(usize, usize)]) {
+        let components = comps
+            .iter()
+            .map(|(idx, id)| (*idx, *id, false) )
+            .collect();
+        self.all_jobs.push(
+            JobBoardListing{
+                claimed: None,
+                job: JobType::ConstructBuilding{
+                    building_id,
+                    building_pos,
+                    step: BuildingSteps::FindComponent,
+                    components
+                }
+            }
+        );
+    }
 }
 
 fn job_cost(pos: &Position, job: &JobType) -> f32 {
     match job {
         JobType::FellTree { tree_pos, .. } => {
             let (tx, ty, tz) = idxmap(*tree_pos);
+            DistanceAlg::Pythagoras.distance3d(pos.as_point3(), Point3::new(tx, ty, tz))
+        }
+        JobType::ConstructBuilding { building_pos, .. } => {
+            let (tx, ty, tz) = idxmap(*building_pos);
             DistanceAlg::Pythagoras.distance3d(pos.as_point3(), Point3::new(tx, ty, tz))
         }
         _ => 0.0,
@@ -185,6 +214,6 @@ pub struct ToolClaim {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct ComponentClaim {
-    pub claimed_by: usize,
+    pub claimed_by_building: usize,
     pub effective_location: usize,
 }

@@ -5,6 +5,7 @@ use crate::systems::REGION;
 use nox_planet::*;
 use nox_components::*;
 use nox_raws::*;
+use bracket_geometry::prelude::Point3;
 
 pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, usize, usize), bidx: i32) -> (i32, Option<usize>) {
     let mut available_buildings = Vec::new();
@@ -106,18 +107,54 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
                 }
             });
         });
+        let world_idx = region.world_idx;
+        std::mem::drop(region);
 
         if can_build {
             if imgui.io().mouse_down[0] {
                 // Issue build order
-                nox_planet::spawn_building(
+                let new_building_id = nox_planet::spawn_building(
                     ecs,
                     &rtag,
                     mouse_world_pos.0,
                     mouse_world_pos.1,
                     mouse_world_pos.2,
-                    region.world_idx,
+                    world_idx,
                     false
+                );
+
+                // Claim the components
+                let binfo = raws.buildings.building_by_tag(rtag).unwrap();
+                let mut chosen_components = Vec::new();
+                for c in binfo.components.iter() {
+                    let t = Tag(c.item.to_string());
+                    let mut available_components : Vec<(usize, usize)> = <Read<Position>>::query()
+                        .filter(tag::<Item>())
+                        .filter(tag_value(&t))
+                        .iter_entities(ecs)
+                        .map(|(entity, pos)| {
+                            (pos.effective_location(ecs), ecs.get_tag::<IdentityTag>(entity).unwrap().0)
+                        })
+                        .collect()
+                    ;
+                    available_components.sort_by(|a,b| a.0.cmp(&b.0));
+                    available_components.iter().take(c.qty as usize).for_each(|cc| {
+                        chosen_components.push(cc.clone());
+                    });
+                }
+
+                let mut rwlock = REGION.write();
+                chosen_components.iter().for_each(|c| {
+                    rwlock.jobs_board.claim_component_for_building(
+                        new_building_id, 
+                        c.1, 
+                        c.0
+                    );
+                });
+                rwlock.jobs_board.add_building_job(
+                    new_building_id, 
+                    mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2),
+                    &chosen_components
                 );
             }
 

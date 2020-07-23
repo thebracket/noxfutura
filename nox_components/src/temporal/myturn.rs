@@ -19,6 +19,12 @@ pub enum JobType {
         tool_id: Option<usize>,
         step: LumberjackSteps,
     },
+    ConstructBuilding {
+        building_id: usize,
+        building_pos: usize,
+        step: BuildingSteps,
+        components: Vec<(usize, usize, bool)>
+    }
 }
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -30,4 +36,15 @@ pub enum LumberjackSteps {
     FindTree,
     TravelToTree { path: Vec<usize> },
     ChopTree,
+}
+
+#[derive(TypeUuid, Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[uuid = "5d17017a-d6ed-47fb-b6ec-86950539261d"]
+pub enum BuildingSteps {
+    FindComponent,
+    TravelToComponent { path: Vec<usize> },
+    CollectComponent,
+    FindBuilding,
+    TravelToTBuilding { path: Vec<usize> },
+    Construct,
 }
