@@ -133,6 +133,7 @@ pub fn localized_flags(region: &mut Region, idx: usize) {
     region.clear_flag(idx, Region::CAN_STAND_HERE);
     region.clear_flag(idx, Region::SOLID);
     region.clear_flag(idx, Region::OUTSIDE);
+    region.clear_flag(idx, Region::CONSTRUCTED);
 
     // Solidity
     match region.tile_types[idx] {

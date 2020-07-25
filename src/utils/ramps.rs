@@ -11,18 +11,19 @@ pub fn add_ramp_geometry(
     material_index: MappedTexture,
 ) {
     let tint = material_index.tint;
+    let mi = material_index.texture as f32;
     match direction {
         RampDirection::NorthSouth => {
-            north_south(vb, element_count, x, y, z, material_index.texture as f32 / 255.0, tint)
+            north_south(vb, element_count, x, y, z, mi, tint)
         }
         RampDirection::SouthNorth => {
-            south_north(vb, element_count, x, y, z, material_index.texture as f32 / 255.0, tint)
+            south_north(vb, element_count, x, y, z, mi, tint)
         }
         RampDirection::EastWest => {
-            east_west(vb, element_count, x, y, z, material_index.texture as f32 / 255.0, tint)
+            east_west(vb, element_count, x, y, z, mi, tint)
         }
         RampDirection::WestEast => {
-            west_east(vb, element_count, x, y, z, material_index.texture as f32 / 255.0, tint)
+            west_east(vb, element_count, x, y, z, mi, tint)
         }
         //_ => {}
     }

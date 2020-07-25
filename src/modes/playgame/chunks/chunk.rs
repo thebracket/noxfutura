@@ -126,7 +126,7 @@ impl Chunk {
                                         }
                                     }
                                     TileType::Ramp { direction } => {
-                                        let mat = self.calc_material(idx, region);
+                                        let mat = self.calc_floor_material(idx, region);
                                         add_ramp_geometry(
                                             &mut self.vb.data,
                                             &mut self.element_count[z],
