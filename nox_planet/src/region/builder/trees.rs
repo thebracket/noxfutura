@@ -91,7 +91,7 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
     let tree_id = {
         let mut tl = TREE_COUNTER.write();
         *tl += 1;
-        tl
+        *tl
     };
 
     let tree_size = rng.roll_dice(3, 6) as usize;
@@ -99,7 +99,7 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
     // Grow the tree
     let mut trunk = Vec::<Trunk>::new();
     trunk.push(Trunk{ x, y, z, depth: 1, done: true });
-    region.tree_bases.insert(*tree_id, mapidx(x, y, z));
+    region.tree_bases.insert(tree_id, mapidx(x, y, z));
     trunk.push(Trunk{ x, y, z: z+1, depth: 2, done: false });
     let mut bailout_count = 0;
     while trunk.iter().filter(|t| t.done == false).count() > 0 && bailout_count < 50 {
@@ -154,7 +154,7 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
     trunk.iter().for_each(|t| {
         if t.x > 0 && t.x < REGION_WIDTH-1 && t.y > 0 && t.y < REGION_HEIGHT-1 && t.z > 0 && t.z < REGION_DEPTH-1 {
             let idx = mapidx(t.x, t.y, t.z);
-            region.tile_types[idx] = TileType::TreeTrunk{ tree_id: *tree_id };
+            region.tile_types[idx] = TileType::TreeTrunk{ tree_id: tree_id };
         }
     });
     trunk.iter().for_each(|t| {
@@ -165,7 +165,7 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
                         if t.depth > 2 && rng.roll_dice(1, 3) > 1 {
                             let idx = mapidx(fx, fy, fz);
                             if region.tile_types[idx] == TileType::Empty {
-                                region.tile_types[idx] = TileType::TreeFoliage{ tree_id: *tree_id };
+                                region.tile_types[idx] = TileType::TreeFoliage{ tree_id: tree_id };
                             }
                         }
                     }

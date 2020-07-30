@@ -16,7 +16,7 @@ pub fn a_star_search(start: usize, end: usize, map: &Region) -> NavigationPath
 /// `destination` is the index of the target tile.
 /// `success` is true if it reached the target, false otherwise.
 /// `steps` is a vector of each step towards the target, *including* the starting position.
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct NavigationPath {
     pub destination: usize,
     pub success: bool,

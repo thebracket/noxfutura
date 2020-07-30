@@ -117,11 +117,15 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
         JobStep::DropItem { id, location } => {
             let idtag = IdentityTag(*id);
+            println!("Dropping item #{}, at {}", id, location);
             <(Write<Position>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
-                .for_each(|(mut pos, _)| {
+                .for_each(|(pos, _)| {
+                    println!("Item dropped");
+                    println!("{:?}", pos);
                     pos.to_ground(*location);
+                    println!("{:?}", pos);
                 });
         }
         JobStep::RelinquishClaim { tool_id, tool_pos } => {
@@ -160,7 +164,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             let itemtag = IdentityTag(*tool_id);
             <(Write<Position>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
-                .filter(|(_, idt)| idt.0 == *id)
+                .filter(|(_, idt)| idt.0 == *tool_id)
                 .for_each(|(mut pos, _)| {
                     pos.to_carried(*id);
                 });

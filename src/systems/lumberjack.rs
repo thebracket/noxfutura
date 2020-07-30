@@ -29,8 +29,10 @@ pub fn build() -> impl Schedulable {
                         tool_id,
                     } = &turn.job
                     {
+                        println!("Loc at step: {:?}", pos);
                         match step {
                             LumberjackSteps::FindAxe => {
+                                println!("Step: FindAxe");
                                 let mut rlock = REGION.write();
                                 let maybe_tool_pos = rlock
                                     .jobs_board
@@ -62,6 +64,7 @@ pub fn build() -> impl Schedulable {
                                 }
                             }
                             LumberjackSteps::TravelToAxe { path } => {
+                                println!("Step: TravelToAxe");
                                 if path.len() > 1 {
                                     crate::messaging::follow_job_path(id.0);
                                 } else {
@@ -77,6 +80,7 @@ pub fn build() -> impl Schedulable {
                                 }
                             }
                             LumberjackSteps::CollectAxe => {
+                                println!("Step: CollectAxe");
                                 messaging::equip_tool(id.0, tool_id.unwrap());
                                 messaging::job_changed(
                                     id.0,
@@ -89,8 +93,10 @@ pub fn build() -> impl Schedulable {
                                 );
                             }
                             LumberjackSteps::FindTree {} => {
+                                println!("Step: FindTree");
                                 let rlock = REGION.read();
                                 let path = a_star_search(pos.get_idx(), *tree_pos, &*rlock);
+                                println!("{:?}", path);
                                 if path.success {
                                     messaging::job_changed(
                                         id.0,
@@ -111,10 +117,12 @@ pub fn build() -> impl Schedulable {
                                     if let Some(tool_id) = tool_id {
                                         messaging::relinquish_claim(*tool_id, pos.get_idx());
                                         messaging::drop_item(*tool_id, pos.get_idx());
+                                        messaging::vox_moved();
                                     }
                                 }
                             }
                             LumberjackSteps::TravelToTree { path } => {
+                                println!("Step: TravelToTree");
                                 if path.len() > 1 {
                                     messaging::follow_job_path(id.0);
                                 } else {
@@ -130,6 +138,7 @@ pub fn build() -> impl Schedulable {
                                 }
                             }
                             LumberjackSteps::ChopTree {} => {
+                                println!("Step: ChopTree");
                                 messaging::chop_tree(id.0, *tree_id);
                                 messaging::conclude_job(id.0);
                                 messaging::drop_item(tool_id.unwrap(), pos.get_idx());
