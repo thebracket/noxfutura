@@ -109,7 +109,7 @@
             skill : [ BuildingSkill(skill: "Construction", difficulty: 5) ],
             vox : "campfire_fake",
             description : "A portable camp fire, for the lazy camper. Combining a nuclear battery, fake fire effects and a marshmallow dispenser it is ideal for a camping trip.",
-            provides : [ Light(radius: 5, color: (1.0, 1.0, 1.0)) ]
+            provides : [ Light(radius: 5, color: (1.0, 0.75, 0.1)) ]
         ),
 
         BuildingDef(

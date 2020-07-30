@@ -15,7 +15,7 @@ struct AvailableBuilding {
 }
 
 pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, usize, usize), bidx: i32) -> (i32, Option<usize>) {
-    let mut available_buildings = Vec::new();
+    let mut available_buildings = Vec::<AvailableBuilding>::new();
 
     // Temporary code to figure out what buildings are possible
     let raws = RAWS.read();
@@ -25,8 +25,8 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
         b.components.iter().for_each(|c| {
             let n = <(Entity, Read<Position>, Read<Tag>, Read<IdentityTag>)>::query()
                 .iter(ecs)
-                .filter(|(entity, pos, t, _)| t.0 == c.item.to_string())
-                .filter(|(entity, _, _, idt)| region.jobs_board.is_component_claimed(
+                .filter(|(_, _, t, _)| t.0 == c.item.to_string())
+                .filter(|(_, _, _, idt)| region.jobs_board.is_component_claimed(
                     idt.0) == false
                 )
                 .count();
@@ -36,19 +36,19 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
         });
         if has_all {
             available_buildings.push(
-                (
-                    b.tag.to_string(), 
-                    ImString::new(b.name.to_string()),
-                    ImString::new(b.description.to_string()),
-                    raws.vox.get_model_idx(&b.vox),
-                    b.dimensions
-                )
+                AvailableBuilding{
+                    tag: b.tag.to_string(), 
+                    name: ImString::new(b.name.to_string()),
+                    description: ImString::new(b.description.to_string()),
+                    model_idx: raws.vox.get_model_idx(&b.vox),
+                    dimensions: b.dimensions
+                }
             );
         }
     });
 
     let mut bid = bidx;
-    let blist: Vec<&ImString> = available_buildings.iter().map(|b| &b.1).collect();
+    let blist: Vec<&ImString> = available_buildings.iter().map(|b| &b.name).collect();
 
     let title = format!("Building Mode. ### BobTheBuilder",);
     let title_tmp = ImString::new(title);
@@ -66,7 +66,7 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
                 10
             );
             if (bid as usize) < available_buildings.len() {
-                imgui.text_wrapped(&available_buildings[bid as usize].2);
+                imgui.text_wrapped(&available_buildings[bid as usize].description);
             }
         }
     );
@@ -77,9 +77,9 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
         (bid, None)
     } else {
         let building_info = &available_buildings[bid as usize];
-        let btag = building_info.3;
-        let rtag = &building_info.0;
-        let dims = &building_info.4;
+        let btag = building_info.model_idx;
+        let rtag = &building_info.tag;
+        let dims = &building_info.dimensions;
 
         // Determine build validity here
         let mut occupied_tiles = Vec::new();
@@ -137,7 +137,7 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
                         .filter(component::<Item>())
                         .iter(ecs)
                         .filter(|(_, _, tag, _)| tag.0 == t.0)
-                        .map(|(entity, pos, _, idt)| {
+                        .map(|(_, pos, _, idt)| {
                             (
                                 pos.effective_location(ecs), 
                                 idt.0

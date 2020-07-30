@@ -67,6 +67,9 @@ where
         let mut ctx = DEVICE_CONTEXT.write();
         let context = ctx.as_mut().unwrap();
         let device = &context.device;
+        if let Some(buf) = &mut self.buffer {
+            std::mem::drop(buf);
+        }
         self.buffer = Some(device.create_buffer_with_data(bytemuck::cast_slice(&self.data), usage));
     }
 

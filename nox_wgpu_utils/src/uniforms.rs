@@ -68,6 +68,8 @@ pub trait UniformBlock<T: bytemuck::Pod = Self>: bytemuck::Pod {
         );
 
         context.queue.submit(&[encoder.finish()]);
+        staging_buffer.unmap();
+        std::mem::drop(staging_buffer);
     }
 
     fn create_buffer_layout_and_group(

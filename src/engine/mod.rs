@@ -20,7 +20,7 @@ fn run(event_loop: EventLoop<()>, window: Window, swapchain_format: wgpu::Textur
             power_preference: wgpu::PowerPreference::HighPerformance,
             compatible_surface: Some(&surface),
         },
-        wgpu::BackendBit::VULKAN,
+        wgpu::BackendBit::DX12,
     ))
     .unwrap();
 

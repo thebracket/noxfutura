@@ -19,7 +19,7 @@ impl TerrainLights {
         let size = (std::mem::size_of::<u32>() * REGION_TILES_COUNT) as wgpu::BufferAddress;
 
         let staging_buffer = context.device.create_buffer_with_data(
-            flags.as_slice().as_bytes(),
+            bytemuck::cast_slice(&flags),
             wgpu::BufferUsage::MAP_READ | wgpu::BufferUsage::COPY_DST | wgpu::BufferUsage::COPY_SRC,
         );
 
@@ -66,6 +66,9 @@ impl TerrainLights {
         encoder.copy_buffer_to_buffer(&staging_buffer, 0, &storage_buffer, 0, size);
         context.queue.submit(&[encoder.finish()]);
 
+        staging_buffer.unmap();
+        std::mem::drop(staging_buffer);
+
         Self {
             flags,
             storage_buffer,
@@ -76,6 +79,7 @@ impl TerrainLights {
     }
 
     pub fn update_buffer(&mut self) {
+        println!("Updating terrain light buffer");
         /*if !self.dirty {
             return;
         }*/
@@ -84,7 +88,7 @@ impl TerrainLights {
         let size = (std::mem::size_of::<u32>() * REGION_TILES_COUNT) as wgpu::BufferAddress;
 
         let staging_buffer = context.device.create_buffer_with_data(
-            self.flags.as_slice().as_bytes(),
+            bytemuck::cast_slice(&self.flags),
             wgpu::BufferUsage::MAP_READ | wgpu::BufferUsage::COPY_DST | wgpu::BufferUsage::COPY_SRC,
         );
 
@@ -95,5 +99,7 @@ impl TerrainLights {
         context.queue.submit(&[encoder.finish()]);
 
         //self.dirty = false;
+        staging_buffer.unmap();
+        std::mem::drop(staging_buffer);
     }
 }
