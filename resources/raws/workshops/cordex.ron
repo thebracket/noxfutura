@@ -1,0 +1,19 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "cordex",
+            name : "Cordex",
+            components : [ BuildingComponent(item: "cordex_core", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 25) ],
+            vox : "cordex",
+            description : "This is you, the ship-borne AI trying to keep the motley crew of meat-bag morons from your ship alive.",
+            blocked: Some("-X-XXX-X-"),
+            provides : [ ],
+            dimensions: Some((3,3,1))
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"cordex", file:"cordex" ),
+    ])
+)
