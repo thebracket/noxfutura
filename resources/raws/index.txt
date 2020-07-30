@@ -1,0 +1,10 @@
+resources/raws/biome_bundle.ron
+resources/raws/material_bundle.ron
+resources/raws/plants_bundle.ron
+resources/raws/vox_bundle.ron
+resources/raws/species_bundle.ron
+resources/raws/professions_bundle.ron
+resources/raws/clothing_bundle.ron
+resources/raws/items_bundle.ron
+resources/raws/reactions_bundle.ron
+resources/raws/buildings_bundle.ron

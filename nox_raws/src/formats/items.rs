@@ -1,6 +1,4 @@
-use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Items {
@@ -38,17 +36,4 @@ pub enum ItemDefType {
     ToolChopping,
     ToolDigging,
     ToolFarming,
-}
-
-pub fn load_items() -> Items {
-    let mat_path = "resources/raws/items.ron";
-    let f = File::open(&mat_path).expect("Failed opening file");
-    let items: Items = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            println!("Failed to load items: {}", e);
-            std::process::exit(1);
-        }
-    };
-    items
 }

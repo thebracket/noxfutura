@@ -20,3 +20,5 @@ mod items;
 pub use items::*;
 mod reactions;
 pub use reactions::*;
+mod bundle;
+pub use bundle::*;

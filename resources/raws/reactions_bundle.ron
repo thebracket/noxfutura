@@ -1,5 +1,5 @@
 (
-    reactions: [
+    reactions: Some([
         ReactionDef(
             name: "Cut Wooden Logs into Blocks",
             workshop: "sawmill",
@@ -9,5 +9,5 @@
             inputs: [ ReactionItem(tag: "wood_log", qty: 1) ],
             outputs: [ ReactionItem(tag: "block", qty: 4 ), ReactionItem(tag: "wood_waste", qty: 2) ]
         )
-    ]
+    ])
 )

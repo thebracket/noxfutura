@@ -1,5 +1,5 @@
 (
-    buildings: [
+    buildings: Some([
         BuildingDef(
             tag : "cordex",
             name : "Cordex",
@@ -121,5 +121,5 @@
             description : "Two tables and a large cutting saw, designed for turning wooden logs into usable planks.",
             provides : [ ]
         ),
-    ]
+    ])
 )

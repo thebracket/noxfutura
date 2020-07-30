@@ -1,5 +1,5 @@
 (
-    professions: [
+    professions: Some([
         ProfessionDef(
             tag: "insurance_adjuster", name: "Insurance Adjuster",
             modifiers: ProfModifiers( int: Some(2), cha: Some(-1) ),
@@ -399,5 +399,5 @@
                 both: [ ProfCloth(tag: "sneakers", loc: Shoes) ]
             )
         ),
-    ]
+    ])
 )

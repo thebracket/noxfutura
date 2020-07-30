@@ -1,5 +1,5 @@
 (
-    areas: [
+    biomes: Some([
         // Ocean Areas
         BiomeType(
             name: "Frozen Ocean",
@@ -653,5 +653,5 @@
             nouns: [ "Jungle", "Morass", "Tangle" ],
             color: [0.0, 0.7, 0.0, 1.0]
         )
-    ]
+    ])
 )

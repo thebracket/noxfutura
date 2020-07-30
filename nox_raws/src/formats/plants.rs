@@ -1,6 +1,5 @@
-use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
+
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Plants {
     pub plants: Vec<PlantDef>,
@@ -55,17 +54,4 @@ pub struct PlantDef {
     pub max_hardiness: u8,
     pub soil_quality: u8,
     pub vox: String,
-}
-
-pub fn load_plants() -> Plants {
-    let mat_path = "resources/raws/plants.ron";
-    let f = File::open(&mat_path).expect("Failed opening file");
-    let plants: Plants = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            println!("Failed to load materials: {}", e);
-            std::process::exit(1);
-        }
-    };
-    plants
 }

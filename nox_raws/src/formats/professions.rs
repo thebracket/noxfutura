@@ -1,6 +1,4 @@
-use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Professions {
@@ -52,17 +50,4 @@ pub enum ProfClothLoc {
     Legs,
     Shoes,
     Head,
-}
-
-pub fn load_professions() -> Professions {
-    let p_path = "resources/raws/professions.ron";
-    let f = File::open(&p_path).expect("Failed opening file");
-    let profs: Professions = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            println!("Failed to load professions: {}", e);
-            std::process::exit(1);
-        }
-    };
-    profs
 }

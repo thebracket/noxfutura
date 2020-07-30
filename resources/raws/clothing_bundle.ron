@@ -1,5 +1,5 @@
 (
-    clothing: [
+    clothing: Some([
         // Headware
         ClothingDef(
             tag: "batman_hat",
@@ -245,5 +245,5 @@
             item_model: "ground_shoes",
             colors: [ "red", "blue", "yellow", "grey", "green", "khaki", "black", "navy" ]
         ),
-    ]
+    ])
 )

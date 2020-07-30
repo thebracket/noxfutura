@@ -1,6 +1,4 @@
-use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Species {
@@ -60,17 +58,4 @@ pub enum Alignment {
     Good,
     Neutral,
     Evil,
-}
-
-pub fn load_species() -> Species {
-    let species_path = "resources/raws/species.ron";
-    let f = File::open(&species_path).expect("Failed opening file");
-    let species: Species = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            println!("Failed to load species: {}", e);
-            std::process::exit(1);
-        }
-    };
-    species
 }

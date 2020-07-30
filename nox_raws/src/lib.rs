@@ -3,7 +3,6 @@ extern crate lazy_static;
 
 mod formats;
 pub use formats::*;
-use formats::{load_biomes, load_materials};
 use parking_lot::RwLock;
 mod material_map;
 pub use material_map::MappedTexture;
@@ -43,18 +42,23 @@ impl Raws {
         }
     }
 
+    fn load_index(&self) -> Vec<String> {
+        use std::fs::File;
+        use std::io::{BufRead, BufReader};
+
+        let file = File::open("resources/raws/index.txt").unwrap();
+        let reader = BufReader::new(file);
+        reader.lines().map(|l| l.unwrap()).collect()
+    }
+
     fn load(&mut self) {
-        self.biomes = load_biomes();
-        self.materials = load_materials();
-        self.plants = load_plants();
-        self.vox = load_vox();
-        self.buildings = load_buildings();
-        self.species = load_species();
         self.names = load_names();
-        self.professions = load_professions();
-        self.clothing = load_clothing();
-        self.items = load_items();
-        self.reactions = load_reactions();
+
+        let bundles = self.load_index();
+        bundles.iter().for_each(|bf| {
+            let bundle = RawBundle::load(&bf);
+            bundle.merge(self);
+        });
     }
 }
 

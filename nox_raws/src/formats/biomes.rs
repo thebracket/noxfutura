@@ -1,7 +1,5 @@
 use crate::blocktype::BlockType;
-use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Biomes {
@@ -40,17 +38,4 @@ pub struct SoilTypes {
 pub struct TreeType {
     pub tree: String,
     pub freq: f32,
-}
-
-pub fn load_biomes() -> Biomes {
-    let biome_path = "resources/raws/biomes.ron";
-    let f = File::open(&biome_path).expect("Failed opening file");
-    let biomes: Biomes = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            println!("Failed to load biomes: {}", e);
-            std::process::exit(1);
-        }
-    };
-    biomes
 }

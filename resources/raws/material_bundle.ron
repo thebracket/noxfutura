@@ -1,5 +1,5 @@
 (
-    materials: [
+    materials: Some([
         MaterialDef(
             name: "Alabaster",
             layer: ClusterRock(parent: "Gypsum"),
@@ -802,5 +802,5 @@
             texture: "metalfloor", constructed: "metalfloor", floor: "titanium", floor_constructed: "plasteeltile",
             tint: (1.0, 1.0, 1.0)
         ),
-    ]
+    ])
 )

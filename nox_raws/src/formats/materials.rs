@@ -1,6 +1,4 @@
-use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Materials {
@@ -43,17 +41,4 @@ pub enum MaterialLayer {
 pub enum MinesTo {
     Item { name: String },
     Ore { name: String },
-}
-
-pub fn load_materials() -> Materials {
-    let mat_path = "resources/raws/materials.ron";
-    let f = File::open(&mat_path).expect("Failed opening file");
-    let materials: Materials = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            println!("Failed to load materials: {}", e);
-            std::process::exit(1);
-        }
-    };
-    materials
 }

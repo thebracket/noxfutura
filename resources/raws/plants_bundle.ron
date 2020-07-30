@@ -1,5 +1,5 @@
 (
-    plants : [
+    plants : Some([
         PlantDef(
             tag: "grass",
             name: "Grass",
@@ -26,5 +26,5 @@
             min_hardiness: 3, max_hardiness: 7, soil_quality: 2,
             vox: "heather"
         ),
-    ]
+    ])
 )

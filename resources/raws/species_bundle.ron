@@ -1,5 +1,5 @@
 (
-    species: [
+    species: Some([
         SpeciesDef(
             name: "Human", male_name: "Man", female_name: "Woman", group_name: "People",
             description: "A bipedal ape-descendant with an unhealthy obsession with money and power.",
@@ -59,5 +59,5 @@
                 ColorDef( tag: "Terracotta", r:181, g:82, b:57  )
             ]
         )
-    ]
+    ])
 )

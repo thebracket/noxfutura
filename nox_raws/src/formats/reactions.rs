@@ -1,6 +1,4 @@
-use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Reactions {
@@ -30,17 +28,4 @@ pub struct ReactionDef {
 pub struct ReactionItem {
     pub tag: String,
     pub qty: i32
-}
-
-pub fn load_reactions() -> Reactions {
-    let mat_path = "resources/raws/reactions.ron";
-    let f = File::open(&mat_path).expect("Failed opening file");
-    let reactions: Reactions = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            println!("Failed to load reactions: {}", e);
-            std::process::exit(1);
-        }
-    };
-    reactions
 }

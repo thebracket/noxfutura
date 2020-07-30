@@ -1,5 +1,5 @@
 (
-    items: [
+    items: Some([
         ItemDef(
             tag: "wood_log",
             name: "Log",
@@ -47,5 +47,5 @@
             item_type: [ ToolFarming ],
             vox: "pick"
         ),
-    ]
+    ])
 )

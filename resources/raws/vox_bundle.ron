@@ -1,5 +1,5 @@
 (
-    vox: [
+    vox: Some([
         VoxelModel( tag:"cordex", file:"cordex" ),
         VoxelModel( tag:"cryo_bed", file:"cryobed32" ),
         VoxelModel( tag:"storage_locker", file:"cabinet" ),
@@ -160,5 +160,5 @@
         VoxelModel( tag:"support", file:"support" ),
 
         VoxelModel( tag:"rampnew", file:"rampnew" ),
-    ]
+    ])
 )
