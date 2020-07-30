@@ -118,8 +118,8 @@ impl Position {
             Location::Stored { container } => {
                 <(Read<Position>, Read<IdentityTag>)>::query()
                     .iter(ecs)
-                    .filter(|(pos, id)| id.0 == container)
-                    .map(|(pos, id)| *pos)
+                    .filter(|(_, id)| id.0 == container)
+                    .map(|(pos, _)| *pos)
                     .nth(0)
                     .unwrap()
                     .effective_location(ecs)
@@ -127,18 +127,17 @@ impl Position {
             Location::Carried { by } => {
                 <(Read<Position>, Read<IdentityTag>)>::query()
                     .iter(ecs)
-                    .filter(|(pos, id)| id.0 == by)
-                    .map(|(pos, id)| *pos)
+                    .filter(|(_, id)| id.0 == by)
+                    .map(|(pos, _)| *pos)
                     .nth(0)
                     .unwrap()
                     .effective_location(ecs)
             }
             Location::Worn { by } => {
-                let idtag = IdentityTag(by);
                 <(Read<Position>, Read<IdentityTag>)>::query()
                     .iter(ecs)
-                    .filter(|(pos, id)| id.0 == by)
-                    .map(|(pos, id)| *pos)
+                    .filter(|(_, id)| id.0 == by)
+                    .map(|(pos, _)| *pos)
                     .nth(0)
                     .unwrap()
                     .effective_location(ecs)

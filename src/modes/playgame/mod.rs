@@ -235,7 +235,7 @@ impl PlayGame {
         let pass = self.rpass.as_mut().unwrap();
         let mut query = <(Write<Position>, Write<CameraOptions>)>::query();
         let mut camera_changed = true;
-        for (mut pos, mut camopts) in query.iter_mut(&mut self.ecs) {
+        for (pos, mut camopts) in query.iter_mut(&mut self.ecs) {
             let cam = &mut pass.camera;
             if imgui.io().want_capture_keyboard {
                 camera_changed = false;

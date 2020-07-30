@@ -74,7 +74,7 @@ impl Region {
     }
 
     pub fn reset_flags(&mut self, idx: usize) {
-        self.flags[0] = 0;
+        self.flags[idx] = 0;
     }
 
     pub fn is_floor(&self, idx: usize) -> bool {

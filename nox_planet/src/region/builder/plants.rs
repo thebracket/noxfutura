@@ -6,7 +6,7 @@ use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 
 pub fn grow_plants(
     region: &mut Region,
-    ecs: &mut World,
+    _ecs: &mut World,
     mean_temperature: i8,
     rng: &mut RandomNumberGenerator,
 ) {

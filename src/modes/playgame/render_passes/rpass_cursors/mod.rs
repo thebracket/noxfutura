@@ -3,7 +3,7 @@ use super::super::RunState;
 use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
 use cubes::add_cube_geometry;
 use legion::*;
-use nox_components::*;
+//use nox_components::*;
 
 pub struct CursorPass {
     pub shader_id: usize,
@@ -154,7 +154,7 @@ impl CursorPass {
         frame: &wgpu::SwapChainOutput,
         uniform_bg: &wgpu::BindGroup,
         run_state: &RunState,
-        ecs: &World,
+        _ecs: &World,
     ) {
         use nox_planet::TileType;
         use nox_spatial::idxmap;

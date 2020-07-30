@@ -1,4 +1,4 @@
-use crate::{ground_z, Region, TileType};
+use crate::{ground_z, Region};
 use nox_raws::get_material_by_tag;
 use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 

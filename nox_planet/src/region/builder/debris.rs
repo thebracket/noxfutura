@@ -4,7 +4,7 @@ use legion::*;
 use nox_spatial::{ REGION_WIDTH, mapidx };
 use std::collections::HashSet;
 
-pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
+pub fn debris_trail(region: &mut Region, ship_loc: Point, _ecs: &mut World) {
     let mut trees_to_remove = HashSet::new();
 
     for x in ship_loc.x - (REGION_WIDTH as i32 / 4)..ship_loc.x {

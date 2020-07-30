@@ -38,7 +38,6 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             MOVER_LIST.lock().insert(*id, (end.x as usize, end.y as usize, end.z as usize));
         }
         JobStep::JobChanged { id, new_job } => {
-            let idtag = IdentityTag(*id);
             <(Write<MyTurn>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
@@ -47,7 +46,6 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 });
         }
         JobStep::JobCancelled { id } => {
-            let idtag = IdentityTag(*id);
             <(Write<MyTurn>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
@@ -58,7 +56,6 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
         JobStep::JobConcluded { id } => {
             println!("Job finished");
-            let idtag = IdentityTag(*id);
             <(Write<MyTurn>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
@@ -80,11 +77,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 });
         }
         JobStep::FollowJobPath { id } => {
-            let idtag = IdentityTag(*id);
             <(Write<MyTurn>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
-                .for_each(|(mut turn, _)| match &mut turn.job {
+                .for_each(|(turn, _)| match &mut turn.job {
                     JobType::FellTree { step, .. } => {
                         let path = match step {
                             LumberjackSteps::TravelToAxe { path, .. } => Some(path),
@@ -116,7 +112,6 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             );
         }
         JobStep::DropItem { id, location } => {
-            let idtag = IdentityTag(*id);
             println!("Dropping item #{}, at {}", id, location);
             <(Write<Position>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
@@ -161,38 +156,35 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
 
         JobStep::EquipItem { id, tool_id } => {
-            let itemtag = IdentityTag(*tool_id);
             <(Write<Position>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *tool_id)
-                .for_each(|(mut pos, _)| {
+                .for_each(|(pos, _)| {
                     pos.to_carried(*id);
                 });
             super::vox_moved();
         }
 
         JobStep::DeleteItem { id} => {
-            let itemtag = IdentityTag(*id);
             let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
                 .iter(ecs)
                 .filter(|(_, _, idt)| idt.0 == *id)
-                .map(|(e, _, _)| e)
+                .map(|(e, _, _)| *e)
                 .nth(0);
             if let Some(i) = i {
-                ecs.remove(*i);
+                ecs.remove(i);
             }
             super::vox_moved();
         }
 
         JobStep::DeleteBuilding { building_id } => {
-            let itemtag = IdentityTag(*building_id);
             let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
                 .iter(ecs)
                 .filter(|(_, _, idt)| idt.0 == *building_id)
-                .map(|(e, _, _)| e)
+                .map(|(e, _, _)| *e)
                 .nth(0);
             if let Some(i) = i {
-                ecs.remove(*i);
+                ecs.remove(i);
             }
             super::vox_moved();
             super::lights_changed();
@@ -200,7 +192,6 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
 
         JobStep::FinishBuilding { building_id } => {
             println!("Finish building called for id {}", building_id);
-            let idtag = IdentityTag(*building_id);
             let e = <(Entity, Read<Position>, Read<IdentityTag>, Read<Building>)>::query()
                 .iter(ecs)
                 .filter(|(_, _, idt, _)| idt.0 == *building_id)
@@ -230,7 +221,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         <(Read<IdentityTag>, Write<Position>)>::query()
             .iter_mut(ecs)
             .filter(|(idt, _)| movers.contains_key(&idt.0))
-            .for_each(|(id, mut pos)| {
+            .for_each(|(id, pos)| {
                 if let Some(destination) = movers.get(&id.0) {
                     pos.set_tile_loc(destination);
                 }

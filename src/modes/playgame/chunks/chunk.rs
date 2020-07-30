@@ -1,9 +1,8 @@
-use super::super::ChunkModel;
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::utils::add_floor_geometry;
-use nox_planet::{RampDirection, Region, StairsType, TileType};
+use nox_planet::{Region, TileType};
 use nox_raws::{MappedTexture, RAWS};
 use nox_spatial::mapidx;
 use cgmath::Vector3;

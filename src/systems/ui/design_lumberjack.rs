@@ -8,7 +8,7 @@ fn find_tree_base(target: usize) -> usize {
     REGION.read().tree_bases[&target]
 }
 
-pub fn lumberjack_display(imgui: &Ui, ecs: &World, mouse_world_pos: &(usize, usize, usize)) {
+pub fn lumberjack_display(imgui: &Ui, _ecs: &World, mouse_world_pos: &(usize, usize, usize)) {
     let title = format!("Lumberjack Mode. Click trees to designate for chopping. ### LumberJack",);
     let title_tmp = ImString::new(title);
     let window = imgui::Window::new(&title_tmp);

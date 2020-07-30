@@ -14,7 +14,7 @@ pub fn plant_trees(
     region: &mut Region,
     biome: &BiomeType,
     rng: &mut RandomNumberGenerator,
-    ecs: &mut World,
+    _ecs: &mut World,
 ) {
     let mut d_chance = 0;
     let mut e_chance = 0;

@@ -7,14 +7,14 @@ use nox_spatial::mapidx;
 fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {
     <(Read<Tool>, Read<IdentityTag>)>::query()
         .iter(ecs)
-        .filter(|(tool, id)| id.0 == item_id)
+        .filter(|(_, id)| id.0 == item_id)
         .for_each(|(tool, _)| {
             let mut effective_location = 0;
 
             if claimed.is_none() {
                 <(Read<Position>, Read<IdentityTag>)>::query()
                     .iter(ecs)
-                    .filter(|(pos, id)| id.0 == item_id)
+                    .filter(|(_, id)| id.0 == item_id)
                     .for_each(|(pos, _)| effective_location = pos.effective_location(ecs));
             }
 

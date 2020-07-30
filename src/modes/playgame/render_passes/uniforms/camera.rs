@@ -1,5 +1,5 @@
 use nox_components::*;
-use cgmath::{Matrix4, Vector3, Vector4, Point3, EuclideanSpace};
+use cgmath::{Matrix4, Vector3, Point3, EuclideanSpace};
 
 pub struct Camera {
     pub eye: Vector3<f32>,
