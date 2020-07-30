@@ -48,7 +48,7 @@ impl Raws {
 
         let file = File::open("resources/raws/index.txt").unwrap();
         let reader = BufReader::new(file);
-        reader.lines().map(|l| l.unwrap()).filter(|l| !l.is_empty()).collect()
+        reader.lines().map(|l| l.unwrap()).filter(|l| !l.is_empty() && !l.starts_with("# ")).collect()
     }
 
     fn load(&mut self) {

@@ -8,4 +8,6 @@ resources/raws/clothing_bundle.ron
 resources/raws/items_bundle.ron
 resources/raws/reactions_bundle.ron
 resources/raws/buildings_bundle.ron
+
+# Built-in workshops at world-gen
 resources/raws/workshops/cordex.ron
