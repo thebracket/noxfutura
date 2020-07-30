@@ -1,10 +1,6 @@
 (
     vox: Some([
         VoxelModel( tag:"cabinet", file:"cabinet" ),
-        VoxelModel( tag:"wood_logs", file:"woodlogs" ),
-        VoxelModel( tag:"axe", file:"simpleaxe" ),
-        VoxelModel( tag:"campfire_kit", file:"crate-fakefire" ),
-        VoxelModel( tag:"tent_kit", file:"crate-tent" ),
         VoxelModel( tag:"block", file:"block" ),
         VoxelModel( tag:"woodwaste", file:"wastewood" ),
         VoxelModel( tag:"bonecarver", file:"bonecarver" ),
@@ -16,7 +12,6 @@
         VoxelModel( tag:"stairs_updown", file:"stairs-updown" ),
         VoxelModel( tag:"tailor", file:"tailor" ),
         VoxelModel( tag:"forge", file:"forge" ),
-        VoxelModel( tag:"pick", file:"simplepick" ),
         VoxelModel( tag:"boulder", file:"boulder" ),
         VoxelModel( tag:"ore", file:"ore" ),
         VoxelModel( tag:"powder", file:"powder" ),
@@ -107,7 +102,6 @@
 
         VoxelModel( tag:"pick_held", file:"simplepick_held" ),
         VoxelModel( tag:"axe_held", file:"simpleaxe_held" ),
-        VoxelModel( tag:"hoe", file:"hoe" ),
         VoxelModel( tag:"hoe_held", file:"hoe_held" ),
 
         VoxelModel( tag:"dung_heap", file:"dung_heap" ),

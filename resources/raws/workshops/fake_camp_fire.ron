@@ -13,5 +13,17 @@
 
     vox: Some([
         VoxelModel( tag:"campfire_fake", file:"campfire-fake" ),
+        VoxelModel( tag:"campfire_kit", file:"crate-fakefire" ),
+    ]),
+
+    items: Some([
+
+        ItemDef(
+            tag:"camp_fire_kit",
+            name: "Camping Fire Kit",
+            description: "A plastic campfire, powered by a tiny nuclear reactor. Ideal for your off-world vacation.",
+            item_type: [ Component ],
+            vox: "campfire_kit"
+        ),
     ])
 )

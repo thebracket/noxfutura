@@ -5,7 +5,6 @@ resources/raws/vox_bundle.ron
 resources/raws/species_bundle.ron
 resources/raws/professions_bundle.ron
 resources/raws/clothing_bundle.ron
-resources/raws/items_bundle.ron
 
 # Built-in workshops at world-gen
 
@@ -24,3 +23,13 @@ resources/raws/workshops/fake_camp_fire.ron
 # Low tech workshops to build
 
 resources/raws/workshops/sawmill.ron
+
+# Tools
+
+resources/raws/tools/fire_axe.ron
+resources/raws/tools/pickaxe.ron
+resources/raws/tools/hoe.ron
+
+# Raw Material Items
+resources/raws/raw_materials/woodlogs.ron
+
