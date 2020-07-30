@@ -17,7 +17,10 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
         result = identity.0;
 
         let entity = ecs.push(
-            (Building { complete }, Tag(tag.to_string()), identity,
+            (
+                identity,
+                Building { complete }, 
+                Tag(tag.to_string()), 
                 Name {
                     name: building_def.name.clone(),
                 },
@@ -33,8 +36,8 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
                     color: (1.0, 1.0, 1.0),
                 },
             ),
-        )
-        .clone();
+        );
+        println!("New building ID: {}", identity.0);
 
         for provides in building_def.provides.iter() {
             if let BuildingProvides::Light { radius, color } = provides {

@@ -41,11 +41,10 @@ pub fn serialize_world(world: &World) -> String {
 
 pub fn deserialize_world(raw: String) -> World {
     let universe = Universe::new();
-    //ron::from_str(&raw).expect("blah")
-    //registry().as_deserialize(&universe).deserialize(&raw).expect("Boo")
-
     let reg = registry();
     let de = reg.as_deserialize(&universe);
     let mut ronnie = ron::Deserializer::from_str(&raw).unwrap();
-    de.deserialize(&mut ronnie).unwrap()
+    let world = de.deserialize(&mut ronnie).unwrap();
+    identity::rebuild_identity(&world);
+    world
 }

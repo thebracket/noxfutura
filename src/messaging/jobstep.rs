@@ -195,17 +195,22 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
 
         JobStep::FinishBuilding { building_id } => {
+            println!("Finish building called for id {}", building_id);
             let idtag = IdentityTag(*building_id);
-            let e = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
+            let e = <(Entity, Read<Position>, Read<IdentityTag>, Read<Building>)>::query()
                 .iter(ecs)
-                .filter(|(_, _, idt)| idt.0 == *building_id)
-                .map(|(e, _, _)| e)
+                .filter(|(_, _, idt, _)| idt.0 == *building_id)
+                .map(|(e, _, _, _)| *e)
                 .nth(0);
 
             if let Some(e) = e {
-                if let Some(mut en) = ecs.entry(*e) {
-                    en.remove_component::<Building>();
-                    en.add_component(Building{complete: true});
+                println!("Entity located");
+                if let Some(mut en) = ecs.entry(e) {
+                    println!("Entry obtained");
+                    if let Ok(b) = en.get_component_mut::<Building>() {
+                        println!("Building updated");
+                        b.complete = true;
+                    }
                     if let Ok(mut l) = en.get_component_mut::<Light>() {
                         l.enabled = true;
                         super::lights_changed();
