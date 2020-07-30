@@ -2,7 +2,7 @@ mod cubes;
 use super::super::RunState;
 use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
 use cubes::add_cube_geometry;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 
 pub struct CursorPass {

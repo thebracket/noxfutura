@@ -2,7 +2,7 @@ use super::gbuffer::GBuffer;
 use super::{LightUniforms, TerrainLights};
 use crate::engine::uniforms::UniformBlock;
 use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
-use legion::prelude::*;
+use legion::*;
 use cgmath::Vector3;
 
 pub struct SunlightPass {

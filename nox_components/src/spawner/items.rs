@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use legion::prelude::*;
+use legion::*;
 use nox_raws::*;
 
 fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
@@ -8,9 +8,8 @@ fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
         println!("Spawning item [{}]", tag);
         let id = IdentityTag::new();
         let new_identity = id.0;
-        let entity = ecs.insert(
-            (Item {}, Tag(tag.to_string()), id),
-            vec![(
+        let entity = ecs.push(
+            (Item {}, Tag(tag.to_string()), id,
                 Name {
                     name: item.name.clone(),
                 },
@@ -24,36 +23,36 @@ fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
                 Tint {
                     color: (1.0, 1.0, 1.0),
                 },
-            )],
-        )[0]
+            ),
+        )
         .clone();
 
         for it in item.item_type.iter() {
             match it {
                 ItemDefType::ToolChopping => ecs
+                    .entry(entity)
+                    .unwrap()
                     .add_component(
-                        entity,
                         Tool {
                             usage: ToolType::Chopping,
                         },
-                    )
-                    .expect("Fail to spawn component"),
+                    ),
                 ItemDefType::ToolDigging => ecs
+                    .entry(entity)
+                    .unwrap()
                     .add_component(
-                        entity,
                         Tool {
                             usage: ToolType::Digging,
                         },
-                    )
-                    .expect("Fail to spawn component"),
+                    ),
                 ItemDefType::ToolFarming => ecs
+                    .entry(entity)
+                    .unwrap()
                     .add_component(
-                        entity,
                         Tool {
                             usage: ToolType::Farming,
                         },
-                    )
-                    .expect("Fail to spawn component"),
+                    ),
                 _ => {}
             }
         }
@@ -74,8 +73,7 @@ pub fn spawn_item_on_ground(
     region_idx: usize,
 ) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, Position::with_tile(x, y, z, region_idx, (1, 1, 1)))
-            .expect("Failed to add component");
+        ecs.entry(entity).unwrap().add_component(Position::with_tile(x, y, z, region_idx, (1, 1, 1)));
         Some(id)
     } else {
         None
@@ -84,8 +82,7 @@ pub fn spawn_item_on_ground(
 
 pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, Position::stored(container))
-            .expect("Failed to add component");
+        ecs.entry(entity).unwrap().add_component(Position::stored(container));
         Some(id)
     } else {
         None
@@ -94,8 +91,7 @@ pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) -> 
 
 pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, Position::worn(wearer))
-            .expect("Failed to add component");
+        ecs.entry(entity).unwrap().add_component(Position::worn(wearer));
         Some(id)
     } else {
         None
@@ -104,8 +100,7 @@ pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) -> Option<usiz
 
 pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag) {
-        ecs.add_component(entity, Position::carried(wearer))
-            .expect("Failed to add component");
+        ecs.entry(entity).unwrap().add_component(Position::carried(wearer));
         Some(id)
     } else {
         None

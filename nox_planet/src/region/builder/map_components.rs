@@ -1,4 +1,4 @@
-use legion::prelude::*;
+use legion::*;
 use crate::{Region, StairsType, TileType};
 use nox_raws::*;
 use nox_components::*;
@@ -37,13 +37,12 @@ pub fn transform_terrain_to_ecs(region: &mut Region, ecs: &mut World) {
                 RAWS.read().matmap.get(region.material_idx[idx]).floor_constructed.tint
             };
 
-            ecs.insert(
-                (Terrain{}, ),
-                vec![(
+            ecs.push(
+                (Terrain{},
                     Position::with_tile_idx(idx, region.world_idx, (1, 1, 1)),
                     nox_components::VoxelModel{ index: model_id, rotation_radians: 0.0 },
                     Tint{ color: tint }
-                )]
+                )
             );
         }
     );

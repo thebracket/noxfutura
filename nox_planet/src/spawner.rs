@@ -1,22 +1,21 @@
 use crate::Region;
 use bracket_random::prelude::RandomNumberGenerator;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 use nox_spatial::mapidx;
 
 fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {
-    let idtag = IdentityTag(item_id);
-    <Read<Tool>>::query()
-        .filter(tag_value(&idtag))
+    <(Read<Tool>, Read<IdentityTag>)>::query()
         .iter(ecs)
-        .for_each(|tool| {
+        .filter(|(tool, id)| id.0 == item_id)
+        .for_each(|(tool, _)| {
             let mut effective_location = 0;
 
             if claimed.is_none() {
-                <Read<Position>>::query()
-                    .filter(tag_value(&idtag))
+                <(Read<Position>, Read<IdentityTag>)>::query()
                     .iter(ecs)
-                    .for_each(|pos| effective_location = pos.effective_location(ecs));
+                    .filter(|(pos, id)| id.0 == item_id)
+                    .for_each(|(pos, _)| effective_location = pos.effective_location(ecs));
             }
 
             println!(

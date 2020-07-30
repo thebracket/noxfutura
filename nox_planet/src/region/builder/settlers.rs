@@ -1,6 +1,6 @@
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 use nox_raws::*;
 
@@ -217,32 +217,37 @@ fn spawn_settler(
         }
     }
 
-    ecs.insert(
-        (Sentient {}, id),
-        vec![(
-            Position::with_tile(x, y, z, region_idx, (1, 1, 1)),
-            species,
-            composite,
-            name,
-            Tagline {
-                name: profession_def.name.clone(),
-            },
-            attr,
-            FieldOfView::new(8),
-            Initiative::new(),
-            MyTurn {
-                active: false,
-                shift: ScheduleTime::Work,
-                order: WorkOrder::None,
-                job: JobType::None,
-            },
+    let entity = ecs.push(
+        (
+            Sentient {},
+            id)
+    );
+
+    if let Some(mut e) = ecs.entry(entity) {
+        e.add_component(Position::with_tile(x, y, z, region_idx, (1, 1, 1)));
+        e.add_component(species);
+        e.add_component(composite);
+        e.add_component(name);
+        e.add_component(Tagline {
+            name: profession_def.name.clone(),
+        });
+        e.add_component(attr);
+        e.add_component(FieldOfView::new(8));
+        e.add_component(Initiative::new());
+        e.add_component(MyTurn {
+            active: false,
+            shift: ScheduleTime::Work,
+            order: WorkOrder::None,
+            job: JobType::None,
+        });
+        e.add_component(
             WorkSchedule::new(match x % 3 {
                 0 => Shift::Day,
                 1 => Shift::Night,
                 _ => Shift::Morning,
             }),
-        )],
-    );
+        );
+    }
 
     spawner::spawn_item_worn(ecs, "ray_pistol", settler_id);
     spawner::spawn_item_carried(ecs, "small_energy_cell", settler_id);

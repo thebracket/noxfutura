@@ -38,39 +38,3 @@ pub mod prelude {
     };
     pub use type_uuid::TypeUuid;
 }
-
-use serialize::{ComponentRegistration, TagRegistration};
-
-fn component_registration() -> (Vec<ComponentRegistration>, Vec<TagRegistration>) {
-    let comp_registrations = vec![
-        ComponentRegistration::of::<Position>(),
-        ComponentRegistration::of::<CameraOptions>(),
-        ComponentRegistration::of::<Calendar>(),
-        ComponentRegistration::of::<VoxelModel>(),
-        ComponentRegistration::of::<Name>(),
-        ComponentRegistration::of::<Description>(),
-        ComponentRegistration::of::<Tint>(),
-        ComponentRegistration::of::<Species>(),
-        ComponentRegistration::of::<CompositeRender>(),
-        ComponentRegistration::of::<Tagline>(),
-        ComponentRegistration::of::<Attributes>(),
-        ComponentRegistration::of::<Light>(),
-        ComponentRegistration::of::<FieldOfView>(),
-        ComponentRegistration::of::<Initiative>(),
-        ComponentRegistration::of::<MyTurn>(),
-        ComponentRegistration::of::<Storage>(),
-        ComponentRegistration::of::<WorkSchedule>(),
-    ];
-    let tag_registrations = vec![
-        TagRegistration::of::<Cordex>(),
-        TagRegistration::of::<Building>(),
-        TagRegistration::of::<Item>(),
-        TagRegistration::of::<Sentient>(),
-        TagRegistration::of::<Vegetation>(),
-        TagRegistration::of::<Tree>(),
-        TagRegistration::of::<IdentityTag>(),
-        TagRegistration::of::<Terrain>(),
-        TagRegistration::of::<Tag>(),
-    ];
-    (comp_registrations, tag_registrations)
-}

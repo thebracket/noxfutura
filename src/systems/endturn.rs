@@ -1,7 +1,8 @@
-use legion::prelude::*;
+use legion::*;
+use legion::systems::Schedulable;
 use nox_components::*;
 
-pub fn build() -> Box<dyn Schedulable> {
+pub fn build() -> impl Schedulable {
     SystemBuilder::new("endturn")
         .with_query(<Write<MyTurn>>::query())
         .build(|_, ecs, _, turn| {

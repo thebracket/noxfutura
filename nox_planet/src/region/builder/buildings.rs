@@ -1,6 +1,6 @@
 use crate::{ground_z, rex::*, Region, StairsType, TileType};
 use bracket_geometry::prelude::*;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 use nox_raws::get_material_by_tag;
 use nox_spatial::mapidx;
@@ -85,14 +85,14 @@ fn add_construction(
     }
 
     // Remove any vegetation
-    let veg_list_delete = <Read<Position>>::query()
-        .filter(tag::<Vegetation>())
-        .iter_entities_mut(ecs)
+    let veg_list_delete = <(Entity, Read<Position>)>::query()
+        .filter(component::<Vegetation>())
+        .iter_mut(ecs)
         .filter(|(_, pos)| pos.exact_position(x, y, z))
-        .map(|(entity, _)| entity)
+        .map(|(entity, _)| *entity)
         .collect::<Vec<Entity>>();
     veg_list_delete.iter().for_each(|e| {
-        ecs.delete(*e);
+        ecs.remove(*e);
     });
 
     match name {

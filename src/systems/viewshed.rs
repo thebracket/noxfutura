@@ -1,21 +1,22 @@
 use crate::systems::REGION;
-use legion::prelude::*;
+use legion::*;
+use legion::systems::Schedulable;
 use nox_components::*;
 use nox_planet::{Region};
 use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use cgmath::{Vector3, InnerSpace};
 
-pub fn build() -> Box<dyn Schedulable> {
+pub fn build() -> impl Schedulable {
     SystemBuilder::new("calendar")
-        .with_query(<(Read<Position>, Write<FieldOfView>)>::query())
+        .with_query(<(Entity, Read<Position>, Write<FieldOfView>)>::query())
         .with_query(<Read<Light>>::query())
         .build(|_, ecs, _, (fov_list, _)| {
-            let mut entities = Vec::new();
+            let mut entities = Vec::<Entity>::new();
 
             fov_list
-                .iter_entities_mut(ecs)
-                .filter(|(_, (_, fov))| fov.is_dirty)
-                .for_each(|(entity, (pos, mut fov))| {
+                .iter_mut(ecs)
+                .filter(|(_, _, fov)| fov.is_dirty)
+                .for_each(|(entity, pos, mut fov)| {
                     //println!("{:?}", fov);
                     fov.visible_tiles.clear();
                     let radius = fov.radius as i32;
@@ -42,11 +43,11 @@ pub fn build() -> Box<dyn Schedulable> {
                         }
                     }
                     fov.is_dirty = false;
-                    entities.push(entity);
+                    entities.push(*entity);
                 }
             );
             entities.iter().for_each(|e| {
-                if ecs.get_component::<Light>(*e).is_some() {
+                if ecs.entry_ref(*e).unwrap().get_component::<Light>().is_ok() {
                     crate::messaging::lights_changed();
                     println!("Lights changed");
                 }

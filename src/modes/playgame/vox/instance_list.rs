@@ -1,7 +1,7 @@
 use super::super::frustrum::Frustrum;
 use crate::engine::VertexBuffer;
 use crate::modes::playgame::vox::VoxBuffer;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 use std::collections::HashMap;
 
@@ -66,11 +66,11 @@ pub fn build_vox_instances2(
     vox_instances.clear();
 
     // Models from the ECS
-    let query =
-        <(Read<Position>, Read<VoxelModel>, Read<Tint>)>::query();
+    let mut query =
+        <(Entity, Read<Position>, Read<VoxelModel>, Read<Tint>)>::query();
     query
-        .iter_entities(ecs)
-        .filter(|(_, (pos, _, _))| {
+        .iter(ecs)
+        .filter(|(_, pos, _, _)| {
             if let Some(pt) = pos.as_point3_only_tile() {
                 pt.z as usize > camera_z - LAYERS_DOWN
                     && pt.z as usize <= camera_z
@@ -79,7 +79,7 @@ pub fn build_vox_instances2(
                 false
             }
         })
-        .for_each(|(entity, (pos, model, tint))| {
+        .for_each(|(entity, pos, model, tint)| {
             let mut pt = pos.as_vec3();
 
             if pos.dimensions.0 == 3 {
@@ -94,7 +94,7 @@ pub fn build_vox_instances2(
                 [pt.x, pt.z, pt.y],
                 [tint.color.0, tint.color.1, tint.color.2],
                 model.rotation_radians,
-                if let Some(b) = ecs.get_tag::<Building>(entity) {
+                if let Ok(b) = ecs.entry_ref(*entity).unwrap().get_component::<Building>() {
                     if b.complete {
                         0.0
                     } else {
@@ -107,7 +107,7 @@ pub fn build_vox_instances2(
         });
 
     // Composite builder
-    let query =
+    let mut query =
         <(Read<Position>, Read<CompositeRender>)>::query();
     query
         .iter(ecs)

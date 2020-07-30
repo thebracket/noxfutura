@@ -1,11 +1,18 @@
 use imgui::*;
-use legion::prelude::*;
+use legion::*;
 use nox_spatial::mapidx;
 use crate::systems::REGION;
 use nox_planet::*;
 use nox_components::*;
 use nox_raws::*;
-use bracket_geometry::prelude::Point3;
+
+struct AvailableBuilding {
+    tag: String,
+    name: ImString,
+    description: ImString,
+    model_idx: usize,
+    dimensions: Option<(i32, i32, i32)>
+}
 
 pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, usize, usize), bidx: i32) -> (i32, Option<usize>) {
     let mut available_buildings = Vec::new();
@@ -16,13 +23,11 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
     raws.buildings.buildings.iter().for_each(|b| {
         let mut has_all = true;
         b.components.iter().for_each(|c| {
-            let t = Tag(c.item.to_string());
-            let n = <Read<Position>>::query()
-                .filter(tag::<Item>())
-                .filter(tag_value(&t))
-                .iter_entities(ecs)
-                .filter(|(entity, _)| region.jobs_board.is_component_claimed(
-                    ecs.get_tag::<IdentityTag>(*entity).unwrap().0) == false
+            let n = <(Entity, Read<Position>, Read<Tag>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(entity, pos, t, _)| t.0 == c.item.to_string())
+                .filter(|(entity, _, _, idt)| region.jobs_board.is_component_claimed(
+                    idt.0) == false
                 )
                 .count();
             if n < c.qty as usize {
@@ -101,7 +106,7 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
             }
 
             // Check to see if the space if occupied
-            <Read<Position>>::query().filter(tag::<Building>()).iter(ecs).for_each(|p| {
+            <Read<Position>>::query().filter(component::<Building>()).iter(ecs).for_each(|p| {
                 if p.contains_point(&mouse_world_pos) {
                     can_build = false;
                 }
@@ -128,12 +133,15 @@ pub fn building_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, u
                 let mut chosen_components = Vec::new();
                 for c in binfo.components.iter() {
                     let t = Tag(c.item.to_string());
-                    let mut available_components : Vec<(usize, usize)> = <Read<Position>>::query()
-                        .filter(tag::<Item>())
-                        .filter(tag_value(&t))
-                        .iter_entities(ecs)
-                        .map(|(entity, pos)| {
-                            (pos.effective_location(ecs), ecs.get_tag::<IdentityTag>(entity).unwrap().0)
+                    let mut available_components : Vec<(usize, usize)> = <(Entity, Read<Position>, Read<Tag>, Read<IdentityTag>)>::query()
+                        .filter(component::<Item>())
+                        .iter(ecs)
+                        .filter(|(_, _, tag, _)| tag.0 == t.0)
+                        .map(|(entity, pos, _, idt)| {
+                            (
+                                pos.effective_location(ecs), 
+                                idt.0
+                            )
                         })
                         .collect()
                     ;

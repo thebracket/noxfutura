@@ -1,6 +1,6 @@
 use crate::{ground_z, Region, TileType};
 use bracket_random::prelude::RandomNumberGenerator;
-use legion::prelude::*;
+use legion::*;
 use nox_raws::*;
 use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 

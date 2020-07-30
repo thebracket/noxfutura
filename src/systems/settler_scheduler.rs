@@ -1,7 +1,8 @@
-use legion::prelude::*;
+use legion::*;
+use legion::systems::Schedulable;
 use nox_components::*;
 
-pub fn build() -> Box<dyn Schedulable> {
+pub fn build() -> impl Schedulable {
     SystemBuilder::new("settler_schedule")
         .with_query(<(Write<MyTurn>, Read<WorkSchedule>)>::query())
         .with_query(<Read<Calendar>>::query())

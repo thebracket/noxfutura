@@ -1,12 +1,13 @@
 use crate::systems::REGION;
 use crate::systems::RNG;
-use legion::prelude::*;
+use legion::*;
+use legion::systems::Schedulable;
 use nox_components::*;
 use nox_planet::Region;
 
-pub fn build() -> Box<dyn Schedulable> {
+pub fn build() -> impl Schedulable {
     SystemBuilder::new("move_randomly")
-        .with_query(<(Write<Position>, Read<MyTurn>, Tagged<IdentityTag>)>::query())
+        .with_query(<(Write<Position>, Read<MyTurn>, Read<IdentityTag>)>::query())
         .build(|_, ecs, _, actors| {
             actors
                 .iter_mut(ecs)

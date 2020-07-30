@@ -1,7 +1,8 @@
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
+use legion::systems::Schedulable;
 
-pub fn build() -> Box<dyn Schedulable> {
+pub fn build() -> impl Schedulable {
     SystemBuilder::new("calendar")
         .with_query(<Write<Calendar>>::query())
         .build(|_, ecs, _, calendars| {

@@ -1,6 +1,6 @@
 use crate::systems::REGION;
 use bracket_geometry::prelude::Point3;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 use nox_spatial::idxmap;
 use super::MOVER_LIST;
@@ -39,19 +39,19 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
         JobStep::JobChanged { id, new_job } => {
             let idtag = IdentityTag(*id);
-            <Write<MyTurn>>::query()
-                .filter(tag_value(&idtag))
+            <(Write<MyTurn>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
-                .for_each(|mut turn| {
+                .filter(|(_, idt)| idt.0 == *id)
+                .for_each(|(mut turn, _)| {
                     turn.job = new_job.clone();
                 });
         }
         JobStep::JobCancelled { id } => {
             let idtag = IdentityTag(*id);
-            <Write<MyTurn>>::query()
-                .filter(tag_value(&idtag))
+            <(Write<MyTurn>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
-                .for_each(|mut turn| {
+                .filter(|(_, idt)| idt.0 == *id)
+                .for_each(|(mut turn, _)| {
                     REGION.write().jobs_board.restore_job(&turn.job);
                     turn.job = JobType::None;
                 });
@@ -59,10 +59,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         JobStep::JobConcluded { id } => {
             println!("Job finished");
             let idtag = IdentityTag(*id);
-            <Write<MyTurn>>::query()
-                .filter(tag_value(&idtag))
+            <(Write<MyTurn>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
-                .for_each(|mut turn| {
+                .filter(|(_, idt)| idt.0 == *id)
+                .for_each(|(mut turn, _)| {
                     match &turn.job {
                         JobType::FellTree {
                             tree_id,
@@ -81,10 +81,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
         JobStep::FollowJobPath { id } => {
             let idtag = IdentityTag(*id);
-            <Write<MyTurn>>::query()
-                .filter(tag_value(&idtag))
+            <(Write<MyTurn>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
-                .for_each(|mut turn| match &mut turn.job {
+                .filter(|(_, idt)| idt.0 == *id)
+                .for_each(|(mut turn, _)| match &mut turn.job {
                     JobType::FellTree { step, .. } => {
                         let path = match step {
                             LumberjackSteps::TravelToAxe { path, .. } => Some(path),
@@ -117,10 +117,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         }
         JobStep::DropItem { id, location } => {
             let idtag = IdentityTag(*id);
-            <Write<Position>>::query()
-                .filter(tag_value(&idtag))
+            <(Write<Position>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
-                .for_each(|mut pos| {
+                .filter(|(_, idt)| idt.0 == *id)
+                .for_each(|(mut pos, _)| {
                     pos.to_ground(*location);
                 });
         }
@@ -158,10 +158,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
 
         JobStep::EquipItem { id, tool_id } => {
             let itemtag = IdentityTag(*tool_id);
-            <Write<Position>>::query()
-                .filter(tag_value(&itemtag))
+            <(Write<Position>, Read<IdentityTag>)>::query()
                 .iter_mut(ecs)
-                .for_each(|mut pos| {
+                .filter(|(_, idt)| idt.0 == *id)
+                .for_each(|(mut pos, _)| {
                     pos.to_carried(*id);
                 });
             super::vox_moved();
@@ -169,26 +169,26 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
 
         JobStep::DeleteItem { id} => {
             let itemtag = IdentityTag(*id);
-            let i = <Read<Position>>::query()
-                .filter(tag_value(&itemtag))
-                .iter_entities(ecs)
-                .map(|(e, _)| e)
+            let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(_, _, idt)| idt.0 == *id)
+                .map(|(e, _, _)| e)
                 .nth(0);
             if let Some(i) = i {
-                ecs.delete(i);
+                ecs.remove(*i);
             }
             super::vox_moved();
         }
 
         JobStep::DeleteBuilding { building_id } => {
             let itemtag = IdentityTag(*building_id);
-            let i = <Read<Position>>::query()
-                .filter(tag_value(&itemtag))
-                .iter_entities(ecs)
-                .map(|(e, _)| e)
+            let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(_, _, idt)| idt.0 == *building_id)
+                .map(|(e, _, _)| e)
                 .nth(0);
             if let Some(i) = i {
-                ecs.delete(i);
+                ecs.remove(*i);
             }
             super::vox_moved();
             super::lights_changed();
@@ -196,18 +196,20 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
 
         JobStep::FinishBuilding { building_id } => {
             let idtag = IdentityTag(*building_id);
-            let e = <Read<Position>>::query()
-                .filter(tag_value(&idtag))
-                .iter_entities(ecs)
-                .map(|(e, _)| e)
+            let e = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(_, _, idt)| idt.0 == *building_id)
+                .map(|(e, _, _)| e)
                 .nth(0);
 
             if let Some(e) = e {
-                ecs.remove_tag::<Building>(e).expect("Failed to remove tag");
-                ecs.add_tag(e, Building{complete: true}).expect("Failed to add tag");
-                if let Some(mut l) = ecs.get_component_mut::<Light>(e) {
-                    l.enabled = true;
-                    super::lights_changed();
+                if let Some(mut en) = ecs.entry(*e) {
+                    en.remove_component::<Building>();
+                    en.add_component(Building{complete: true});
+                    if let Ok(mut l) = en.get_component_mut::<Light>() {
+                        l.enabled = true;
+                        super::lights_changed();
+                    }
                 }
             }
         }
@@ -216,9 +218,9 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
     let movers = MOVER_LIST.lock();
     if !movers.is_empty() {
         super::vox_moved();
-        <(Tagged<IdentityTag>, Write<Position>)>::query()
+        <(Read<IdentityTag>, Write<Position>)>::query()
             .iter_mut(ecs)
-            .filter(|(id, _)| movers.contains_key(&id.0))
+            .filter(|(idt, _)| movers.contains_key(&idt.0))
             .for_each(|(id, mut pos)| {
                 if let Some(destination) = movers.get(&id.0) {
                     pos.set_tile_loc(destination);

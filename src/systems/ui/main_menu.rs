@@ -1,6 +1,6 @@
 use crate::modes::{DesignMode, RunState};
 use imgui::*;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 use cgmath::Vector3;
 use cgmath::num_traits::identities::Zero;
@@ -10,7 +10,7 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec
     let mut sun_pos = (Vector3::zero(), Vector3::zero());
     // Obtain info to display
     let mut hud_time = String::new();
-    let query = <Read<Calendar>>::query();
+    let mut query = <Read<Calendar>>::query();
     for c in query.iter(ecs) {
         hud_time = c.get_date_time();
         sun_pos = c.calculate_sun_moon();

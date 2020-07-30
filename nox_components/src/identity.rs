@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use legion::prelude::*;
+use legion::*;
 use parking_lot::Mutex;
 
 #[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
@@ -21,7 +21,7 @@ impl IdentityTag {
 
 pub fn rebuild_identity(ecs: &World) {
     let mut lock = IDENTITY.lock();
-    let query = Tagged::<IdentityTag>::query();
+    let mut query = Read::<IdentityTag>::query();
     let max_id = query.iter(ecs).map(|i| i.0).max().unwrap();
     *lock = max_id;
 }

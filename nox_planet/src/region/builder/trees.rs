@@ -1,7 +1,7 @@
 use crate::{ground_z, Region, TileType};
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
-use legion::prelude::*;
+use legion::*;
 use nox_raws::*;
 use nox_spatial::*;
 use parking_lot::RwLock;

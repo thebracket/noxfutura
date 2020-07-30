@@ -1,12 +1,13 @@
 use crate::messaging;
 use crate::systems::REGION;
 use nox_planet::pathfinding::a_star_search;
-use legion::prelude::*;
+use legion::*;
+use legion::systems::Schedulable;
 use nox_components::*;
 
-pub fn build() -> Box<dyn Schedulable> {
+pub fn build() -> impl Schedulable {
     SystemBuilder::new("lumberjack")
-        .with_query(<(Read<MyTurn>, Read<Position>, Tagged<IdentityTag>)>::query())
+        .with_query(<(Read<MyTurn>, Read<Position>, Read<IdentityTag>)>::query())
         .build(|_, ecs, _, actors| {
             // Look for a job to do
             actors

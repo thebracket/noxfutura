@@ -1,9 +1,10 @@
 use crate::systems::RNG;
 use crate::utils::attribute_modifier;
-use legion::prelude::*;
+use legion::*;
+use legion::systems::Schedulable;
 use nox_components::*;
 
-pub fn build() -> Box<dyn Schedulable> {
+pub fn build() -> impl Schedulable {
     SystemBuilder::new("initiative")
         .with_query(<(Write<Initiative>, Write<MyTurn>, Read<Attributes>)>::query())
         .build(|_, ecs, _, actors| {

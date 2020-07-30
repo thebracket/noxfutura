@@ -16,7 +16,7 @@ mod strata;
 mod trees;
 mod water_features;
 mod map_components;
-use legion::prelude::*;
+use legion::*;
 pub use primitive::Primitive;
 mod flags;
 use nox_raws::RAWS;

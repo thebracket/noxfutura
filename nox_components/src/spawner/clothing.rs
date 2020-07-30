@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use bracket_random::prelude::*;
-use legion::prelude::*;
+use legion::*;
 use nox_raws::*;
 
 pub fn spawn_clothing_from_raws_worn(
@@ -18,9 +18,8 @@ pub fn spawn_clothing_from_raws_worn(
 
         let color = get_color(rng.random_slice_entry(&cd.colors));
 
-        ecs.insert(
-            (Item {}, Tag(tag.to_string()), IdentityTag::new()),
-            vec![(
+        ecs.push(
+            (Item {}, Tag(tag.to_string()), IdentityTag::new(),
                 Position::worn(wearer),
                 Name { name: cd.name },
                 Description {
@@ -31,7 +30,7 @@ pub fn spawn_clothing_from_raws_worn(
                     rotation_radians: 0.0,
                 },
                 Tint { color },
-            )],
+            ),
         );
 
         result.push((index, color));

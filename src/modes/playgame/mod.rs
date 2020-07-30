@@ -1,6 +1,6 @@
 use super::resources::SharedResources;
 use imgui::*;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 use nox_planet::*;
 use winit::event::VirtualKeyCode;
@@ -98,7 +98,6 @@ impl PlayGame {
                 self.planet = Some(game.planet);
                 *REGION.write() = game.current_region;
                 self.ecs = nox_components::deserialize_world(game.ecs_text);
-                self.ecs.defrag(None);
 
                 let mut loader_lock = crate::modes::loader::LOADER.write();
                 self.rpass = loader_lock.rpass.take();
@@ -190,7 +189,7 @@ impl PlayGame {
         self.chunks.rebuild_all();
 
         // Update the chunk frustrum system
-        let query = <(Read<Position>, Read<CameraOptions>)>::query();
+        let mut query = <(Read<Position>, Read<CameraOptions>)>::query();
         for (pos, camopts) in query.iter(&self.ecs) {
             let size = crate::engine::get_window_size();
             pass.camera
@@ -234,7 +233,7 @@ impl PlayGame {
     fn camera_control(&mut self, keycode: &Option<VirtualKeyCode>, imgui: &Ui) -> usize {
         let mut result = 0;
         let pass = self.rpass.as_mut().unwrap();
-        let query = <(Write<Position>, Write<CameraOptions>)>::query();
+        let mut query = <(Write<Position>, Write<CameraOptions>)>::query();
         let mut camera_changed = true;
         for (mut pos, mut camopts) in query.iter_mut(&mut self.ecs) {
             let cam = &mut pass.camera;

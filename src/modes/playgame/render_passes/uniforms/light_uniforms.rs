@@ -1,6 +1,6 @@
 use crate::engine::uniforms::UniformBlock;
 use crate::systems::REGION;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 use nox_planet::Region;
 use rayon::prelude::*;
@@ -79,7 +79,7 @@ impl LightUniforms {
         // Index the lights
         const LIGHT_BOOST: f32 = 10.0;
         let mut index = 1;
-        let light_query = <(Read<Position>, Read<Light>, Read<FieldOfView>)>::query();
+        let mut light_query = <(Read<Position>, Read<Light>, Read<FieldOfView>)>::query();
         light_query.iter(ecs).for_each(|(pos, light, fov)| {
             let pt = pos.as_point3();
             if index < 32 && pt.z <= camera_pos.y as i32 && light.enabled {

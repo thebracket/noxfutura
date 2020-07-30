@@ -1,5 +1,5 @@
 use imgui::*;
-use legion::prelude::*;
+use legion::*;
 use nox_spatial::mapidx;
 use crate::systems::REGION;
 use nox_planet::TileType;

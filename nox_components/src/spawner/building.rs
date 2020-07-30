@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use legion::prelude::*;
+use legion::*;
 
 pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: usize, complete: bool) -> usize {
     use nox_raws::*;
@@ -16,9 +16,8 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
         let identity = IdentityTag::new();
         result = identity.0;
 
-        let entity = ecs.insert(
-            (Building { complete }, Tag(tag.to_string()), identity),
-            vec![(
+        let entity = ecs.push(
+            (Building { complete }, Tag(tag.to_string()), identity,
                 Name {
                     name: building_def.name.clone(),
                 },
@@ -33,29 +32,25 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
                 Tint {
                     color: (1.0, 1.0, 1.0),
                 },
-            )],
-        )[0]
+            ),
+        )
         .clone();
 
         for provides in building_def.provides.iter() {
             if let BuildingProvides::Light { radius, color } = provides {
-                ecs.add_component(
-                    entity,
+                ecs.entry(entity).unwrap().add_component(
                     Light {
                         color: *color,
                         radius: *radius,
                         enabled: complete
                     },
-                )
-                .expect("Unable to add light");
-                ecs.add_component(entity, FieldOfView::new(*radius))
-                    .expect("Unable to add field-of-view");
+                );
+                ecs.entry(entity).unwrap().add_component(FieldOfView::new(*radius));
             }
 
             if let BuildingProvides::Storage = provides {
                 //println!("Added storage capacity");
-                ecs.add_component(entity, Storage {})
-                    .expect("Unable to add storage");
+                ecs.entry(entity).unwrap().add_component(Storage {});
             }
         }
 

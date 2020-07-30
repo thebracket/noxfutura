@@ -1,10 +1,11 @@
 use crate::systems::REGION;
-use legion::prelude::*;
+use legion::*;
+use legion::systems::Schedulable;
 use nox_components::*;
 
-pub fn build() -> Box<dyn Schedulable> {
-    SystemBuilder::new("work")
-        .with_query(<(Write<MyTurn>, Read<Position>, Tagged<IdentityTag>)>::query())
+pub fn build() -> impl Schedulable {
+    let sb = SystemBuilder::new("work")
+        .with_query(<(Write<MyTurn>, Read<Position>, Read<IdentityTag>)>::query())
         .build(|_, ecs, _, actors| {
             // Look for a job to do
             actors
@@ -22,5 +23,7 @@ pub fn build() -> Box<dyn Schedulable> {
                         turn.order = WorkOrder::MoveRandomly;
                     }
                 });
-        })
+        }
+    );
+    sb
 }

@@ -1,6 +1,6 @@
 use crate::{ground_z, Region, TileType};
 use bracket_geometry::prelude::Point;
-use legion::prelude::*;
+use legion::*;
 use nox_spatial::{ REGION_WIDTH, mapidx };
 use std::collections::HashSet;
 

@@ -1,5 +1,5 @@
 use imgui::*;
-use legion::prelude::*;
+use legion::*;
 use nox_components::*;
 
 pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui: &Ui) {
@@ -51,19 +51,19 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
     }
 
     // This is eating a ton of frame time!
-    <(Read<Name>, Read<Position>, Tagged<IdentityTag>)>::query()
-        .iter_entities(ecs)
-        .filter(|(_, (_, pos, _))| pos.contains_point(mouse_world_pos))
-        .for_each(|(entity, (name, _, identity))| {
+    <(Entity, Read<Name>, Read<Position>, Read<IdentityTag>)>::query()
+        .iter(ecs)
+        .filter(|(_, _, pos, _)| pos.contains_point(mouse_world_pos))
+        .for_each(|(entity, name, _, identity)| {
             lines.push((true, format!("{}", name.name)));
-            if let Some(binfo) = ecs.get_tag::<Building>(entity) {
+            if let Ok(binfo) = ecs.entry_ref(*entity).unwrap().get_component::<Building>() {
                 if !binfo.complete {
                     lines.push((true, "Building not yet completed".to_string()));
                 }
             }
 
-            <Read<Description>>::query()
-                .iter_entities(ecs)
+            <(Entity, Read<Description>)>::query()
+                .iter(ecs)
                 .filter(|(e, _)| *e == entity)
                 .for_each(|(_, d)| {
                     lines.push((false, format!("{}", d.desc)));

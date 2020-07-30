@@ -14,7 +14,7 @@ pub use shared_state::*;
 mod ui;
 pub use ui::*;
 
-use legion::prelude::*;
+use legion::*;
 
 pub fn build_scheduler() -> Schedule {
     Schedule::builder()

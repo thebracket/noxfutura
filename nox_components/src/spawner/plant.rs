@@ -1,13 +1,12 @@
 use crate::prelude::*;
-use legion::prelude::*;
+use legion::*;
 use nox_raws::*;
 
 pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) {
     let rlock = RAWS.read();
     if let Some(plant) = rlock.plants.plant_by_tag(tag) {
-        ecs.insert(
-            (Vegetation {}, IdentityTag::new()),
-            vec![(
+        ecs.push(
+            (Vegetation {}, IdentityTag::new(),
                 Name {
                     name: plant.name.clone(),
                 },
@@ -22,7 +21,7 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
                 Tint {
                     color: (1.0, 1.0, 1.0),
                 },
-            )],
+            ),
         );
     } else {
         println!("Cannot find plant to spawn: {}", tag);
@@ -31,9 +30,8 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
 
 pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usize) {
     let rlock = RAWS.read();
-    ecs.insert(
-        (Tree {}, IdentityTag::new()),
-        vec![(
+    ecs.push(
+        (Tree {}, IdentityTag::new(),
             Name {
                 name: "Tree".to_string(),
             },
@@ -48,6 +46,6 @@ pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usi
             Tint {
                 color: (1.0, 1.0, 1.0),
             },
-        )],
+        ),
     );
 }

@@ -6,7 +6,7 @@ mod jobstep;
 use jobstep::apply_jobs_queue;
 use jobstep::JobStep;
 use bracket_geometry::prelude::Point3;
-use legion::prelude::World;
+use legion::World;
 
 pub use renderflags::get_render_flags;
 

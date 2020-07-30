@@ -111,36 +111,34 @@ impl Position {
         }
     }
 
-    pub fn effective_location(&self, ecs: &legion::prelude::World) -> usize {
-        use legion::prelude::*;
+    pub fn effective_location(&self, ecs: &legion::World) -> usize {
+        use legion::*;
         match self.loc {
             Location::Tile { idx } => idx,
             Location::Stored { container } => {
-                let idtag = IdentityTag(container);
-                <Read<Position>>::query()
-                    .filter(tag_value(&idtag))
+                <(Read<Position>, Read<IdentityTag>)>::query()
                     .iter(ecs)
-                    .map(|pos| *pos)
+                    .filter(|(pos, id)| id.0 == container)
+                    .map(|(pos, id)| *pos)
                     .nth(0)
                     .unwrap()
                     .effective_location(ecs)
             }
             Location::Carried { by } => {
-                let idtag = IdentityTag(by);
-                <Read<Position>>::query()
-                    .filter(tag_value(&idtag))
+                <(Read<Position>, Read<IdentityTag>)>::query()
                     .iter(ecs)
-                    .map(|pos| *pos)
+                    .filter(|(pos, id)| id.0 == by)
+                    .map(|(pos, id)| *pos)
                     .nth(0)
                     .unwrap()
                     .effective_location(ecs)
             }
             Location::Worn { by } => {
                 let idtag = IdentityTag(by);
-                <Read<Position>>::query()
-                    .filter(tag_value(&idtag))
+                <(Read<Position>, Read<IdentityTag>)>::query()
                     .iter(ecs)
-                    .map(|pos| *pos)
+                    .filter(|(pos, id)| id.0 == by)
+                    .map(|(pos, id)| *pos)
                     .nth(0)
                     .unwrap()
                     .effective_location(ecs)

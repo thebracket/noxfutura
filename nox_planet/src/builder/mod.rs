@@ -88,7 +88,7 @@ fn threaded_builder() {
     PLANET_BUILD.lock().done = true;
 }
 
-fn save_world(region: Region, world: legion::prelude::World) {
+fn save_world(region: Region, world: legion::World) {
     use super::SavedGame;
     set_worldgen_status("Saving the world. To disk, sadly.");
     let pclone = PLANET_BUILD.lock().planet.clone();
