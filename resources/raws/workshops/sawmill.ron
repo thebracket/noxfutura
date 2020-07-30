@@ -1,0 +1,29 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "sawmill",
+            name : "Sawmill",
+            components : [ BuildingComponent(item: "wood_log", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 12) ],
+            vox : "sawmill",
+            description : "Two tables and a large cutting saw, designed for turning wooden logs into usable planks.",
+            provides : [ ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"sawmill", file:"sawmill" ),
+    ]),
+
+    reactions: Some([
+        ReactionDef(
+            name: "Cut Wooden Logs into Blocks",
+            workshop: "sawmill",
+            difficulty: 10,
+            automatic: true,
+            skill: "Carpentry",
+            inputs: [ ReactionItem(tag: "wood_log", qty: 1) ],
+            outputs: [ ReactionItem(tag: "block", qty: 4 ), ReactionItem(tag: "wood_waste", qty: 2) ]
+        )
+    ])
+)

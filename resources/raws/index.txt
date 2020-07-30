@@ -6,8 +6,21 @@ resources/raws/species_bundle.ron
 resources/raws/professions_bundle.ron
 resources/raws/clothing_bundle.ron
 resources/raws/items_bundle.ron
-resources/raws/reactions_bundle.ron
-resources/raws/buildings_bundle.ron
 
 # Built-in workshops at world-gen
+
 resources/raws/workshops/cordex.ron
+resources/raws/workshops/ship_lamp.ron
+resources/raws/workshops/ship_defense_turret.ron
+resources/raws/workshops/cryo_bed.ron
+resources/raws/workshops/storage_locker.ron
+resources/raws/workshops/solar_panel.ron
+resources/raws/workshops/battery.ron
+resources/raws/workshops/rtg.ron
+resources/raws/workshops/small_replicator.ron
+resources/raws/workshops/personal_survival_shelter.ron
+resources/raws/workshops/fake_camp_fire.ron
+
+# Low tech workshops to build
+
+resources/raws/workshops/sawmill.ron

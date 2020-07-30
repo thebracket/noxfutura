@@ -1,0 +1,17 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag: "ship_lamp",
+            name: "Lamp",
+            components : [ BuildingComponent(item: "lamp_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 25) ],
+            description: "A simple lamp, designed to provide light.",
+            vox : "ship_lamp",
+            provides : [ Light(radius: 5, color: (1.0, 1.0, 1.0))  ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"ship_lamp", file:"floorlight" ),
+    ])
+)

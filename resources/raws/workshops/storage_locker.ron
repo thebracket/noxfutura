@@ -1,0 +1,17 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "storage_locker",
+            name : "Storage Locker",
+            components : [ BuildingComponent(item: "storage_locker_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 10) ],
+            vox : "cabinet",
+            description : "A ship-mounted storage locker, pre-shipped with enough to survive settling a new world.",
+            provides : [ Storage ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"storage_locker", file:"cabinet" ),
+    ])
+)

@@ -1,0 +1,17 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "fake_camp_fire",
+            name : "Nuclear Camp Fire",
+            components : [ BuildingComponent(item: "camp_fire_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 5) ],
+            vox : "campfire_fake",
+            description : "A portable camp fire, for the lazy camper. Combining a nuclear battery, fake fire effects and a marshmallow dispenser it is ideal for a camping trip.",
+            provides : [ Light(radius: 5, color: (1.0, 0.75, 0.1)) ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"campfire_fake", file:"campfire-fake" ),
+    ])
+)

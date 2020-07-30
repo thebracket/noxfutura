@@ -1,20 +1,10 @@
 (
     vox: Some([
-        VoxelModel( tag:"cryo_bed", file:"cryobed32" ),
-        VoxelModel( tag:"storage_locker", file:"cabinet" ),
-        VoxelModel( tag:"ship_lamp", file:"floorlight" ),
-        VoxelModel( tag:"rtg", file:"rtg" ),
         VoxelModel( tag:"cabinet", file:"cabinet" ),
-        VoxelModel( tag:"battery", file:"battery" ),
-        VoxelModel( tag:"small_replicator", file:"replicator_small" ),
-        VoxelModel( tag:"solar_panel", file:"solar_panel" ),
         VoxelModel( tag:"wood_logs", file:"woodlogs" ),
-        VoxelModel( tag:"ship_defense_turret", file:"turret" ),
         VoxelModel( tag:"axe", file:"simpleaxe" ),
         VoxelModel( tag:"campfire_kit", file:"crate-fakefire" ),
         VoxelModel( tag:"tent_kit", file:"crate-tent" ),
-        VoxelModel( tag:"tent", file:"tent" ),
-        VoxelModel( tag:"sawmill", file:"sawmill" ),
         VoxelModel( tag:"block", file:"block" ),
         VoxelModel( tag:"woodwaste", file:"wastewood" ),
         VoxelModel( tag:"bonecarver", file:"bonecarver" ),
@@ -46,7 +36,6 @@
         VoxelModel( tag:"mechanic", file:"mechanic" ),
         VoxelModel( tag:"tanner", file:"tanner" ),
         VoxelModel( tag:"charcoal", file:"charcoal" ),
-        VoxelModel( tag:"campfire_fake", file:"campfire-fake" ),
         VoxelModel( tag:"ant", file:"ant" ),
 
         VoxelModel( tag:"person_base", file:"person_base" ),
