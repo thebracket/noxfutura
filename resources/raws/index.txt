@@ -8,17 +8,17 @@ resources/raws/clothing_bundle.ron
 
 # Built-in workshops at world-gen
 
-resources/raws/workshops/cordex.ron
-resources/raws/workshops/ship_lamp.ron
-resources/raws/workshops/ship_defense_turret.ron
-resources/raws/workshops/cryo_bed.ron
-resources/raws/workshops/storage_locker.ron
-resources/raws/workshops/solar_panel.ron
-resources/raws/workshops/battery.ron
-resources/raws/workshops/rtg.ron
-resources/raws/workshops/small_replicator.ron
-resources/raws/workshops/personal_survival_shelter.ron
-resources/raws/workshops/fake_camp_fire.ron
+resources/raws/shipboard/cordex.ron
+resources/raws/shipboard/ship_lamp.ron
+resources/raws/shipboard/ship_defense_turret.ron
+resources/raws/shipboard/cryo_bed.ron
+resources/raws/shipboard/storage_locker.ron
+resources/raws/shipboard/solar_panel.ron
+resources/raws/shipboard/battery.ron
+resources/raws/shipboard/rtg.ron
+resources/raws/shipboard/small_replicator.ron
+resources/raws/shipboard/personal_survival_shelter.ron
+resources/raws/shipboard/fake_camp_fire.ron
 
 # Low tech workshops to build
 
