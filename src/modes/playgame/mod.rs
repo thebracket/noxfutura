@@ -13,13 +13,13 @@ use vox::VoxBuffer;
 mod render_passes;
 use crate::messaging;
 use crate::systems;
-pub use render_passes::*;
 use cgmath::Vector3;
+pub use render_passes::*;
 
 #[derive(PartialEq, Clone)]
 pub enum DesignMode {
     Lumberjack,
-    Buildings{ bidx: i32, vox: Option<usize> }
+    Buildings { bidx: i32, vox: Option<usize> },
 }
 
 #[derive(PartialEq, Clone)]
@@ -155,20 +155,32 @@ impl PlayGame {
             self.vox_changed = true;
         }
         if rf.terrain_changed {
-            use nox_spatial::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, idxmap, mapidx};
+            use nox_spatial::{idxmap, mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
             self.rebuild_geometry = true;
             self.chunks.mark_dirty(&rf.dirty_tiles);
             use std::collections::HashSet;
             let mut tiles_to_flag = HashSet::<usize>::new();
             rf.dirty_tiles.iter().for_each(|idx| {
                 tiles_to_flag.insert(*idx);
-                let (x,y,z) = idxmap(*idx);
-                if x > 0 { tiles_to_flag.insert(mapidx(x-1, y, z)); }
-                if x < REGION_WIDTH { tiles_to_flag.insert(mapidx(x+1, y, z)); }
-                if y > 0 { tiles_to_flag.insert(mapidx(x, y-1, z)); }
-                if y < REGION_HEIGHT { tiles_to_flag.insert(mapidx(x, y+1, z)); }
-                if z > 0 { tiles_to_flag.insert(mapidx(x, y, z-1)); }
-                if z < REGION_DEPTH { tiles_to_flag.insert(mapidx(x, y, z+1)); }
+                let (x, y, z) = idxmap(*idx);
+                if x > 0 {
+                    tiles_to_flag.insert(mapidx(x - 1, y, z));
+                }
+                if x < REGION_WIDTH {
+                    tiles_to_flag.insert(mapidx(x + 1, y, z));
+                }
+                if y > 0 {
+                    tiles_to_flag.insert(mapidx(x, y - 1, z));
+                }
+                if y < REGION_HEIGHT {
+                    tiles_to_flag.insert(mapidx(x, y + 1, z));
+                }
+                if z > 0 {
+                    tiles_to_flag.insert(mapidx(x, y, z - 1));
+                }
+                if z < REGION_DEPTH {
+                    tiles_to_flag.insert(mapidx(x, y, z + 1));
+                }
             });
             let mut rlock = crate::systems::REGION.write();
             tiles_to_flag.iter().for_each(|idx| {
@@ -209,7 +221,9 @@ impl PlayGame {
         imgui: &Ui,
         mouse_world_pos: &(usize, usize, usize),
     ) -> (Vector3<f32>, Vector3<f32>) {
-        use crate::systems::{draw_main_menu, draw_tooltips, fps_display, lumberjack_display, building_display};
+        use crate::systems::{
+            building_display, draw_main_menu, draw_tooltips, fps_display, lumberjack_display,
+        };
         let sun_pos = draw_main_menu(&self.ecs, &mut self.run_state, imgui);
         fps_display(imgui, frame_time);
         draw_tooltips(&self.ecs, mouse_world_pos, imgui);
@@ -219,9 +233,12 @@ impl PlayGame {
                 DesignMode::Lumberjack => {
                     lumberjack_display(imgui, &self.ecs, mouse_world_pos);
                 }
-                DesignMode::Buildings{bidx, ..} => {
-                    let (bidx, vox) = building_display(imgui, &mut self.ecs, mouse_world_pos, *bidx);
-                    self.run_state = RunState::Design { mode: DesignMode::Buildings{ bidx, vox } };
+                DesignMode::Buildings { bidx, .. } => {
+                    let (bidx, vox) =
+                        building_display(imgui, &mut self.ecs, mouse_world_pos, *bidx);
+                    self.run_state = RunState::Design {
+                        mode: DesignMode::Buildings { bidx, vox },
+                    };
                     self.vox_changed = true;
                 }
             }
@@ -276,7 +293,7 @@ impl PlayGame {
                         }
                         VirtualKeyCode::B => {
                             self.run_state = RunState::Design {
-                                mode: DesignMode::Buildings{bidx: 0, vox: None},
+                                mode: DesignMode::Buildings { bidx: 0, vox: None },
                             };
                             camera_changed = false;
                             self.vox_changed = true;
@@ -329,7 +346,7 @@ impl PlayGame {
         depth_id: usize,
         frame: &wgpu::SwapChainOutput,
         sun_pos: &(Vector3<f32>, Vector3<f32>),
-        mouse_world_pos: &(usize, usize, usize)
+        mouse_world_pos: &(usize, usize, usize),
     ) {
         let pass = self.rpass.as_mut().unwrap();
         // Render terrain building the initial chunk models list
@@ -347,12 +364,12 @@ impl PlayGame {
                 &self.chunks.frustrum,
                 mouse_world_pos,
                 match &self.run_state {
-                    RunState::Design{mode} => match mode {
-                        DesignMode::Buildings{ vox, ..} => vox,
-                        _ => &None
-                    }
-                    _ => &None
-                }
+                    RunState::Design { mode } => match mode {
+                        DesignMode::Buildings { vox, .. } => vox,
+                        _ => &None,
+                    },
+                    _ => &None,
+                },
             );
             self.vox_changed = false;
         }

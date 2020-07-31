@@ -18,20 +18,21 @@ pub fn spawn_clothing_from_raws_worn(
 
         let color = get_color(rng.random_slice_entry(&cd.colors));
 
-        ecs.push(
-            (Item {}, Tag(tag.to_string()), IdentityTag::new(),
-                Position::worn(wearer),
-                Name { name: cd.name },
-                Description {
-                    desc: cd.description,
-                },
-                crate::VoxelModel {
-                    index,
-                    rotation_radians: 0.0,
-                },
-                Tint { color },
-            ),
-        );
+        ecs.push((
+            Item {},
+            Tag(tag.to_string()),
+            IdentityTag::new(),
+            Position::worn(wearer),
+            Name { name: cd.name },
+            Description {
+                desc: cd.description,
+            },
+            crate::VoxelModel {
+                index,
+                rotation_radians: 0.0,
+            },
+            Tint { color },
+        ));
 
         result.push((index, color));
     } else {

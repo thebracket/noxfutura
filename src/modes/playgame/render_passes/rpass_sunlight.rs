@@ -2,8 +2,8 @@ use super::gbuffer::GBuffer;
 use super::{LightUniforms, TerrainLights};
 use crate::engine::uniforms::UniformBlock;
 use crate::engine::{VertexBuffer, DEVICE_CONTEXT};
-use legion::*;
 use cgmath::Vector3;
+use legion::*;
 
 pub struct SunlightPass {
     pub vb: VertexBuffer<f32>,

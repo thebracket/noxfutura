@@ -1,12 +1,16 @@
 use crate::modes::{DesignMode, RunState};
+use cgmath::num_traits::identities::Zero;
+use cgmath::Vector3;
 use imgui::*;
 use legion::*;
 use nox_components::*;
-use cgmath::Vector3;
-use cgmath::num_traits::identities::Zero;
 
 // Returns the sun position/color, since we look there anyway
-pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vector3<f32>, Vector3<f32>) {
+pub fn draw_main_menu(
+    ecs: &World,
+    run_state: &mut RunState,
+    imgui: &Ui,
+) -> (Vector3<f32>, Vector3<f32>) {
     let mut sun_pos = (Vector3::zero(), Vector3::zero());
     // Obtain info to display
     let mut hud_time = String::new();
@@ -68,7 +72,7 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) -> (Vec
                 .build(imgui)
             {
                 *run_state = RunState::Design {
-                    mode: DesignMode::Buildings{ bidx: 0, vox: None },
+                    mode: DesignMode::Buildings { bidx: 0, vox: None },
                 };
             }
             menu.end(imgui);

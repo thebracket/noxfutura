@@ -3,9 +3,9 @@ use crate::{
     planet_idx, sphere_vertex, Block, BlockType,
 };
 use bracket_geometry::prelude::Degrees;
+use cgmath::Vector3;
 use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use nox_wgpu_utils::VertexBuffer;
-use cgmath::Vector3;
 
 pub type LatLonIdx = (f32, f32, usize);
 pub type LatLonQuad = [LatLonIdx; 6];

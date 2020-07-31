@@ -1,7 +1,6 @@
 use crate::{ground_z, RampDirection, Region, TileType};
 use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 
-
 pub fn build_ramps(region: &mut Region) {
     for y in 1..REGION_HEIGHT - 1 {
         for x in 1..REGION_WIDTH - 1 {
@@ -12,22 +11,26 @@ pub fn build_ramps(region: &mut Region) {
                     region.tile_types[idx] = TileType::Ramp {
                         direction: RampDirection::NorthSouth,
                     };
-                    region.material_idx[idx] = region.material_idx[idx - (REGION_HEIGHT*REGION_HEIGHT)];
+                    region.material_idx[idx] =
+                        region.material_idx[idx - (REGION_HEIGHT * REGION_HEIGHT)];
                 } else if region.is_floor(mapidx(x, y + 1, z + 1)) {
                     region.tile_types[idx] = TileType::Ramp {
                         direction: RampDirection::SouthNorth,
                     };
-                    region.material_idx[idx] = region.material_idx[idx - (REGION_HEIGHT*REGION_HEIGHT)];
+                    region.material_idx[idx] =
+                        region.material_idx[idx - (REGION_HEIGHT * REGION_HEIGHT)];
                 } else if region.is_floor(mapidx(x + 1, y, z + 1)) {
                     region.tile_types[idx] = TileType::Ramp {
                         direction: RampDirection::WestEast,
                     };
-                    region.material_idx[idx] = region.material_idx[idx - (REGION_HEIGHT*REGION_HEIGHT)];
+                    region.material_idx[idx] =
+                        region.material_idx[idx - (REGION_HEIGHT * REGION_HEIGHT)];
                 } else if region.is_floor(mapidx(x - 1, y, z + 1)) {
                     region.tile_types[idx] = TileType::Ramp {
                         direction: RampDirection::EastWest,
                     };
-                    region.material_idx[idx] = region.material_idx[idx - (REGION_HEIGHT*REGION_HEIGHT)];
+                    region.material_idx[idx] =
+                        region.material_idx[idx - (REGION_HEIGHT * REGION_HEIGHT)];
                 }
             }
         }

@@ -1,6 +1,6 @@
+use legion::systems::Schedulable;
 use legion::*;
 use nox_components::*;
-use legion::systems::Schedulable;
 
 pub fn build() -> impl Schedulable {
     SystemBuilder::new("calendar")

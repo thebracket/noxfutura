@@ -1,10 +1,10 @@
 use crate::engine::uniforms::UniformBlock;
 use crate::systems::REGION;
+use cgmath::Vector3;
 use legion::*;
 use nox_components::*;
 use nox_planet::Region;
 use rayon::prelude::*;
-use cgmath::Vector3;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -44,7 +44,11 @@ impl LightUniforms {
         }
     }
 
-    pub fn update_partial(&mut self, sun_pos: &(Vector3<f32>, Vector3<f32>), camera_pos: &Vector3<f32>) {
+    pub fn update_partial(
+        &mut self,
+        sun_pos: &(Vector3<f32>, Vector3<f32>),
+        camera_pos: &Vector3<f32>,
+    ) {
         self.camera_position = vec_to_float(camera_pos);
         self.lights[0].pos = [sun_pos.0.x, sun_pos.0.y, sun_pos.0.z, 512.0];
         self.lights[0].color = [sun_pos.1.x, sun_pos.1.y, sun_pos.1.z, 1.0];

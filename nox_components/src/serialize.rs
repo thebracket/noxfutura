@@ -1,6 +1,6 @@
+use crate::*;
 use legion::*;
 use serde::de::DeserializeSeed;
-use crate::*;
 
 fn registry() -> Registry<String> {
     let mut registry = Registry::<String>::new();
@@ -37,7 +37,8 @@ fn registry() -> Registry<String> {
 }
 
 pub fn serialize_world(world: &World) -> String {
-    ron::to_string(&world.as_serializable(component::<IdentityTag>(), &registry())).expect("Unable to serialize")
+    ron::to_string(&world.as_serializable(component::<IdentityTag>(), &registry()))
+        .expect("Unable to serialize")
 }
 
 pub fn deserialize_world(raw: String) -> World {

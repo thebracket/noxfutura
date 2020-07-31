@@ -1,7 +1,7 @@
-use legion::*;
 use crate::{Region, StairsType, TileType};
-use nox_raws::*;
+use legion::*;
 use nox_components::*;
+use nox_raws::*;
 
 pub fn transform_terrain_to_ecs(region: &mut Region, ecs: &mut World) {
     let stairs_up = RAWS.read().vox.get_model_idx("stairs_up");
@@ -14,36 +14,39 @@ pub fn transform_terrain_to_ecs(region: &mut Region, ecs: &mut World) {
         .enumerate()
         .filter(|(_, tt)| {
             match tt {
-                TileType::Stairs{..} => true,
+                TileType::Stairs { .. } => true,
                 //TileType::Ramp{..} => true,
-                _ => false
+                _ => false,
             }
         })
         .for_each(|(idx, tt)| {
             let model_id = match tt {
-                TileType::Stairs{direction} => {
-                    match direction {
-                        StairsType::Up => stairs_up,
-                        StairsType::Down => stairs_down,
-                        StairsType::UpDown => stairs_updown
-                    }
-                }
-                _ => 0
+                TileType::Stairs { direction } => match direction {
+                    StairsType::Up => stairs_up,
+                    StairsType::Down => stairs_down,
+                    StairsType::UpDown => stairs_updown,
+                },
+                _ => 0,
             };
 
             let tint = if region.flag(idx, Region::CONSTRUCTED) {
                 RAWS.read().matmap.get(region.material_idx[idx]).floor.tint
             } else {
-                RAWS.read().matmap.get(region.material_idx[idx]).floor_constructed.tint
+                RAWS.read()
+                    .matmap
+                    .get(region.material_idx[idx])
+                    .floor_constructed
+                    .tint
             };
 
-            ecs.push(
-                (Terrain{},
-                    Position::with_tile_idx(idx, region.world_idx, (1, 1, 1)),
-                    nox_components::VoxelModel{ index: model_id, rotation_radians: 0.0 },
-                    Tint{ color: tint }
-                )
-            );
-        }
-    );
+            ecs.push((
+                Terrain {},
+                Position::with_tile_idx(idx, region.world_idx, (1, 1, 1)),
+                nox_components::VoxelModel {
+                    index: model_id,
+                    rotation_radians: 0.0,
+                },
+                Tint { color: tint },
+            ));
+        });
 }

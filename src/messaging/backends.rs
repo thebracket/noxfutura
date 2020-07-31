@@ -1,7 +1,7 @@
 use super::renderflags::RenderFlags;
 use super::JobStep;
 use parking_lot::Mutex;
-use std::collections::{VecDeque, HashMap};
+use std::collections::{HashMap, VecDeque};
 
 lazy_static! {
     pub static ref RENDER_FLAGS: Mutex<RenderFlags> = Mutex::new(RenderFlags::new());
@@ -12,5 +12,6 @@ lazy_static! {
 }
 
 lazy_static! {
-    pub static ref MOVER_LIST: Mutex<HashMap<usize, (usize, usize, usize)>> = Mutex::new(HashMap::new());
+    pub static ref MOVER_LIST: Mutex<HashMap<usize, (usize, usize, usize)>> =
+        Mutex::new(HashMap::new());
 }

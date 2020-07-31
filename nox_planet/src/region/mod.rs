@@ -37,7 +37,7 @@ impl Region {
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
             jobs_board: JobsBoard::new(),
-            tree_bases: HashMap::new()
+            tree_bases: HashMap::new(),
         }
     }
 
@@ -52,7 +52,7 @@ impl Region {
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
             jobs_board: JobsBoard::new(),
-            tree_bases: HashMap::new()
+            tree_bases: HashMap::new(),
         }
     }
 
@@ -79,8 +79,8 @@ impl Region {
 
     pub fn is_floor(&self, idx: usize) -> bool {
         match self.tile_types[idx] {
-            TileType::Floor{..} => true,
-            _ => false
+            TileType::Floor { .. } => true,
+            _ => false,
         }
     }
 
@@ -102,22 +102,22 @@ impl Region {
         let (x, y, z) = idxmap(idx);
 
         if self.flag(idx, Region::CAN_GO_NORTH) {
-            exits.push((mapidx(x, y-1, z), 1.0))
+            exits.push((mapidx(x, y - 1, z), 1.0))
         }
         if self.flag(idx, Region::CAN_GO_SOUTH) {
-            exits.push((mapidx(x, y+1, z), 1.0))
+            exits.push((mapidx(x, y + 1, z), 1.0))
         }
         if self.flag(idx, Region::CAN_GO_WEST) {
-            exits.push((mapidx(x-1, y, z), 1.0))
+            exits.push((mapidx(x - 1, y, z), 1.0))
         }
         if self.flag(idx, Region::CAN_GO_EAST) {
-            exits.push((mapidx(x+1, y, z), 1.0))
+            exits.push((mapidx(x + 1, y, z), 1.0))
         }
         if self.flag(idx, Region::CAN_GO_UP) {
-            exits.push((mapidx(x, y, z+1), 1.0));
+            exits.push((mapidx(x, y, z + 1), 1.0));
         }
         if self.flag(idx, Region::CAN_GO_DOWN) {
-            exits.push((mapidx(x, y, z-1), 1.0));
+            exits.push((mapidx(x, y, z - 1), 1.0));
         }
 
         exits

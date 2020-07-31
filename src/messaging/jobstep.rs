@@ -1,9 +1,9 @@
+use super::MOVER_LIST;
 use crate::systems::REGION;
 use bracket_geometry::prelude::Point3;
 use legion::*;
 use nox_components::*;
 use nox_spatial::idxmap;
-use super::MOVER_LIST;
 
 pub enum JobStep {
     EntityMoved { id: usize, end: Point3 },
@@ -17,7 +17,7 @@ pub enum JobStep {
     TreeChop { id: usize, tree_id: usize },
     DeleteItem { id: usize },
     FinishBuilding { building_id: usize },
-    DeleteBuilding { building_id: usize }
+    DeleteBuilding { building_id: usize },
 }
 
 pub fn apply_jobs_queue(ecs: &mut World) {
@@ -35,7 +35,9 @@ pub fn apply_jobs_queue(ecs: &mut World) {
 fn apply(ecs: &mut World, js: &mut JobStep) {
     match js {
         JobStep::EntityMoved { id, end } => {
-            MOVER_LIST.lock().insert(*id, (end.x as usize, end.y as usize, end.z as usize));
+            MOVER_LIST
+                .lock()
+                .insert(*id, (end.x as usize, end.y as usize, end.z as usize));
         }
         JobStep::JobChanged { id, new_job } => {
             <(Write<MyTurn>, Read<IdentityTag>)>::query()
@@ -94,7 +96,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                             MOVER_LIST.lock().insert(*id, (x, y, z));
                         }
                     }
-                    JobType::ConstructBuilding {step, ..} => {
+                    JobType::ConstructBuilding { step, .. } => {
                         let path = match step {
                             BuildingSteps::TravelToComponent { path, .. } => Some(path),
                             BuildingSteps::TravelToTBuilding { path, .. } => Some(path),
@@ -108,8 +110,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                         }
                     }
                     _ => {}
-                }
-            );
+                });
         }
         JobStep::DropItem { id, location } => {
             println!("Dropping item #{}, at {}", id, location);
@@ -124,7 +125,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 });
         }
         JobStep::RelinquishClaim { tool_id, tool_pos } => {
-            REGION.write().jobs_board.relinquish_claim(*tool_id, *tool_pos);
+            REGION
+                .write()
+                .jobs_board
+                .relinquish_claim(*tool_id, *tool_pos);
         }
         JobStep::TreeChop { id: _, tree_id } => {
             println!("Chop tree");
@@ -133,23 +137,23 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             let mut tree_idx = std::usize::MAX;
 
             let tid = tree_id;
-            rlock.tile_types.iter_mut().enumerate()
-                .filter(|(_, tt)| {
-                    match tt {
-                        TileType::TreeTrunk{tree_id} => *tree_id == *tid,
-                        TileType::TreeFoliage{tree_id} => *tree_id == *tid,
-                        _ => false
-                    }
+            rlock
+                .tile_types
+                .iter_mut()
+                .enumerate()
+                .filter(|(_, tt)| match tt {
+                    TileType::TreeTrunk { tree_id } => *tree_id == *tid,
+                    TileType::TreeFoliage { tree_id } => *tree_id == *tid,
+                    _ => false,
                 })
                 .for_each(|(idx, tt)| {
                     tree_idx = usize::min(tree_idx, idx);
                     *tt = TileType::Empty;
                     super::geometry_changed(idx);
-                })
-            ;
+                });
 
             for _ in 0..crate::systems::RNG.lock().roll_dice(1, 6) {
-                let (tx,ty,tz) = idxmap(tree_idx);
+                let (tx, ty, tz) = idxmap(tree_idx);
                 let wood = nox_raws::get_material_by_tag("Wood").unwrap();
                 nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock, wood);
             }
@@ -166,7 +170,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             super::vox_moved();
         }
 
-        JobStep::DeleteItem { id} => {
+        JobStep::DeleteItem { id } => {
             let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
                 .iter(ecs)
                 .filter(|(_, _, idt)| idt.0 == *id)

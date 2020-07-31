@@ -53,7 +53,7 @@ pub fn plant_trees(
                         let mut die_roll = rng.roll_dice(1, 1000);
                         if die_roll < d_chance {
                             plant_deciduous(x, y, z, rng, region);
-                            //crate::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
+                        //crate::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
                             if die_roll < e_chance {
@@ -74,11 +74,11 @@ struct Trunk {
     x: usize,
     y: usize,
     z: usize,
-    depth : usize,
-    done: bool
+    depth: usize,
+    done: bool,
 }
 
-fn check_collision(list: &[Trunk], x: usize, y:usize, z:usize) -> bool {
+fn check_collision(list: &[Trunk], x: usize, y: usize, z: usize) -> bool {
     for l in list.iter() {
         if l.x == x && l.y == y && l.z == z {
             return false;
@@ -87,7 +87,13 @@ fn check_collision(list: &[Trunk], x: usize, y:usize, z:usize) -> bool {
     true
 }
 
-fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, region: &mut Region) {
+fn plant_deciduous(
+    x: usize,
+    y: usize,
+    z: usize,
+    rng: &mut RandomNumberGenerator,
+    region: &mut Region,
+) {
     let tree_id = {
         let mut tl = TREE_COUNTER.write();
         *tl += 1;
@@ -98,9 +104,21 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
 
     // Grow the tree
     let mut trunk = Vec::<Trunk>::new();
-    trunk.push(Trunk{ x, y, z, depth: 1, done: true });
+    trunk.push(Trunk {
+        x,
+        y,
+        z,
+        depth: 1,
+        done: true,
+    });
     region.tree_bases.insert(tree_id, mapidx(x, y, z));
-    trunk.push(Trunk{ x, y, z: z+1, depth: 2, done: false });
+    trunk.push(Trunk {
+        x,
+        y,
+        z: z + 1,
+        depth: 2,
+        done: false,
+    });
     let mut bailout_count = 0;
     while trunk.iter().filter(|t| t.done == false).count() > 0 && bailout_count < 50 {
         for i in 0..trunk.len() {
@@ -111,35 +129,65 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
                     let b = trunk[i].clone();
                     let mut added = false;
                     while !added && bailout_count < 50 {
-                        for _ in 0 .. rng.range(0, 4) {
+                        for _ in 0..rng.range(0, 4) {
                             match rng.range(0, usize::max(4, 10 - b.depth)) {
                                 0 => {
-                                    if check_collision(&trunk, x-1, y, z) {
-                                        trunk.push(Trunk{ x: b.x-1, y: b.y, z: b.z, depth: b.depth + 1, done: false });
+                                    if check_collision(&trunk, x - 1, y, z) {
+                                        trunk.push(Trunk {
+                                            x: b.x - 1,
+                                            y: b.y,
+                                            z: b.z,
+                                            depth: b.depth + 1,
+                                            done: false,
+                                        });
                                         added = true;
                                     }
                                 }
                                 1 => {
-                                    if check_collision(&trunk, x+1, y, z) {
-                                        trunk.push(Trunk{ x: b.x+1, y: b.y, z: b.z, depth: b.depth + 1, done: false });
+                                    if check_collision(&trunk, x + 1, y, z) {
+                                        trunk.push(Trunk {
+                                            x: b.x + 1,
+                                            y: b.y,
+                                            z: b.z,
+                                            depth: b.depth + 1,
+                                            done: false,
+                                        });
                                         added = true;
                                     }
                                 }
                                 2 => {
-                                    if check_collision(&trunk, x, y-1, z) {
-                                        trunk.push(Trunk{ x: b.x, y: b.y-1, z: b.z, depth: b.depth + 1, done: false });
+                                    if check_collision(&trunk, x, y - 1, z) {
+                                        trunk.push(Trunk {
+                                            x: b.x,
+                                            y: b.y - 1,
+                                            z: b.z,
+                                            depth: b.depth + 1,
+                                            done: false,
+                                        });
                                         added = true;
                                     }
                                 }
                                 3 => {
-                                    if check_collision(&trunk, x, y+1, z) {
-                                        trunk.push(Trunk{ x: b.x, y: b.y+1, z: b.z, depth: b.depth + 1, done: false });
+                                    if check_collision(&trunk, x, y + 1, z) {
+                                        trunk.push(Trunk {
+                                            x: b.x,
+                                            y: b.y + 1,
+                                            z: b.z,
+                                            depth: b.depth + 1,
+                                            done: false,
+                                        });
                                         added = true;
                                     }
                                 }
                                 _ => {
-                                    if check_collision(&trunk, x-1, y, z+1) {
-                                        trunk.push(Trunk{ x: b.x, y: b.y, z: b.z + 1, depth: b.depth + 1, done: false });
+                                    if check_collision(&trunk, x - 1, y, z + 1) {
+                                        trunk.push(Trunk {
+                                            x: b.x,
+                                            y: b.y,
+                                            z: b.z + 1,
+                                            depth: b.depth + 1,
+                                            done: false,
+                                        });
                                         added = true;
                                     }
                                 }
@@ -152,20 +200,32 @@ fn plant_deciduous(x: usize, y:usize, z:usize, rng: &mut RandomNumberGenerator, 
         }
     }
     trunk.iter().for_each(|t| {
-        if t.x > 0 && t.x < REGION_WIDTH-1 && t.y > 0 && t.y < REGION_HEIGHT-1 && t.z > 0 && t.z < REGION_DEPTH-1 {
+        if t.x > 0
+            && t.x < REGION_WIDTH - 1
+            && t.y > 0
+            && t.y < REGION_HEIGHT - 1
+            && t.z > 0
+            && t.z < REGION_DEPTH - 1
+        {
             let idx = mapidx(t.x, t.y, t.z);
-            region.tile_types[idx] = TileType::TreeTrunk{ tree_id: tree_id };
+            region.tile_types[idx] = TileType::TreeTrunk { tree_id: tree_id };
         }
     });
     trunk.iter().for_each(|t| {
-        if t.x > 1 && t.x < REGION_WIDTH-2 && t.y > 1 && t.y < REGION_HEIGHT-2 && t.z > 1 && t.z < REGION_DEPTH-2 {
-            for fx in t.x - 1..= t.x + 1 {
-                for fy in t.y - 1..= t.y + 1 {
-                    for fz in t.z ..= t.z + 1 {
+        if t.x > 1
+            && t.x < REGION_WIDTH - 2
+            && t.y > 1
+            && t.y < REGION_HEIGHT - 2
+            && t.z > 1
+            && t.z < REGION_DEPTH - 2
+        {
+            for fx in t.x - 1..=t.x + 1 {
+                for fy in t.y - 1..=t.y + 1 {
+                    for fz in t.z..=t.z + 1 {
                         if t.depth > 2 && rng.roll_dice(1, 3) > 1 {
                             let idx = mapidx(fx, fy, fz);
                             if region.tile_types[idx] == TileType::Empty {
-                                region.tile_types[idx] = TileType::TreeFoliage{ tree_id: tree_id };
+                                region.tile_types[idx] = TileType::TreeFoliage { tree_id: tree_id };
                             }
                         }
                     }

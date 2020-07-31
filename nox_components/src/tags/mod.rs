@@ -6,7 +6,9 @@ pub use orders::*;
 pub struct Cordex {}
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-pub struct Building { pub complete: bool }
+pub struct Building {
+    pub complete: bool,
+}
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Item {}

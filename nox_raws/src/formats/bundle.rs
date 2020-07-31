@@ -1,7 +1,7 @@
+use super::*;
 use ron::de::from_reader;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use super::*;
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct RawBundle {

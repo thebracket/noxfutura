@@ -8,8 +8,11 @@ fn spawn_item_common(ecs: &mut World, tag: &str, material: usize) -> Option<(Ent
         println!("Spawning item [{}]", tag);
         let id = IdentityTag::new();
         let new_identity = id.0;
-        let entity = ecs.push(
-            (Item {}, Tag(tag.to_string()), id,
+        let entity = ecs
+            .push((
+                Item {},
+                Tag(tag.to_string()),
+                id,
                 Name {
                     name: item.name.clone(),
                 },
@@ -23,37 +26,21 @@ fn spawn_item_common(ecs: &mut World, tag: &str, material: usize) -> Option<(Ent
                 Tint {
                     color: (1.0, 1.0, 1.0),
                 },
-                Material(material)
-            ),
-        )
-        .clone();
+                Material(material),
+            ))
+            .clone();
 
         for it in item.item_type.iter() {
             match it {
-                ItemDefType::ToolChopping => ecs
-                    .entry(entity)
-                    .unwrap()
-                    .add_component(
-                        Tool {
-                            usage: ToolType::Chopping,
-                        },
-                    ),
-                ItemDefType::ToolDigging => ecs
-                    .entry(entity)
-                    .unwrap()
-                    .add_component(
-                        Tool {
-                            usage: ToolType::Digging,
-                        },
-                    ),
-                ItemDefType::ToolFarming => ecs
-                    .entry(entity)
-                    .unwrap()
-                    .add_component(
-                        Tool {
-                            usage: ToolType::Farming,
-                        },
-                    ),
+                ItemDefType::ToolChopping => ecs.entry(entity).unwrap().add_component(Tool {
+                    usage: ToolType::Chopping,
+                }),
+                ItemDefType::ToolDigging => ecs.entry(entity).unwrap().add_component(Tool {
+                    usage: ToolType::Digging,
+                }),
+                ItemDefType::ToolFarming => ecs.entry(entity).unwrap().add_component(Tool {
+                    usage: ToolType::Farming,
+                }),
                 _ => {}
             }
         }
@@ -72,37 +59,60 @@ pub fn spawn_item_on_ground(
     y: usize,
     z: usize,
     region_idx: usize,
-    material: usize
+    material: usize,
 ) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
-        ecs.entry(entity).unwrap().add_component(Position::with_tile(x, y, z, region_idx, (1, 1, 1)));
+        ecs.entry(entity)
+            .unwrap()
+            .add_component(Position::with_tile(x, y, z, region_idx, (1, 1, 1)));
         Some(id)
     } else {
         None
     }
 }
 
-pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize, material: usize) -> Option<usize> {
+pub fn spawn_item_in_container(
+    ecs: &mut World,
+    tag: &str,
+    container: usize,
+    material: usize,
+) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
-        ecs.entry(entity).unwrap().add_component(Position::stored(container));
+        ecs.entry(entity)
+            .unwrap()
+            .add_component(Position::stored(container));
         Some(id)
     } else {
         None
     }
 }
 
-pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize, material: usize) -> Option<usize> {
+pub fn spawn_item_worn(
+    ecs: &mut World,
+    tag: &str,
+    wearer: usize,
+    material: usize,
+) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
-        ecs.entry(entity).unwrap().add_component(Position::worn(wearer));
+        ecs.entry(entity)
+            .unwrap()
+            .add_component(Position::worn(wearer));
         Some(id)
     } else {
         None
     }
 }
 
-pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize, material: usize) -> Option<usize> {
+pub fn spawn_item_carried(
+    ecs: &mut World,
+    tag: &str,
+    wearer: usize,
+    material: usize,
+) -> Option<usize> {
     if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
-        ecs.entry(entity).unwrap().add_component(Position::carried(wearer));
+        ecs.entry(entity)
+            .unwrap()
+            .add_component(Position::carried(wearer));
         Some(id)
     } else {
         None

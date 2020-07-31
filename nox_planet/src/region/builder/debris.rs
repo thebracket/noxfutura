@@ -1,7 +1,7 @@
 use crate::{ground_z, Region, TileType};
 use bracket_geometry::prelude::Point;
 use legion::*;
-use nox_spatial::{ REGION_WIDTH, mapidx };
+use nox_spatial::{mapidx, REGION_WIDTH};
 use std::collections::HashSet;
 
 pub fn debris_trail(region: &mut Region, ship_loc: Point, _ecs: &mut World) {
@@ -13,27 +13,33 @@ pub fn debris_trail(region: &mut Region, ship_loc: Point, _ecs: &mut World) {
 
             let idx = mapidx(x as usize, y as usize, z);
             match region.tile_types[idx] {
-                TileType::Floor{ plant } => {
+                TileType::Floor { plant } => {
                     if plant.is_some() {
-                        region.tile_types[idx] = TileType::Floor{ plant: None };
+                        region.tile_types[idx] = TileType::Floor { plant: None };
                     }
                 }
-                TileType::TreeTrunk { tree_id } => { trees_to_remove.insert(tree_id); }
-                TileType::TreeFoliage { tree_id } => { trees_to_remove.insert(tree_id); }
+                TileType::TreeTrunk { tree_id } => {
+                    trees_to_remove.insert(tree_id);
+                }
+                TileType::TreeFoliage { tree_id } => {
+                    trees_to_remove.insert(tree_id);
+                }
                 _ => {}
             }
         }
     }
 
-    region.tile_types.iter_mut().for_each(|t| {
-        match t {
-            TileType::TreeTrunk { tree_id } => {
-                if trees_to_remove.contains(&tree_id) { *t = TileType::Empty; }
+    region.tile_types.iter_mut().for_each(|t| match t {
+        TileType::TreeTrunk { tree_id } => {
+            if trees_to_remove.contains(&tree_id) {
+                *t = TileType::Empty;
             }
-            TileType::TreeFoliage { tree_id } => {
-                if trees_to_remove.contains(&tree_id) { *t = TileType::Empty; }
-            }
-            _ => {}
         }
+        TileType::TreeFoliage { tree_id } => {
+            if trees_to_remove.contains(&tree_id) {
+                *t = TileType::Empty;
+            }
+        }
+        _ => {}
     });
 }

@@ -10,7 +10,7 @@ pub fn spawn_settlers(
     crash_site: &Point,
     crash_z: usize,
     region_idx: usize,
-    n_settlers: usize
+    n_settlers: usize,
 ) {
     let spawn_points = vec![
         (crash_site.x - 4, crash_site.y - 2, crash_z + 3),
@@ -217,11 +217,7 @@ fn spawn_settler(
         }
     }
 
-    let entity = ecs.push(
-        (
-            Sentient {},
-            id)
-    );
+    let entity = ecs.push((Sentient {}, id));
 
     if let Some(mut e) = ecs.entry(entity) {
         e.add_component(Position::with_tile(x, y, z, region_idx, (1, 1, 1)));
@@ -240,13 +236,11 @@ fn spawn_settler(
             order: WorkOrder::None,
             job: JobType::None,
         });
-        e.add_component(
-            WorkSchedule::new(match x % 3 {
-                0 => Shift::Day,
-                1 => Shift::Night,
-                _ => Shift::Morning,
-            }),
-        );
+        e.add_component(WorkSchedule::new(match x % 3 {
+            0 => Shift::Day,
+            1 => Shift::Night,
+            _ => Shift::Morning,
+        }));
     }
 
     let plasteel = get_material_by_tag("Plasteel").unwrap();

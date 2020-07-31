@@ -1,7 +1,7 @@
 use crate::systems::REGION;
 use crate::systems::RNG;
-use legion::*;
 use legion::systems::Schedulable;
+use legion::*;
 use nox_components::*;
 use nox_planet::Region;
 

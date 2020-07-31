@@ -56,7 +56,7 @@ pub fn spawn_item_on_ground(
     y: usize,
     z: usize,
     region: &mut Region,
-    material: usize
+    material: usize,
 ) {
     if let Some(id) =
         nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx, material)
@@ -65,20 +65,40 @@ pub fn spawn_item_on_ground(
     }
 }
 
-pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize, region: &mut Region, material: usize) {
+pub fn spawn_item_in_container(
+    ecs: &mut World,
+    tag: &str,
+    container: usize,
+    region: &mut Region,
+    material: usize,
+) {
     println!("Container spawn");
-    if let Some(id) = nox_components::spawner::spawn_item_in_container(ecs, tag, container, material) {
+    if let Some(id) =
+        nox_components::spawner::spawn_item_in_container(ecs, tag, container, material)
+    {
         add_tool_info(ecs, id, region, None);
     }
 }
 
-pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize, region: &mut Region, material: usize) {
+pub fn spawn_item_worn(
+    ecs: &mut World,
+    tag: &str,
+    wearer: usize,
+    region: &mut Region,
+    material: usize,
+) {
     if let Some(id) = nox_components::spawner::spawn_item_worn(ecs, tag, wearer, material) {
         add_tool_info(ecs, id, region, Some(wearer));
     }
 }
 
-pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize, region: &mut Region, material: usize) {
+pub fn spawn_item_carried(
+    ecs: &mut World,
+    tag: &str,
+    wearer: usize,
+    region: &mut Region,
+    material: usize,
+) {
     if let Some(id) = nox_components::spawner::spawn_item_carried(ecs, tag, wearer, material) {
         add_tool_info(ecs, id, region, Some(wearer));
     }

@@ -1,9 +1,9 @@
 mod calendar;
+mod construct_buildings;
 mod endturn;
 mod initiative;
 mod leisure_shift;
 mod lumberjack;
-mod construct_buildings;
 mod move_randomly;
 mod settler_scheduler;
 mod shared_state;

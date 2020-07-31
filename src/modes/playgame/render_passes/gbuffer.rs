@@ -15,22 +15,24 @@ impl GBuffer {
         let albedo = GBufferTarget::make_texture(
             "Albedo",
             swap_format,
-            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT
+            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT,
         );
         let normal = GBufferTarget::make_texture(
             "Normal",
             wgpu::TextureFormat::Rgba32Float,
-            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT
+            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT,
         );
         let pbr = GBufferTarget::make_texture(
             "PBR",
             swap_format,
-            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT
+            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT,
         );
         let coords = GBufferTarget::make_texture(
-    "Coords",
-    wgpu::TextureFormat::Rgba32Float,
-            wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::OUTPUT_ATTACHMENT | wgpu::TextureUsage::COPY_SRC,
+            "Coords",
+            wgpu::TextureFormat::Rgba32Float,
+            wgpu::TextureUsage::SAMPLED
+                | wgpu::TextureUsage::OUTPUT_ATTACHMENT
+                | wgpu::TextureUsage::COPY_SRC,
         );
 
         let mouse_buffer = {
@@ -98,7 +100,11 @@ pub struct GBufferTarget {
 }
 
 impl GBufferTarget {
-    pub fn make_texture(label: &str, format: wgpu::TextureFormat, usage: wgpu::TextureUsage) -> Self {
+    pub fn make_texture(
+        label: &str,
+        format: wgpu::TextureFormat,
+        usage: wgpu::TextureUsage,
+    ) -> Self {
         let mut ctx_lock = DEVICE_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
 
@@ -115,7 +121,7 @@ impl GBufferTarget {
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format,
-            usage
+            usage,
         });
 
         let view = texture.create_default_view();

@@ -1,7 +1,7 @@
 use crate::systems::RNG;
 use crate::utils::attribute_modifier;
-use legion::*;
 use legion::systems::Schedulable;
+use legion::*;
 use nox_components::*;
 
 pub fn build() -> impl Schedulable {

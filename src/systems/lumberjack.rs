@@ -1,9 +1,9 @@
 use crate::messaging;
 use crate::systems::REGION;
-use nox_planet::pathfinding::a_star_search;
-use legion::*;
 use legion::systems::Schedulable;
+use legion::*;
 use nox_components::*;
+use nox_planet::pathfinding::a_star_search;
 
 pub fn build() -> impl Schedulable {
     SystemBuilder::new("lumberjack")

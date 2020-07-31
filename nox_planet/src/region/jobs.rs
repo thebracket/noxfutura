@@ -9,7 +9,7 @@ pub struct JobsBoard {
     designated_trees: HashSet<usize>,
     all_jobs: Vec<JobBoardListing>,
     tool_ownership: HashMap<usize, ToolClaim>,
-    component_ownership: HashMap<usize, ComponentClaim>
+    component_ownership: HashMap<usize, ComponentClaim>,
 }
 
 impl JobsBoard {
@@ -18,7 +18,7 @@ impl JobsBoard {
             designated_trees: HashSet::new(),
             all_jobs: Vec::new(),
             tool_ownership: HashMap::new(),
-            component_ownership: HashMap::new()
+            component_ownership: HashMap::new(),
         }
     }
 
@@ -123,7 +123,7 @@ impl JobsBoard {
 
     fn is_possible(&self, job: &JobBoardListing) -> bool {
         match job.job {
-            JobType::FellTree{..} => {
+            JobType::FellTree { .. } => {
                 let available_tools = self
                     .tool_ownership
                     .iter()
@@ -131,7 +131,7 @@ impl JobsBoard {
                     .count();
                 available_tools > 0
             }
-            _ => true
+            _ => true,
         }
     }
 
@@ -159,33 +159,41 @@ impl JobsBoard {
         self.component_ownership.contains_key(&id)
     }
 
-    pub fn claim_component_for_building(&mut self, building_id: usize, component_id: usize, effective_location: usize) {
-        self.component_ownership.insert(component_id, ComponentClaim{
-            claimed_by_building: building_id,
-            effective_location
-        });
+    pub fn claim_component_for_building(
+        &mut self,
+        building_id: usize,
+        component_id: usize,
+        effective_location: usize,
+    ) {
+        self.component_ownership.insert(
+            component_id,
+            ComponentClaim {
+                claimed_by_building: building_id,
+                effective_location,
+            },
+        );
     }
 
     pub fn relinquish_component_for_building(&mut self, component_id: usize) {
         self.component_ownership.remove(&component_id);
     }
 
-    pub fn add_building_job(&mut self, building_id: usize, building_pos: usize, comps: &[(usize, usize)]) {
-        let components = comps
-            .iter()
-            .map(|(idx, id)| (*idx, *id, false) )
-            .collect();
-        self.all_jobs.push(
-            JobBoardListing{
-                claimed: None,
-                job: JobType::ConstructBuilding{
-                    building_id,
-                    building_pos,
-                    step: BuildingSteps::FindComponent,
-                    components
-                }
-            }
-        );
+    pub fn add_building_job(
+        &mut self,
+        building_id: usize,
+        building_pos: usize,
+        comps: &[(usize, usize)],
+    ) {
+        let components = comps.iter().map(|(idx, id)| (*idx, *id, false)).collect();
+        self.all_jobs.push(JobBoardListing {
+            claimed: None,
+            job: JobType::ConstructBuilding {
+                building_id,
+                building_pos,
+                step: BuildingSteps::FindComponent,
+                components,
+            },
+        });
     }
 }
 

@@ -1,7 +1,13 @@
 use crate::prelude::*;
 use legion::*;
 
-pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: usize, complete: bool) -> usize {
+pub fn spawn_building(
+    ecs: &mut World,
+    tag: &str,
+    tile_idx: usize,
+    region_idx: usize,
+    complete: bool,
+) -> usize {
     use nox_raws::*;
     let mut result = 0;
     let rlock = RAWS.read();
@@ -16,39 +22,37 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
         let identity = IdentityTag::new();
         result = identity.0;
 
-        let entity = ecs.push(
-            (
-                identity,
-                Building { complete },
-                Tag(tag.to_string()),
-                Name {
-                    name: building_def.name.clone(),
-                },
-                crate::VoxelModel {
-                    index: rlock.vox.get_model_idx(&building_def.vox),
-                    rotation_radians: 0.0,
-                },
-                Description {
-                    desc: building_def.description.clone(),
-                },
-                Position::with_tile_idx(tile_idx, region_idx, dims),
-                Tint {
-                    color: (1.0, 1.0, 1.0),
-                },
-            ),
-        );
+        let entity = ecs.push((
+            identity,
+            Building { complete },
+            Tag(tag.to_string()),
+            Name {
+                name: building_def.name.clone(),
+            },
+            crate::VoxelModel {
+                index: rlock.vox.get_model_idx(&building_def.vox),
+                rotation_radians: 0.0,
+            },
+            Description {
+                desc: building_def.description.clone(),
+            },
+            Position::with_tile_idx(tile_idx, region_idx, dims),
+            Tint {
+                color: (1.0, 1.0, 1.0),
+            },
+        ));
         println!("New building ID: {}", identity.0);
 
         for provides in building_def.provides.iter() {
             if let BuildingProvides::Light { radius, color } = provides {
-                ecs.entry(entity).unwrap().add_component(
-                    Light {
-                        color: *color,
-                        radius: *radius,
-                        enabled: complete
-                    },
-                );
-                ecs.entry(entity).unwrap().add_component(FieldOfView::new(*radius));
+                ecs.entry(entity).unwrap().add_component(Light {
+                    color: *color,
+                    radius: *radius,
+                    enabled: complete,
+                });
+                ecs.entry(entity)
+                    .unwrap()
+                    .add_component(FieldOfView::new(*radius));
             }
 
             if let BuildingProvides::Storage = provides {

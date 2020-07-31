@@ -23,17 +23,24 @@ pub struct VMInstances {
 impl VMInstances {
     pub fn new() -> Self {
         Self {
-            instances: HashMap::with_capacity(200)
+            instances: HashMap::with_capacity(200),
         }
     }
 
-    fn add(&mut self, model_id: usize, position: [f32; 3], tint: [f32; 3], rotation: f32, greyscale: f32) {
+    fn add(
+        &mut self,
+        model_id: usize,
+        position: [f32; 3],
+        tint: [f32; 3],
+        rotation: f32,
+        greyscale: f32,
+    ) {
         if let Some(vmi) = self.instances.get_mut(&model_id) {
             vmi.push(VMRender {
                 position,
                 tint,
                 rotation,
-                greyscale
+                greyscale,
             });
         } else {
             self.instances.insert(
@@ -42,7 +49,7 @@ impl VMInstances {
                     position,
                     tint,
                     rotation,
-                    greyscale
+                    greyscale,
                 }],
             );
         }
@@ -59,15 +66,14 @@ pub fn build_vox_instances2(
     vox_instances: &mut Vec<(u32, u32, u32)>,
     frustrum: &Frustrum,
     mouse_world_pos: &(usize, usize, usize),
-    building_to_build: &Option<usize>
+    building_to_build: &Option<usize>,
 ) {
     let mut instances = VMInstances::new();
     instance_buffer.clear();
     vox_instances.clear();
 
     // Models from the ECS
-    let mut query =
-        <(Entity, Read<Position>, Read<VoxelModel>, Read<Tint>)>::query();
+    let mut query = <(Entity, Read<Position>, Read<VoxelModel>, Read<Tint>)>::query();
     query
         .iter(ecs)
         .filter(|(_, pos, _, _)| {
@@ -102,13 +108,12 @@ pub fn build_vox_instances2(
                     }
                 } else {
                     0.0
-                }
+                },
             );
         });
 
     // Composite builder
-    let mut query =
-        <(Read<Position>, Read<CompositeRender>)>::query();
+    let mut query = <(Read<Position>, Read<CompositeRender>)>::query();
     query
         .iter(ecs)
         .filter(|(pos, _)| {
@@ -130,20 +135,23 @@ pub fn build_vox_instances2(
                     pos.as_xzy_f32(),
                     [vm.tint.0, vm.tint.1, vm.tint.2],
                     composite.rotation,
-                    0.0
+                    0.0,
                 );
             }
-        }
-    );
+        });
 
     // Building Projects
     if let Some(tag) = building_to_build {
         instances.add(
-           *tag,
-            [ mouse_world_pos.0 as f32, mouse_world_pos.2 as f32, mouse_world_pos.1 as f32 ],
+            *tag,
+            [
+                mouse_world_pos.0 as f32,
+                mouse_world_pos.2 as f32,
+                mouse_world_pos.1 as f32,
+            ],
             [0.5, 0.5, 0.5],
             0.0,
-            1.0
+            1.0,
         );
     }
 

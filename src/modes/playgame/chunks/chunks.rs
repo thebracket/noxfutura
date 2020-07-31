@@ -2,9 +2,9 @@ use super::super::render_passes::frustrum::Frustrum;
 use super::{Chunk, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
 use crate::systems::REGION;
 use bracket_geometry::prelude::*;
+use cgmath::Matrix4;
 use nox_components::Position;
 use rayon::prelude::*;
-use cgmath::Matrix4;
 
 pub struct Chunks {
     chunks: Vec<Chunk>,
@@ -31,7 +31,7 @@ impl Chunks {
 
     pub fn mark_dirty(&mut self, tiles: &Vec<usize>) {
         tiles.iter().for_each(|idx| {
-            let (x,y,z) = nox_spatial::idxmap(*idx);
+            let (x, y, z) = nox_spatial::idxmap(*idx);
             let chunk_id = super::chunk_id_by_world(x, y, z);
             self.chunks[chunk_id].dirty = true;
         });

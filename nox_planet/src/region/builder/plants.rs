@@ -32,15 +32,17 @@ pub fn grow_plants(
                     if (rng.roll_dice(1, 15) as u8) <= soil_quality {
                         let chosen_plant = rng.random_slice_entry(&available_plants);
                         if let Some(plant_idx) = chosen_plant {
-                            region.tile_types[mapidx(x, y, z)] = TileType::Floor{ plant: Some(*plant_idx) };
-                            /*spawn_plant(
-                                ecs,
-                                &RAWS.read().plants.plants[*plant_idx].tag,
-                                x,
-                                y,
-                                z,
-                                region.world_idx,
-                            );*/
+                            region.tile_types[mapidx(x, y, z)] = TileType::Floor {
+                                plant: Some(*plant_idx),
+                            };
+                        /*spawn_plant(
+                            ecs,
+                            &RAWS.read().plants.plants[*plant_idx].tag,
+                            x,
+                            y,
+                            z,
+                            region.world_idx,
+                        );*/
                         } else {
                             println!("Rejecting because no plant type was received");
                         }

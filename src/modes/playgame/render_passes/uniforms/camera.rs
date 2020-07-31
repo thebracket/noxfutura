@@ -1,5 +1,5 @@
+use cgmath::{EuclideanSpace, Matrix4, Point3, Vector3};
 use nox_components::*;
-use cgmath::{Matrix4, Vector3, Point3, EuclideanSpace};
 
 pub struct Camera {
     pub eye: Vector3<f32>,
@@ -34,9 +34,9 @@ impl Camera {
 
     pub fn build_view_projection_matrix(&self) -> Matrix4<f32> {
         let view = Matrix4::look_at(
-            Point3::from_vec(self.eye), 
-            Point3::from_vec(self.target), 
-            self.up
+            Point3::from_vec(self.eye),
+            Point3::from_vec(self.target),
+            self.up,
         );
         let proj = cgmath::perspective(cgmath::Rad(self.fovy), self.aspect, self.znear, self.zfar);
         OPENGL_TO_WGPU_MATRIX * proj * view

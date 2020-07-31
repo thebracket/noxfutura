@@ -77,7 +77,7 @@ fn add_construction(
 ) {
     let plasteel = get_material_by_tag("Plasteel").unwrap();
     let idx = mapidx(x, y, z);
-    region.tile_types[idx] = TileType::Floor{ plant: None };
+    region.tile_types[idx] = TileType::Floor { plant: None };
     region.material_idx[idx] = plasteel;
     region.set_flag(idx, Region::CONSTRUCTED);
     if solid {
@@ -134,17 +134,29 @@ fn add_construction(
                 "personal_survival_shelter_kit",
                 storage_id,
                 region,
-                plasteel
+                plasteel,
             );
             crate::spawner::spawn_item_in_container(
                 ecs,
                 "personal_survival_shelter_kit",
                 storage_id,
                 region,
-                plasteel
+                plasteel,
             );
-            crate::spawner::spawn_item_in_container(ecs, "camp_fire_kit", storage_id, region, plasteel);
-            crate::spawner::spawn_item_in_container(ecs, "personal_survival_shelter_kit", storage_id, region, plasteel);
+            crate::spawner::spawn_item_in_container(
+                ecs,
+                "camp_fire_kit",
+                storage_id,
+                region,
+                plasteel,
+            );
+            crate::spawner::spawn_item_in_container(
+                ecs,
+                "personal_survival_shelter_kit",
+                storage_id,
+                region,
+                plasteel,
+            );
             crate::spawner::spawn_item_in_container(ecs, "fire_axe", storage_id, region, plasteel);
             crate::spawner::spawn_item_in_container(ecs, "pickaxe", storage_id, region, plasteel);
             crate::spawner::spawn_item_in_container(ecs, "hoe", storage_id, region, plasteel);

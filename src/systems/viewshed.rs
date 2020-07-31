@@ -1,10 +1,10 @@
 use crate::systems::REGION;
-use legion::*;
+use cgmath::{InnerSpace, Vector3};
 use legion::systems::Schedulable;
+use legion::*;
 use nox_components::*;
-use nox_planet::{Region};
+use nox_planet::Region;
 use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
-use cgmath::{Vector3, InnerSpace};
 
 pub fn build() -> impl Schedulable {
     SystemBuilder::new("calendar")
@@ -44,16 +44,14 @@ pub fn build() -> impl Schedulable {
                     }
                     fov.is_dirty = false;
                     entities.push(*entity);
-                }
-            );
+                });
             entities.iter().for_each(|e| {
                 if ecs.entry_ref(*e).unwrap().get_component::<Light>().is_ok() {
                     crate::messaging::lights_changed();
                     println!("Lights changed");
                 }
             })
-        }
-    )
+        })
 }
 
 #[inline]
@@ -91,8 +89,7 @@ fn internal_view_to(pos: &Position, fov: &mut FieldOfView, x: i32, y: i32, z: i3
                     }
                 } else if z > last_z {
                     // Check if we're trying to go through a ceiling
-                    if REGION.read().is_floor(idx + (REGION_WIDTH * REGION_HEIGHT))
-                    {
+                    if REGION.read().is_floor(idx + (REGION_WIDTH * REGION_HEIGHT)) {
                         blocked = true;
                         reveal(idx, fov);
                     }

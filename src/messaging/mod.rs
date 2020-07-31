@@ -3,9 +3,9 @@ mod renderflags;
 use backends::*;
 use nox_components::JobType;
 mod jobstep;
+use bracket_geometry::prelude::Point3;
 use jobstep::apply_jobs_queue;
 use jobstep::JobStep;
-use bracket_geometry::prelude::Point3;
 use legion::World;
 
 pub use renderflags::get_render_flags;
@@ -41,7 +41,9 @@ pub fn entity_moved(id: usize, end: &Point3) {
 }
 
 pub fn job_changed(id: usize, new_job: JobType) {
-    JOBS_QUEUE.lock().push_back(JobStep::JobChanged { id, new_job });
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::JobChanged { id, new_job });
 }
 
 pub fn cancel_job(id: usize) {
@@ -57,11 +59,15 @@ pub fn follow_job_path(id: usize) {
 }
 
 pub fn drop_item(id: usize, location: usize) {
-    JOBS_QUEUE.lock().push_back(JobStep::DropItem { id, location });
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::DropItem { id, location });
 }
 
 pub fn relinquish_claim(tool_id: usize, tool_pos: usize) {
-    JOBS_QUEUE.lock().push_back(JobStep::RelinquishClaim { tool_id, tool_pos });
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::RelinquishClaim { tool_id, tool_pos });
 }
 
 pub fn equip_tool(id: usize, tool_id: usize) {
@@ -77,13 +83,17 @@ pub fn chop_tree(id: usize, tree_id: usize) {
 }
 
 pub fn delete_item(id: usize) {
-    JOBS_QUEUE.lock().push_back(JobStep::DeleteItem{ id });
+    JOBS_QUEUE.lock().push_back(JobStep::DeleteItem { id });
 }
 
 pub fn delete_building(building_id: usize) {
-    JOBS_QUEUE.lock().push_back(JobStep::DeleteBuilding{ building_id });
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::DeleteBuilding { building_id });
 }
 
 pub fn finish_building(building_id: usize) {
-    JOBS_QUEUE.lock().push_back(JobStep::FinishBuilding{ building_id });
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::FinishBuilding { building_id });
 }

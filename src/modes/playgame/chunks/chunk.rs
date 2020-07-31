@@ -2,11 +2,11 @@ use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::engine::VertexBuffer;
 use crate::utils::add_floor_geometry;
+use crate::utils::add_ramp_geometry;
+use cgmath::Vector3;
 use nox_planet::{Region, TileType};
 use nox_raws::{MappedTexture, RAWS};
 use nox_spatial::mapidx;
-use cgmath::Vector3;
-use crate::utils::add_ramp_geometry;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -111,17 +111,36 @@ impl Chunk {
                                     TileType::Solid => {
                                         cubes.insert(idx, self.calc_material(idx, region));
                                     }
-                                    TileType::TreeTrunk{..} => {
-                                        cubes.insert(idx, MappedTexture{ texture: RAWS.read().matmap.bark_id, tint: (1.0, 1.0, 1.0) });
+                                    TileType::TreeTrunk { .. } => {
+                                        cubes.insert(
+                                            idx,
+                                            MappedTexture {
+                                                texture: RAWS.read().matmap.bark_id,
+                                                tint: (1.0, 1.0, 1.0),
+                                            },
+                                        );
                                     }
-                                    TileType::TreeFoliage{..} => {
-                                        cubes.insert(idx, MappedTexture{ texture: RAWS.read().matmap.leaf_id, tint: (1.0, 1.0, 1.0) });
+                                    TileType::TreeFoliage { .. } => {
+                                        cubes.insert(
+                                            idx,
+                                            MappedTexture {
+                                                texture: RAWS.read().matmap.leaf_id,
+                                                tint: (1.0, 1.0, 1.0),
+                                            },
+                                        );
                                     }
-                                    TileType::Floor{plant} => {
+                                    TileType::Floor { plant } => {
                                         if let Some(_plant) = plant {
-                                            floors.insert(idx, MappedTexture{ texture: RAWS.read().matmap.grass_id, tint: (1.0, 1.0, 1.0) });
+                                            floors.insert(
+                                                idx,
+                                                MappedTexture {
+                                                    texture: RAWS.read().matmap.grass_id,
+                                                    tint: (1.0, 1.0, 1.0),
+                                                },
+                                            );
                                         } else {
-                                            floors.insert(idx, self.calc_floor_material(idx, region));
+                                            floors
+                                                .insert(idx, self.calc_floor_material(idx, region));
                                         }
                                     }
                                     TileType::Ramp { direction } => {

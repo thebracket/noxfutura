@@ -8,6 +8,7 @@ mod buildings;
 mod debris;
 mod game_components;
 mod heightmap;
+mod map_components;
 mod plants;
 mod primitive;
 mod ramping;
@@ -15,12 +16,11 @@ mod settlers;
 mod strata;
 mod trees;
 mod water_features;
-mod map_components;
 use legion::*;
 pub use primitive::Primitive;
 mod flags;
-use nox_raws::RAWS;
 pub use flags::localized_flags as rebuild_flags;
+use nox_raws::RAWS;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");
@@ -92,12 +92,12 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
 
     set_worldgen_status("Settlers");
     settlers::spawn_settlers(
-        &mut world, 
-        &mut rng, 
-        &ship_loc, 
-        crash_z, 
+        &mut world,
+        &mut rng,
+        &ship_loc,
+        crash_z,
         region.world_idx,
-        planet.starting_settlers as usize
+        planet.starting_settlers as usize,
     );
 
     set_worldgen_status("Features");

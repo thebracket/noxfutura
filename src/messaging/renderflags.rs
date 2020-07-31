@@ -3,7 +3,7 @@ pub struct RenderFlags {
     pub lights_changed: bool,
     pub models_changed: bool,
     pub terrain_changed: bool,
-    pub dirty_tiles: Vec<usize>
+    pub dirty_tiles: Vec<usize>,
 }
 
 impl RenderFlags {
@@ -12,7 +12,7 @@ impl RenderFlags {
             lights_changed: false,
             models_changed: false,
             terrain_changed: false,
-            dirty_tiles: Vec::new()
+            dirty_tiles: Vec::new(),
         }
     }
 

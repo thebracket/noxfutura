@@ -21,8 +21,8 @@ pub enum JobType {
         building_id: usize,
         building_pos: usize,
         step: BuildingSteps,
-        components: Vec<(usize, usize, bool)>
-    }
+        components: Vec<(usize, usize, bool)>,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -38,9 +38,19 @@ pub enum LumberjackSteps {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum BuildingSteps {
     FindComponent,
-    TravelToComponent { path: Vec<usize>, component_id: usize },
-    CollectComponent { component_id: usize },
-    FindBuilding { component_id: usize },
-    TravelToTBuilding { path: Vec<usize>, component_id: usize },
+    TravelToComponent {
+        path: Vec<usize>,
+        component_id: usize,
+    },
+    CollectComponent {
+        component_id: usize,
+    },
+    FindBuilding {
+        component_id: usize,
+    },
+    TravelToTBuilding {
+        path: Vec<usize>,
+        component_id: usize,
+    },
     Construct,
 }

@@ -1,5 +1,5 @@
-use legion::*;
 use legion::systems::Schedulable;
+use legion::*;
 use nox_components::*;
 
 pub fn build() -> impl Schedulable {

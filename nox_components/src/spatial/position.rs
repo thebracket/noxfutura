@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use bracket_geometry::prelude::Point3;
-use nox_spatial::*;
 use cgmath::Vector3;
+use nox_spatial::*;
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Position {
@@ -113,33 +113,27 @@ impl Position {
         use legion::*;
         match self.loc {
             Location::Tile { idx } => idx,
-            Location::Stored { container } => {
-                <(Read<Position>, Read<IdentityTag>)>::query()
-                    .iter(ecs)
-                    .filter(|(_, id)| id.0 == container)
-                    .map(|(pos, _)| *pos)
-                    .nth(0)
-                    .unwrap()
-                    .effective_location(ecs)
-            }
-            Location::Carried { by } => {
-                <(Read<Position>, Read<IdentityTag>)>::query()
-                    .iter(ecs)
-                    .filter(|(_, id)| id.0 == by)
-                    .map(|(pos, _)| *pos)
-                    .nth(0)
-                    .unwrap()
-                    .effective_location(ecs)
-            }
-            Location::Worn { by } => {
-                <(Read<Position>, Read<IdentityTag>)>::query()
-                    .iter(ecs)
-                    .filter(|(_, id)| id.0 == by)
-                    .map(|(pos, _)| *pos)
-                    .nth(0)
-                    .unwrap()
-                    .effective_location(ecs)
-            }
+            Location::Stored { container } => <(Read<Position>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(_, id)| id.0 == container)
+                .map(|(pos, _)| *pos)
+                .nth(0)
+                .unwrap()
+                .effective_location(ecs),
+            Location::Carried { by } => <(Read<Position>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(_, id)| id.0 == by)
+                .map(|(pos, _)| *pos)
+                .nth(0)
+                .unwrap()
+                .effective_location(ecs),
+            Location::Worn { by } => <(Read<Position>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(_, id)| id.0 == by)
+                .map(|(pos, _)| *pos)
+                .nth(0)
+                .unwrap()
+                .effective_location(ecs),
         }
     }
 
