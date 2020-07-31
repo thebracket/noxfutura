@@ -2,23 +2,20 @@ use super::prelude::*;
 
 // TODO: Be more inclusive
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "0e9e3f7b-0769-4b4e-b332-d94861f6d20c"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub enum Gender {
     Male,
     Female,
 }
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "0e9e3f7b-0769-4b4e-b332-d94861f6d20c"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub enum GenderIdentity {
     Male,
     Female,
     Neutral,
 }
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "9494aa2b-56b5-4573-a5e1-68bfde781bd5"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub enum Sexuality {
     Heterosexual,
     Pansexual,
@@ -26,8 +23,7 @@ pub enum Sexuality {
     ASexual,
 }
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "71e76ad4-17e6-4dc8-a129-568a6bdd14e8"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub enum HairStyle {
     Bald,
     Balding,
@@ -38,8 +34,7 @@ pub enum HairStyle {
     Triangle,
 }
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "a5a46181-6f8c-49a9-869d-f1367da09564"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Species {
     pub gender: Gender,
     pub gender_identity: GenderIdentity,

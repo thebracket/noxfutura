@@ -1,8 +1,7 @@
 use crate::prelude::*;
 use cgmath::Vector3;
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "a6464855-c959-4eb3-be05-dec8301b06b8"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Calendar {
     pub year: u16,
     pub month: u8,

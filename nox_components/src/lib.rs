@@ -33,8 +33,4 @@ pub mod prelude {
         de::{self, DeserializeSeed, IgnoredAny, Visitor},
         Deserialize, Deserializer, Serialize, Serializer,
     };
-    pub use std::{
-        any::TypeId, cell::RefCell, collections::HashMap, marker::PhantomData, ptr::NonNull,
-    };
-    pub use type_uuid::TypeUuid;
 }

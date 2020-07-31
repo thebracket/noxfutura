@@ -1,8 +1,7 @@
 use crate::prelude::*;
 use std::collections::HashSet;
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Debug, PartialEq)]
-#[uuid = "2b4c9d8c-a941-41a2-a850-342b2759c1ef"]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct FieldOfView {
     pub is_dirty: bool,
     pub radius: usize,

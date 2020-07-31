@@ -31,6 +31,7 @@ fn registry() -> Registry<String> {
     registry.register::<IdentityTag>("IdentityTag".to_string());
     registry.register::<Terrain>("Terrain".to_string());
     registry.register::<Tag>("Tag".to_string());
+    registry.register::<Material>("Material".to_string());
 
     registry
 }

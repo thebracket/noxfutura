@@ -1,7 +1,6 @@
 use crate::prelude::*;
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Debug, PartialEq)]
-#[uuid = "d5922445-30a4-4a39-bd69-c336d0d9e092"]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct Initiative {
     pub initiative: i32,
     pub modifier: i32,

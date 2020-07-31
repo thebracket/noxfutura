@@ -8,7 +8,6 @@ edition = "2018"
 
 [dependencies]
 legion = { git = "https://github.com/TomGillen/legion", features = [ "serialize" ]}
-type-uuid = "0.1"
 erased-serde = "0.3"
 uuid = { version = "0.8", features = ["v4"] }
 serde = { version = "1.0.114" }

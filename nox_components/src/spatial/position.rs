@@ -3,16 +3,14 @@ use bracket_geometry::prelude::Point3;
 use nox_spatial::*;
 use cgmath::Vector3;
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "ca3f2ce0-9c8e-4abe-a3c6-12098b1b016a"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Position {
     pub loc: Location,
     pub region_idx: usize,
     pub dimensions: (i32, i32, i32),
 }
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "a9c5c6a1-a175-4a4f-9165-02e06689a9c4"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub enum Location {
     Tile { idx: usize },
     Stored { container: usize },

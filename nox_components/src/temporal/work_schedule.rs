@@ -1,21 +1,18 @@
 use crate::prelude::*;
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "dc6e7909-5bce-4126-b1ec-672930c5af54"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub enum ScheduleTime {
     Work,
     Sleep,
     Leisure,
 }
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "d3caa080-defb-4a8f-b80d-ef10fc4e85d4"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct WorkSchedule {
     pub hours: [ScheduleTime; 24],
 }
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "c51516f4-7816-4fd7-89ab-7fcbb43cf355"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub enum Shift {
     Morning,
     Day,

@@ -2,8 +2,7 @@ use crate::prelude::*;
 use legion::*;
 use parking_lot::Mutex;
 
-#[derive(TypeUuid, Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-#[uuid = "32327503-a48b-483a-bde4-cc2825164b45"]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct IdentityTag(pub usize);
 
 lazy_static! {
