@@ -1,0 +1,13 @@
+(
+    materials: Some([
+        MaterialDef(
+            name: "Plasteel",
+            layer: Synthetic,
+            hit_points: 200,
+            mines_to: [ ],
+            description: "A nano-hybrid combining plastic and steel at a molecular level.",
+            texture: "metalfloor", constructed: "metalfloor", floor: "titanium", floor_constructed: "plasteeltile",
+            tint: (1.0, 1.0, 1.0)
+        ),
+    ])
+)

@@ -1,0 +1,203 @@
+(
+    materials: Some([
+        MaterialDef(
+            name: "Bithumous Coal",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "coal") ],
+            description: "Sticky black rock from which one can extract coal and tar.",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Chalk",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A crumbly rock, commonly used for writing on walls.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Chert",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder"), Item(name: "flint") ],
+            description: "A microcrystalline quartz rock.",
+            texture: "slate", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.1, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Claystone",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A sedimentary rock formed largely from mud.",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Cobaltite",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "Cobalt, arsenic and sulphur. Not tasty. Kobolds were named after this rock.",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.1, 0.8)
+        ),
+
+        MaterialDef(
+            name: "Conglomerate",
+            layer: Sedimentary,
+            hit_points: 75,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A sedimentary rock formed largely from just about everything else.",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Dacite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A hard rock containing lots of quartz and feltspar.",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Gypsum",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "gypsum_powder") ],
+            description: "A white rock frequently ground into plaster.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Jet",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A hard, black rock.",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Kaolinite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A white rock made up mostly of clay.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.9, 0.9, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Lignite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "coal") ],
+            description: "Sticky brown rock from which one can extract coal and tar.",
+            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Limestone",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A soft, light-colored rock.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.9, 0.9, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Marble",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A soft, light-colored rock popular in architecture.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.8, 0.8, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Mudstone",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A sedimentary rock formed largely from just about everything else.",
+            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.5, 0.4, 0.4)
+        ),
+
+        MaterialDef(
+            name: "Rock Salt",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "Salt crystals, crammed together into a rock.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Saltpeter",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Item(name: "stone_boulder") ],
+            description: "A primary component of gunpowder.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (0.6, 0.6, 0.6)
+        ),
+
+        MaterialDef(
+            name: "Sandstone",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Item(name: "sand") ],
+            description: "A primary component of gunpowder.",
+            texture: "sandstone", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.8, 0.8)
+        ),
+
+        MaterialDef(
+            name: "Shale",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Item(name: "oil") ],
+            description: "A soft, light-colored rock often containing oil.",
+            texture: "sandstone", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.7, 0.7)
+        ),
+
+        MaterialDef(
+            name: "Siltstone",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Item(name: "oil") ],
+            description: "A soft, light-colored rock.",
+            texture: "sandstone", constructed: "blocksrough", floor: "slicedrock", floor_constructed: "slipperystone",
+            tint: (0.1, 0.7, 0.7)
+        ),
+
+        MaterialDef(
+            name: "Alabaster",
+            layer: Sedimentary,
+            hit_points: 110,
+            mines_to: [ Item(name: "alabaster_powder") ],
+            description: "A soft rock that can be ground into plaster, or easily carved.",
+            texture: "limestone", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
+            tint: (1.0, 1.0, 1.0)
+        ),
+    ])
+)

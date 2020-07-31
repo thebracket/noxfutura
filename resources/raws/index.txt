@@ -1,10 +1,18 @@
 resources/raws/biome_bundle.ron
-resources/raws/material_bundle.ron
 resources/raws/plants_bundle.ron
 resources/raws/vox_bundle.ron
 resources/raws/species_bundle.ron
 resources/raws/professions_bundle.ron
 resources/raws/clothing_bundle.ron
+
+# Materials
+
+resources/raws/mats/igneous.ron
+resources/raws/mats/ore.ron
+resources/raws/mats/sediment.ron
+resources/raws/mats/soil.ron
+resources/raws/mats/sand.ron
+resources/raws/mats/synthetic.ron
 
 # Built-in workshops at world-gen
 
