@@ -19,8 +19,8 @@ pub fn spawn_building(ecs: &mut World, tag: &str, tile_idx: usize, region_idx: u
         let entity = ecs.push(
             (
                 identity,
-                Building { complete }, 
-                Tag(tag.to_string()), 
+                Building { complete },
+                Tag(tag.to_string()),
                 Name {
                     name: building_def.name.clone(),
                 },

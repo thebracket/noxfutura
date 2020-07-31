@@ -150,7 +150,8 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
 
             for _ in 0..crate::systems::RNG.lock().roll_dice(1, 6) {
                 let (tx,ty,tz) = idxmap(tree_idx);
-                nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock);
+                let wood = nox_raws::get_material_by_tag("Wood").unwrap();
+                nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock, wood);
             }
             super::vox_moved();
         }

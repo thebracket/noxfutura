@@ -2,7 +2,7 @@ use crate::prelude::*;
 use legion::*;
 use nox_raws::*;
 
-fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
+fn spawn_item_common(ecs: &mut World, tag: &str, material: usize) -> Option<(Entity, usize)> {
     let raws = RAWS.read();
     if let Some(item) = raws.items.item_by_tag(tag) {
         println!("Spawning item [{}]", tag);
@@ -23,6 +23,7 @@ fn spawn_item_common(ecs: &mut World, tag: &str) -> Option<(Entity, usize)> {
                 Tint {
                     color: (1.0, 1.0, 1.0),
                 },
+                Material(material)
             ),
         )
         .clone();
@@ -71,8 +72,9 @@ pub fn spawn_item_on_ground(
     y: usize,
     z: usize,
     region_idx: usize,
+    material: usize
 ) -> Option<usize> {
-    if let Some((entity, id)) = spawn_item_common(ecs, tag) {
+    if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
         ecs.entry(entity).unwrap().add_component(Position::with_tile(x, y, z, region_idx, (1, 1, 1)));
         Some(id)
     } else {
@@ -80,8 +82,8 @@ pub fn spawn_item_on_ground(
     }
 }
 
-pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) -> Option<usize> {
-    if let Some((entity, id)) = spawn_item_common(ecs, tag) {
+pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize, material: usize) -> Option<usize> {
+    if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
         ecs.entry(entity).unwrap().add_component(Position::stored(container));
         Some(id)
     } else {
@@ -89,8 +91,8 @@ pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize) -> 
     }
 }
 
-pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) -> Option<usize> {
-    if let Some((entity, id)) = spawn_item_common(ecs, tag) {
+pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize, material: usize) -> Option<usize> {
+    if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
         ecs.entry(entity).unwrap().add_component(Position::worn(wearer));
         Some(id)
     } else {
@@ -98,8 +100,8 @@ pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize) -> Option<usiz
     }
 }
 
-pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize) -> Option<usize> {
-    if let Some((entity, id)) = spawn_item_common(ecs, tag) {
+pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize, material: usize) -> Option<usize> {
+    if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
         ecs.entry(entity).unwrap().add_component(Position::carried(wearer));
         Some(id)
     } else {

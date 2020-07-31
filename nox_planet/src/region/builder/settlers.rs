@@ -249,6 +249,7 @@ fn spawn_settler(
         );
     }
 
-    spawner::spawn_item_worn(ecs, "ray_pistol", settler_id);
-    spawner::spawn_item_carried(ecs, "small_energy_cell", settler_id);
+    let plasteel = get_material_by_tag("Plasteel").unwrap();
+    spawner::spawn_item_worn(ecs, "ray_pistol", settler_id, plasteel);
+    spawner::spawn_item_carried(ecs, "small_energy_cell", settler_id, plasteel);
 }
