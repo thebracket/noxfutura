@@ -59,7 +59,7 @@ pub fn building_display(
         .movable(true)
         .position([0.0, 20.0], Condition::FirstUseEver)
         .build(imgui, || {
-            imgui.text(im_str!("Building list goes here"));
+            imgui.text(im_str!("Available buildings:"));
             imgui.list_box(im_str!("### build_list"), &mut bid, &blist, 10);
             if (bid as usize) < available_buildings.len() {
                 imgui.text_wrapped(&available_buildings[bid as usize].description);

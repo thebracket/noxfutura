@@ -8,3 +8,5 @@ mod design_lumberjack;
 pub use design_lumberjack::*;
 mod design_buildings;
 pub use design_buildings::*;
+mod design_mining;
+pub use design_mining::*;

@@ -1,4 +1,4 @@
-use crate::modes::{DesignMode, RunState};
+use crate::modes::{DesignMode, RunState, MiningMode};
 use cgmath::num_traits::identities::Zero;
 use cgmath::Vector3;
 use imgui::*;
@@ -65,6 +65,14 @@ pub fn draw_main_menu(
             {
                 *run_state = RunState::Design {
                     mode: DesignMode::Lumberjack,
+                };
+            }
+            if MenuItem::new(im_str!("\u{f1b3} Mining"))
+                .shortcut(im_str!("D"))
+                .build(imgui)
+            {
+                *run_state = RunState::Design {
+                    mode: DesignMode::Mining{ mode: MiningMode::Dig },
                 };
             }
             if MenuItem::new(im_str!("\u{f015} Buildings"))

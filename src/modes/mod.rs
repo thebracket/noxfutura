@@ -11,7 +11,7 @@ use planetgen::PlanetGen;
 mod planetgen2;
 use planetgen2::PlanetGen2;
 mod playgame;
-pub use playgame::{DesignMode, RunState};
+pub use playgame::{DesignMode, RunState, MiningMode};
 use playgame::{LoadState, PlayGame, LOAD_STATE};
 use std::time::Instant;
 

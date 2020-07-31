@@ -20,6 +20,12 @@ pub use render_passes::*;
 pub enum DesignMode {
     Lumberjack,
     Buildings { bidx: i32, vox: Option<usize> },
+    Mining{ mode: MiningMode },
+}
+
+#[derive(PartialEq, Clone)]
+pub enum MiningMode {
+    Dig, Channel, Ramp, Up, Down, UpDown
 }
 
 #[derive(PartialEq, Clone)]
@@ -223,6 +229,7 @@ impl PlayGame {
     ) -> (Vector3<f32>, Vector3<f32>) {
         use crate::systems::{
             building_display, draw_main_menu, draw_tooltips, fps_display, lumberjack_display,
+            mining_display
         };
         let sun_pos = draw_main_menu(&self.ecs, &mut self.run_state, imgui);
         fps_display(imgui, frame_time);
@@ -240,6 +247,12 @@ impl PlayGame {
                         mode: DesignMode::Buildings { bidx, vox },
                     };
                     self.vox_changed = true;
+                }
+                DesignMode::Mining{ mode } => {
+                    let mmode = mining_display(imgui, &self.ecs, mouse_world_pos, mode);
+                    self.run_state = RunState::Design{
+                        mode: DesignMode::Mining { mode: mmode }
+                    };
                 }
             }
         }
@@ -294,6 +307,13 @@ impl PlayGame {
                         VirtualKeyCode::B => {
                             self.run_state = RunState::Design {
                                 mode: DesignMode::Buildings { bidx: 0, vox: None },
+                            };
+                            camera_changed = false;
+                            self.vox_changed = true;
+                        }
+                        VirtualKeyCode::D => {
+                            self.run_state = RunState::Design {
+                                mode: DesignMode::Mining { mode: MiningMode::Dig  } ,
                             };
                             camera_changed = false;
                             self.vox_changed = true;
