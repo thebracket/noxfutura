@@ -9,5 +9,15 @@
             texture: "metalfloor", constructed: "metalfloor", floor: "titanium", floor_constructed: "plasteeltile",
             tint: (1.0, 1.0, 1.0)
         ),
+
+        MaterialDef(
+            name: "Synthread",
+            layer: Synthetic,
+            hit_points: 10,
+            mines_to: [ ],
+            description: "A nano-hybrid cloth.",
+            texture: "metalfloor", constructed: "metalfloor", floor: "titanium", floor_constructed: "plasteeltile",
+            tint: (1.0, 1.0, 1.0)
+        ),
     ])
 )

@@ -13,6 +13,7 @@ resources/raws/mats/sediment.ron
 resources/raws/mats/soil.ron
 resources/raws/mats/sand.ron
 resources/raws/mats/synthetic.ron
+resources/raws/mats/wood.ron
 
 # Built-in workshops at world-gen
 

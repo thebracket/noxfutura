@@ -1,0 +1,13 @@
+(
+    materials: Some([
+        MaterialDef(
+            name: "Wood",
+            layer: Synthetic,
+            hit_points: 20,
+            mines_to: [ ],
+            description: "Hard, fibrous material extracted from dead trees.",
+            texture: "bark", constructed: "wood", floor: "oakfloor", floor_constructed: "oakfloor",
+            tint: (0.33, 0.30, 0.1)
+        ),
+    ])
+)
