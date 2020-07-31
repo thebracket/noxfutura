@@ -1,6 +1,5 @@
 use crate::engine::DEVICE_CONTEXT;
 use nox_spatial::REGION_TILES_COUNT;
-use zerocopy::AsBytes as _;
 
 pub struct TerrainLights {
     pub flags: Vec<u32>,
