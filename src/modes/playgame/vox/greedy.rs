@@ -30,8 +30,8 @@ pub fn greedy_cubes(cube_index: &mut VoxMap, output: &mut Vec<f32>, size: &Model
             let (x, y, z) = size.idxmap(idx as u32);
             let width = grow_right(cube_index, idx as u32, mat_idx);
             let height = grow_down(cube_index, idx as u32, width, mat_idx, size);
-            //let depth = grow_in(&mut cube_index, idx, width, height);
-            let depth = 1;
+            let depth = grow_in(cube_index, idx as u32, width, height, mat_idx, size);
+            //let depth = 1;
 
             super::cube::add_cube_geometry(
                 output,
@@ -82,4 +82,33 @@ fn grow_down(cube_index: &mut VoxMap, idx: u32, width: u32, mat: u8, size: &Mode
         candidate_idx += size.x;
     }
     height
+}
+
+fn grow_in(cube_index: &mut VoxMap, idx: u32, width: u32, height: u32, mat: u8, size: &ModelSize) -> u32 {
+    let mut depth = 1;
+    let layer_size = size.x * size.y;
+    let mut candidate_idx = idx + layer_size;
+    'outer: loop {
+        for x in 0..width {
+            for y in 0..height {
+                let cidx = candidate_idx + x + (y * size.x);
+                if !cube_index.contains_key(&(cidx as i32)) {
+                    break 'outer;
+                }
+                if cube_index[&(cidx as i32)] != mat {
+                    break 'outer;
+                }
+            }
+        }
+
+        for x in 0..width {
+            for y in 0..height {
+                let cidx = candidate_idx + x + (y * size.x);
+                cube_index.remove(&(cidx as i32));
+            }
+        }
+        depth += 1;
+        candidate_idx += layer_size;
+    }
+    depth
 }
