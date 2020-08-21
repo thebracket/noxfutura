@@ -1,0 +1,16 @@
+[package]
+name = "bengine"
+version = "0.1.0"
+authors = ["Herbert Wolverson <herberticus@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+wgpu = "0.6.0"
+winit = { version = "0.22.2", features = ["web-sys"] }
+futures = { version = "0.3" }
+imgui = "0.4.0"
+imgui-winit-support = { version = "0.4", default-features = false, features = [ "winit-22" ] }
+bytemuck = "1.3.1"
+smallvec = "1.4.2"
