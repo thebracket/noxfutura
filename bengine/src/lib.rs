@@ -1,31 +1,58 @@
+mod game;
 mod imgui_wgpu;
 mod init;
 mod textures;
+mod core;
+mod shaders;
 
+pub use game::BEngineGame;
+use imgui::Context;
 use imgui_wgpu::Renderer;
-use init::WgpuInit;
-use textures::TextureRef;
+use imgui_winit_support::WinitPlatform;
+pub use init::WgpuInit;
+use std::time::Instant;
 use winit::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
-use std::time::Instant;
-use imgui::Context;
-use imgui_winit_support::WinitPlatform;
+pub use crate::core::Core;
+pub use crate::textures::Textures;
+pub use crate::shaders::Shaders;
+pub use crate::shaders::ShaderType;
 
-fn bootstrap() -> (EventLoop<()>, Window, WgpuInit, TextureRef, Context, Renderer, f64, WinitPlatform) {
+pub mod gui {
+    pub use imgui::*;
+}
+
+pub mod gpu {
+    pub use wgpu::*;
+}
+
+fn bootstrap() -> (
+    EventLoop<()>,
+    Window,
+    WgpuInit,
+    usize,
+    Context,
+    Renderer,
+    f64,
+    WinitPlatform,
+    Textures,
+    Shaders
+) {
     let event_loop = EventLoop::new();
     let window = Window::new(&event_loop).unwrap();
     let mut device_info = init::initialize_wgpu(&window);
-    let depth_texture =
-        textures::create_depth_texture(&device_info.device, device_info.size, "depth");
+    let mut textures = Textures::new();
+    let depth_texture = textures.register_new_depth_texture(&device_info.device, device_info.size, "depth");
     let imgui_renderer = init::initialize_imgui(
         &window,
         &device_info.device,
         &mut device_info.queue,
         &device_info.swapchain_desc,
     );
+    let mut shaders = Shaders::new();
 
     (
         event_loop,
@@ -35,17 +62,40 @@ fn bootstrap() -> (EventLoop<()>, Window, WgpuInit, TextureRef, Context, Rendere
         imgui_renderer.0,
         imgui_renderer.1,
         imgui_renderer.2,
-        imgui_renderer.3
+        imgui_renderer.3,
+        textures,
+        shaders
     )
 }
 
-pub fn run() {
-    let (event_loop, window, mut device_info, mut depth_texture, mut imgui, mut imgui_renderer, mut hidpi_factor, mut platform) = bootstrap();
+pub fn run<P: 'static>(mut program: P)
+where
+    P: BEngineGame,
+{
+    let (
+        event_loop,
+        window,
+        mut device_info,
+        mut depth_texture,
+        mut imgui,
+        mut imgui_renderer,
+        mut hidpi_factor,
+        mut platform,
+        mut textures,
+        mut shaders
+    ) = bootstrap();
 
     let mut last_frame = Instant::now();
     let mut last_cursor = None;
     let mut keycode: Option<winit::event::VirtualKeyCode> = None;
     let mut mouse_world_pos = (0usize, 0usize, 0usize);
+
+    program.init(
+        &device_info.device,
+        &device_info.queue,
+        &mut textures,
+        &mut shaders
+    );
 
     let clear_color = wgpu::Color {
         r: 0.1,
@@ -71,13 +121,18 @@ pub fn run() {
             } => {
                 device_info.swapchain_desc.width = size.width;
                 device_info.swapchain_desc.height = size.height;
-                device_info.swap_chain = device_info.device.create_swap_chain(&device_info.surface, &device_info.swapchain_desc);
-                depth_texture = textures::create_depth_texture(&device_info.device, device_info.size, "depth");
+                device_info.swap_chain = device_info
+                    .device
+                    .create_swap_chain(&device_info.surface, &device_info.swapchain_desc);
+                textures.replace_depth_texture(depth_texture, &device_info.device, device_info.size, "depth");
                 device_info.size = size;
                 // TODO: program.on_resize();
             }
             Event::RedrawRequested(_) => {
-                let frame = device_info.swap_chain.get_current_frame().expect("Frame failed");
+                let frame = device_info
+                    .swap_chain
+                    .get_current_frame()
+                    .expect("Frame failed");
 
                 platform
                     .prepare_frame(imgui.io_mut(), &window)
@@ -85,6 +140,14 @@ pub fn run() {
                 let mouse_position = imgui.io().mouse_pos;
                 let ui = imgui.frame();
 
+                let mut core = Core{
+                    imgui: &ui,
+                    textures: &mut textures
+                };
+                let should_continue = program.tick(&mut core);
+                if !should_continue {
+                    *control_flow = ControlFlow::Exit;
+                }
                 /*let should_continue = program.tick(&frame, depth_id, &ui, keycode, &mouse_world_pos);
                 if !should_continue {
                     *control_flow = ControlFlow::Exit;
@@ -155,7 +218,7 @@ pub fn run() {
                             ui.render(),
                             &mut device_info.queue,
                             &device_info.device,
-                            &mut rpass
+                            &mut rpass,
                         )
                         .expect("Rendering failed");
                     std::mem::drop(rpass);

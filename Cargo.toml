@@ -5,9 +5,6 @@ authors = ["Herbert Wolverson <herberticus@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-wgpu = "0.6.0"
-winit = { version = "0.22.2", features = ["web-sys"] }
-futures = { version = "0.3" }
 bengine = { path = "bengine/" }
 
 [profile.dev]

@@ -1,14 +1,14 @@
-use imgui::*;
 use crate::imgui_wgpu::Renderer;
+use imgui::*;
 
 use futures::executor::block_on;
+use imgui_winit_support::WinitPlatform;
 use wgpu::{
     Adapter, BackendBit, Device, DeviceDescriptor, Features, Instance, Limits, PowerPreference,
     PresentMode, Queue, RequestAdapterOptions, Surface, SwapChain, SwapChainDescriptor,
     TextureFormat, TextureUsage,
 };
 use winit::{dpi::PhysicalSize, window::Window};
-use imgui_winit_support::WinitPlatform;
 
 const SWAPCHAIN_FORMAT: TextureFormat = TextureFormat::Bgra8UnormSrgb;
 
@@ -56,15 +56,15 @@ fn create_swap_chain(
 }
 
 /// Container for the data intialized by a WGPU initialization
-pub(crate) struct WgpuInit {
-    pub(crate) adapter: Adapter,
-    pub(crate) device: Device,
-    pub(crate) queue: Queue,
-    pub(crate) size: PhysicalSize<u32>,
-    pub(crate) surface: Surface,
-    pub(crate) swapchain_format: TextureFormat,
-    pub(crate) swapchain_desc: SwapChainDescriptor,
-    pub(crate) swap_chain: SwapChain,
+pub struct WgpuInit {
+    pub adapter: Adapter,
+    pub device: Device,
+    pub queue: Queue,
+    pub size: PhysicalSize<u32>,
+    pub surface: Surface,
+    pub swapchain_format: TextureFormat,
+    pub swapchain_desc: SwapChainDescriptor,
+    pub swap_chain: SwapChain,
 }
 
 /// Starts WGPU, associated with a window.
