@@ -4,6 +4,7 @@ mod init;
 mod textures;
 mod core;
 mod shaders;
+mod buffers;
 
 pub use game::BEngineGame;
 use imgui::Context;
@@ -20,6 +21,7 @@ pub use crate::core::Core;
 pub use crate::textures::Textures;
 pub use crate::shaders::Shaders;
 pub use crate::shaders::ShaderType;
+pub use crate::buffers::Buffers;
 
 pub mod gui {
     pub use imgui::*;
@@ -39,7 +41,8 @@ fn bootstrap() -> (
     f64,
     WinitPlatform,
     Textures,
-    Shaders
+    Shaders,
+    Buffers
 ) {
     let event_loop = EventLoop::new();
     let window = Window::new(&event_loop).unwrap();
@@ -52,7 +55,8 @@ fn bootstrap() -> (
         &mut device_info.queue,
         &device_info.swapchain_desc,
     );
-    let mut shaders = Shaders::new();
+    let shaders = Shaders::new();
+    let buffers = Buffers::new();
 
     (
         event_loop,
@@ -64,7 +68,8 @@ fn bootstrap() -> (
         imgui_renderer.2,
         imgui_renderer.3,
         textures,
-        shaders
+        shaders,
+        buffers
     )
 }
 
@@ -82,7 +87,8 @@ where
         mut hidpi_factor,
         mut platform,
         mut textures,
-        mut shaders
+        mut shaders,
+        mut buffers
     ) = bootstrap();
 
     let mut last_frame = Instant::now();
@@ -189,6 +195,22 @@ where
                         }
                     }
                 }*/
+
+                {
+                    use imgui::*;
+                    let title = format!(
+                        "FPS: {:.0}. ### FPS",
+                        ui.io().framerate
+                    );
+                    let title_tmp = ImString::new(title);
+                    let window = imgui::Window::new(&title_tmp);
+                    window
+                        .collapsed(true, Condition::FirstUseEver)
+                        .size([100.0, 100.0], Condition::FirstUseEver)
+                        .movable(true)
+                        .position([0.0, device_info.size.height as f32 - 20.0], Condition::FirstUseEver)
+                        .build(&ui, || {});
+                }
 
                 // ImGui
                 {
