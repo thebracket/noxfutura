@@ -11,4 +11,14 @@ impl Buffers {
             buffers: Vec::new()
         }
     }
+
+    pub fn init_buffer(&mut self, layout: &[usize], capacity: usize, usage: wgpu::BufferUsage) -> usize {
+        let idx = self.buffers.len();
+        self.buffers.push(FloatBuffer::new(layout, capacity, usage));
+        idx
+    }
+
+    pub fn get_buffer(&mut self, idx: usize) -> &mut FloatBuffer<f32> {
+        &mut self.buffers[idx]
+    }
 }

@@ -3,7 +3,8 @@ use bengine::*;
 struct NoxFutura {
     background_image: usize,
     quad_vert_shader: usize,
-    quad_frag_shader: usize
+    quad_frag_shader: usize,
+    quad_buffer: usize
 }
 
 impl NoxFutura {
@@ -11,21 +12,28 @@ impl NoxFutura {
         Self {
             background_image: 0,
             quad_frag_shader: 0,
-            quad_vert_shader: 0
+            quad_vert_shader: 0,
+            quad_buffer: 0
         }
     }
 }
 
 impl BEngineGame for NoxFutura {
-    fn init(&mut self, device: &gpu::Device, queue: &gpu::Queue, textures: &mut Textures, shaders: &mut Shaders) {
-        self.background_image = textures.load_texture_from_bytes(
-            device,
-            queue,
-            include_bytes!("../resources/images/background_image.png"),
-            "Background"
+    fn init(&mut self, init: &mut Initializer) {
+        self.background_image = init.load_texture_from_bytes(include_bytes!("../resources/images/background_image.png"));
+
+        self.quad_vert_shader = init.load_shader_from_file("resources/shaders/quad_tex.vert", ShaderType::Vertex);
+        self.quad_frag_shader = init.load_shader_from_file("resources/shaders/quad_tex.frag", ShaderType::Vertex);
+
+        self.quad_buffer = init.make_buffer_with_data(
+            &[2, 2], 
+            24, 
+            gpu::BufferUsage::VERTEX, 
+            &[
+            -1.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 0.0, 0.0,
+            1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            ]
         );
-        self.quad_vert_shader = shaders.register("resources/shaders/quad_tex.vert", ShaderType::Vertex, device);
-        self.quad_frag_shader = shaders.register("resources/shaders/quad_tex.frag", ShaderType::Vertex, device);
     }
 
     fn tick(&mut self, core: &mut Core) -> bool {

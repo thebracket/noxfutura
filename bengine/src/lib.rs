@@ -22,6 +22,7 @@ pub use crate::textures::Textures;
 pub use crate::shaders::Shaders;
 pub use crate::shaders::ShaderType;
 pub use crate::buffers::Buffers;
+pub use crate::core::Initializer;
 
 pub mod gui {
     pub use imgui::*;
@@ -96,12 +97,15 @@ where
     let mut keycode: Option<winit::event::VirtualKeyCode> = None;
     let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
-    program.init(
+    let mut initializer = Initializer::new(
         &device_info.device,
         &device_info.queue,
         &mut textures,
-        &mut shaders
+        &mut shaders,
+        &mut buffers
     );
+
+    program.init(&mut initializer);
 
     let clear_color = wgpu::Color {
         r: 0.1,
