@@ -7,6 +7,7 @@ pub enum ShaderType {
 }
 
 pub(crate) fn from_source<S: ToString>(filename: S, shader_type: ShaderType, device: &Device) -> ShaderModule {
+    panic!("This doesn't currently work.");
     let filename = filename.to_string();
     let source = fs::read_to_string(&filename).expect("Unable to read shader source");
 
@@ -21,4 +22,8 @@ pub(crate) fn from_source<S: ToString>(filename: S, shader_type: ShaderType, dev
     spirv_file.read(&mut buffer).expect("Cannot read compiled file");
 
     device.create_shader_module(wgpu::util::make_spirv(&buffer))
+}
+
+pub(crate) fn from_spv(shader_type: ShaderType, device: &Device, source: wgpu::ShaderModuleSource) -> ShaderModule {
+    device.create_shader_module(source)
 }

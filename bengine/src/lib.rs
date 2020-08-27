@@ -5,6 +5,7 @@ mod textures;
 mod core;
 mod shaders;
 mod buffers;
+mod layouts;
 
 pub use game::BEngineGame;
 use imgui::Context;
@@ -23,6 +24,9 @@ pub use crate::shaders::Shaders;
 pub use crate::shaders::ShaderType;
 pub use crate::buffers::Buffers;
 pub use crate::core::Initializer;
+
+use crate::layouts::simple_texture_bg_layout;
+use crate::layouts::simple_texture_bg;
 
 pub mod gui {
     pub use imgui::*;
@@ -102,7 +106,8 @@ where
         &device_info.queue,
         &mut textures,
         &mut shaders,
-        &mut buffers
+        &mut buffers,
+        device_info.swapchain_format
     );
 
     program.init(&mut initializer);
@@ -152,7 +157,11 @@ where
 
                 let mut core = Core{
                     imgui: &ui,
-                    textures: &mut textures
+                    textures: &mut textures,
+                    frame: &frame,
+                    device: &device_info.device,
+                    buffers: &mut buffers,
+                    queue: &mut device_info.queue
                 };
                 let should_continue = program.tick(&mut core);
                 if !should_continue {
@@ -232,7 +241,7 @@ where
                             attachment: &frame.output.view,
                             resolve_target: None,
                             ops: wgpu::Operations {
-                                load: wgpu::LoadOp::Clear(clear_color),
+                                load: wgpu::LoadOp::Load,
                                 store: true,
                             },
                         }],

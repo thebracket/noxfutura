@@ -47,4 +47,14 @@ impl Textures {
         self.textures.push(tex);
         id
     }
+
+    pub fn get_view(&self, id: usize) -> &wgpu::TextureView {
+        println!("View tex {}", id);
+        &self.textures[id].view
+    }
+
+    pub fn get_sampler(&self, id: usize) -> &wgpu::Sampler {
+        println!("Sampler tex {}", id);
+        &self.textures[id].sampler
+    }
 }

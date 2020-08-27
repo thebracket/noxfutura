@@ -7,6 +7,25 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "Debug unit tests in library 'bengine'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=bengine"
+                ],
+                "filter": {
+                    "name": "bengine",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug executable 'noxfutura'",
             "cargo": {
                 "args": [
@@ -20,7 +39,8 @@
                 }
             },
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}", 
+            "terminal": "console"
         },
         {
             "type": "lldb",

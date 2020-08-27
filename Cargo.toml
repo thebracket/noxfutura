@@ -8,7 +8,7 @@ edition = "2018"
 bengine = { path = "bengine/" }
 
 [profile.dev]
-opt-level = 1
+#opt-level = 1
 
 [profile.release]
 incremental = true

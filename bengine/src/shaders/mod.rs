@@ -19,4 +19,16 @@ impl Shaders {
         self.shaders.push(sm);
         idx
     }
+
+    pub fn register_include(&mut self, shader_type: ShaderType, device: &Device, source: wgpu::ShaderModuleSource) -> usize {
+        let sm = loader::from_spv(shader_type, device, source);
+        let idx = self.shaders.len();
+        self.shaders.push(sm);
+        idx
+    }
+
+    pub fn get_module(&self, id: usize) -> &wgpu::ShaderModule {
+        println!("Access shader {}", id);
+        &self.shaders[id]
+    }
 }

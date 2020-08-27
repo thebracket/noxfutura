@@ -61,7 +61,7 @@ pub(crate) fn from_image(
         mipmap_filter: wgpu::FilterMode::Nearest,
         lod_min_clamp: -100.0,
         lod_max_clamp: 100.0,
-        compare: Some(wgpu::CompareFunction::Always),
+        compare: None,
         label: None,
         anisotropy_clamp: None
     });

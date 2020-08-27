@@ -40,6 +40,8 @@ where
             cumulative_len += size;
         }
 
+        println!("{:#?}", attributes);
+
         Self {
             data: Vec::new(),
             attributes,
@@ -70,13 +72,13 @@ where
         if let Some(buf) = &mut self.buffer {
             std::mem::drop(buf);
         }
-        device.create_buffer_init(
+        self.buffer = Some(device.create_buffer_init(
             &wgpu::util::BufferInitDescriptor {
                 label: None,
                 contents: bytemuck::cast_slice(&self.data),
                 usage: self.usage
             }
-        );
+        ));
     }
 
     pub fn update_buffer(&mut self, device: &wgpu::Device) {
