@@ -3,7 +3,6 @@ use crate::RENDER_CONTEXT;
 use image::GenericImageView;
 
 pub(crate) fn from_bytes(bytes: &[u8], label: &str) -> Result<TextureRef, failure::Error> {
-    println!("from_bytes");
     let img = image::load_from_memory(bytes)?;
     from_image(&img, Some(label))
 }
@@ -12,11 +11,9 @@ pub(crate) fn from_image(
     img: &image::DynamicImage,
     label: Option<&str>,
 ) -> Result<TextureRef, failure::Error> {
-    println!("from_image");
     let rgba = img.as_rgba8().unwrap();
     let dimensions = img.dimensions();
 
-    println!("{}", RENDER_CONTEXT.is_locked());
     let rcl = RENDER_CONTEXT.read();
     let rc = rcl.as_ref().unwrap();
 

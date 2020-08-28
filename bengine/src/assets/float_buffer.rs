@@ -41,8 +41,6 @@ where
             cumulative_len += size;
         }
 
-        println!("{:#?}", attributes);
-
         Self {
             data: Vec::new(),
             attributes,

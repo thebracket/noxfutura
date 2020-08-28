@@ -4,9 +4,9 @@ extern crate lazy_static;
 mod assets;
 mod core;
 mod game;
+pub mod helpers;
 mod imgui_wgpu;
 mod render_core;
-pub mod helpers;
 
 pub use crate::assets::*;
 pub use crate::core::Core;

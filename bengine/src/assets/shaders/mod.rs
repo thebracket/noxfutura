@@ -25,7 +25,6 @@ impl Shaders {
     }
 
     pub fn get_module(&self, id: usize) -> &wgpu::ShaderModule {
-        println!("Access shader {}", id);
         &self.shaders[id]
     }
 }

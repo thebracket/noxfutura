@@ -24,7 +24,6 @@ fn bootstrap(
     let window = Window::new(&event_loop).unwrap();
     window.set_title(title);
     init_render_context(&window);
-    println!("Set title");
 
     let mut textures = TEXTURES.write();
     let depth_texture = textures.register_new_depth_texture("depth");
@@ -36,7 +35,6 @@ fn bootstrap(
         &mut device_info.queue,
         &device_info.swapchain_desc,
     );
-    println!("Bootstrapped");
 
     (
         event_loop,

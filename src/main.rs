@@ -18,7 +18,7 @@ impl NoxFutura {
     fn new() -> Self {
         Self {
             current_mode: GameMode::Loader,
-            modes: Vec::new()
+            modes: Vec::new(),
         }
     }
 }
@@ -30,7 +30,7 @@ impl BEngineGame for NoxFutura {
 
     fn tick(&mut self, core: &mut Core) -> bool {
         let _new_mode = match self.current_mode {
-            GameMode::Loader => self.modes[0].tick(core)
+            GameMode::Loader => self.modes[0].tick(core),
         };
         true
     }
