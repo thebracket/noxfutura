@@ -1,24 +1,17 @@
 use wgpu::{Device, Queue};
-use crate::{Shaders, RENDER_CONTEXT, Buffers};
+use crate::{RENDER_CONTEXT, SHADERS, Buffers};
 
 pub struct Initializer<'a> {
-    shaders: &'a mut Shaders,
     buffers: &'a mut Buffers,
 }
 
 impl<'a> Initializer<'a> {
     pub(crate) fn new(
-        shaders: &'a mut Shaders,
         buffers: &'a mut Buffers,
     ) -> Self {
         Self {
-            shaders,
             buffers,
         }
-    }
-
-    pub fn load_shader_from_include(&mut self, source: wgpu::ShaderModuleSource) -> usize {
-        self.shaders.register_include(source)
     }
 
     pub fn make_empty_buffer(&mut self, layout: &[usize], capacity: usize, usage: wgpu::BufferUsage) -> usize {
@@ -60,6 +53,8 @@ impl<'a> Initializer<'a> {
         let rcl = RENDER_CONTEXT.read();
         let rc = rcl.as_ref().unwrap();
 
+        let shaders = SHADERS.read();
+
         rc
             .device
             .create_render_pipeline(
@@ -67,11 +62,11 @@ impl<'a> Initializer<'a> {
                     layout: Some(layout),
                     label: Some(label),
                     vertex_stage: wgpu::ProgrammableStageDescriptor {
-                        module: self.shaders.get_module(vertex_shader_id),
+                        module: shaders.get_module(vertex_shader_id),
                         entry_point: "main"
                     },
                     fragment_stage: Some(wgpu::ProgrammableStageDescriptor {
-                        module: self.shaders.get_module(fragment_shader_id),
+                        module: shaders.get_module(fragment_shader_id),
                         entry_point: "main"
                     }),
                     rasterization_state: Some(wgpu::RasterizationStateDescriptor {

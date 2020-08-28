@@ -6,7 +6,6 @@ mod game;
 mod imgui_wgpu;
 mod init;
 mod core;
-mod shaders;
 mod buffers;
 mod layouts;
 mod render_core;
@@ -26,9 +25,9 @@ use winit::{
 };
 pub use crate::core::Core;
 pub use crate::assets::TEXTURES;
-pub use crate::shaders::Shaders;
 pub use crate::buffers::Buffers;
 pub use crate::core::Initializer;
+pub use crate::assets::SHADERS;
 
 use crate::layouts::simple_texture_bg_layout;
 use crate::layouts::simple_texture_bg;
@@ -50,7 +49,6 @@ fn bootstrap(title: &str) -> (
     Renderer,
     f64,
     WinitPlatform,
-    Shaders,
     Buffers
 ) {
     let event_loop = EventLoop::new();
@@ -69,7 +67,6 @@ fn bootstrap(title: &str) -> (
         &mut device_info.queue,
         &device_info.swapchain_desc,
     );
-    let shaders = Shaders::new();
     let buffers = Buffers::new();
     println!("Bootstrapped");
 
@@ -81,7 +78,6 @@ fn bootstrap(title: &str) -> (
         imgui_renderer.1,
         imgui_renderer.2,
         imgui_renderer.3,
-        shaders,
         buffers
     )
 }
@@ -98,7 +94,6 @@ where
         mut imgui_renderer,
         mut hidpi_factor,
         mut platform,
-        mut shaders,
         mut buffers
     ) = bootstrap(title);
 
@@ -108,7 +103,6 @@ where
     let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
     let mut initializer = Initializer::new(
-        &mut shaders,
         &mut buffers,
     );
 

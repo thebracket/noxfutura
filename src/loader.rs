@@ -16,12 +16,14 @@ impl Loader {
         println!("texl");
         let pipeline_layout = init.pipeline_layout(&[&tex_layout], "quad_pipeline");
         println!("pl");
-        let quad_vert_shader = init.load_shader_from_include(
+        let mut shaders = SHADERS.write();
+        let quad_vert_shader = shaders.register_include(
             gpu::include_spirv!("../resources/shaders/quad_tex.vert.spv")
         );
-        let quad_frag_shader = init.load_shader_from_include(
+        let quad_frag_shader = shaders.register_include(
             gpu::include_spirv!("../resources/shaders/quad_tex.frag.spv")
         );
+        std::mem::drop(shaders);
         println!("shaders");
         let quad_buffer = init.make_buffer_with_data(
             &[2, 2],

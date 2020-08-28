@@ -1,5 +1,10 @@
 mod loader;
 use wgpu::{Device, ShaderModule};
+use parking_lot::RwLock;
+
+lazy_static! {
+    pub static ref SHADERS : RwLock<Shaders> = RwLock::new(Shaders::new());
+}
 
 pub struct Shaders {
     shaders: Vec<ShaderModule>
