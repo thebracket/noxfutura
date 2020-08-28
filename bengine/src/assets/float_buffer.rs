@@ -122,4 +122,8 @@ where
         self.data.push(f2);
         self.data.push(f3);
     }
+
+    pub fn slice(&self) -> wgpu::BufferSlice {
+        self.buffer.as_ref().unwrap().slice(..)
+    }
 }

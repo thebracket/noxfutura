@@ -1,4 +1,4 @@
-use crate::GameMode;
+use crate::{GameMode, NoxMode};
 use bengine::*;
 
 pub struct Loader {
@@ -9,16 +9,12 @@ pub struct Loader {
 
 impl Loader {
     pub fn new() -> Self {
-        println!("Start loader init");
         let background_image = TEXTURES.write().load_texture_from_bytes(
             include_bytes!("../resources/images/background_image.png"),
             "nox_bg",
         );
-        println!("tex");
         let tex_layout = simple_texture_bg_layout("quad_layout");
-        println!("texl");
         let pipeline_layout = pipeline_layout(&[&tex_layout], "quad_pipeline");
-        println!("pl");
         let mut shaders = SHADERS.write();
         let quad_vert_shader = shaders.register_include(gpu::include_spirv!(
             "../resources/shaders/quad_tex.vert.spv"
@@ -27,7 +23,7 @@ impl Loader {
             "../resources/shaders/quad_tex.frag.spv"
         ));
         std::mem::drop(shaders);
-        println!("shaders");
+
         let quad_buffer = make_buffer_with_data(
             &[2, 2],
             24,
@@ -37,7 +33,6 @@ impl Loader {
                 0.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
             ],
         );
-        println!("ProgInit");
         let pipeline = render_pipeline_simple(
             "QuadPipeline",
             &pipeline_layout,
@@ -51,8 +46,10 @@ impl Loader {
             pipeline,
         }
     }
+}
 
-    pub fn render(&mut self, core: &mut Core) -> GameMode {
+impl NoxMode for Loader {
+    fn tick(&mut self, core: &mut Core) -> GameMode {
         // Draw the background image
         let rcl = RENDER_CONTEXT.read();
         let rc = rcl.as_ref().unwrap();
@@ -73,7 +70,7 @@ impl Loader {
             });
             rpass.set_pipeline(&self.pipeline);
             rpass.set_bind_group(0, &self.quad_bg, &[]);
-            rpass.set_vertex_buffer(0, self.quad_buffer.buffer.as_ref().unwrap().slice(..));
+            rpass.set_vertex_buffer(0, self.quad_buffer.slice());
             rpass.draw(0..24, 0..1);
         }
         rc.queue.submit(Some(encoder.finish()));
