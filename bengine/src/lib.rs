@@ -36,7 +36,7 @@ pub mod gpu {
     pub use wgpu::*;
 }
 
-fn bootstrap() -> (
+fn bootstrap(title: &str) -> (
     EventLoop<()>,
     Window,
     WgpuInit,
@@ -50,7 +50,8 @@ fn bootstrap() -> (
     Buffers
 ) {
     let event_loop = EventLoop::new();
-    let window = Window::new(&event_loop).unwrap();
+    let mut window = Window::new(&event_loop).unwrap();
+    window.set_title(title);
     let mut device_info = init::initialize_wgpu(&window);
     let mut textures = Textures::new();
     let depth_texture = textures.register_new_depth_texture(&device_info.device, device_info.size, "depth");
@@ -78,7 +79,7 @@ fn bootstrap() -> (
     )
 }
 
-pub fn run<P: 'static>(mut program: P)
+pub fn run<P: 'static>(mut program: P, title: &str)
 where
     P: BEngineGame,
 {
@@ -94,7 +95,7 @@ where
         mut textures,
         mut shaders,
         mut buffers
-    ) = bootstrap();
+    ) = bootstrap(title);
 
     let mut last_frame = Instant::now();
     let mut last_cursor = None;

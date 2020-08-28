@@ -1,4 +1,6 @@
 use bengine::*;
+use crate::GameMode;
+
 pub struct Loader {
     quad_buffer: usize,
     quad_bg: gpu::BindGroup,
@@ -40,7 +42,7 @@ impl Loader {
         }
     }
 
-    pub fn render(&mut self, core: &mut Core) -> bool {
+    pub fn render(&mut self, core: &mut Core) -> GameMode {
         // Draw the background image
         let mut encoder = core.device.create_command_encoder(&gpu::CommandEncoderDescriptor { label: None });
         {
@@ -65,6 +67,6 @@ impl Loader {
         }
         core.queue.submit(Some(encoder.finish()));
 
-        true
+        GameMode::Loader
     }
 }

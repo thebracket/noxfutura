@@ -1,7 +1,7 @@
 use bengine::*;
 mod loader;
 
-enum GameMode {
+pub enum GameMode {
     Loader
 }
 
@@ -25,12 +25,13 @@ impl BEngineGame for NoxFutura {
     }
 
     fn tick(&mut self, core: &mut Core) -> bool {
-        match self.current_mode {
+        let _new_mode = match self.current_mode {
             GameMode::Loader => self.loader.as_mut().unwrap().render(core)
-        }
+        };
+        true
     }
 }
 
 fn main() {
-    run(NoxFutura::new() );
+    run(NoxFutura::new(), "Nox Futura" );
 }
