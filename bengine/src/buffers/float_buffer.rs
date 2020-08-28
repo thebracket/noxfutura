@@ -1,4 +1,5 @@
 use wgpu::util::DeviceExt;
+use crate::RENDER_CONTEXT;
 
 pub struct FloatBuffer<T>
 where
@@ -68,11 +69,13 @@ where
         }
     }
 
-    pub fn build(&mut self, device: &wgpu::Device) {
+    pub fn build(&mut self) {
         if let Some(buf) = &mut self.buffer {
             std::mem::drop(buf);
         }
-        self.buffer = Some(device.create_buffer_init(
+        let rcl = RENDER_CONTEXT.read();
+        let rc = rcl.as_ref().unwrap();
+        self.buffer = Some(rc.device.create_buffer_init(
             &wgpu::util::BufferInitDescriptor {
                 label: None,
                 contents: bytemuck::cast_slice(&self.data),
@@ -82,7 +85,7 @@ where
     }
 
     pub fn update_buffer(&mut self, device: &wgpu::Device) {
-        self.build(device);
+        self.build();
     }
 
     pub fn len(&self) -> u32 {

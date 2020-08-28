@@ -1,8 +1,7 @@
 mod depth_texture;
 mod texture_loader;
 pub(crate) use depth_texture::create_depth_texture;
-use wgpu::{Device, Queue};
-use winit::dpi::PhysicalSize;
+use crate::RENDER_CONTEXT;
 
 pub struct TextureRef {
     pub texture: wgpu::Texture,
@@ -21,40 +20,42 @@ impl Textures {
         }
     }
 
-    pub fn register_new_depth_texture(&mut self, device: &Device, size: PhysicalSize<u32>, label: &str) -> usize {
-        let tex = create_depth_texture(device, size, label);
+    pub fn register_new_depth_texture(&mut self, label: &str) -> usize {
+        let rcl = RENDER_CONTEXT.read();
+        let rc = rcl.as_ref().unwrap();
+        let tex = create_depth_texture(&rc.device, rc.size, label);
         let id = self.textures.len();
         self.textures.push(tex);
         id
     }
 
-    pub fn replace_depth_texture(&mut self, id: usize, device: &Device, size: PhysicalSize<u32>, label: &str) -> usize {
-        let tex = create_depth_texture(device, size, label);
+    pub fn replace_depth_texture(&mut self, id: usize, label: &str) -> usize {
+        let rcl = RENDER_CONTEXT.read();
+        let rc = rcl.as_ref().unwrap();
+        let tex = create_depth_texture(&rc.device, rc.size, label);
         self.textures[id] = tex;
         id
     }
 
-    pub fn load_texture_from_bytes(&mut self, device: &Device, queue: &Queue, bytes: &[u8], label: &str) -> usize {
-        let tex = texture_loader::from_bytes(device, queue, bytes, label).unwrap();
+    pub fn load_texture_from_bytes(&mut self, bytes: &[u8], label: &str) -> usize {
+        let tex = texture_loader::from_bytes(bytes, label).unwrap();
         let id = self.textures.len();
         self.textures.push(tex);
         id
     }
 
-    pub fn load_texture_from_image(&mut self, device: &Device, queue: &Queue, image: &image::DynamicImage, label: &str) -> usize {
-        let tex = texture_loader::from_image(device, queue, image, Some(label)).unwrap();
+    pub fn load_texture_from_image(&mut self, image: &image::DynamicImage, label: &str) -> usize {
+        let tex = texture_loader::from_image(image, Some(label)).unwrap();
         let id = self.textures.len();
         self.textures.push(tex);
         id
     }
 
     pub fn get_view(&self, id: usize) -> &wgpu::TextureView {
-        println!("View tex {}", id);
         &self.textures[id].view
     }
 
     pub fn get_sampler(&self, id: usize) -> &wgpu::Sampler {
-        println!("Sampler tex {}", id);
         &self.textures[id].sampler
     }
 }

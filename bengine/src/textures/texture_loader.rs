@@ -1,32 +1,35 @@
 use super::TextureRef;
 use wgpu::{Device, Queue};
 use image::GenericImageView;
+use crate::RENDER_CONTEXT;
 
 pub(crate) fn from_bytes(
-    device: &Device,
-    queue: &Queue,
     bytes: &[u8],
     label: &str,
 ) -> Result<TextureRef, failure::Error> {
+    println!("from_bytes");
     let img = image::load_from_memory(bytes)?;
-    from_image(device, queue, &img, Some(label))
+    from_image(&img, Some(label))
 }
 
 pub(crate) fn from_image(
-    device: &Device,
-    queue: &Queue,
     img: &image::DynamicImage,
     label: Option<&str>,
 ) -> Result<TextureRef, failure::Error> {
+    println!("from_image");
     let rgba = img.as_rgba8().unwrap();
     let dimensions = img.dimensions();
+
+    println!("{}", RENDER_CONTEXT.is_locked());
+    let rcl = RENDER_CONTEXT.read();
+    let rc = rcl.as_ref().unwrap();
 
     let size = wgpu::Extent3d {
         width: dimensions.0,
         height: dimensions.1,
         depth: 1,
     };
-    let texture = device.create_texture(&wgpu::TextureDescriptor {
+    let texture = rc.device.create_texture(&wgpu::TextureDescriptor {
         label,
         size,
         mip_level_count: 1,
@@ -36,7 +39,7 @@ pub(crate) fn from_image(
         usage: wgpu::TextureUsage::SAMPLED | wgpu::TextureUsage::COPY_DST,
     });
 
-    queue.write_texture(
+    rc.queue.write_texture(
         wgpu::TextureCopyView{
             texture: &texture,
             mip_level: 0,
@@ -52,7 +55,7 @@ pub(crate) fn from_image(
     );
 
     let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
-    let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+    let sampler = rc.device.create_sampler(&wgpu::SamplerDescriptor {
         address_mode_u: wgpu::AddressMode::Repeat,
         address_mode_v: wgpu::AddressMode::Repeat,
         address_mode_w: wgpu::AddressMode::Repeat,

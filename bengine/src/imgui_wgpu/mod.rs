@@ -121,20 +121,6 @@ pub struct Renderer {
 }
 
 impl Renderer {
-    /// Create a new imgui wgpu renderer with newly compiled shaders.
-    #[cfg(feature = "glsl-to-spirv")]
-    pub fn new_glsl(
-        imgui: &mut Context,
-        device: &Device,
-        queue: &Queue,
-        format: TextureFormat,
-    ) -> Renderer {
-        let (vs_code, fs_code) = Shaders::get_program_code();
-        let vs_raw = Shaders::compile_glsl(vs_code, ShaderStage::Vertex);
-        let fs_raw = Shaders::compile_glsl(fs_code, ShaderStage::Fragment);
-        Self::new_impl(imgui, device, queue, format, vs_raw, fs_raw)
-    }
-
     /// Create a new imgui wgpu renderer, using prebuilt spirv shaders.
     pub fn new(
         imgui: &mut Context,
@@ -147,17 +133,6 @@ impl Renderer {
 
         Self::new_impl(imgui, device, queue, format, vs_bytes, fs_bytes)
     }
-
-    #[deprecated(note = "Renderer::new now uses static shaders by default")]
-    pub fn new_static(
-        imgui: &mut Context,
-        device: &Device,
-        queue: &Queue,
-        format: TextureFormat,
-    ) -> Renderer {
-        Renderer::new(imgui, device, queue, format)
-    }
-
     /// Create an entirely new imgui wgpu renderer.
     fn new_impl(
         imgui: &mut Context,

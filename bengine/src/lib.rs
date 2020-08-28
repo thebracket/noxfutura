@@ -1,3 +1,7 @@
+#[macro_use]
+extern crate lazy_static;
+
+
 mod game;
 mod imgui_wgpu;
 mod init;
@@ -6,6 +10,8 @@ mod core;
 mod shaders;
 mod buffers;
 mod layouts;
+mod render_core;
+
 
 pub use game::BEngineGame;
 use imgui::Context;
@@ -21,12 +27,12 @@ use winit::{
 pub use crate::core::Core;
 pub use crate::textures::Textures;
 pub use crate::shaders::Shaders;
-pub use crate::shaders::ShaderType;
 pub use crate::buffers::Buffers;
 pub use crate::core::Initializer;
 
 use crate::layouts::simple_texture_bg_layout;
 use crate::layouts::simple_texture_bg;
+pub use crate::render_core::*;
 
 pub mod gui {
     pub use imgui::*;
@@ -39,7 +45,6 @@ pub mod gpu {
 fn bootstrap(title: &str) -> (
     EventLoop<()>,
     Window,
-    WgpuInit,
     usize,
     Context,
     Renderer,
@@ -50,11 +55,15 @@ fn bootstrap(title: &str) -> (
     Buffers
 ) {
     let event_loop = EventLoop::new();
-    let mut window = Window::new(&event_loop).unwrap();
+    let window = Window::new(&event_loop).unwrap();
     window.set_title(title);
-    let mut device_info = init::initialize_wgpu(&window);
+    init_render_context(&window);
+    println!("Set title");
+
     let mut textures = Textures::new();
-    let depth_texture = textures.register_new_depth_texture(&device_info.device, device_info.size, "depth");
+    let depth_texture = textures.register_new_depth_texture("depth");
+    let mut rcl = RENDER_CONTEXT.write();
+    let device_info = rcl.as_mut().unwrap();
     let imgui_renderer = init::initialize_imgui(
         &window,
         &device_info.device,
@@ -63,11 +72,11 @@ fn bootstrap(title: &str) -> (
     );
     let shaders = Shaders::new();
     let buffers = Buffers::new();
+    println!("Bootstrapped");
 
     (
         event_loop,
         window,
-        device_info,
         depth_texture,
         imgui_renderer.0,
         imgui_renderer.1,
@@ -86,7 +95,6 @@ where
     let (
         event_loop,
         window,
-        mut device_info,
         mut depth_texture,
         mut imgui,
         mut imgui_renderer,
@@ -103,22 +111,14 @@ where
     let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
     let mut initializer = Initializer::new(
-        &device_info.device,
-        &device_info.queue,
         &mut textures,
         &mut shaders,
         &mut buffers,
-        device_info.swapchain_format
     );
 
+    println!("Starting program init");
     program.init(&mut initializer);
-
-    let clear_color = wgpu::Color {
-        r: 0.1,
-        g: 0.2,
-        b: 0.3,
-        a: 1.0,
-    };
+    println!("Program init complete");
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -135,17 +135,22 @@ where
                 event: WindowEvent::Resized(size),
                 ..
             } => {
-                device_info.swapchain_desc.width = size.width;
-                device_info.swapchain_desc.height = size.height;
-                device_info.swap_chain = device_info
+                let mut rcl = RENDER_CONTEXT.write();
+                let rc = rcl.as_mut().unwrap();
+                rc.swapchain_desc.width = size.width;
+                rc.swapchain_desc.height = size.height;
+                rc.swap_chain = rc
                     .device
-                    .create_swap_chain(&device_info.surface, &device_info.swapchain_desc);
-                textures.replace_depth_texture(depth_texture, &device_info.device, device_info.size, "depth");
-                device_info.size = size;
+                    .create_swap_chain(&rc.surface, &rc.swapchain_desc);
+                rc.size = size;
+                std::mem::drop(rcl);
+                textures.replace_depth_texture(depth_texture, "depth");
                 // TODO: program.on_resize();
             }
             Event::RedrawRequested(_) => {
-                let frame = device_info
+                let mut rcl = RENDER_CONTEXT.write();
+                let rc = rcl.as_mut().unwrap();
+                let frame = rc
                     .swap_chain
                     .get_current_frame()
                     .expect("Frame failed");
@@ -160,10 +165,9 @@ where
                     imgui: &ui,
                     textures: &mut textures,
                     frame: &frame,
-                    device: &device_info.device,
                     buffers: &mut buffers,
-                    queue: &mut device_info.queue
                 };
+                std::mem::drop(rcl);
                 let should_continue = program.tick(&mut core);
                 if !should_continue {
                     *control_flow = ControlFlow::Exit;
@@ -222,13 +226,13 @@ where
                         .collapsed(true, Condition::FirstUseEver)
                         .size([100.0, 100.0], Condition::FirstUseEver)
                         .movable(true)
-                        .position([0.0, device_info.size.height as f32 - 20.0], Condition::FirstUseEver)
+                        .position([0.0, RENDER_CONTEXT.read().as_ref().unwrap().size.height as f32 - 20.0], Condition::FirstUseEver)
                         .build(&ui, || {});
                 }
 
                 // ImGui
                 {
-                    let mut encoder: wgpu::CommandEncoder = device_info
+                    let mut encoder: wgpu::CommandEncoder = RENDER_CONTEXT.read().as_ref().unwrap()
                         .device
                         .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
 
@@ -249,17 +253,19 @@ where
                         depth_stencil_attachment: None,
                     });
 
+                    let mut rcl = RENDER_CONTEXT.write();
+                    let rc = rcl.as_mut().unwrap();
                     imgui_renderer
                         .render(
                             ui.render(),
-                            &mut device_info.queue,
-                            &device_info.device,
+                            &mut rc.queue,
+                            &rc.device,
                             &mut rpass,
                         )
                         .expect("Rendering failed");
                     std::mem::drop(rpass);
 
-                    device_info.queue.submit(Some(encoder.finish()));
+                    rc.queue.submit(Some(encoder.finish()));
                 }
             }
             Event::WindowEvent {

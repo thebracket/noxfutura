@@ -8,6 +8,4 @@ pub struct Core<'a> {
     pub textures: &'a mut Textures,
     pub buffers: &'a mut Buffers,
     pub frame: &'a wgpu::SwapChainFrame,
-    pub device: &'a wgpu::Device,
-    pub queue: &'a mut wgpu::Queue,
 }

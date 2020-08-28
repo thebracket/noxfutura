@@ -1,5 +1,8 @@
-pub fn simple_texture_bg_layout(device: &wgpu::Device, label: &str) -> wgpu::BindGroupLayout {
-    device
+use crate::RENDER_CONTEXT;
+
+pub fn simple_texture_bg_layout(label: &str) -> wgpu::BindGroupLayout {
+    RENDER_CONTEXT.read().as_ref().unwrap()
+        .device
         .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             entries: &[
                 wgpu::BindGroupLayoutEntry {

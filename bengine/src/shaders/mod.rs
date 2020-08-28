@@ -1,6 +1,5 @@
 mod loader;
 use wgpu::{Device, ShaderModule};
-pub use loader::ShaderType;
 
 pub struct Shaders {
     shaders: Vec<ShaderModule>
@@ -13,15 +12,8 @@ impl Shaders {
         }
     }
 
-    pub fn register<S: ToString>(&mut self, filename: S, shader_type: ShaderType, device: &Device) -> usize {
-        let sm = loader::from_source(filename, shader_type, device);
-        let idx = self.shaders.len();
-        self.shaders.push(sm);
-        idx
-    }
-
-    pub fn register_include(&mut self, shader_type: ShaderType, device: &Device, source: wgpu::ShaderModuleSource) -> usize {
-        let sm = loader::from_spv(shader_type, device, source);
+    pub fn register_include(&mut self, source: wgpu::ShaderModuleSource) -> usize {
+        let sm = loader::from_spv(source);
         let idx = self.shaders.len();
         self.shaders.push(sm);
         idx
