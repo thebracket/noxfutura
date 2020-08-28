@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 bengine = { path = "bengine/" }
+bracket-random = "0.8.0"
 
 [profile.dev]
 #opt-level = 1

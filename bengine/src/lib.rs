@@ -22,3 +22,7 @@ pub mod gpu {
 }
 
 pub use crate::core::run;
+
+pub fn get_window_size() -> winit::dpi::PhysicalSize<u32> {
+    RENDER_CONTEXT.read().as_ref().unwrap().size
+}
