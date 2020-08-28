@@ -34,7 +34,7 @@ pub(crate) fn initialize_imgui(
             }),
         },
         FontSource::TtfData {
-            data: include_bytes!("../../resources/fontawesome-webfont.ttf"),
+            data: include_bytes!("../../../resources/fontawesome-webfont.ttf"),
             size_pixels: font_size,
             config: Some(FontConfig {
                 glyph_ranges: FontGlyphRanges::from_slice(&[0xf000, 0xf2e0, 0]),

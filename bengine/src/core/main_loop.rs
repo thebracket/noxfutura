@@ -1,5 +1,6 @@
-use imgui::Context;
 use crate::imgui_wgpu::Renderer;
+use crate::{init_render_context, BEngineGame, Core, RENDER_CONTEXT, TEXTURES};
+use imgui::Context;
 use imgui_winit_support::WinitPlatform;
 use std::time::Instant;
 use winit::{
@@ -7,7 +8,6 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
-use crate::{init_render_context, init, RENDER_CONTEXT, TEXTURES, BEngineGame, Core};
 
 fn bootstrap(
     title: &str,
@@ -30,7 +30,7 @@ fn bootstrap(
     let depth_texture = textures.register_new_depth_texture("depth");
     let mut rcl = RENDER_CONTEXT.write();
     let device_info = rcl.as_mut().unwrap();
-    let imgui_renderer = init::initialize_imgui(
+    let imgui_renderer = crate::initialize_imgui(
         &window,
         &device_info.device,
         &mut device_info.queue,
