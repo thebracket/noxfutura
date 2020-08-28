@@ -1,8 +1,10 @@
 mod float_buffer;
+mod layouts;
 mod shaders;
 mod textures;
 
 pub use float_buffer::FloatBuffer;
+pub use layouts::*;
 pub use shaders::SHADERS;
 pub use textures::TEXTURES;
 

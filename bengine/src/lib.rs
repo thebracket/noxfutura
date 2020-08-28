@@ -6,14 +6,10 @@ mod core;
 mod game;
 mod imgui_wgpu;
 mod init;
-mod layouts;
 mod render_core;
 
-pub use crate::assets::SHADERS;
-pub use crate::assets::TEXTURES;
-pub use crate::assets::{make_buffer_with_data, make_empty_buffer, FloatBuffer};
+pub use crate::assets::*;
 pub use crate::core::Core;
-pub use crate::core::Initializer;
 pub use game::BEngineGame;
 use imgui::Context;
 use imgui_wgpu::Renderer;
@@ -25,8 +21,6 @@ use winit::{
     window::Window,
 };
 
-use crate::layouts::simple_texture_bg;
-use crate::layouts::simple_texture_bg_layout;
 pub use crate::render_core::*;
 
 pub mod gui {
@@ -96,11 +90,7 @@ where
     let mut keycode: Option<winit::event::VirtualKeyCode> = None;
     //let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
-    let mut initializer = Initializer::new();
-
-    println!("Starting program init");
-    program.init(&mut initializer);
-    println!("Program init complete");
+    program.init();
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;

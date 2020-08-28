@@ -8,16 +8,16 @@ pub struct Loader {
 }
 
 impl Loader {
-    pub fn new(init: &mut Initializer) -> Self {
+    pub fn new() -> Self {
         println!("Start loader init");
         let background_image = TEXTURES.write().load_texture_from_bytes(
             include_bytes!("../resources/images/background_image.png"),
             "nox_bg",
         );
         println!("tex");
-        let tex_layout = init.simple_texture_bg_layout("quad_layout");
+        let tex_layout = simple_texture_bg_layout("quad_layout");
         println!("texl");
-        let pipeline_layout = init.pipeline_layout(&[&tex_layout], "quad_pipeline");
+        let pipeline_layout = pipeline_layout(&[&tex_layout], "quad_pipeline");
         println!("pl");
         let mut shaders = SHADERS.write();
         let quad_vert_shader = shaders.register_include(gpu::include_spirv!(
@@ -38,7 +38,7 @@ impl Loader {
             ],
         );
         println!("ProgInit");
-        let pipeline = init.render_pipeline_simple(
+        let pipeline = render_pipeline_simple(
             "QuadPipeline",
             &pipeline_layout,
             quad_vert_shader,
@@ -47,7 +47,7 @@ impl Loader {
         );
         Self {
             quad_buffer,
-            quad_bg: init.simple_texture_bg(&tex_layout, background_image),
+            quad_bg: simple_texture_bg(&tex_layout, background_image),
             pipeline,
         }
     }

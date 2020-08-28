@@ -20,8 +20,8 @@ impl NoxFutura {
 }
 
 impl BEngineGame for NoxFutura {
-    fn init(&mut self, init: &mut Initializer) {
-        self.loader = Some(loader::Loader::new(init));
+    fn init(&mut self) {
+        self.loader = Some(loader::Loader::new());
     }
 
     fn tick(&mut self, core: &mut Core) -> bool {
