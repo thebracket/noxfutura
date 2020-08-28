@@ -1,13 +1,12 @@
+use futures::executor::block_on;
+use parking_lot::RwLock;
 use wgpu::{
-    Adapter, BackendBit, Device, Instance,
-    Queue, Surface, SwapChain, SwapChainDescriptor,
-    TextureFormat, 
+    Adapter, BackendBit, Device, Instance, Queue, Surface, SwapChain, SwapChainDescriptor,
+    TextureFormat,
 };
 use winit::{dpi::PhysicalSize, window::Window};
-use parking_lot::RwLock;
-use futures::executor::block_on;
 mod init;
-use init::{get_adapter, get_device_and_queue, create_swap_chain};
+use init::{create_swap_chain, get_adapter, get_device_and_queue};
 
 const SWAPCHAIN_FORMAT: TextureFormat = TextureFormat::Bgra8UnormSrgb;
 
@@ -45,12 +44,10 @@ impl RenderContext {
 }
 
 lazy_static! {
-    pub static ref RENDER_CONTEXT : RwLock<Option<RenderContext>> = RwLock::new(None);
+    pub static ref RENDER_CONTEXT: RwLock<Option<RenderContext>> = RwLock::new(None);
 }
 
 pub(crate) fn init_render_context(window: &Window) {
     let mut rc = RENDER_CONTEXT.write();
-    *rc = Some(
-        RenderContext::new(window)
-    );
+    *rc = Some(RenderContext::new(window));
 }

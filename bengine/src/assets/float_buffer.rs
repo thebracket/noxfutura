@@ -1,5 +1,5 @@
-use wgpu::util::DeviceExt;
 use crate::RENDER_CONTEXT;
+use wgpu::util::DeviceExt;
 
 pub struct FloatBuffer<T>
 where
@@ -10,7 +10,7 @@ where
     total_size: wgpu::BufferAddress,
     row_len: usize,
     pub buffer: Option<wgpu::Buffer>,
-    usage: wgpu::BufferUsage
+    usage: wgpu::BufferUsage,
 }
 
 impl<T> FloatBuffer<T>
@@ -49,7 +49,7 @@ where
             total_size: cumulative_size,
             row_len: cumulative_len,
             buffer: None,
-            usage
+            usage,
         }
     }
 
@@ -75,16 +75,17 @@ where
         }
         let rcl = RENDER_CONTEXT.read();
         let rc = rcl.as_ref().unwrap();
-        self.buffer = Some(rc.device.create_buffer_init(
-            &wgpu::util::BufferInitDescriptor {
-                label: None,
-                contents: bytemuck::cast_slice(&self.data),
-                usage: self.usage
-            }
-        ));
+        self.buffer = Some(
+            rc.device
+                .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                    label: None,
+                    contents: bytemuck::cast_slice(&self.data),
+                    usage: self.usage,
+                }),
+        );
     }
 
-    pub fn update_buffer(&mut self, device: &wgpu::Device) {
+    pub fn update_buffer(&mut self) {
         self.build();
     }
 

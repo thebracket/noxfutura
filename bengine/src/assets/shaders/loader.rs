@@ -1,7 +1,5 @@
-use glsl_to_spirv::compile;
-use std::fs;
-use wgpu::{Device, ShaderModule};
 use crate::RENDER_CONTEXT;
+use wgpu::ShaderModule;
 
 pub(crate) fn from_spv(source: wgpu::ShaderModuleSource) -> ShaderModule {
     let rcl = RENDER_CONTEXT.read();

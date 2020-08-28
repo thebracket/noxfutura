@@ -1,7 +1,10 @@
 use crate::RENDER_CONTEXT;
 
 pub fn simple_texture_bg_layout(label: &str) -> wgpu::BindGroupLayout {
-    RENDER_CONTEXT.read().as_ref().unwrap()
+    RENDER_CONTEXT
+        .read()
+        .as_ref()
+        .unwrap()
         .device
         .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             entries: &[
@@ -23,6 +26,5 @@ pub fn simple_texture_bg_layout(label: &str) -> wgpu::BindGroupLayout {
                 },
             ],
             label: Some(label),
-        }
-    )
+        })
 }

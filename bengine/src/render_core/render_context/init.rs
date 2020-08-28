@@ -1,10 +1,9 @@
+use super::SWAPCHAIN_FORMAT;
 use wgpu::{
-    Adapter, Device, DeviceDescriptor, Features, Instance, Limits, PowerPreference,
-    PresentMode, Queue, RequestAdapterOptions, Surface, SwapChain, SwapChainDescriptor,
-    TextureUsage,
+    Adapter, Device, DeviceDescriptor, Features, Instance, Limits, PowerPreference, PresentMode,
+    Queue, RequestAdapterOptions, Surface, SwapChain, SwapChainDescriptor, TextureUsage,
 };
 use winit::dpi::PhysicalSize;
-use super::SWAPCHAIN_FORMAT;
 
 /// Async function to request an adapter from WGPU
 pub(crate) async fn get_adapter(instance: &Instance, surface: &Surface) -> Adapter {

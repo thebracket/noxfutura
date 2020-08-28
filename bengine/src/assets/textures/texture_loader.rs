@@ -1,12 +1,8 @@
 use super::TextureRef;
-use wgpu::{Device, Queue};
-use image::GenericImageView;
 use crate::RENDER_CONTEXT;
+use image::GenericImageView;
 
-pub(crate) fn from_bytes(
-    bytes: &[u8],
-    label: &str,
-) -> Result<TextureRef, failure::Error> {
+pub(crate) fn from_bytes(bytes: &[u8], label: &str) -> Result<TextureRef, failure::Error> {
     println!("from_bytes");
     let img = image::load_from_memory(bytes)?;
     from_image(&img, Some(label))
@@ -40,18 +36,18 @@ pub(crate) fn from_image(
     });
 
     rc.queue.write_texture(
-        wgpu::TextureCopyView{
+        wgpu::TextureCopyView {
             texture: &texture,
             mip_level: 0,
-            origin: wgpu::Origin3d::ZERO
+            origin: wgpu::Origin3d::ZERO,
         },
         &rgba,
-        wgpu::TextureDataLayout{
+        wgpu::TextureDataLayout {
             offset: 0,
             bytes_per_row: 4 * size.width,
-            rows_per_image: size.height
+            rows_per_image: size.height,
         },
-        size
+        size,
     );
 
     let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
@@ -66,14 +62,12 @@ pub(crate) fn from_image(
         lod_max_clamp: 100.0,
         compare: None,
         label: None,
-        anisotropy_clamp: None
+        anisotropy_clamp: None,
     });
 
-    Ok(
-        TextureRef {
-            texture,
-            view,
-            sampler,
-        }
-    )
+    Ok(TextureRef {
+        texture,
+        view,
+        sampler,
+    })
 }

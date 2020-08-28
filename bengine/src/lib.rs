@@ -1,35 +1,32 @@
 #[macro_use]
 extern crate lazy_static;
 
-
+mod assets;
+mod core;
 mod game;
 mod imgui_wgpu;
 mod init;
-mod core;
 mod layouts;
 mod render_core;
-mod assets;
 
-
+pub use crate::assets::SHADERS;
+pub use crate::assets::TEXTURES;
+pub use crate::assets::{make_buffer_with_data, make_empty_buffer, FloatBuffer};
+pub use crate::core::Core;
+pub use crate::core::Initializer;
 pub use game::BEngineGame;
 use imgui::Context;
 use imgui_wgpu::Renderer;
 use imgui_winit_support::WinitPlatform;
-pub use init::WgpuInit;
 use std::time::Instant;
 use winit::{
     event::{Event, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
-pub use crate::core::Core;
-pub use crate::assets::TEXTURES;
-pub use crate::core::Initializer;
-pub use crate::assets::SHADERS;
-pub use crate::assets::{ FloatBuffer, make_buffer_with_data, make_empty_buffer };
 
-use crate::layouts::simple_texture_bg_layout;
 use crate::layouts::simple_texture_bg;
+use crate::layouts::simple_texture_bg_layout;
 pub use crate::render_core::*;
 
 pub mod gui {
@@ -40,7 +37,9 @@ pub mod gpu {
     pub use wgpu::*;
 }
 
-fn bootstrap(title: &str) -> (
+fn bootstrap(
+    title: &str,
+) -> (
     EventLoop<()>,
     Window,
     usize,
@@ -85,7 +84,7 @@ where
     let (
         event_loop,
         window,
-        mut depth_texture,
+        depth_texture,
         mut imgui,
         mut imgui_renderer,
         mut hidpi_factor,
@@ -95,7 +94,7 @@ where
     let mut last_frame = Instant::now();
     let mut last_cursor = None;
     let mut keycode: Option<winit::event::VirtualKeyCode> = None;
-    let mut mouse_world_pos = (0usize, 0usize, 0usize);
+    //let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
     let mut initializer = Initializer::new();
 
@@ -122,9 +121,7 @@ where
                 let rc = rcl.as_mut().unwrap();
                 rc.swapchain_desc.width = size.width;
                 rc.swapchain_desc.height = size.height;
-                rc.swap_chain = rc
-                    .device
-                    .create_swap_chain(&rc.surface, &rc.swapchain_desc);
+                rc.swap_chain = rc.device.create_swap_chain(&rc.surface, &rc.swapchain_desc);
                 rc.size = size;
                 std::mem::drop(rcl);
                 let mut textures = TEXTURES.write();
@@ -134,18 +131,15 @@ where
             Event::RedrawRequested(_) => {
                 let mut rcl = RENDER_CONTEXT.write();
                 let rc = rcl.as_mut().unwrap();
-                let frame = rc
-                    .swap_chain
-                    .get_current_frame()
-                    .expect("Frame failed");
+                let frame = rc.swap_chain.get_current_frame().expect("Frame failed");
 
                 platform
                     .prepare_frame(imgui.io_mut(), &window)
                     .expect("Failed to prepare frame");
-                let mouse_position = imgui.io().mouse_pos;
+                //let mouse_position = imgui.io().mouse_pos;
                 let ui = imgui.frame();
 
-                let mut core = Core{
+                let mut core = Core {
                     imgui: &ui,
                     frame: &frame,
                 };
@@ -198,23 +192,29 @@ where
 
                 {
                     use imgui::*;
-                    let title = format!(
-                        "FPS: {:.0}. ### FPS",
-                        ui.io().framerate
-                    );
+                    let title = format!("FPS: {:.0}. ### FPS", ui.io().framerate);
                     let title_tmp = ImString::new(title);
                     let window = imgui::Window::new(&title_tmp);
                     window
                         .collapsed(true, Condition::FirstUseEver)
                         .size([100.0, 100.0], Condition::FirstUseEver)
                         .movable(true)
-                        .position([0.0, RENDER_CONTEXT.read().as_ref().unwrap().size.height as f32 - 20.0], Condition::FirstUseEver)
+                        .position(
+                            [
+                                0.0,
+                                RENDER_CONTEXT.read().as_ref().unwrap().size.height as f32 - 20.0,
+                            ],
+                            Condition::FirstUseEver,
+                        )
                         .build(&ui, || {});
                 }
 
                 // ImGui
                 {
-                    let mut encoder: wgpu::CommandEncoder = RENDER_CONTEXT.read().as_ref().unwrap()
+                    let mut encoder: wgpu::CommandEncoder = RENDER_CONTEXT
+                        .read()
+                        .as_ref()
+                        .unwrap()
                         .device
                         .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
 
@@ -238,12 +238,7 @@ where
                     let mut rcl = RENDER_CONTEXT.write();
                     let rc = rcl.as_mut().unwrap();
                     imgui_renderer
-                        .render(
-                            ui.render(),
-                            &mut rc.queue,
-                            &rc.device,
-                            &mut rpass,
-                        )
+                        .render(ui.render(), &mut rc.queue, &rc.device, &mut rpass)
                         .expect("Rendering failed");
                     std::mem::drop(rpass);
 

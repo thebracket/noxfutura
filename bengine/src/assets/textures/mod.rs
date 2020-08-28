@@ -1,11 +1,11 @@
 mod depth_texture;
 mod texture_loader;
-pub(crate) use depth_texture::create_depth_texture;
 use crate::RENDER_CONTEXT;
+pub(crate) use depth_texture::create_depth_texture;
 use parking_lot::RwLock;
 
 lazy_static! {
-    pub static ref TEXTURES : RwLock<Textures> = RwLock::new(Textures::new());
+    pub static ref TEXTURES: RwLock<Textures> = RwLock::new(Textures::new());
 }
 
 pub struct TextureRef {
@@ -15,13 +15,13 @@ pub struct TextureRef {
 }
 
 pub struct Textures {
-    textures: Vec<TextureRef>
+    textures: Vec<TextureRef>,
 }
 
 impl Textures {
     fn new() -> Self {
-        Textures{
-            textures: Vec::new()
+        Textures {
+            textures: Vec::new(),
         }
     }
 
