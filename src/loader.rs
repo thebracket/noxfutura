@@ -10,7 +10,7 @@ pub struct Loader {
 impl Loader {
     pub fn new(init: &mut Initializer) -> Self {
         println!("Start loader init");
-        let background_image = init.load_texture_from_bytes(include_bytes!("../resources/images/background_image.png"));
+        let background_image = TEXTURES.write().load_texture_from_bytes(include_bytes!("../resources/images/background_image.png"), "nox_bg");
         println!("tex");
         let tex_layout = init.simple_texture_bg_layout("quad_layout");
         println!("texl");

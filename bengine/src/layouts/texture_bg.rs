@@ -1,7 +1,8 @@
-use crate::Textures;
+use crate::TEXTURES;
 use crate::RENDER_CONTEXT;
 
-pub fn simple_texture_bg(textures: &Textures, layout: &wgpu::BindGroupLayout, texture_id: usize) -> wgpu::BindGroup {
+pub fn simple_texture_bg(layout: &wgpu::BindGroupLayout, texture_id: usize) -> wgpu::BindGroup {
+    let mut textures = TEXTURES.write();
     RENDER_CONTEXT.read().as_ref().unwrap()
     .device
         .create_bind_group(&wgpu::BindGroupDescriptor {

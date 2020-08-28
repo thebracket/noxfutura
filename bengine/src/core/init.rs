@@ -1,31 +1,20 @@
 use wgpu::{Device, Queue};
-use crate::{Textures, Shaders, RENDER_CONTEXT, Buffers};
+use crate::{Shaders, RENDER_CONTEXT, Buffers};
 
 pub struct Initializer<'a> {
-    textures: &'a mut Textures,
     shaders: &'a mut Shaders,
     buffers: &'a mut Buffers,
 }
 
 impl<'a> Initializer<'a> {
     pub(crate) fn new(
-        textures: &'a mut Textures,
         shaders: &'a mut Shaders,
         buffers: &'a mut Buffers,
     ) -> Self {
         Self {
-            textures,
             shaders,
             buffers,
         }
-    }
-
-    pub fn load_texture_from_bytes(&mut self, bytes: &[u8]) -> usize {
-        println!("Call load_texture_from_bytes");
-        self.textures.load_texture_from_bytes(
-            bytes,
-            "Background"
-        )
     }
 
     pub fn load_shader_from_include(&mut self, source: wgpu::ShaderModuleSource) -> usize {
@@ -49,7 +38,7 @@ impl<'a> Initializer<'a> {
     }
 
     pub fn simple_texture_bg(&mut self, layout: &wgpu::BindGroupLayout, texture_id: usize) -> wgpu::BindGroup {
-        crate::simple_texture_bg(&self.textures, layout, texture_id)
+        crate::simple_texture_bg(layout, texture_id)
     }
 
     pub fn pipeline_layout(&mut self, entries: &[&wgpu::BindGroupLayout], label: &str) -> wgpu::PipelineLayout {

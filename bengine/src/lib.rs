@@ -5,12 +5,12 @@ extern crate lazy_static;
 mod game;
 mod imgui_wgpu;
 mod init;
-mod textures;
 mod core;
 mod shaders;
 mod buffers;
 mod layouts;
 mod render_core;
+mod assets;
 
 
 pub use game::BEngineGame;
@@ -25,7 +25,7 @@ use winit::{
     window::Window,
 };
 pub use crate::core::Core;
-pub use crate::textures::Textures;
+pub use crate::assets::TEXTURES;
 pub use crate::shaders::Shaders;
 pub use crate::buffers::Buffers;
 pub use crate::core::Initializer;
@@ -50,7 +50,6 @@ fn bootstrap(title: &str) -> (
     Renderer,
     f64,
     WinitPlatform,
-    Textures,
     Shaders,
     Buffers
 ) {
@@ -60,7 +59,7 @@ fn bootstrap(title: &str) -> (
     init_render_context(&window);
     println!("Set title");
 
-    let mut textures = Textures::new();
+    let mut textures = TEXTURES.write();
     let depth_texture = textures.register_new_depth_texture("depth");
     let mut rcl = RENDER_CONTEXT.write();
     let device_info = rcl.as_mut().unwrap();
@@ -82,7 +81,6 @@ fn bootstrap(title: &str) -> (
         imgui_renderer.1,
         imgui_renderer.2,
         imgui_renderer.3,
-        textures,
         shaders,
         buffers
     )
@@ -100,7 +98,6 @@ where
         mut imgui_renderer,
         mut hidpi_factor,
         mut platform,
-        mut textures,
         mut shaders,
         mut buffers
     ) = bootstrap(title);
@@ -111,7 +108,6 @@ where
     let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
     let mut initializer = Initializer::new(
-        &mut textures,
         &mut shaders,
         &mut buffers,
     );
@@ -144,6 +140,7 @@ where
                     .create_swap_chain(&rc.surface, &rc.swapchain_desc);
                 rc.size = size;
                 std::mem::drop(rcl);
+                let mut textures = TEXTURES.write();
                 textures.replace_depth_texture(depth_texture, "depth");
                 // TODO: program.on_resize();
             }
@@ -163,7 +160,6 @@ where
 
                 let mut core = Core{
                     imgui: &ui,
-                    textures: &mut textures,
                     frame: &frame,
                     buffers: &mut buffers,
                 };
