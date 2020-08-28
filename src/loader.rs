@@ -2,7 +2,7 @@ use bengine::*;
 use crate::GameMode;
 
 pub struct Loader {
-    quad_buffer: usize,
+    quad_buffer: FloatBuffer<f32>,
     quad_bg: gpu::BindGroup,
     pipeline: gpu::RenderPipeline
 }
@@ -25,7 +25,7 @@ impl Loader {
         );
         std::mem::drop(shaders);
         println!("shaders");
-        let quad_buffer = init.make_buffer_with_data(
+        let quad_buffer = make_buffer_with_data(
             &[2, 2],
             24,
             gpu::BufferUsage::VERTEX,
@@ -35,16 +35,17 @@ impl Loader {
             ]
         );
         println!("ProgInit");
+        let pipeline = init.render_pipeline_simple(
+            "QuadPipeline",
+            &pipeline_layout,
+            quad_vert_shader,
+            quad_frag_shader,
+            &quad_buffer
+        );
         Self {
             quad_buffer,
             quad_bg: init.simple_texture_bg(&tex_layout, background_image),
-            pipeline: init.render_pipeline_simple(
-                "QuadPipeline",
-                &pipeline_layout,
-                quad_vert_shader,
-                quad_frag_shader,
-                quad_buffer
-            )
+            pipeline
         }
     }
 
@@ -69,7 +70,7 @@ impl Loader {
             rpass.set_bind_group(0, &self.quad_bg, &[]);
             rpass.set_vertex_buffer(
                 0, 
-                core.buffers.get_buffer(self.quad_buffer).buffer.as_ref().unwrap().slice(..)
+                self.quad_buffer.buffer.as_ref().unwrap().slice(..)
             );
             rpass.draw(0..24, 0..1);
         }

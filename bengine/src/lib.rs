@@ -6,7 +6,6 @@ mod game;
 mod imgui_wgpu;
 mod init;
 mod core;
-mod buffers;
 mod layouts;
 mod render_core;
 mod assets;
@@ -25,9 +24,9 @@ use winit::{
 };
 pub use crate::core::Core;
 pub use crate::assets::TEXTURES;
-pub use crate::buffers::Buffers;
 pub use crate::core::Initializer;
 pub use crate::assets::SHADERS;
+pub use crate::assets::{ FloatBuffer, make_buffer_with_data, make_empty_buffer };
 
 use crate::layouts::simple_texture_bg_layout;
 use crate::layouts::simple_texture_bg;
@@ -49,7 +48,6 @@ fn bootstrap(title: &str) -> (
     Renderer,
     f64,
     WinitPlatform,
-    Buffers
 ) {
     let event_loop = EventLoop::new();
     let window = Window::new(&event_loop).unwrap();
@@ -67,7 +65,6 @@ fn bootstrap(title: &str) -> (
         &mut device_info.queue,
         &device_info.swapchain_desc,
     );
-    let buffers = Buffers::new();
     println!("Bootstrapped");
 
     (
@@ -78,7 +75,6 @@ fn bootstrap(title: &str) -> (
         imgui_renderer.1,
         imgui_renderer.2,
         imgui_renderer.3,
-        buffers
     )
 }
 
@@ -94,7 +90,6 @@ where
         mut imgui_renderer,
         mut hidpi_factor,
         mut platform,
-        mut buffers
     ) = bootstrap(title);
 
     let mut last_frame = Instant::now();
@@ -102,9 +97,7 @@ where
     let mut keycode: Option<winit::event::VirtualKeyCode> = None;
     let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
-    let mut initializer = Initializer::new(
-        &mut buffers,
-    );
+    let mut initializer = Initializer::new();
 
     println!("Starting program init");
     program.init(&mut initializer);
@@ -155,7 +148,6 @@ where
                 let mut core = Core{
                     imgui: &ui,
                     frame: &frame,
-                    buffers: &mut buffers,
                 };
                 std::mem::drop(rcl);
                 let should_continue = program.tick(&mut core);

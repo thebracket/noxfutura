@@ -1,29 +1,13 @@
 use wgpu::{Device, Queue};
-use crate::{RENDER_CONTEXT, SHADERS, Buffers};
+use crate::{RENDER_CONTEXT, SHADERS, FloatBuffer};
 
-pub struct Initializer<'a> {
-    buffers: &'a mut Buffers,
+pub struct Initializer {
 }
 
-impl<'a> Initializer<'a> {
-    pub(crate) fn new(
-        buffers: &'a mut Buffers,
-    ) -> Self {
+impl Initializer {
+    pub(crate) fn new() -> Self {
         Self {
-            buffers,
         }
-    }
-
-    pub fn make_empty_buffer(&mut self, layout: &[usize], capacity: usize, usage: wgpu::BufferUsage) -> usize {
-        self.buffers.init_buffer(layout, capacity, usage)
-    }
-
-    pub fn make_buffer_with_data(&mut self, layout: &[usize], capacity: usize, usage: wgpu::BufferUsage, data: &[f32]) -> usize {
-        let idx = self.buffers.init_buffer(layout, capacity, usage);
-        let buf = self.buffers.get_buffer(idx);
-        buf.add_slice(data);
-        buf.build();
-        idx
     }
 
     pub fn simple_texture_bg_layout(&mut self, label: &str) -> wgpu::BindGroupLayout {
@@ -48,7 +32,7 @@ impl<'a> Initializer<'a> {
         layout: &wgpu::PipelineLayout, 
         vertex_shader_id: usize, 
         fragment_shader_id: usize,
-        buf_id: usize
+        buffer: &FloatBuffer<f32>
     ) -> wgpu::RenderPipeline {
         let rcl = RENDER_CONTEXT.read();
         let rc = rcl.as_ref().unwrap();
@@ -84,7 +68,7 @@ impl<'a> Initializer<'a> {
                     depth_stencil_state: None,
                     vertex_state: wgpu::VertexStateDescriptor {
                         index_format: wgpu::IndexFormat::Uint16,
-                        vertex_buffers: &[self.buffers.get_descriptor(buf_id)],
+                        vertex_buffers: &[buffer.descriptor()],
                     },
                     sample_count: 1,
                     sample_mask: !0,
