@@ -6,6 +6,7 @@ mod core;
 mod game;
 mod imgui_wgpu;
 mod render_core;
+pub mod helpers;
 
 pub use crate::assets::*;
 pub use crate::core::Core;

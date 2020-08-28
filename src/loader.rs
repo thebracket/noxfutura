@@ -9,20 +9,15 @@ pub struct Loader {
 
 impl Loader {
     pub fn new() -> Self {
-        let background_image = TEXTURES.write().load_texture_from_bytes(
-            include_bytes!("../resources/images/background_image.png"),
-            "nox_bg",
-        );
+        use helpers::*;
+        let background_image = texture_from_file("resources/images/background_image.png", "nox_bg");
         let tex_layout = simple_texture_bg_layout("quad_layout");
         let pipeline_layout = pipeline_layout(&[&tex_layout], "quad_pipeline");
-        let mut shaders = SHADERS.write();
-        let quad_vert_shader = shaders.register_include(gpu::include_spirv!(
-            "../resources/shaders/quad_tex.vert.spv"
-        ));
-        let quad_frag_shader = shaders.register_include(gpu::include_spirv!(
-            "../resources/shaders/quad_tex.frag.spv"
-        ));
-        std::mem::drop(shaders);
+
+        let (quad_vert_shader, quad_frag_shader) = shader_from_bytes(
+            gpu::include_spirv!("../resources/shaders/quad_tex.vert.spv"),
+            gpu::include_spirv!("../resources/shaders/quad_tex.frag.spv"),
+        );
 
         let quad_buffer = make_buffer_with_data(
             &[2, 2],
