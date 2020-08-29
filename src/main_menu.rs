@@ -3,7 +3,7 @@ use bengine::*;
 use bracket_random::prelude::RandomNumberGenerator;
 
 pub struct MainMenu {
-    tagline: String
+    tagline: String,
 }
 
 impl MainMenu {

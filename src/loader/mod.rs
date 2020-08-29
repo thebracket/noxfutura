@@ -4,13 +4,13 @@ mod asset_loader;
 use bengine::gui::*;
 
 pub struct Loader {
-    started_thread: bool
+    started_thread: bool,
 }
 
 impl Loader {
     pub fn new() -> Self {
-        Self{
-            started_thread: false
+        Self {
+            started_thread: false,
         }
     }
 }
@@ -25,7 +25,6 @@ impl NoxMode for Loader {
             self.started_thread = true;
         }
 
-
         let load_lock = LOADER.read();
         let load_state = load_lock.status.clone();
         let progress = load_lock.progress;
@@ -36,7 +35,9 @@ impl NoxMode for Loader {
         window
             .size([300.0, 100.0], Condition::FirstUseEver)
             .build(core.imgui, || {
-                ProgressBar::new(progress).size([250.0, 20.0]).build(core.imgui);
+                ProgressBar::new(progress)
+                    .size([250.0, 20.0])
+                    .build(core.imgui);
 
                 core.imgui.text(&load_state);
             });

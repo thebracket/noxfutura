@@ -37,7 +37,3 @@ impl LoaderState {
         self.done = is_done;
     }
 }
-
-pub fn loader_progress(progress: f32, status: &str, is_done: bool) {
-    LOADER.write().update(progress, status, is_done);
-}

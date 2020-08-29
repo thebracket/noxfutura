@@ -2,16 +2,16 @@
 extern crate lazy_static;
 
 use bengine::*;
-mod shared_resources;
 mod loader;
+mod shared_resources;
 use shared_resources::SharedResources;
 mod main_menu;
 mod raws;
-pub use raws::{RAWS, load_raws};
+pub use raws::{load_raws, RAWS};
 
 pub enum GameMode {
     Loader,
-    MainMenu
+    MainMenu,
 }
 
 trait NoxMode {
@@ -21,7 +21,7 @@ trait NoxMode {
 struct NoxFutura {
     current_mode: GameMode,
     modes: Vec<Box<dyn NoxMode>>,
-    shared_resources: Option<SharedResources>
+    shared_resources: Option<SharedResources>,
 }
 
 impl NoxFutura {
@@ -29,7 +29,7 @@ impl NoxFutura {
         Self {
             current_mode: GameMode::Loader,
             modes: Vec::new(),
-            shared_resources: None
+            shared_resources: None,
         }
     }
 }
