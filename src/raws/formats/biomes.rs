@@ -1,4 +1,4 @@
-use crate::blocktype::BlockType;
+use crate::raws::blocktype::BlockType;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

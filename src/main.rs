@@ -1,8 +1,13 @@
+#[macro_use]
+extern crate lazy_static;
+
 use bengine::*;
 mod shared_resources;
 mod loader;
 use shared_resources::SharedResources;
 mod main_menu;
+mod raws;
+pub use raws::{RAWS, load_raws};
 
 pub enum GameMode {
     Loader,

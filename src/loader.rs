@@ -13,6 +13,8 @@ impl NoxMode for Loader {
     fn tick(&mut self, core: &mut Core, shared: &SharedResources) -> GameMode {
         shared.quad_render.render(shared.background_image, core);
 
+        crate::load_raws();
+
         GameMode::MainMenu
     }
 }

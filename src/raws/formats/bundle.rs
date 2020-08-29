@@ -30,7 +30,7 @@ impl RawBundle {
         bundle
     }
 
-    pub fn merge(&self, raws: &mut crate::Raws) {
+    pub fn merge(&self, raws: &mut crate::raws::Raws) {
         if let Some(biomes) = &self.biomes {
             raws.biomes.areas.extend_from_slice(&biomes);
         }

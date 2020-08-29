@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate lazy_static;
-
 mod formats;
 pub use formats::*;
 use parking_lot::RwLock;
