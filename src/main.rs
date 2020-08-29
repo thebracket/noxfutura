@@ -7,11 +7,13 @@ mod shared_resources;
 use shared_resources::SharedResources;
 mod main_menu;
 mod raws;
+mod worldgen;
 pub use raws::{load_raws, RAWS};
 
 pub enum GameMode {
     Loader,
     MainMenu,
+    WorldGen1,
 }
 
 trait NoxMode {
@@ -38,13 +40,17 @@ impl BEngineGame for NoxFutura {
     fn init(&mut self) {
         self.shared_resources = Some(SharedResources::new());
         self.modes.push(Box::new(loader::Loader::new()));
-        self.modes.push(Box::new(main_menu::MainMenu::new()))
+        self.modes.push(Box::new(main_menu::MainMenu::new()));
+        self.modes.push(Box::new(worldgen::WorldGen1::new()));
     }
 
     fn tick(&mut self, core: &mut Core) -> bool {
         let new_mode = match self.current_mode {
             GameMode::Loader => self.modes[0].tick(core, self.shared_resources.as_ref().unwrap()),
             GameMode::MainMenu => self.modes[1].tick(core, self.shared_resources.as_ref().unwrap()),
+            GameMode::WorldGen1 => {
+                self.modes[2].tick(core, self.shared_resources.as_ref().unwrap())
+            }
         };
         self.current_mode = new_mode;
         true

@@ -114,7 +114,7 @@ impl NoxMode for MainMenu {
             .build(ui, || {
                 ui.text_colored([1.0, 1.0, 0.0, 1.0], &self.tagline);
                 if ui.button(im_str!("New Game"), [100.0, 20.0]) {
-                    result = GameMode::MainMenu;
+                    result = GameMode::WorldGen1;
                 }
                 if std::path::Path::new("world.dat").exists() {
                     if ui.button(im_str!("Play/Continue Game"), [100.0, 20.0]) {
