@@ -58,7 +58,7 @@ impl NoxMode for WorldGen1 {
                 .checkbox(im_str!("Extra Noise Level"), &mut self.params.extra_noise);
             if core.imgui.button(im_str!("Build Planet"), [400.0, 50.0]) {
                 //nox_planet::start_building_planet(self.params.clone());
-                //result = GameMode::PlanetGen2;
+                result = GameMode::WorldGen2;
             }
         });
 

@@ -2,18 +2,16 @@
 extern crate lazy_static;
 
 use bengine::*;
-mod loader;
-mod shared_resources;
-use shared_resources::SharedResources;
-mod main_menu;
 mod raws;
-mod worldgen;
+mod modes;
+use modes::*;
 pub use raws::{load_raws, RAWS};
 
 pub enum GameMode {
     Loader,
     MainMenu,
     WorldGen1,
+    WorldGen2,
 }
 
 trait NoxMode {
@@ -39,9 +37,10 @@ impl NoxFutura {
 impl BEngineGame for NoxFutura {
     fn init(&mut self) {
         self.shared_resources = Some(SharedResources::new());
-        self.modes.push(Box::new(loader::Loader::new()));
-        self.modes.push(Box::new(main_menu::MainMenu::new()));
-        self.modes.push(Box::new(worldgen::WorldGen1::new()));
+        self.modes.push(Box::new(Loader::new()));
+        self.modes.push(Box::new(MainMenu::new()));
+        self.modes.push(Box::new(WorldGen1::new()));
+        self.modes.push(Box::new(WorldGen2::new()));
     }
 
     fn tick(&mut self, core: &mut Core) -> bool {
@@ -50,6 +49,9 @@ impl BEngineGame for NoxFutura {
             GameMode::MainMenu => self.modes[1].tick(core, self.shared_resources.as_ref().unwrap()),
             GameMode::WorldGen1 => {
                 self.modes[2].tick(core, self.shared_resources.as_ref().unwrap())
+            }
+            GameMode::WorldGen2 => {
+                self.modes[3].tick(core, self.shared_resources.as_ref().unwrap())
             }
         };
         self.current_mode = new_mode;
