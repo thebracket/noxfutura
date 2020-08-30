@@ -6,6 +6,9 @@ mod raws;
 mod modes;
 use modes::*;
 pub use raws::{load_raws, RAWS};
+pub mod planet;
+pub mod spatial;
+pub mod components;
 
 pub enum GameMode {
     Loader,
