@@ -130,9 +130,9 @@ fn plant_deciduous(
                     let mut added = false;
                     while !added && bailout_count < 50 {
                         for _ in 0..rng.range(0, 4) {
-                            match rng.range(0, usize::max(4, 10 - b.depth)) {
+                            match rng.range(0, usize::max(4, 10 - usize::max(b.depth, 6))) {
                                 0 => {
-                                    if check_collision(&trunk, x - 1, y, z) {
+                                    if x > 0 && check_collision(&trunk, x - 1, y, z) {
                                         trunk.push(Trunk {
                                             x: b.x - 1,
                                             y: b.y,
@@ -156,7 +156,7 @@ fn plant_deciduous(
                                     }
                                 }
                                 2 => {
-                                    if check_collision(&trunk, x, y - 1, z) {
+                                    if y > 0 && check_collision(&trunk, x, y - 1, z) {
                                         trunk.push(Trunk {
                                             x: b.x,
                                             y: b.y - 1,

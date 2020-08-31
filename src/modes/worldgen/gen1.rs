@@ -1,16 +1,7 @@
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use bracket_random::prelude::RandomNumberGenerator;
-
-#[derive(Clone)]
-pub struct PlanetParams {
-    pub world_seed: i32,
-    pub water_level: i32,
-    pub plains_level: i32,
-    pub starting_settlers: i32,
-    pub strict_beamdown: bool,
-    pub extra_noise: bool,
-}
+use crate::planet::PlanetParams;
 
 pub struct WorldGen1 {
     params: PlanetParams,
@@ -57,7 +48,7 @@ impl NoxMode for WorldGen1 {
             core.imgui
                 .checkbox(im_str!("Extra Noise Level"), &mut self.params.extra_noise);
             if core.imgui.button(im_str!("Build Planet"), [400.0, 50.0]) {
-                //nox_planet::start_building_planet(self.params.clone());
+                crate::planet::start_building_planet(self.params.clone());
                 result = GameMode::WorldGen2;
             }
         });

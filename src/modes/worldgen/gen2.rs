@@ -1,5 +1,6 @@
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
+use bengine::gui::*;
 
 pub struct WorldGen2 {
 }
@@ -16,6 +17,14 @@ impl NoxMode for WorldGen2 {
 
         let result = GameMode::WorldGen2;
         shared.quad_render.render(shared.background_image, core);
+
+        gui::Window::new(im_str!("Status"))
+            .position([10.0, 10.0], Condition::Always)
+            .always_auto_resize(true)
+            .collapsible(false)
+            .build(core.imgui, || {
+                core.imgui.text(ImString::new(crate::planet::get_worldgen_status()));
+            });
 
         result
     }

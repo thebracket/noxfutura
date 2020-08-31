@@ -165,9 +165,13 @@ pub fn just_add_water(
         for off_y in -2..2 {
             for off_x in -2..=2 {
                 let pt = Point::new(off_x, off_y) + dig_at;
-                let pt_alt = orig_height[((pt.y * REGION_WIDTH as i32) + pt.x) as usize];
-                if pt_alt < min_altitude {
-                    min_altitude = pt_alt;
+                let idx = (pt.y * REGION_WIDTH as i32) + pt.x;
+                if idx > 0 && idx < REGION_TILES_COUNT as i32
+                {
+                    let pt_alt = orig_height[idx as usize];
+                    if pt_alt < min_altitude {
+                        min_altitude = pt_alt;
+                    }
                 }
             }
         }

@@ -67,6 +67,7 @@ impl MaterialMap {
         if self.map.contains_key(&idx) {
             self.map.get(&idx).unwrap()
         } else {
+            println!("{:#?}", self.map);
             panic!("Material index {} does not exist", idx);
         }
     }

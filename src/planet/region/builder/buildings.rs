@@ -18,8 +18,8 @@ pub fn build_escape_pod(region: &mut Region, crash_site: &Point, ecs: &mut World
     for (i, layer) in ship.layers.iter().enumerate() {
         for y in 0..layer.height {
             for x in 0..layer.width {
-                let mx = x - 5 + crash_site.x as usize;
-                let my = y - 11 + crash_site.y as usize;
+                let mx = (x as i32 - 5 + crash_site.x as i32) as usize;
+                let my = (y as i32 - 11 + crash_site.y as i32) as usize;
                 let mz = z + i;
                 let tile_idx = mapidx(mx as usize, my as usize, mz);
 
