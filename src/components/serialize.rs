@@ -36,9 +36,7 @@ fn registry() -> Registry<String> {
 }
 
 pub fn serialize_world(world: &World) -> String {
-    ron::to_string(
-        &world.as_serializable(component::<IdentityTag>(), &registry())
-    ).unwrap()
+    ron::to_string(&world.as_serializable(component::<IdentityTag>(), &registry())).unwrap()
 }
 
 pub fn deserialize_world(raw: String) -> World {

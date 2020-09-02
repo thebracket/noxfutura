@@ -1,14 +1,14 @@
-use crate::{GameMode, NoxMode, SharedResources};
-use bengine::*;
-use bengine::gui::*;
-use crate::planet::WORLDGEN_RENDER;
 use super::worldgen_uniforms::*;
+use crate::planet::WORLDGEN_RENDER;
+use crate::{GameMode, NoxMode, SharedResources};
+use bengine::gui::*;
+use bengine::*;
 
 pub struct WorldGen2 {
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
     uniforms: Uniforms,
-    camera: Camera
+    camera: Camera,
 }
 
 impl WorldGen2 {
@@ -29,53 +29,48 @@ impl WorldGen2 {
         let mut uniforms = Uniforms::new();
         uniforms.update_view_proj(&mut camera);
 
-        let bind_group_layout = ctx.device.create_bind_group_layout(
-            &gpu::BindGroupLayoutDescriptor{
-                label: None,
-                entries: &[
-                    gpu::BindGroupLayoutEntry {
+        let bind_group_layout =
+            ctx.device
+                .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
+                    label: None,
+                    entries: &[gpu::BindGroupLayoutEntry {
                         binding: 0,
                         visibility: gpu::ShaderStage::VERTEX,
                         ty: gpu::BindingType::UniformBuffer {
                             dynamic: false,
-                            min_binding_size: gpu::BufferSize::new(64)
+                            min_binding_size: gpu::BufferSize::new(64),
                         },
                         count: None,
-                    }
-                ]
-            }
-        );
+                    }],
+                });
 
-        let bind_group = ctx.device.create_bind_group(
-            &gpu::BindGroupDescriptor{
-                label: None,
-                layout: &bind_group_layout,
-                entries: &[
-                    gpu::BindGroupEntry {
-                        binding: 0,
-                        resource: gpu::BindingResource::Buffer(uniforms.uniform_buffer.slice(..))
-                    }
-                ]
-            }
-        );
-        let pipeline_layout = ctx.device.create_pipeline_layout(
-            &gpu::PipelineLayoutDescriptor{
+        let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
+            label: None,
+            layout: &bind_group_layout,
+            entries: &[gpu::BindGroupEntry {
+                binding: 0,
+                resource: gpu::BindingResource::Buffer(uniforms.uniform_buffer.slice(..)),
+            }],
+        });
+        let pipeline_layout = ctx
+            .device
+            .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
                 label: None,
                 bind_group_layouts: &[&bind_group_layout],
                 push_constant_ranges: &[],
-            }
-        );
-        let pipeline = ctx.device.create_render_pipeline(
-            &gpu::RenderPipelineDescriptor{
+            });
+        let pipeline = ctx
+            .device
+            .create_render_pipeline(&gpu::RenderPipelineDescriptor {
                 label: None,
                 layout: Some(&pipeline_layout),
                 vertex_stage: gpu::ProgrammableStageDescriptor {
                     module: SHADERS.read().get_module(planet_shader_vert),
-                    entry_point: "main"
+                    entry_point: "main",
                 },
                 fragment_stage: Some(gpu::ProgrammableStageDescriptor {
                     module: SHADERS.read().get_module(planet_shader_frag),
-                    entry_point: "main"
+                    entry_point: "main",
                 }),
                 rasterization_state: Some(gpu::RasterizationStateDescriptor {
                     front_face: gpu::FrontFace::Ccw,
@@ -83,35 +78,32 @@ impl WorldGen2 {
                     ..Default::default()
                 }),
                 primitive_topology: gpu::PrimitiveTopology::TriangleList,
-                color_states: &[
-                    gpu::ColorStateDescriptor {
-                        format: ctx.swapchain_format,
-                        color_blend: gpu::BlendDescriptor::REPLACE,
-                        alpha_blend: gpu::BlendDescriptor::REPLACE,
-                        write_mask: gpu::ColorWrite::ALL,
-                    }
-                ],
-                depth_stencil_state: Some(gpu::DepthStencilStateDescriptor{
+                color_states: &[gpu::ColorStateDescriptor {
+                    format: ctx.swapchain_format,
+                    color_blend: gpu::BlendDescriptor::REPLACE,
+                    alpha_blend: gpu::BlendDescriptor::REPLACE,
+                    write_mask: gpu::ColorWrite::ALL,
+                }],
+                depth_stencil_state: Some(gpu::DepthStencilStateDescriptor {
                     format: gpu::TextureFormat::Depth32Float,
                     depth_write_enabled: true,
                     depth_compare: gpu::CompareFunction::Less,
                     stencil: gpu::StencilStateDescriptor::default(),
                 }),
-                vertex_state: gpu::VertexStateDescriptor{
+                vertex_state: gpu::VertexStateDescriptor {
                     index_format: gpu::IndexFormat::Uint16,
-                    vertex_buffers: &[renderlock.vertex_buffer.descriptor()]
+                    vertex_buffers: &[renderlock.vertex_buffer.descriptor()],
                 },
                 sample_count: 1,
                 sample_mask: !0,
                 alpha_to_coverage_enabled: false,
-            }
-        );
+            });
 
-        Self{
+        Self {
             camera,
             uniforms,
             bind_group,
-            pipeline
+            pipeline,
         }
     }
 }
@@ -128,9 +120,9 @@ impl NoxMode for WorldGen2 {
             .always_auto_resize(true)
             .collapsible(false)
             .build(core.imgui, || {
-                core.imgui.text(ImString::new(crate::planet::get_worldgen_status()));
-            }
-        );
+                core.imgui
+                    .text(ImString::new(crate::planet::get_worldgen_status()));
+            });
 
         let mut renderlock = WORLDGEN_RENDER.lock();
         if renderlock.needs_update {
@@ -146,8 +138,8 @@ impl NoxMode for WorldGen2 {
             let ctx = dl.as_ref().unwrap();
 
             let mut encoder = ctx
-            .device
-            .create_command_encoder(&gpu::CommandEncoderDescriptor { label: None });
+                .device
+                .create_command_encoder(&gpu::CommandEncoderDescriptor { label: None });
             {
                 let mut rpass = encoder.begin_render_pass(&gpu::RenderPassDescriptor {
                     color_attachments: &[gpu::RenderPassColorAttachmentDescriptor {
@@ -161,12 +153,12 @@ impl NoxMode for WorldGen2 {
                     depth_stencil_attachment: Some(
                         gpu::RenderPassDepthStencilAttachmentDescriptor {
                             attachment: tlock.get_view(0),
-                            depth_ops: Some(gpu::Operations{
+                            depth_ops: Some(gpu::Operations {
                                 load: gpu::LoadOp::Clear(1.0),
-                                store: true
+                                store: true,
                             }),
-                            stencil_ops: None
-                        }
+                            stencil_ops: None,
+                        },
                     ),
                 });
                 rpass.set_pipeline(&self.pipeline);

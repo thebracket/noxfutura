@@ -1,7 +1,7 @@
 use crate::components::prelude::*;
+use crate::spatial::*;
 use bracket_geometry::prelude::Point3;
 use cgmath::Vector3;
-use crate::spatial::*;
 use components::IdentityTag;
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]

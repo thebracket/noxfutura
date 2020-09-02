@@ -1,7 +1,7 @@
-use crate::planet::{Planet, Region, set_worldgen_status, planet_idx};
+use crate::planet::{planet_idx, set_worldgen_status, Planet, Region};
+use crate::spatial::{REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
 use bracket_random::prelude::RandomNumberGenerator;
-use crate::spatial::{REGION_HEIGHT, REGION_WIDTH};
 mod beaches;
 mod buildings;
 mod debris;
@@ -18,8 +18,8 @@ mod water_features;
 use legion::*;
 pub use primitive::Primitive;
 mod flags;
-pub use flags::localized_flags as rebuild_flags;
 use crate::raws::RAWS;
+pub use flags::localized_flags as rebuild_flags;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");

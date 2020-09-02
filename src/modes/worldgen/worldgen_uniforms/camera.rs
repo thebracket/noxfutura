@@ -1,5 +1,5 @@
-use cgmath::{Vector3, Matrix4, Point3};
 use cgmath::EuclideanSpace;
+use cgmath::{Matrix4, Point3, Vector3};
 
 #[cfg_attr(rustfmt, rustfmt_skip)]
 const OPENGL_TO_WGPU_MATRIX: cgmath::Matrix4<f32> = Matrix4::new(

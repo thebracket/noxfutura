@@ -34,6 +34,7 @@ pub fn load_game() -> SavedGame {
     let raw_bytes =
         miniz_oxide::inflate::decompress_to_vec(&buffer).expect("Unable to decompress file");
 
-    let saved: crate::planet::SavedGame = bincode::deserialize(&raw_bytes).expect("Unable to deserialize");
+    let saved: crate::planet::SavedGame =
+        bincode::deserialize(&raw_bytes).expect("Unable to deserialize");
     saved
 }

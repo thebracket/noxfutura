@@ -1,8 +1,8 @@
+use crate::components::*;
+use crate::raws::*;
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
 use legion::*;
-use crate::components::*;
-use crate::raws::*;
 
 pub fn spawn_settlers(
     ecs: &mut World,

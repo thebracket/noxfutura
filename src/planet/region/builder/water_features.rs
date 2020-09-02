@@ -1,8 +1,8 @@
 use super::Region;
 use crate::planet::{Planet, TileType};
+use crate::spatial::*;
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::RandomNumberGenerator;
-use crate::spatial::*;
 use std::collections::HashSet;
 
 pub fn just_add_water(
@@ -166,8 +166,7 @@ pub fn just_add_water(
             for off_x in -2..=2 {
                 let pt = Point::new(off_x, off_y) + dig_at;
                 let idx = (pt.y * REGION_WIDTH as i32) + pt.x;
-                if idx > 0 && idx < REGION_TILES_COUNT as i32
-                {
+                if idx > 0 && idx < REGION_TILES_COUNT as i32 {
                     let pt_alt = orig_height[idx as usize];
                     if pt_alt < min_altitude {
                         min_altitude = pt_alt;

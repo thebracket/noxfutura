@@ -1,13 +1,13 @@
-use cgmath::{EuclideanSpace, Matrix4, Point3, SquareMatrix, Vector3};
+use cgmath::{Matrix4, SquareMatrix};
 mod camera;
-pub use camera::*;
-use bengine::*;
 use bengine::gpu::util::DeviceExt;
+use bengine::*;
+pub use camera::*;
 
 #[repr(C)]
 pub struct Uniforms {
     data: UniformData,
-    pub uniform_buffer: gpu::Buffer
+    pub uniform_buffer: gpu::Buffer,
 }
 
 #[repr(C)]
@@ -26,18 +26,18 @@ impl Uniforms {
         let dc = dcl.as_ref().unwrap();
         let data = UniformData {
             view_proj: Matrix4::identity(),
-            rot_angle: 0.0
+            rot_angle: 0.0,
         };
-        let uniform_buffer = dc.device.create_buffer_init(
-            &gpu::util::BufferInitDescriptor{
+        let uniform_buffer = dc
+            .device
+            .create_buffer_init(&gpu::util::BufferInitDescriptor {
                 label: Some("WGUniforms"),
                 contents: bytemuck::cast_slice(&[data]),
                 usage: gpu::BufferUsage::UNIFORM | gpu::BufferUsage::COPY_DST,
-            }
-        );
+            });
         Self {
             data,
-            uniform_buffer
+            uniform_buffer,
         }
     }
 
@@ -47,6 +47,7 @@ impl Uniforms {
 
         let dcl = RENDER_CONTEXT.read();
         let dc = dcl.as_ref().unwrap();
-        dc.queue.write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[self.data]));
+        dc.queue
+            .write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[self.data]));
     }
 }

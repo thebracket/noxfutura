@@ -1,9 +1,9 @@
 use crate::planet::{ground_z, Region, TileType};
+use crate::raws::*;
+use crate::spatial::*;
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
 use legion::*;
-use crate::raws::*;
-use crate::spatial::*;
 use parking_lot::RwLock;
 
 lazy_static! {

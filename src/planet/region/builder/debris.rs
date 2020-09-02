@@ -1,7 +1,7 @@
 use crate::planet::{ground_z, Region, TileType};
+use crate::spatial::{mapidx, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
 use legion::*;
-use crate::spatial::{mapidx, REGION_WIDTH};
 use std::collections::HashSet;
 
 pub fn debris_trail(region: &mut Region, ship_loc: Point, _ecs: &mut World) {

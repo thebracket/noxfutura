@@ -1,8 +1,8 @@
 use crate::planet::sphere_vertex;
+use crate::spatial::{REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::*;
 use bracket_noise::prelude::*;
 use bracket_random::prelude::*;
-use crate::spatial::{REGION_HEIGHT, REGION_WIDTH};
 
 pub fn build_empty_heightmap() -> Vec<u8> {
     vec![0u8; (REGION_WIDTH * REGION_HEIGHT) as usize]

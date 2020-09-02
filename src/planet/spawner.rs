@@ -1,8 +1,8 @@
+use crate::components::*;
 use crate::planet::Region;
+use crate::spatial::mapidx;
 use bracket_random::prelude::RandomNumberGenerator;
 use legion::*;
-use crate::components::*;
-use crate::spatial::mapidx;
 
 fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {
     <(Read<Tool>, Read<IdentityTag>)>::query()
@@ -58,9 +58,15 @@ pub fn spawn_item_on_ground(
     region: &mut Region,
     material: usize,
 ) {
-    if let Some(id) =
-    crate::components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx, material)
-    {
+    if let Some(id) = crate::components::spawner::spawn_item_on_ground(
+        ecs,
+        tag,
+        x,
+        y,
+        z,
+        region.world_idx,
+        material,
+    ) {
         add_tool_info(ecs, id, region, None);
     }
 }
@@ -74,7 +80,7 @@ pub fn spawn_item_in_container(
 ) {
     println!("Container spawn");
     if let Some(id) =
-    crate::components::spawner::spawn_item_in_container(ecs, tag, container, material)
+        crate::components::spawner::spawn_item_in_container(ecs, tag, container, material)
     {
         add_tool_info(ecs, id, region, None);
     }

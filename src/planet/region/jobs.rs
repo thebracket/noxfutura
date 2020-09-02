@@ -1,6 +1,6 @@
-use bracket_geometry::prelude::*;
 use crate::components::*;
 use crate::spatial::idxmap;
+use bracket_geometry::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 

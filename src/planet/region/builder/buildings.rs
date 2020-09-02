@@ -1,9 +1,9 @@
-use crate::planet::{ground_z, rex::*, Region, StairsType, TileType};
-use bracket_geometry::prelude::*;
-use legion::*;
 use crate::components::*;
+use crate::planet::{ground_z, rex::*, Region, StairsType, TileType};
 use crate::raws::get_material_by_tag;
 use crate::spatial::mapidx;
+use bracket_geometry::prelude::*;
+use legion::*;
 use std::fs::File;
 
 fn load_ship() -> XpFile {
@@ -157,9 +157,15 @@ fn add_construction(
                 region,
                 plasteel,
             );
-            crate::planet::spawner::spawn_item_in_container(ecs, "fire_axe", storage_id, region, plasteel);
-            crate::planet::spawner::spawn_item_in_container(ecs, "pickaxe", storage_id, region, plasteel);
-            crate::planet::spawner::spawn_item_in_container(ecs, "hoe", storage_id, region, plasteel);
+            crate::planet::spawner::spawn_item_in_container(
+                ecs, "fire_axe", storage_id, region, plasteel,
+            );
+            crate::planet::spawner::spawn_item_in_container(
+                ecs, "pickaxe", storage_id, region, plasteel,
+            );
+            crate::planet::spawner::spawn_item_in_container(
+                ecs, "hoe", storage_id, region, plasteel,
+            );
         }
         "cordex" => {
             add_building(region, "cordex", x, y, z, ecs);

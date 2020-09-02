@@ -2,13 +2,13 @@
 extern crate lazy_static;
 
 use bengine::*;
-mod raws;
 mod modes;
+mod raws;
 use modes::*;
 pub use raws::{load_raws, RAWS};
+pub mod components;
 pub mod planet;
 pub mod spatial;
-pub mod components;
 
 pub enum GameMode {
     Loader,

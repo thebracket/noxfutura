@@ -1,8 +1,8 @@
 use crate::planet::{ground_z, Region, TileType};
-use bracket_random::prelude::RandomNumberGenerator;
-use legion::*;
 use crate::raws::*;
 use crate::spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
+use bracket_random::prelude::RandomNumberGenerator;
+use legion::*;
 
 pub fn grow_plants(
     region: &mut Region,

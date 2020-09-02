@@ -1,6 +1,5 @@
-use crate::components::prelude::*;
-use legion::*;
 use crate::components::*;
+use legion::*;
 
 pub fn spawn_building(
     ecs: &mut World,

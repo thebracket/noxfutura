@@ -1,8 +1,7 @@
-use crate::components::prelude::*;
+use crate::components::*;
+use crate::raws::*;
 use bracket_random::prelude::*;
 use legion::*;
-use crate::raws::*;
-use crate::components::*;
 
 pub fn spawn_clothing_from_raws_worn(
     ecs: &mut World,

@@ -1,8 +1,8 @@
 use super::{set_worldgen_status, PLANET_BUILD};
 use crate::planet::{planet_idx, BlockType, Planet, River, RiverStep};
+use crate::spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use bracket_geometry::prelude::*;
 use bracket_random::prelude::*;
-use crate::spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use std::collections::HashSet;
 
 pub fn run_rivers() {
