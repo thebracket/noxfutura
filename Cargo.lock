@@ -1379,6 +1379,7 @@ dependencies = [
  "bracket-geometry",
  "bracket-noise",
  "bracket-random",
+ "bytemuck",
  "byteorder",
  "cgmath",
  "flate2",

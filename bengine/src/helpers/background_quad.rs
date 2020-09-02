@@ -71,7 +71,7 @@ impl BackgroundQuad {
             rpass.set_pipeline(&self.pipeline);
             rpass.set_bind_group(0, &quad_bg, &[]);
             rpass.set_vertex_buffer(0, self.quad_buffer.slice());
-            rpass.draw(0..24, 0..1);
+            rpass.draw(0..6, 0..1);
         }
         rc.queue.submit(Some(encoder.finish()));
     }

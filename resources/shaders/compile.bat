@@ -1,2 +1,2 @@
-glslangValidator.exe -V .\quad_tex.vert -o quad_tex.vert.spv
-glslangValidator.exe -V .\quad_tex.frag -o quad_tex.frag.spv
+glslangValidator.exe -V .\planetgen.vert -o planetgen.vert.spv
+glslangValidator.exe -V .\planetgen.frag -o planetgen.frag.spv
