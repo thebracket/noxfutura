@@ -122,7 +122,7 @@ impl NoxMode for MainMenu {
                     }
                 }
                 if ui.button(im_str!("Quit"), [100.0, 20.0]) {
-                    result = GameMode::MainMenu;
+                    result = GameMode::Quitting;
                 }
                 ui.text_colored([1.0, 0.0, 0.0, 1.0], &MainMenu::DEDICATION);
             });
