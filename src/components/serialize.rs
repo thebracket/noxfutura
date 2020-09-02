@@ -1,38 +1,26 @@
 use crate::components::*;
 use legion::*;
 
+// I didn't like repeating myself in boilerplate, so this macro
+// turns a type list into a bunch of component names.
+macro_rules! register_component_types {
+    ($registry:expr, $( $type:ty),*) => {
+        $(
+            $registry.register::<$type>(stringify!($type).to_string());
+        )*
+    };
+}
+
 fn registry() -> Registry<String> {
     let mut registry = Registry::default();
 
-    registry.register::<Attributes>("Attributes".to_string());
-    registry.register::<Initiative>("Initiative".to_string());
-    registry.register::<Material>("Material".to_string());
-    registry.register::<Storage>("Storage".to_string());
-    registry.register::<Tool>("Tool".to_string());
-    registry.register::<CameraOptions>("CameraOptions".to_string());
-    registry.register::<VoxLayer>("VoxLayer".to_string());
-    registry.register::<CompositeRender>("CompositeRender".to_string());
-    registry.register::<Light>("Light".to_string());
-    registry.register::<Tint>("Tint".to_string());
-    registry.register::<VoxelModel>("VoxelModel".to_string());
-    registry.register::<Position>("Position".to_string());
-    registry.register::<Cordex>("Cordex".to_string());
-    registry.register::<Building>("Building".to_string());
-    registry.register::<Item>("Item".to_string());
-    registry.register::<Sentient>("Sentient".to_string());
-    registry.register::<Vegetation>("Vegetation".to_string());
-    registry.register::<Tree>("Tree".to_string());
-    registry.register::<Terrain>("Terrain".to_string());
-    registry.register::<Tag>("Tag".to_string());
-    registry.register::<Calendar>("Calendar".to_string());
-    registry.register::<MyTurn>("MyTurn".to_string());
-    registry.register::<Species>("Species".to_string());
-    registry.register::<Name>("Name".to_string());
-    registry.register::<Description>("Description".to_string());
-    registry.register::<Tagline>("Tagline".to_string());
-    registry.register::<FieldOfView>("FieldOfView".to_string());
-    registry.register::<WorkSchedule>("WorkSchedule".to_string());
-    registry.register::<IdentityTag>("IdentityTag".to_string());
+    register_component_types!(registry, 
+        Attributes, Initiative, Material, Storage, Tool, CameraOptions,
+        VoxLayer, CompositeRender, Light, Tint, VoxelModel, Position,
+        Cordex, Building, Item, Sentient, Vegetation, Tree, Terrain,
+        Tag, Calendar, MyTurn, Species, Name, Description, Tagline,
+        FieldOfView, WorkSchedule, IdentityTag
+    );
 
     registry
 }
