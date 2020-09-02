@@ -1,5 +1,6 @@
 use parking_lot::RwLock;
 use std::thread;
+use super::super::GBuffer;
 
 lazy_static! {
     pub static ref LOADER: RwLock<LoaderState> = RwLock::new(LoaderState::new());
@@ -9,7 +10,8 @@ pub struct LoaderState {
     pub progress: f32,
     pub status: String,
     pub done: bool,
-    pub tex_array: Option<crate::modes::TextureArray>
+    pub tex_array: Option<crate::modes::TextureArray>,
+    pub g_buffer: Option<GBuffer>
 }
 
 impl LoaderState {
@@ -18,7 +20,8 @@ impl LoaderState {
             progress: 0.0,
             status: "Randomly Flipping Bits...".to_string(),
             done: false,
-            tex_array: None
+            tex_array: None,
+            g_buffer: None
         }
     }
 
@@ -34,6 +37,9 @@ impl LoaderState {
                 .update(0.02, "Baking Materials", false);
             let tex_array = super::super::TextureArray::blank().expect("Unable to load textures");
             LOADER.write().tex_array = Some(tex_array);
+
+            let gbuffer = GBuffer::new();
+            LOADER.write().g_buffer = Some(gbuffer);
 
             LOADER.write().update(1.00, "Built all the things", true);
         });
