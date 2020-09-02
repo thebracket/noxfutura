@@ -110,9 +110,7 @@ impl WorldGen2 {
 
 impl NoxMode for WorldGen2 {
     fn tick(&mut self, core: &mut Core, shared: &SharedResources) -> GameMode {
-        //use gui::*;
-
-        let result = GameMode::WorldGen2;
+        let mut result = GameMode::WorldGen2;
         shared.quad_render.render(shared.background_image, core);
 
         gui::Window::new(im_str!("Status"))
@@ -168,6 +166,10 @@ impl NoxMode for WorldGen2 {
             }
 
             ctx.queue.submit(Some(encoder.finish()));
+        }
+
+        if crate::planet::is_worldgen_done() {
+            result = GameMode::MainMenu;
         }
 
         result

@@ -9,6 +9,7 @@ pub struct LoaderState {
     pub progress: f32,
     pub status: String,
     pub done: bool,
+    pub tex_array: Option<crate::modes::TextureArray>
 }
 
 impl LoaderState {
@@ -17,6 +18,7 @@ impl LoaderState {
             progress: 0.0,
             status: "Randomly Flipping Bits...".to_string(),
             done: false,
+            tex_array: None
         }
     }
 
@@ -24,8 +26,14 @@ impl LoaderState {
         thread::spawn(|| {
             LOADER
                 .write()
-                .update(0.01, "Starting to load things", false);
+                .update(0.01, "Loading Raw Files", false);
+
             crate::load_raws();
+            LOADER
+                .write()
+                .update(0.02, "Baking Materials", false);
+            let tex_array = super::super::TextureArray::blank().expect("Unable to load textures");
+            LOADER.write().tex_array = Some(tex_array);
 
             LOADER.write().update(1.00, "Built all the things", true);
         });
@@ -36,4 +44,8 @@ impl LoaderState {
         self.status = status.to_string();
         self.done = is_done;
     }
+}
+
+pub fn loader_progress(progress: f32, status: &str, is_done: bool) {
+    LOADER.write().update(progress, status, is_done);
 }

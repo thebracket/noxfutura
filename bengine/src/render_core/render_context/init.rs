@@ -1,6 +1,6 @@
 use super::SWAPCHAIN_FORMAT;
 use wgpu::{
-    Adapter, Device, DeviceDescriptor, Features, Instance, Limits, PowerPreference, PresentMode,
+    Adapter, Device, DeviceDescriptor, Instance, Limits, PowerPreference, PresentMode,
     Queue, RequestAdapterOptions, Surface, SwapChain, SwapChainDescriptor, TextureUsage,
 };
 use winit::dpi::PhysicalSize;
@@ -22,7 +22,7 @@ pub(crate) async fn get_device_and_queue(adapter: &Adapter) -> (Device, Queue) {
     adapter
         .request_device(
             &DeviceDescriptor {
-                features: Features::empty(),
+                features: wgpu::Features::SAMPLED_TEXTURE_BINDING_ARRAY,
                 limits: Limits::default(),
                 shader_validation: true,
             },

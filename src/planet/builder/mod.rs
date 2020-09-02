@@ -134,3 +134,7 @@ pub fn set_worldgen_status<S: ToString>(status: S) {
 pub fn get_worldgen_status() -> String {
     PLANET_BUILD.lock().task.clone()
 }
+
+pub fn is_worldgen_done() -> bool {
+    PLANET_BUILD.lock().done
+}

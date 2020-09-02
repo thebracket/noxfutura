@@ -476,17 +476,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "crossbeam-queue"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "774ba60a54c213d409d5353bda12d49cd68d14e45036a285234c8d6f91f92570"
-dependencies = [
- "cfg-if",
- "crossbeam-utils",
- "maybe-uninit",
-]
-
-[[package]]
 name = "crossbeam-utils"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -965,9 +954,9 @@ dependencies = [
 
 [[package]]
 name = "image"
-version = "0.23.8"
+version = "0.23.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "543904170510c1b5fb65140485d84de4a57fddb2ed685481e9020ce3d2c9f64c"
+checksum = "974e194911d1f7efe3cd8a8f9db3b767e43536327e899e8bc9a12ef5711b74d2"
 dependencies = [
  "bytemuck",
  "byteorder",
@@ -1097,7 +1086,7 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 [[package]]
 name = "legion"
 version = "0.3.0"
-source = "git+https://github.com/TomGillen/legion?rev=d68d340c006244ddf1d53f994aa0bf4360e49336#d68d340c006244ddf1d53f994aa0bf4360e49336"
+source = "git+https://github.com/TomGillen/legion#3cb7c73f35bbc9f71b0e68f57a306d00f7abacaf"
 dependencies = [
  "bit-set",
  "crossbeam-channel",
@@ -1119,7 +1108,7 @@ dependencies = [
 [[package]]
 name = "legion_codegen"
 version = "0.3.0"
-source = "git+https://github.com/TomGillen/legion?rev=d68d340c006244ddf1d53f994aa0bf4360e49336#d68d340c006244ddf1d53f994aa0bf4360e49336"
+source = "git+https://github.com/TomGillen/legion#3cb7c73f35bbc9f71b0e68f57a306d00f7abacaf"
 dependencies = [
  "proc-macro2 1.0.19",
  "quote 1.0.7",
@@ -1382,11 +1371,14 @@ dependencies = [
  "bytemuck",
  "byteorder",
  "cgmath",
+ "failure",
  "flate2",
+ "image",
  "lazy_static",
  "legion",
  "miniz_oxide 0.4.1",
  "parking_lot 0.11.0",
+ "rayon",
  "ron",
  "serde",
  "smallvec",
@@ -1860,9 +1852,9 @@ dependencies = [
 
 [[package]]
 name = "rayon"
-version = "1.3.1"
+version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62f02856753d04e03e26929f820d0a0a337ebe71f849801eea335d464b349080"
+checksum = "cfd016f0c045ad38b5251be2c9c0ab806917f82da4d36b2a327e5166adad9270"
 dependencies = [
  "autocfg 1.0.1",
  "crossbeam-deque",
@@ -1872,12 +1864,12 @@ dependencies = [
 
 [[package]]
 name = "rayon-core"
-version = "1.7.1"
+version = "1.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e92e15d89083484e11353891f1af602cc661426deb9564c298b270c726973280"
+checksum = "91739a34c4355b5434ce54c9086c5895604a9c278586d1f1aa95e04f66b525a0"
 dependencies = [
+ "crossbeam-channel",
  "crossbeam-deque",
- "crossbeam-queue",
  "crossbeam-utils",
  "lazy_static",
  "num_cpus",
