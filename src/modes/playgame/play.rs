@@ -1,9 +1,9 @@
-use crate::{GameMode, NoxMode, SharedResources};
-use bengine::*;
 use super::loadstate::*;
-use legion::*;
 use super::systems::REGION;
 use super::Chunks;
+use crate::{GameMode, NoxMode, SharedResources};
+use bengine::*;
+use legion::*;
 
 pub struct PlayTheGame {
     ready: bool,
@@ -11,9 +11,9 @@ pub struct PlayTheGame {
     planet: Option<crate::planet::Planet>,
     ecs: World,
     ecs_resources: Resources,
-    chunks : Chunks,
+    chunks: Chunks,
 
-    rebuild_geometry: bool
+    rebuild_geometry: bool,
 }
 
 impl PlayTheGame {
@@ -26,7 +26,7 @@ impl PlayTheGame {
             ecs: World::default(),
             ecs_resources: Resources::default(),
             chunks: Chunks::empty(),
-            rebuild_geometry: true
+            rebuild_geometry: true,
         }
     }
 
@@ -48,7 +48,7 @@ impl PlayTheGame {
             match locker {
                 LoadState::Loading => {
                     // Do nothing while the loader spins
-                },
+                }
                 LoadState::Loaded { game } => {
                     LOAD_STATE.write().state = LoadState::Idle;
                     self.planet = Some(game.planet);
@@ -90,8 +90,7 @@ impl NoxMode for PlayTheGame {
             window
                 .size([300.0, 100.0], Condition::FirstUseEver)
                 .collapsed(true, Condition::FirstUseEver)
-                .build(core.imgui, || {
-                });
+                .build(core.imgui, || {});
         } else {
             if self.rebuild_geometry {
                 self.chunks.rebuild_all();

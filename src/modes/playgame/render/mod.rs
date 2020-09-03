@@ -1,9 +1,9 @@
-mod texarray;
+mod chunks;
 mod gbuffer;
 mod palette;
-mod chunks;
+mod texarray;
 
-pub use texarray::TextureArray;
+pub use chunks::*;
 pub use gbuffer::GBuffer;
 pub use palette::Palette;
-pub use chunks::*;
+pub use texarray::TextureArray;

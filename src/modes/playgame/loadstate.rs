@@ -9,9 +9,11 @@ pub enum LoadState {
 }
 
 pub struct GameLoader {
-    pub state: LoadState
+    pub state: LoadState,
 }
 
 lazy_static! {
-    pub static ref LOAD_STATE: RwLock<GameLoader> = RwLock::new(GameLoader{ state: LoadState::Idle });
+    pub static ref LOAD_STATE: RwLock<GameLoader> = RwLock::new(GameLoader {
+        state: LoadState::Idle
+    });
 }

@@ -1,9 +1,9 @@
-use crate::utils::Frustrum;
 use super::{Chunk, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
+use crate::components::Position;
 use crate::modes::playgame::systems::REGION;
+use crate::utils::Frustrum;
 use bracket_geometry::prelude::*;
 use cgmath::Matrix4;
-use crate::components::Position;
 use rayon::prelude::*;
 
 pub struct Chunks {

@@ -3,13 +3,14 @@ use dot_vox::DEFAULT_PALETTE;
 use gpu::util::DeviceExt;
 
 pub struct Palette {
-    palette : Vec<f32>,
-    palette_buf : gpu::Buffer
+    palette_buf: gpu::Buffer,
+    color_finder: Vec<(f32, f32, f32)>,
 }
 
 impl Palette {
     pub fn new() -> Self {
-        let mut palette = Vec::with_capacity(256*3);
+        let mut color_finder = Vec::with_capacity(256 * 3);
+        let mut palette = Vec::with_capacity(256 * 3);
 
         // Initialize the palette with the vox model default palette
         for color_bytes in DEFAULT_PALETTE.iter() {
@@ -23,22 +24,40 @@ impl Palette {
             palette.push(r);
             palette.push(g);
             palette.push(b);
+
+            color_finder.push((r, g, b));
         }
 
         let ctl = RENDER_CONTEXT.read();
         let ctx = ctl.as_ref().unwrap();
-        let palette_buf = ctx.device
+        let palette_buf = ctx
+            .device
             .create_buffer_init(&gpu::util::BufferInitDescriptor {
                 label: None,
                 contents: bytemuck::cast_slice(&palette),
                 usage: gpu::BufferUsage::STORAGE
-                | gpu::BufferUsage::COPY_DST
-                | gpu::BufferUsage::COPY_SRC,
+                    | gpu::BufferUsage::COPY_DST
+                    | gpu::BufferUsage::COPY_SRC,
             });
 
         Self {
-            palette,
-            palette_buf
+            palette_buf,
+            color_finder,
         }
+    }
+
+    pub fn find_palette(&self, r: f32, g: f32, b: f32) -> usize {
+        self.color_finder
+            .iter()
+            .enumerate()
+            .map(|(idx, c)| {
+                let rd = f32::abs(c.0 - r);
+                let gd = f32::abs(c.1 - g);
+                let bd = f32::abs(c.2 - b);
+                (idx, rd * rd + gd * gd + bd * bd)
+            })
+            .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap())
+            .unwrap()
+            .0
     }
 }

@@ -17,7 +17,7 @@ pub enum GameMode {
     WorldGen1,
     WorldGen2,
     Quitting,
-    PlayGame
+    PlayGame,
 }
 
 trait NoxMode {
@@ -63,9 +63,7 @@ impl BEngineGame for NoxFutura {
             GameMode::Quitting => {
                 return false;
             }
-            GameMode::PlayGame => {
-                self.modes[4].tick(core, self.shared_resources.as_ref().unwrap())
-            }
+            GameMode::PlayGame => self.modes[4].tick(core, self.shared_resources.as_ref().unwrap()),
         };
         self.current_mode = new_mode;
         true

@@ -48,7 +48,7 @@ impl GBuffer {
                 size,
                 usage: gpu::BufferUsage::MAP_READ | gpu::BufferUsage::COPY_DST,
                 label: None,
-                mapped_at_creation: false
+                mapped_at_creation: false,
             })
         };
 
@@ -77,13 +77,13 @@ impl GBuffer {
                 },
                 gpu::BufferCopyView {
                     buffer: &self.mouse_buffer,
-                    layout: gpu::TextureDataLayout{
+                    layout: gpu::TextureDataLayout {
                         offset: 0,
                         bytes_per_row: context.size.width as u32
                             * 4
                             * std::mem::size_of::<f32>() as u32,
                         rows_per_image: 0,
-                    }
+                    },
                 },
                 self.coords.extent,
             );
@@ -102,11 +102,7 @@ pub struct GBufferTarget {
 }
 
 impl GBufferTarget {
-    pub fn make_texture(
-        label: &str,
-        format: gpu::TextureFormat,
-        usage: gpu::TextureUsage,
-    ) -> Self {
+    pub fn make_texture(label: &str, format: gpu::TextureFormat, usage: gpu::TextureUsage) -> Self {
         let mut ctx_lock = RENDER_CONTEXT.write();
         let context = ctx_lock.as_mut().unwrap();
 
@@ -137,7 +133,7 @@ impl GBufferTarget {
             lod_max_clamp: 100.0,
             compare: Some(gpu::CompareFunction::Always),
             label: None,
-            anisotropy_clamp: None
+            anisotropy_clamp: None,
         });
 
         // Return something useful

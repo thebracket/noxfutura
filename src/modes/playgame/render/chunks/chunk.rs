@@ -1,12 +1,12 @@
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
-use bengine::*;
-use crate::utils::add_floor_geometry;
-use crate::utils::add_ramp_geometry;
-use cgmath::Vector3;
 use crate::planet::{Region, TileType};
 use crate::raws::{MappedTexture, RAWS};
 use crate::spatial::mapidx;
+use crate::utils::add_floor_geometry;
+use crate::utils::add_ramp_geometry;
+use bengine::*;
+use cgmath::Vector3;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -36,7 +36,11 @@ impl Chunk {
             base: (x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
             cells,
             dirty: true,
-            vb: FloatBuffer::new(&[3, 1, 2, 1], 10, gpu::BufferUsage::VERTEX | gpu::BufferUsage::COPY_DST),
+            vb: FloatBuffer::new(
+                &[3, 1, 2, 1],
+                10,
+                gpu::BufferUsage::VERTEX | gpu::BufferUsage::COPY_DST,
+            ),
             element_count: [0; CHUNK_SIZE],
             center_pos: (
                 (x * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,

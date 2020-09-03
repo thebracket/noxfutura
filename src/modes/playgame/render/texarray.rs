@@ -1,5 +1,5 @@
-use bengine::*;
 use crate::modes::loader_progress;
+use bengine::*;
 use rayon::prelude::*;
 use std::collections::HashMap;
 use std::fs;
@@ -177,7 +177,7 @@ impl TextureArray {
                     bytes_per_row: 4 * tex_size as u32,
                     rows_per_image: 0,
                 },
-                size
+                size,
             );
             size.width /= 2;
             size.height /= 2;

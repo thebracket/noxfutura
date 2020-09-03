@@ -14,12 +14,37 @@ macro_rules! register_component_types {
 fn registry() -> Registry<String> {
     let mut registry = Registry::default();
 
-    register_component_types!(registry, 
-        Attributes, Initiative, Material, Storage, Tool, CameraOptions,
-        VoxLayer, CompositeRender, Light, Tint, VoxelModel, Position,
-        Cordex, Building, Item, Sentient, Vegetation, Tree, Terrain,
-        Tag, Calendar, MyTurn, Species, Name, Description, Tagline,
-        FieldOfView, WorkSchedule, IdentityTag
+    register_component_types!(
+        registry,
+        Attributes,
+        Initiative,
+        Material,
+        Storage,
+        Tool,
+        CameraOptions,
+        VoxLayer,
+        CompositeRender,
+        Light,
+        Tint,
+        VoxelModel,
+        Position,
+        Cordex,
+        Building,
+        Item,
+        Sentient,
+        Vegetation,
+        Tree,
+        Terrain,
+        Tag,
+        Calendar,
+        MyTurn,
+        Species,
+        Name,
+        Description,
+        Tagline,
+        FieldOfView,
+        WorkSchedule,
+        IdentityTag
     );
 
     registry

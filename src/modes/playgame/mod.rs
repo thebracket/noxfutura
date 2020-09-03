@@ -1,7 +1,7 @@
 mod loadstate;
 mod play;
-mod systems;
 mod render;
+mod systems;
 
-pub use render::{TextureArray, GBuffer, Palette, Chunks};
 pub use play::PlayTheGame;
+pub use render::{Chunks, GBuffer, Palette, TextureArray};

@@ -1,7 +1,7 @@
 use super::SWAPCHAIN_FORMAT;
 use wgpu::{
-    Adapter, Device, DeviceDescriptor, Instance, Limits, PowerPreference, PresentMode,
-    Queue, RequestAdapterOptions, Surface, SwapChain, SwapChainDescriptor, TextureUsage,
+    Adapter, Device, DeviceDescriptor, Instance, Limits, PowerPreference, PresentMode, Queue,
+    RequestAdapterOptions, Surface, SwapChain, SwapChainDescriptor, TextureUsage,
 };
 use winit::dpi::PhysicalSize;
 

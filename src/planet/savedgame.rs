@@ -37,7 +37,8 @@ pub fn load_game() -> SavedGame {
     println!("Decompressing file");
 
     println!("Deserializing");
-    let saved: crate::planet::SavedGame = bincode::deserialize(&raw_bytes).expect("Unable to deserialize");
+    let saved: crate::planet::SavedGame =
+        bincode::deserialize(&raw_bytes).expect("Unable to deserialize");
     println!("Done");
     saved
 }

@@ -1,6 +1,6 @@
+use super::super::{GBuffer, Palette};
 use parking_lot::RwLock;
 use std::thread;
-use super::super::{GBuffer, Palette};
 
 lazy_static! {
     pub static ref LOADER: RwLock<LoaderState> = RwLock::new(LoaderState::new());
@@ -12,7 +12,7 @@ pub struct LoaderState {
     pub done: bool,
     pub palette: Option<Palette>,
     pub tex_array: Option<crate::modes::TextureArray>,
-    pub g_buffer: Option<GBuffer>
+    pub g_buffer: Option<GBuffer>,
 }
 
 impl LoaderState {
@@ -23,27 +23,21 @@ impl LoaderState {
             done: false,
             tex_array: None,
             g_buffer: None,
-            palette: None
+            palette: None,
         }
     }
 
     pub fn start_loading() {
         thread::spawn(|| {
-            LOADER
-                .write()
-                .update(0.01, "Loading Raw Files", false);
+            LOADER.write().update(0.01, "Loading Raw Files", false);
 
             crate::load_raws();
 
-            LOADER
-                .write()
-                .update(0.02, "Fingerpainting", false);
+            LOADER.write().update(0.02, "Fingerpainting", false);
             let palette = super::super::Palette::new();
             LOADER.write().palette = Some(palette);
 
-            LOADER
-                .write()
-                .update(0.03, "Baking Materials", false);
+            LOADER.write().update(0.03, "Baking Materials", false);
             let tex_array = super::super::TextureArray::blank().expect("Unable to load textures");
             LOADER.write().tex_array = Some(tex_array);
 
