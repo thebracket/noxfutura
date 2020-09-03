@@ -1,11 +1,7 @@
-mod texarray;
-mod gbuffer;
-mod palette;
 mod loadstate;
 mod play;
 mod systems;
+mod render;
 
-pub use texarray::TextureArray;
-pub use gbuffer::GBuffer;
-pub use palette::Palette;
+pub use render::{TextureArray, GBuffer, Palette};
 pub use play::PlayTheGame;
