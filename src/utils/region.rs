@@ -1,5 +1,5 @@
-use nox_planet::{Region, TileType};
-use nox_spatial::{mapidx, REGION_DEPTH};
+use crate::planet::{Region, TileType};
+use crate::spatial::{mapidx, REGION_DEPTH};
 
 pub fn ground_z(region: &Region, x: usize, y: usize) -> usize {
     let mut z = REGION_DEPTH - 1;

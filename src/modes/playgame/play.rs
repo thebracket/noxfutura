@@ -3,13 +3,17 @@ use bengine::*;
 use super::loadstate::*;
 use legion::*;
 use super::systems::REGION;
+use super::Chunks;
 
 pub struct PlayTheGame {
     ready: bool,
     started_loader: bool,
     planet: Option<crate::planet::Planet>,
-    pub ecs: World,
-    pub ecs_resources: Resources,
+    ecs: World,
+    ecs_resources: Resources,
+    chunks : Chunks,
+
+    rebuild_geometry: bool
 }
 
 impl PlayTheGame {
@@ -20,7 +24,9 @@ impl PlayTheGame {
             started_loader: false,
             planet: None,
             ecs: World::default(),
-            ecs_resources: Resources::default()
+            ecs_resources: Resources::default(),
+            chunks: Chunks::empty(),
+            rebuild_geometry: true
         }
     }
 
@@ -75,7 +81,7 @@ impl PlayTheGame {
 impl NoxMode for PlayTheGame {
     fn tick(&mut self, core: &mut Core, shared: &SharedResources) -> GameMode {
         use gui::*;
-        let mut result = GameMode::PlayGame;
+        let result = GameMode::PlayGame;
 
         if !self.ready {
             self.load();
@@ -86,6 +92,11 @@ impl NoxMode for PlayTheGame {
                 .collapsed(true, Condition::FirstUseEver)
                 .build(core.imgui, || {
                 });
+        } else {
+            if self.rebuild_geometry {
+                self.chunks.rebuild_all();
+                self.rebuild_geometry = false;
+            }
         }
 
         result

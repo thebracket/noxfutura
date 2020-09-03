@@ -8,3 +8,5 @@ mod attrmods;
 pub use attrmods::*;
 mod ramps;
 pub use ramps::*;
+mod frustrum;
+pub use frustrum::Frustrum;

@@ -1,4 +1,4 @@
-use nox_raws::MappedTexture;
+use crate::raws::MappedTexture;
 
 pub fn add_floor_geometry(
     vb: &mut Vec<f32>,

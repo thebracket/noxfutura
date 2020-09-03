@@ -1,12 +1,12 @@
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
-use crate::engine::VertexBuffer;
+use bengine::*;
 use crate::utils::add_floor_geometry;
 use crate::utils::add_ramp_geometry;
 use cgmath::Vector3;
-use nox_planet::{Region, TileType};
-use nox_raws::{MappedTexture, RAWS};
-use nox_spatial::mapidx;
+use crate::planet::{Region, TileType};
+use crate::raws::{MappedTexture, RAWS};
+use crate::spatial::mapidx;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -14,7 +14,7 @@ pub struct Chunk {
     pub base: (usize, usize, usize),
     cells: Vec<usize>,
     pub dirty: bool,
-    vb: VertexBuffer<f32>,
+    vb: FloatBuffer<f32>,
     element_count: [u32; CHUNK_SIZE],
     pub center_pos: Vector3<f32>,
 }
@@ -36,7 +36,7 @@ impl Chunk {
             base: (x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE),
             cells,
             dirty: true,
-            vb: VertexBuffer::new(&[3, 1, 2, 1]),
+            vb: FloatBuffer::new(&[3, 1, 2, 1], 10, gpu::BufferUsage::VERTEX | gpu::BufferUsage::COPY_DST),
             element_count: [0; CHUNK_SIZE],
             center_pos: (
                 (x * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,
@@ -201,7 +201,7 @@ impl Chunk {
         }
     }
 
-    pub fn maybe_render_chunk(&self, camera_z: usize) -> Option<(&VertexBuffer<f32>, u32)> {
+    pub fn maybe_render_chunk(&self, camera_z: usize) -> Option<(&FloatBuffer<f32>, u32)> {
         if self.t == ChunkType::Empty {
             return None;
         }

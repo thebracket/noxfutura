@@ -1,5 +1,5 @@
-use nox_raws::MappedTexture;
-use nox_spatial::{idxmap, REGION_WIDTH};
+use crate::raws::MappedTexture;
+use crate::spatial::{idxmap, REGION_WIDTH};
 use std::collections::HashMap;
 
 pub type CubeMap = HashMap<usize, MappedTexture>;
