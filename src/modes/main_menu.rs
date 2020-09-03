@@ -118,7 +118,7 @@ impl NoxMode for MainMenu {
                 }
                 if std::path::Path::new("world.dat").exists() {
                     if ui.button(im_str!("Play/Continue Game"), [100.0, 20.0]) {
-                        result = GameMode::MainMenu;
+                        result = GameMode::PlayGame;
                     }
                 }
                 if ui.button(im_str!("Quit"), [100.0, 20.0]) {

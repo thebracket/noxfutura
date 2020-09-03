@@ -15,7 +15,8 @@ pub enum GameMode {
     MainMenu,
     WorldGen1,
     WorldGen2,
-    Quitting
+    Quitting,
+    PlayGame
 }
 
 trait NoxMode {
@@ -45,6 +46,7 @@ impl BEngineGame for NoxFutura {
         self.modes.push(Box::new(MainMenu::new()));
         self.modes.push(Box::new(WorldGen1::new()));
         self.modes.push(Box::new(WorldGen2::new()));
+        self.modes.push(Box::new(PlayTheGame::new()))
     }
 
     fn tick(&mut self, core: &mut Core) -> bool {
@@ -59,6 +61,9 @@ impl BEngineGame for NoxFutura {
             }
             GameMode::Quitting => {
                 return false;
+            }
+            GameMode::PlayGame => {
+                self.modes[4].tick(core, self.shared_resources.as_ref().unwrap())
             }
         };
         self.current_mode = new_mode;

@@ -12,3 +12,4 @@ pub use loader::loader_progress;
 pub use playgame::TextureArray;
 use playgame::GBuffer;
 use playgame::Palette;
+pub use playgame::PlayTheGame;

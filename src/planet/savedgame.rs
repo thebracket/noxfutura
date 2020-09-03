@@ -30,11 +30,14 @@ pub fn load_game() -> SavedGame {
 
     let mut f = File::open(&savepath).expect("Unable to open file");
     let mut buffer = Vec::<u8>::new();
+    println!("Reading file");
     f.read_to_end(&mut buffer).expect("Unable to read file");
     let raw_bytes =
         miniz_oxide::inflate::decompress_to_vec(&buffer).expect("Unable to decompress file");
+    println!("Decompressing file");
 
-    let saved: crate::planet::SavedGame =
-        bincode::deserialize(&raw_bytes).expect("Unable to deserialize");
+    println!("Deserializing");
+    let saved: crate::planet::SavedGame = bincode::deserialize(&raw_bytes).expect("Unable to deserialize");
+    println!("Done");
     saved
 }
