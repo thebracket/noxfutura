@@ -29,15 +29,7 @@ pub fn transform_terrain_to_ecs(region: &mut Region, ecs: &mut World) {
                 _ => 0,
             };
 
-            let tint = if region.flag(idx, Region::CONSTRUCTED) {
-                RAWS.read().matmap.get(region.material_idx[idx]).floor.tint
-            } else {
-                RAWS.read()
-                    .matmap
-                    .get(region.material_idx[idx])
-                    .floor_constructed
-                    .tint
-            };
+            let tint = *RAWS.read().matmap.get(region.material_idx[idx]);
 
             ecs.push((
                 Terrain {},

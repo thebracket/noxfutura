@@ -11,7 +11,6 @@ pub struct LoaderState {
     pub status: String,
     pub done: bool,
     pub palette: Option<Palette>,
-    pub tex_array: Option<crate::modes::TextureArray>,
     pub g_buffer: Option<GBuffer>,
 }
 
@@ -21,7 +20,6 @@ impl LoaderState {
             progress: 0.0,
             status: "Randomly Flipping Bits...".to_string(),
             done: false,
-            tex_array: None,
             g_buffer: None,
             palette: None,
         }
@@ -35,11 +33,14 @@ impl LoaderState {
 
             LOADER.write().update(0.02, "Fingerpainting", false);
             let palette = super::super::Palette::new();
-            LOADER.write().palette = Some(palette);
 
             LOADER.write().update(0.03, "Baking Materials", false);
-            let tex_array = super::super::TextureArray::blank().expect("Unable to load textures");
-            LOADER.write().tex_array = Some(tex_array);
+            {
+                let mut rawlock = crate::RAWS.write();
+                let mats = rawlock.materials.materials.clone();
+                rawlock.matmap.build(&mats, &palette);
+            }
+            LOADER.write().palette = Some(palette);
 
             let gbuffer = GBuffer::new();
             LOADER.write().g_buffer = Some(gbuffer);

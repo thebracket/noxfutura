@@ -31,7 +31,7 @@ pub fn spawn_clothing_from_raws_worn(
                 index,
                 rotation_radians: 0.0,
             },
-            Tint { color },
+            Tint { color: 0 },
         ));
 
         result.push((index, color));

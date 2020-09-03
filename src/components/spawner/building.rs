@@ -37,9 +37,7 @@ pub fn spawn_building(
                 desc: building_def.description.clone(),
             },
             Position::with_tile_idx(tile_idx, region_idx, dims),
-            Tint {
-                color: (1.0, 1.0, 1.0),
-            },
+            Tint { color: 0 },
         ));
         println!("New building ID: {}", identity.0);
 

@@ -1,7 +1,7 @@
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::planet::{Region, TileType};
-use crate::raws::{MappedTexture, RAWS};
+use crate::raws::RAWS;
 use crate::spatial::mapidx;
 use crate::utils::add_floor_geometry;
 use crate::utils::add_ramp_geometry;
@@ -37,7 +37,7 @@ impl Chunk {
             cells,
             dirty: true,
             vb: FloatBuffer::new(
-                &[3, 1, 2, 1],
+                &[3, 1, 1],
                 10,
                 gpu::BufferUsage::VERTEX | gpu::BufferUsage::COPY_DST,
             ),
@@ -51,23 +51,14 @@ impl Chunk {
         }
     }
 
-    fn calc_material(&self, idx: usize, region: &Region) -> MappedTexture {
-        if region.flag(idx, Region::CONSTRUCTED) {
-            RAWS.read().matmap.get(region.material_idx[idx]).constructed
-        } else {
-            RAWS.read().matmap.get(region.material_idx[idx]).texture
-        }
+    #[inline]
+    fn calc_material(&self, idx: usize, region: &Region) -> usize {
+        *RAWS.read().matmap.get(region.material_idx[idx])
     }
 
-    fn calc_floor_material(&self, idx: usize, region: &Region) -> MappedTexture {
-        if region.flag(idx, Region::CONSTRUCTED) {
-            RAWS.read()
-                .matmap
-                .get(region.material_idx[idx])
-                .floor_constructed
-        } else {
-            RAWS.read().matmap.get(region.material_idx[idx]).floor
-        }
+    #[inline]
+    fn calc_floor_material(&self, idx: usize, region: &Region) -> usize {
+        *RAWS.read().matmap.get(region.material_idx[idx])
     }
 
     pub fn rebuild(&mut self, region: &Region) {
@@ -115,7 +106,7 @@ impl Chunk {
                                     TileType::Solid => {
                                         cubes.insert(idx, self.calc_material(idx, region));
                                     }
-                                    TileType::TreeTrunk { .. } => {
+                                    /*TileType::TreeTrunk { .. } => {
                                         cubes.insert(
                                             idx,
                                             MappedTexture {
@@ -132,9 +123,9 @@ impl Chunk {
                                                 tint: (1.0, 1.0, 1.0),
                                             },
                                         );
-                                    }
+                                    }*/
                                     TileType::Floor { plant } => {
-                                        if let Some(_plant) = plant {
+                                        /*if let Some(_plant) = plant {
                                             floors.insert(
                                                 idx,
                                                 MappedTexture {
@@ -142,10 +133,9 @@ impl Chunk {
                                                     tint: (1.0, 1.0, 1.0),
                                                 },
                                             );
-                                        } else {
-                                            floors
-                                                .insert(idx, self.calc_floor_material(idx, region));
-                                        }
+                                        } else {*/
+                                        floors.insert(idx, self.calc_floor_material(idx, region));
+                                        //}
                                     }
                                     TileType::Ramp { direction } => {
                                         let mat = self.calc_floor_material(idx, region);
@@ -163,7 +153,7 @@ impl Chunk {
                                 }
 
                                 // Add water - temporarily here, it'll have to move
-                                let wl = region.water_level[idx];
+                                /*let wl = region.water_level[idx];
                                 if wl > 0 {
                                     let mat = MappedTexture {
                                         texture: RAWS.read().matmap.water_id,
@@ -179,7 +169,7 @@ impl Chunk {
                                         1.0,
                                         mat,
                                     )
-                                }
+                                }*/
                             }
                         }
                     }

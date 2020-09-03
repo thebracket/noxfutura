@@ -23,9 +23,7 @@ fn spawn_item_common(ecs: &mut World, tag: &str, material: usize) -> Option<(Ent
                     index: raws.vox.get_model_idx(&item.vox),
                     rotation_radians: 0.0,
                 },
-                Tint {
-                    color: (1.0, 1.0, 1.0),
-                },
+                Tint { color: 0 },
                 Material(material),
             ))
             .clone();

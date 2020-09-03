@@ -1,9 +1,8 @@
 mod formats;
 pub use formats::*;
 use parking_lot::RwLock;
-mod material_map;
-pub use material_map::MappedTexture;
 mod blocktype;
+mod material_map;
 pub use blocktype::BlockType;
 
 pub struct Raws {

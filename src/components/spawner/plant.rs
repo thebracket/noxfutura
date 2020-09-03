@@ -19,9 +19,7 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
                 desc: plant.description.clone(),
             },
             Position::with_tile(x, y, z, region_idx, (1, 1, 1)),
-            Tint {
-                color: (1.0, 1.0, 1.0),
-            },
+            Tint { color: 0 },
         ));
     } else {
         println!("Cannot find plant to spawn: {}", tag);
@@ -44,8 +42,6 @@ pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usi
             desc: "A tree".to_string(),
         },
         Position::with_tile(x, y, z, region_idx, (3, 3, 3)),
-        Tint {
-            color: (1.0, 1.0, 1.0),
-        },
+        Tint { color: 0 },
     ));
 }

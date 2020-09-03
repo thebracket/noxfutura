@@ -4,4 +4,4 @@ mod render;
 mod systems;
 
 pub use play::PlayTheGame;
-pub use render::{Chunks, GBuffer, Palette, TextureArray};
+pub use render::{Chunks, GBuffer, Palette};
