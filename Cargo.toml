@@ -26,6 +26,7 @@ bytemuck = "1.4.0"
 rayon = "1.4.0"
 failure = "0.1.8"
 image = "0.23.9"
+dot_vox = "4.1.0"
 
 [profile.dev]
 #opt-level = 1
