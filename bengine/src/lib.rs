@@ -12,6 +12,7 @@ pub use crate::assets::*;
 pub use crate::core::Core;
 pub use crate::render_core::*;
 pub use game::BEngineGame;
+pub use winit::event::VirtualKeyCode;
 
 pub mod gui {
     pub use imgui::*;

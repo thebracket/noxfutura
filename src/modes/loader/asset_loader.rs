@@ -1,4 +1,4 @@
-use crate::modes::{GBuffer, Palette, playgame::TerrainPass};
+use crate::modes::{playgame::TerrainPass, GBuffer, Palette};
 use parking_lot::RwLock;
 use std::thread;
 
@@ -12,7 +12,7 @@ pub struct LoaderState {
     pub done: bool,
     pub palette: Option<Palette>,
     pub g_buffer: Option<GBuffer>,
-    pub terrain_pass: Option<TerrainPass>
+    pub terrain_pass: Option<TerrainPass>,
 }
 
 impl LoaderState {
@@ -23,7 +23,7 @@ impl LoaderState {
             done: false,
             g_buffer: None,
             palette: None,
-            terrain_pass: None
+            terrain_pass: None,
         }
     }
 
@@ -60,4 +60,3 @@ impl LoaderState {
         self.done = is_done;
     }
 }
-

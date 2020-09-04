@@ -1,8 +1,8 @@
-use super::{ loadstate::*, systems::REGION, Chunks, TerrainPass };
+use super::{loadstate::*, systems::REGION, Chunks, TerrainPass};
+use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
-use crate::components::{Position, CameraOptions};
 
 pub struct PlayTheGame {
     ready: bool,
@@ -12,9 +12,10 @@ pub struct PlayTheGame {
     ecs_resources: Resources,
     chunks: Chunks,
 
-    rebuild_geometry: bool,
+    terrain_pass: Option<TerrainPass>,
 
-    terrain_pass: Option<TerrainPass>
+    regular_schedule: Schedule,
+    paused_schedule: Schedule,
 }
 
 impl PlayTheGame {
@@ -27,8 +28,9 @@ impl PlayTheGame {
             ecs: World::default(),
             ecs_resources: Resources::default(),
             chunks: Chunks::empty(),
-            rebuild_geometry: true,
-            terrain_pass: None
+            terrain_pass: None,
+            regular_schedule: super::systems::build_scheduler(),
+            paused_schedule: super::systems::paused_scheduler(),
         }
     }
 
@@ -59,6 +61,20 @@ impl PlayTheGame {
 
                     let mut loader_lock = crate::modes::LOADER.write();
                     self.terrain_pass = loader_lock.terrain_pass.take();
+
+                    self.chunks.rebuild_all();
+                    let mut query = <(&Position, &CameraOptions)>::query();
+                    for (pos, camopts) in query.iter(&self.ecs) {
+                        let size = RENDER_CONTEXT.read().as_ref().unwrap().size;
+                        let pass = self.terrain_pass.as_mut().unwrap();
+                        pass.camera
+                            .update(&*pos, &*camopts, size.width, size.height);
+                        let camera_matrix = pass.camera.build_view_projection_matrix();
+                        self.chunks.on_camera_move(&camera_matrix, &*pos);
+                        pass.uniforms.update_view_proj(&pass.camera);
+                    }
+
+                    self.ecs_resources.insert(super::GameStateResource::new());
                     /*
                     self.planet = Some(game.planet);
                     *REGION.write() = game.current_region;
@@ -81,6 +97,24 @@ impl PlayTheGame {
             }
         }
     }
+
+    #[inline(always)]
+    fn update_camera(&mut self) {
+        let mut shared_state = self.ecs_resources.get_mut::<super::GameStateResource>();
+        if shared_state.as_mut().unwrap().camera_changed {
+            shared_state.as_mut().unwrap().camera_changed = false;
+            let mut camera_changed = <(&Position, &CameraOptions)>::query();
+            for (pos, camopts) in camera_changed.iter(&self.ecs) {
+                let size = RENDER_CONTEXT.read().as_ref().unwrap().size;
+                let pass = self.terrain_pass.as_mut().unwrap();
+                pass.camera
+                    .update(&*pos, &*camopts, size.width, size.height);
+                let camera_matrix = pass.camera.build_view_projection_matrix();
+                self.chunks.on_camera_move(&camera_matrix, &*pos);
+                pass.uniforms.update_view_proj(&pass.camera);
+            }
+        }
+    }
 }
 
 impl NoxMode for PlayTheGame {
@@ -97,29 +131,26 @@ impl NoxMode for PlayTheGame {
                 .collapsed(true, Condition::FirstUseEver)
                 .build(core.imgui, || {});
         } else {
-            if self.rebuild_geometry {
-                self.chunks.rebuild_all();
-                self.rebuild_geometry = false;
-
-                let mut query = <(&Position, &CameraOptions)>::query();
-                let mut camera_z = 0;
-                for (pos, camopts) in query.iter(&self.ecs) {
-                    let size = RENDER_CONTEXT.read().as_ref().unwrap().size;
-                    let pass = self.terrain_pass.as_mut().unwrap();
-                    pass.camera.update(&*pos, &*camopts, size.width, size.height);
-                    let camera_matrix = pass.camera.build_view_projection_matrix();
-                    self.chunks.on_camera_move(&camera_matrix, &*pos);
-                    pass.uniforms.update_view_proj(&pass.camera);
-                    camera_z = pos.as_point3().z;
-                }
+            // Phase 1: Execute the ECS
+            {
+                let mut shared_state = self.ecs_resources.get_mut::<super::GameStateResource>();
+                shared_state.as_mut().unwrap().frame_update(core.keycode);
             }
+            self.regular_schedule
+                .execute(&mut self.ecs, &mut self.ecs_resources);
+
+            // Phase 2: Actually render stuff
+            self.update_camera();
 
             let mut query = <(&Position, &CameraOptions)>::query();
             let mut camera_z = 0;
-            for (pos, camopts) in query.iter(&self.ecs) {
+            for (pos, _camopts) in query.iter(&self.ecs) {
                 camera_z = pos.as_point3().z;
             }
-            self.terrain_pass.as_ref().unwrap().render(core, &self.chunks, camera_z);
+            self.terrain_pass
+                .as_ref()
+                .unwrap()
+                .render(core, &self.chunks, camera_z);
         }
 
         result

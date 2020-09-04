@@ -1,7 +1,7 @@
-use cgmath::{EuclideanSpace, Matrix4, Point3, Vector3, SquareMatrix};
 use crate::components::*;
 use bengine::gpu::util::DeviceExt;
 use bengine::*;
+use cgmath::{EuclideanSpace, Matrix4, Point3, SquareMatrix, Vector3};
 
 pub struct Camera {
     pub eye: Vector3<f32>,

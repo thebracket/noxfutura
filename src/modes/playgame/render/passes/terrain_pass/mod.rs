@@ -1,4 +1,4 @@
-use crate::modes::playgame::{ Camera, CameraUniform, Palette, Chunks };
+use crate::modes::playgame::{Camera, CameraUniform, Chunks, Palette};
 use bengine::*;
 
 pub struct TerrainPass {
@@ -34,19 +34,16 @@ impl TerrainPass {
             ctx.device
                 .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
                     label: None,
-                    entries: &[
-                        gpu::BindGroupLayoutEntry {
-                            binding: 0,
-                            visibility: gpu::ShaderStage::VERTEX,
-                            ty: gpu::BindingType::UniformBuffer {
-                                dynamic: false,
-                                min_binding_size: gpu::BufferSize::new(64),
-                            },
-                            count: None,
-                        }
-                    ],
-                }
-            );
+                    entries: &[gpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: gpu::ShaderStage::VERTEX,
+                        ty: gpu::BindingType::UniformBuffer {
+                            dynamic: false,
+                            min_binding_size: gpu::BufferSize::new(64),
+                        },
+                        count: None,
+                    }],
+                });
 
         let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,
@@ -54,24 +51,21 @@ impl TerrainPass {
             entries: &[gpu::BindGroupEntry {
                 binding: 0,
                 resource: gpu::BindingResource::Buffer(uniforms.uniform_buffer.slice(..)),
-            }]
+            }],
         });
         let palette_bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,
             layout: &palette.bind_group_layout,
-            entries: &[gpu::BindGroupEntry{
+            entries: &[gpu::BindGroupEntry {
                 binding: 0,
-                resource: gpu::BindingResource::Buffer(palette.palette_buf.slice(..))
-            }]
+                resource: gpu::BindingResource::Buffer(palette.palette_buf.slice(..)),
+            }],
         });
         let pipeline_layout = ctx
             .device
             .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: &[
-                    &bind_group_layout,
-                    &palette.bind_group_layout
-                ],
+                bind_group_layouts: &[&bind_group_layout, &palette.bind_group_layout],
                 push_constant_ranges: &[],
             });
         let pipeline = ctx
@@ -112,8 +106,7 @@ impl TerrainPass {
                 sample_count: 1,
                 sample_mask: !0,
                 alpha_to_coverage_enabled: false,
-            }
-        );
+            });
 
         Self {
             camera,
@@ -130,8 +123,8 @@ impl TerrainPass {
         let tlock = TEXTURES.read();
 
         let mut encoder = ctx
-                .device
-                .create_command_encoder(&gpu::CommandEncoderDescriptor { label: None });
+            .device
+            .create_command_encoder(&gpu::CommandEncoderDescriptor { label: None });
 
         {
             let mut rpass = encoder.begin_render_pass(&gpu::RenderPassDescriptor {
@@ -143,16 +136,14 @@ impl TerrainPass {
                         store: true,
                     },
                 }],
-                depth_stencil_attachment: Some(
-                    gpu::RenderPassDepthStencilAttachmentDescriptor {
-                        attachment: tlock.get_view(0),
-                        depth_ops: Some(gpu::Operations {
-                            load: gpu::LoadOp::Clear(1.0),
-                            store: true,
-                        }),
-                        stencil_ops: None,
-                    },
-                ),
+                depth_stencil_attachment: Some(gpu::RenderPassDepthStencilAttachmentDescriptor {
+                    attachment: tlock.get_view(0),
+                    depth_ops: Some(gpu::Operations {
+                        load: gpu::LoadOp::Clear(1.0),
+                        store: true,
+                    }),
+                    stencil_ops: None,
+                }),
             });
 
             rpass.set_pipeline(&self.pipeline);

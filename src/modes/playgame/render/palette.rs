@@ -5,7 +5,7 @@ use gpu::util::DeviceExt;
 pub struct Palette {
     pub palette_buf: gpu::Buffer,
     color_finder: Vec<(f32, f32, f32)>,
-    pub bind_group_layout: gpu::BindGroupLayout
+    pub bind_group_layout: gpu::BindGroupLayout,
 }
 
 impl Palette {
@@ -39,29 +39,28 @@ impl Palette {
                 usage: gpu::BufferUsage::STORAGE
                     | gpu::BufferUsage::COPY_DST
                     | gpu::BufferUsage::COPY_SRC,
-            }
-        );
+            });
 
-        let bind_group_layout = ctx.device.create_bind_group_layout(
-            &gpu::BindGroupLayoutDescriptor{
-                label: None,
-                entries: &[gpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: gpu::ShaderStage::VERTEX,
-                    ty: gpu::BindingType::StorageBuffer {
-                        dynamic: false,
-                        min_binding_size: gpu::BufferSize::new(64),
-                        readonly: true
-                    },
-                    count: None,
-                }],
-            }
-        );
+        let bind_group_layout =
+            ctx.device
+                .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
+                    label: None,
+                    entries: &[gpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: gpu::ShaderStage::VERTEX,
+                        ty: gpu::BindingType::StorageBuffer {
+                            dynamic: false,
+                            min_binding_size: gpu::BufferSize::new(64),
+                            readonly: true,
+                        },
+                        count: None,
+                    }],
+                });
 
         Self {
             palette_buf,
             color_finder,
-            bind_group_layout
+            bind_group_layout,
         }
     }
 

@@ -108,6 +108,11 @@ where
                 let mut core = Core {
                     imgui: &ui,
                     frame: &frame,
+                    keycode: if !ui.io().want_capture_keyboard {
+                        keycode.clone()
+                    } else {
+                        None
+                    },
                 };
                 std::mem::drop(rcl);
                 let should_continue = program.tick(&mut core);
