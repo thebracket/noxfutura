@@ -6,7 +6,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A hydrated aluminium potassium sulfate rock.",
-            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "slipperystone",
             tint: (0.5, 0.5, 0.5)
         ),
 
@@ -16,7 +15,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A common, extrusive igneous stone.",
-            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "slipperystone",
             tint: (0.4, 0.4, 0.4)
         ),
 
@@ -26,7 +24,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A common, extrusive igneous stone.",
-            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "slipperystone",
             tint: (0.6, 0.6, 0.6)
         ),
 
@@ -36,7 +33,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "sulpher") ],
             description: "A smelly, sulphorous rock.",
-            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.1, 1.0, 1.0)
         ),
 
@@ -46,7 +42,6 @@
             hit_points: 115,
             mines_to: [ Ore(name: "mercury") ],
             description: "A red, crystalline rock.",
-            texture: "blackrock", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
             tint: (1.0, 0.2, 0.2)
         ),
 
@@ -56,7 +51,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A hard rock containing lots of quartz.",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.5, 0.5, 0.5)
         ),
 
@@ -66,7 +60,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock, sometimes containing Olivine.",
-            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.3, 0.7, 0.3)
         ),
 
@@ -76,7 +69,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock, also the subject of numerous puns amongst geologists.",
-            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.3, 0.3, 0.3)
         ),
 
@@ -86,7 +78,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock with lots of quartz.",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.3, 0.3, 0.3)
         ),
 
@@ -96,7 +87,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A cyrstalline black rock that generally ends up in pencils.",
-            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.1, 0.1)
         ),
 
@@ -106,7 +96,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A mixture of minerals clumped together.",
-            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.1, 0.1)
         ),
 
@@ -116,7 +105,6 @@
             hit_points: 100,
             mines_to: [ Ore(name: "copper") ],
             description: "A green rock, frequently found in stalagtites.",
-            texture: "greypocked", constructed: "cobbles", floor: "cavefloor", floor_constructed: "streakedmarble",
             tint: (0.3, 0.9, 0.3)
         ),
 
@@ -126,7 +114,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A hard rock with a pleasant blue color.",
-            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 1.0, 1.0)
         ),
 
@@ -136,7 +123,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A sedimentary rock formed largely from just about everything else.",
-            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "slipperystone",
             tint: (0.05, 0.05, 0.05)
         ),
 
@@ -146,7 +132,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A green crystalline rock.",
-            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.1, 0.9, 0.1)
         ),
 
@@ -156,7 +141,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder"), Item(name: "sulpher") ],
             description: "An igneous rock, yellow from sulphur.",
-            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (1.0, 1.0, 0.1)
         ),
 
@@ -166,7 +150,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock with lots of quartz",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.6, 0.6, 0.6)
         ),
 
@@ -176,7 +159,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock with lots of quartz",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.6, 0.6, 0.6)
         ),
 
@@ -186,7 +168,6 @@
             hit_points: 100,
             mines_to: [ Ore(name: "uranium") ],
             description: "A green rock containing Uranium. People used to grind this up for paint.",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.7, 0.3, 0.3)
         ),
 
@@ -196,7 +177,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock with lots of quartz",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.6, 0.6, 0.6)
         ),
 
@@ -206,7 +186,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock with lots of quartz",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.6, 0.6, 0.6)
         ),
 
@@ -216,7 +195,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock with lots of quartz",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.6, 0.6, 0.6)
         ),
 
@@ -226,7 +204,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A dense rock with lots of quartz",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.6, 0.6, 0.6)
         ),
 
@@ -236,7 +213,6 @@
             hit_points: 100,
             mines_to: [ Ore(name: "uranium"), Ore(name: "titanium") ],
             description: "A hard, black rock made from titantium oxide.",
-            texture: "blackrock", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.08, 0.08, 0.08)
         ),
 
@@ -246,7 +222,6 @@
             hit_points: 100,
             mines_to: [ Item(name: "stone_boulder") ],
             description: "A green crystalline rock.",
-            texture: "granite", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.2, 0.7, 0.2)
         ),
 
@@ -256,7 +231,6 @@
             hit_points: 100,
             mines_to: [ Ore(name: "uranium"), Ore(name: "titanium") ],
             description: "A crystalline rock.",
-            texture: "greypocked", constructed: "cobbles", floor: "slicedrock", floor_constructed: "streakedmarble",
             tint: (0.5, 0.5, 0.5)
         ),
     ])

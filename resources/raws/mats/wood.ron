@@ -6,7 +6,6 @@
             hit_points: 20,
             mines_to: [ ],
             description: "Hard, fibrous material extracted from dead trees.",
-            texture: "bark", constructed: "oakfloor", floor: "bamboo", floor_constructed: "oakfloor",
             tint: (0.33, 0.30, 0.1)
         ),
     ])

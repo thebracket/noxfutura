@@ -106,36 +106,8 @@ impl Chunk {
                                     TileType::Solid => {
                                         cubes.insert(idx, self.calc_material(idx, region));
                                     }
-                                    /*TileType::TreeTrunk { .. } => {
-                                        cubes.insert(
-                                            idx,
-                                            MappedTexture {
-                                                texture: RAWS.read().matmap.bark_id,
-                                                tint: (1.0, 1.0, 1.0),
-                                            },
-                                        );
-                                    }
-                                    TileType::TreeFoliage { .. } => {
-                                        cubes.insert(
-                                            idx,
-                                            MappedTexture {
-                                                texture: RAWS.read().matmap.leaf_id,
-                                                tint: (1.0, 1.0, 1.0),
-                                            },
-                                        );
-                                    }*/
-                                    TileType::Floor { plant } => {
-                                        /*if let Some(_plant) = plant {
-                                            floors.insert(
-                                                idx,
-                                                MappedTexture {
-                                                    texture: RAWS.read().matmap.grass_id,
-                                                    tint: (1.0, 1.0, 1.0),
-                                                },
-                                            );
-                                        } else {*/
+                                    TileType::Floor { .. } => {
                                         floors.insert(idx, self.calc_floor_material(idx, region));
-                                        //}
                                     }
                                     TileType::Ramp { direction } => {
                                         let mat = self.calc_floor_material(idx, region);

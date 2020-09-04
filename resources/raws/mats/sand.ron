@@ -6,7 +6,6 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse yellow sand.",
-            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.76, 0.69, 0.5)
         ),
 
@@ -16,7 +15,6 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse dark sand.",
-            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.5, 0.5, 0.5)
         ),
 
@@ -26,7 +24,6 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse red sand.",
-            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.81, 0.5, 0.3)
         ),
 
@@ -36,7 +33,6 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse white sand.",
-            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.81, 0.81, 0.8)
         ),
 
@@ -46,7 +42,6 @@
             hit_points: 10,
             mines_to: [ Item(name: "topsoil") ],
             description: "Coarse yellow sand.",
-            texture: "sandsoil", constructed: "sandsoil", floor: "sandsoil", floor_constructed: "cobbles",
             tint: (0.98, 0.75, 0.6)
         ),
     ])

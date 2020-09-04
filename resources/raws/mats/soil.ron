@@ -6,7 +6,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name:"clay") ],
             description: "Soil, rich in clay and poor for growing.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.52, 0.35, 0.25)
         ),
 
@@ -16,7 +15,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name:"clay") ],
             description: "Soil, rich in clay and average for growing.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.54, 0.39, 0.28)
         ),
 
@@ -26,7 +24,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil") ],
             description: "Rich, dark soil.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.4, 0.4, 0.4)
         ),
 
@@ -36,7 +33,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name: "sand") ],
             description: "Sandy soil, ok for growing.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.9, 0.6, 0.3)
         ),
 
@@ -46,7 +42,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name: "sand") ],
             description: "Rich, dark soil. Perfect growing material.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.44, 0.38, 0.29)
         ),
 
@@ -56,7 +51,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "sand"), Item(name: "clay") ],
             description: "Poor, sandy clay soil.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.9, 0.6, 0.3)
         ),
 
@@ -66,7 +60,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "sand"), Item(name: "clay"), Item(name: "topsoil") ],
             description: "Rich soil with sand and clay.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -76,7 +69,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil") ],
             description: "Poor soil with lots of silt deposits.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -86,7 +78,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name: "clay") ],
             description: "Poor soil with lots of silt and clay deposits.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -96,7 +87,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil"), Item(name: "clay") ],
             description: "Rich soil with lots of silt and clay deposits.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
 
@@ -106,7 +96,6 @@
             hit_points: 20,
             mines_to: [ Item(name: "topsoil") ],
             description: "Rich soil with lots of silt deposits.",
-            texture: "drydirt", constructed: "drydirt", floor: "drydirt", floor_constructed: "cobbles",
             tint: (0.7, 0.5, 0.2)
         ),
     ])

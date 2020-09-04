@@ -65,17 +65,16 @@ impl Palette {
     }
 
     pub fn find_palette(&self, r: f32, g: f32, b: f32) -> usize {
-        self.color_finder
-            .iter()
-            .enumerate()
-            .map(|(idx, c)| {
-                let rd = f32::abs(c.0 - r);
-                let gd = f32::abs(c.1 - g);
-                let bd = f32::abs(c.2 - b);
-                (idx, rd * rd + gd * gd + bd * bd)
-            })
-            .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap())
-            .unwrap()
-            .0
+        let mut tmp : Vec<(usize, f32)> = self.color_finder
+        .iter()
+        .enumerate()
+        .map(|(idx, c)| {
+            let rd = f32::abs(c.0 - r);
+            let gd = f32::abs(c.1 - g);
+            let bd = f32::abs(c.2 - b);
+            (idx, (rd * rd) + (gd * gd) + (bd * bd))
+        }).collect();
+        tmp.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+        tmp[0].0
     }
 }

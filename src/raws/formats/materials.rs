@@ -20,10 +20,6 @@ pub struct MaterialDef {
     pub hit_points: u32,
     pub mines_to: Vec<MinesTo>,
     pub description: String,
-    pub texture: String,
-    pub constructed: String,
-    pub floor: String,
-    pub floor_constructed: String,
     pub tint: (f32, f32, f32),
 }
 
