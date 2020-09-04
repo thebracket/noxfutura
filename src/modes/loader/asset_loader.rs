@@ -1,4 +1,4 @@
-use super::super::{GBuffer, Palette};
+use crate::modes::{GBuffer, Palette, playgame::TerrainPass};
 use parking_lot::RwLock;
 use std::thread;
 
@@ -12,6 +12,7 @@ pub struct LoaderState {
     pub done: bool,
     pub palette: Option<Palette>,
     pub g_buffer: Option<GBuffer>,
+    pub terrain_pass: Option<TerrainPass>
 }
 
 impl LoaderState {
@@ -22,6 +23,7 @@ impl LoaderState {
             done: false,
             g_buffer: None,
             palette: None,
+            terrain_pass: None
         }
     }
 
@@ -40,11 +42,14 @@ impl LoaderState {
                 let mats = rawlock.materials.materials.clone();
                 rawlock.matmap.build(&mats, &palette);
             }
-            LOADER.write().palette = Some(palette);
 
             let gbuffer = GBuffer::new();
             LOADER.write().g_buffer = Some(gbuffer);
 
+            let terrain_pass = TerrainPass::new(&palette);
+            LOADER.write().terrain_pass = Some(terrain_pass);
+
+            LOADER.write().palette = Some(palette);
             LOADER.write().update(1.00, "Built all the things", true);
         });
     }
@@ -56,6 +61,3 @@ impl LoaderState {
     }
 }
 
-pub fn loader_progress(progress: f32, status: &str, is_done: bool) {
-    LOADER.write().update(progress, status, is_done);
-}

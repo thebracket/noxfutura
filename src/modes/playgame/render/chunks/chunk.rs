@@ -195,7 +195,7 @@ impl Chunk {
         }
     }
 
-    pub fn maybe_render_chunk(&self, camera_z: usize) -> Option<(&FloatBuffer<f32>, u32)> {
+    pub fn maybe_render_chunk(&self, camera_z: i32) -> Option<(&FloatBuffer<f32>, u32)> {
         if self.t == ChunkType::Empty {
             return None;
         }
@@ -204,7 +204,7 @@ impl Chunk {
         let mut n_elements = 0;
         for z in 0..CHUNK_SIZE {
             let layer_z = z + self.base.2;
-            if layer_z <= camera_z {
+            if layer_z <= camera_z as usize {
                 n_elements += self.element_count[z];
             }
         }

@@ -1,9 +1,8 @@
-use super::loadstate::*;
-use super::systems::REGION;
-use super::Chunks;
+use super::{ loadstate::*, systems::REGION, Chunks, TerrainPass };
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
+use crate::components::{Position, CameraOptions};
 
 pub struct PlayTheGame {
     ready: bool,
@@ -14,6 +13,8 @@ pub struct PlayTheGame {
     chunks: Chunks,
 
     rebuild_geometry: bool,
+
+    terrain_pass: Option<TerrainPass>
 }
 
 impl PlayTheGame {
@@ -27,6 +28,7 @@ impl PlayTheGame {
             ecs_resources: Resources::default(),
             chunks: Chunks::empty(),
             rebuild_geometry: true,
+            terrain_pass: None
         }
     }
 
@@ -55,6 +57,8 @@ impl PlayTheGame {
                     *REGION.write() = game.current_region;
                     self.ecs = crate::components::deserialize_world(game.ecs_text);
 
+                    let mut loader_lock = crate::modes::LOADER.write();
+                    self.terrain_pass = loader_lock.terrain_pass.take();
                     /*
                     self.planet = Some(game.planet);
                     *REGION.write() = game.current_region;
@@ -72,7 +76,8 @@ impl PlayTheGame {
                     println!("Finished loading");
                     self.ready = true;
                 }
-                _ => panic!("Not meant to go here."),
+
+                LoadState::Idle => {}
             }
         }
     }
@@ -95,7 +100,26 @@ impl NoxMode for PlayTheGame {
             if self.rebuild_geometry {
                 self.chunks.rebuild_all();
                 self.rebuild_geometry = false;
+
+                let mut query = <(&Position, &CameraOptions)>::query();
+                let mut camera_z = 0;
+                for (pos, camopts) in query.iter(&self.ecs) {
+                    let size = RENDER_CONTEXT.read().as_ref().unwrap().size;
+                    let pass = self.terrain_pass.as_mut().unwrap();
+                    pass.camera.update(&*pos, &*camopts, size.width, size.height);
+                    let camera_matrix = pass.camera.build_view_projection_matrix();
+                    self.chunks.on_camera_move(&camera_matrix, &*pos);
+                    pass.uniforms.update_view_proj(&pass.camera);
+                    camera_z = pos.as_point3().z;
+                }
             }
+
+            let mut query = <(&Position, &CameraOptions)>::query();
+            let mut camera_z = 0;
+            for (pos, camopts) in query.iter(&self.ecs) {
+                camera_z = pos.as_point3().z;
+            }
+            self.terrain_pass.as_ref().unwrap().render(core, &self.chunks, camera_z);
         }
 
         result

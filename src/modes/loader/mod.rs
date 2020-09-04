@@ -1,8 +1,8 @@
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 mod asset_loader;
-pub use asset_loader::loader_progress;
 use bengine::gui::*;
+pub use asset_loader::LOADER;
 
 pub struct Loader {
     started_thread: bool,

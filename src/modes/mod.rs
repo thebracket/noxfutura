@@ -4,8 +4,7 @@ mod playgame;
 mod shared_resources;
 mod worldgen;
 
-pub use loader::loader_progress;
-pub use loader::Loader;
+pub use loader::{Loader, LOADER};
 pub use main_menu::MainMenu;
 use playgame::GBuffer;
 pub use playgame::Palette;
