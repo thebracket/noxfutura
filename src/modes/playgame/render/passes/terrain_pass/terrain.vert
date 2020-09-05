@@ -14,7 +14,7 @@ uniform Camera {
 };
 
 layout(set = 1, binding = 0) buffer Palette {
-    vec3[] palette;
+    vec4[] palette;
 };
 
 const vec3 normal_lut[10] = vec3[10](
@@ -37,5 +37,5 @@ void main() {
     v_normal = normal_lut[int(a_normal)];
     // TODO: Lookup the tint from the palette buffer
     int idx = int(a_material);
-    v_tint = palette[idx];
+    v_tint = palette[idx].rgb;
 }

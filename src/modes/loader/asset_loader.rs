@@ -1,4 +1,4 @@
-use crate::modes::{playgame::TerrainPass, GBuffer, Palette};
+use crate::modes::{playgame::TerrainPass, GBuffer, Palette, playgame::ModelsPass};
 use parking_lot::RwLock;
 use std::thread;
 
@@ -13,6 +13,7 @@ pub struct LoaderState {
     pub palette: Option<Palette>,
     pub g_buffer: Option<GBuffer>,
     pub terrain_pass: Option<TerrainPass>,
+    pub model_pass: Option<ModelsPass>
 }
 
 impl LoaderState {
@@ -24,6 +25,7 @@ impl LoaderState {
             g_buffer: None,
             palette: None,
             terrain_pass: None,
+            model_pass: None
         }
     }
 
@@ -46,11 +48,20 @@ impl LoaderState {
             let gbuffer = GBuffer::new();
             LOADER.write().g_buffer = Some(gbuffer);
 
+            LOADER.write().update(0.04, "Terrain Renderer", false);
             let terrain_pass = TerrainPass::new(&palette);
-            LOADER.write().terrain_pass = Some(terrain_pass);
 
+            LOADER.write().update(0.05, "Wavefront Models", false);
+            let tree_model = crate::modes::playgame::Model::load("resources/obj/Low_Poly_Forest_treeTall01.obj", &palette);
+            let model_pass = ModelsPass::new(&palette, tree_model, &terrain_pass.uniforms);
+
+            LOADER.write().terrain_pass = Some(terrain_pass);
+            LOADER.write().model_pass = Some(model_pass);
+
+            // Finish up by moving the palette
             LOADER.write().palette = Some(palette);
             LOADER.write().update(1.00, "Built all the things", true);
+
         });
     }
 

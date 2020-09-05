@@ -1,5 +1,4 @@
 use bengine::*;
-use dot_vox::DEFAULT_PALETTE;
 use gpu::util::DeviceExt;
 
 pub struct Palette {
@@ -10,11 +9,13 @@ pub struct Palette {
 
 impl Palette {
     pub fn new() -> Self {
-        let mut color_finder = Vec::with_capacity(256 * 3);
-        let mut palette = Vec::with_capacity(256 * 3);
+        let model = dot_vox::load("resources/vox/cordex.vox").unwrap();
+
+        let mut color_finder = Vec::with_capacity(256);
+        let mut palette = Vec::with_capacity(256 * 4);
 
         // Initialize the palette with the vox model default palette
-        for color_bytes in DEFAULT_PALETTE.iter() {
+        for color_bytes in model.palette.iter() {
             let rr: u8 = ((color_bytes & 0x00ff0000) >> 16) as u8;
             let rg: u8 = ((color_bytes & 0x0000ff00) >> 8) as u8;
             let rb: u8 = (color_bytes & 0x000000ff) as u8;
@@ -25,8 +26,12 @@ impl Palette {
             palette.push(r);
             palette.push(g);
             palette.push(b);
+            palette.push(0.0); // To align it to 64-bits
 
             color_finder.push((r, g, b));
+
+            use colored::*;
+            println!("{}", "COLOR".truecolor(rr, rg, rb));
         }
 
         let ctl = RENDER_CONTEXT.read();
@@ -36,9 +41,7 @@ impl Palette {
             .create_buffer_init(&gpu::util::BufferInitDescriptor {
                 label: None,
                 contents: bytemuck::cast_slice(&palette),
-                usage: gpu::BufferUsage::STORAGE
-                    | gpu::BufferUsage::COPY_DST
-                    | gpu::BufferUsage::COPY_SRC,
+                usage: gpu::BufferUsage::STORAGE,
             });
 
         let bind_group_layout =
@@ -65,6 +68,12 @@ impl Palette {
     }
 
     pub fn find_palette(&self, r: f32, g: f32, b: f32) -> usize {
+        use colored::*;
+        let rr = (r * 255.0) as u8;
+        let rg = (g * 255.0) as u8;
+        let rb = (b * 255.0) as u8;
+        println!("{}", "REQUESTED".truecolor(rr, rg, rb));
+
         let mut tmp : Vec<(usize, f32)> = self.color_finder
         .iter()
         .enumerate()
@@ -75,6 +84,13 @@ impl Palette {
             (idx, (rd * rd) + (gd * gd) + (bd * bd))
         }).collect();
         tmp.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+
+        let raw_color = self.color_finder[tmp[0].0];
+        let rr = (raw_color.0 * 255.0) as u8;
+        let rg = (raw_color.1 * 255.0) as u8;
+        let rb = (raw_color.2 * 255.0) as u8;
+        println!("{}", "FOUND".truecolor(rr, rg, rb));
+
         tmp[0].0
     }
 }

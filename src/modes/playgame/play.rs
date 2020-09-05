@@ -1,4 +1,4 @@
-use super::{loadstate::*, systems::REGION, Chunks, TerrainPass};
+use super::{loadstate::*, systems::REGION, Chunks, TerrainPass, ModelsPass};
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
@@ -13,6 +13,7 @@ pub struct PlayTheGame {
     chunks: Chunks,
 
     terrain_pass: Option<TerrainPass>,
+    model_pass: Option<ModelsPass>,
 
     regular_schedule: Schedule,
     paused_schedule: Schedule,
@@ -29,6 +30,7 @@ impl PlayTheGame {
             ecs_resources: Resources::default(),
             chunks: Chunks::empty(),
             terrain_pass: None,
+            model_pass: None,
             regular_schedule: super::systems::build_scheduler(),
             paused_schedule: super::systems::paused_scheduler(),
         }
@@ -61,6 +63,7 @@ impl PlayTheGame {
 
                     let mut loader_lock = crate::modes::LOADER.write();
                     self.terrain_pass = loader_lock.terrain_pass.take();
+                    self.model_pass = loader_lock.model_pass.take();
 
                     self.chunks.rebuild_all();
                     let mut query = <(&Position, &CameraOptions)>::query();
@@ -151,6 +154,8 @@ impl NoxMode for PlayTheGame {
                 .as_ref()
                 .unwrap()
                 .render(core, &self.chunks, camera_z);
+
+            self.model_pass.as_ref().unwrap().render(core);
         }
 
         result
