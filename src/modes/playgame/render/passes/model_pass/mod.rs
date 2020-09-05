@@ -1,11 +1,11 @@
-use crate::modes::playgame::{Camera, CameraUniform, Palette, Model};
+use crate::modes::playgame::{Camera, CameraUniform, Model, Palette};
 use bengine::*;
 
 pub struct ModelsPass {
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
     palette_bind_group: gpu::BindGroup,
-    tree_model: Model
+    tree_model: Model,
 }
 
 impl ModelsPass {
@@ -106,7 +106,7 @@ impl ModelsPass {
             bind_group,
             palette_bind_group,
             pipeline,
-            tree_model
+            tree_model,
         }
     }
 

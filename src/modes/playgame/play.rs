@@ -1,4 +1,4 @@
-use super::{loadstate::*, systems::REGION, Chunks, TerrainPass, ModelsPass};
+use super::{loadstate::*, systems::REGION, Chunks, ModelsPass, TerrainPass};
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
