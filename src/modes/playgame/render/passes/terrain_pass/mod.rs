@@ -83,7 +83,7 @@ impl TerrainPass {
                 }),
                 rasterization_state: Some(gpu::RasterizationStateDescriptor {
                     front_face: gpu::FrontFace::Ccw,
-                    cull_mode: gpu::CullMode::None,
+                    cull_mode: gpu::CullMode::Back,
                     ..Default::default()
                 }),
                 primitive_topology: gpu::PrimitiveTopology::TriangleList,

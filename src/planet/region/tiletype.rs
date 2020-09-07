@@ -10,8 +10,6 @@ pub enum TileType {
     Stairs { direction: StairsType },
     SemiMoltenRock,
     Window,
-    TreeTrunk { tree_id: usize },
-    TreeFoliage { tree_id: usize },
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]

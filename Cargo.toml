@@ -28,7 +28,6 @@ failure = "0.1.8"
 image = "0.23.9"
 dot_vox = "4.1.0"
 tobj = "2.0.2"
-colored = "2.0.0" # Remove me when done debugging the palette
 
 [profile.dev]
 #opt-level = 1

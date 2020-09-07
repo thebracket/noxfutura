@@ -9,8 +9,6 @@ pub fn set_flags(region: &mut Region) {
             TileType::Solid => region.set_flag(idx, Region::SOLID),
             TileType::Wall => region.set_flag(idx, Region::SOLID),
             TileType::Window => region.set_flag(idx, Region::SOLID),
-            TileType::TreeFoliage { .. } => region.set_flag(idx, Region::SOLID),
-            TileType::TreeTrunk { .. } => region.set_flag(idx, Region::SOLID),
             _ => {}
         }
     }
@@ -164,8 +162,6 @@ pub fn localized_flags(region: &mut Region, idx: usize) {
         TileType::Solid => region.set_flag(idx, Region::SOLID),
         TileType::Wall => region.set_flag(idx, Region::SOLID),
         TileType::Window => region.set_flag(idx, Region::SOLID),
-        TileType::TreeFoliage { .. } => region.set_flag(idx, Region::SOLID),
-        TileType::TreeTrunk { .. } => region.set_flag(idx, Region::SOLID),
         _ => {}
     }
 

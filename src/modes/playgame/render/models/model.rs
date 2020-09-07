@@ -10,7 +10,7 @@ pub struct Model {
 
 impl Model {
     pub fn load(filename: &str, palette: &Palette) -> Self {
-        let (models, _materials) = tobj::load_obj(filename, true).unwrap();
+        let (models, _materials) = tobj::load_obj(filename, false).unwrap();
 
         // Format: position, normal, colour index
         let mut index_buf = Vec::<u16>::new();

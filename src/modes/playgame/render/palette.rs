@@ -29,9 +29,6 @@ impl Palette {
             palette.push(0.0); // To align it to 64-bits
 
             color_finder.push((r, g, b));
-
-            use colored::*;
-            println!("{}", "COLOR".truecolor(rr, rg, rb));
         }
 
         let ctl = RENDER_CONTEXT.read();
@@ -68,12 +65,6 @@ impl Palette {
     }
 
     pub fn find_palette(&self, r: f32, g: f32, b: f32) -> usize {
-        use colored::*;
-        let rr = (r * 255.0) as u8;
-        let rg = (g * 255.0) as u8;
-        let rb = (b * 255.0) as u8;
-        println!("{}", "REQUESTED".truecolor(rr, rg, rb));
-
         let mut tmp: Vec<(usize, f32)> = self
             .color_finder
             .iter()
@@ -86,13 +77,6 @@ impl Palette {
             })
             .collect();
         tmp.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
-
-        let raw_color = self.color_finder[tmp[0].0];
-        let rr = (raw_color.0 * 255.0) as u8;
-        let rg = (raw_color.1 * 255.0) as u8;
-        let rb = (raw_color.2 * 255.0) as u8;
-        println!("{}", "FOUND".truecolor(rr, rg, rb));
-
         tmp[0].0
     }
 }
