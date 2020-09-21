@@ -1,6 +1,6 @@
 use crate::spatial::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 
-pub const CHUNK_SIZE: usize = 32;
+pub const CHUNK_SIZE: usize = 64;
 pub const CHUNK_WIDTH: usize = REGION_WIDTH as usize / CHUNK_SIZE;
 pub const CHUNK_HEIGHT: usize = REGION_HEIGHT as usize / CHUNK_SIZE;
 pub const CHUNK_DEPTH: usize = REGION_DEPTH as usize / CHUNK_SIZE;

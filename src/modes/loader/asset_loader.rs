@@ -52,11 +52,8 @@ impl LoaderState {
             let terrain_pass = TerrainPass::new(&palette);
 
             LOADER.write().update(0.05, "Wavefront Models", false);
-            let tree_model = crate::modes::playgame::Model::load(
-                "resources/obj/BlenderTree.obj",
-                &palette,
-            );
-            let model_pass = ModelsPass::new(&palette, tree_model, &terrain_pass.uniforms);
+            let models = crate::modes::playgame::Models::load_models(&palette);
+            let model_pass = ModelsPass::new(&palette, models, &terrain_pass.uniforms);
 
             LOADER.write().terrain_pass = Some(terrain_pass);
             LOADER.write().model_pass = Some(model_pass);

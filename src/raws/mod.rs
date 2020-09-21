@@ -18,6 +18,7 @@ pub struct Raws {
     pub clothing: Clothing,
     pub items: Items,
     pub reactions: Reactions,
+    pub obj_models: WavefrontModels
 }
 
 impl Raws {
@@ -35,6 +36,7 @@ impl Raws {
             clothing: Clothing::new(),
             items: Items::new(),
             reactions: Reactions::new(),
+            obj_models: WavefrontModels::new()
         }
     }
 

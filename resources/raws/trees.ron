@@ -1,0 +1,27 @@
+(
+    models: Some([
+        WavefrontObj(
+            tag: "tree",
+            file: "resources/obj/Low_Poly_Forest_treeTall01.obj",
+            scale: 0.008
+        )
+    ]),
+
+    colors: Some([
+        MappedColor(
+            tag: "leaf", r:0.0, g: 1.0, b:0.0
+        ),
+        MappedColor(
+            tag: "leaf_2", r:0.0, g:0.5, b:0.0
+        ),
+        MappedColor(
+            tag: "leaf_3", r:0.0, g:0.75, b:0.0
+        ),
+        MappedColor(
+            tag: "leaf_4", r:0.0, g:0.25, b:0.0
+        ),
+        MappedColor(
+            tag: "bark", r:0.75, g:0.6, b:0.4
+        )
+    ])
+)

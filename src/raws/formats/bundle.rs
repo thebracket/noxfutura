@@ -15,6 +15,8 @@ pub struct RawBundle {
     pub reactions: Option<Vec<ReactionDef>>,
     pub species: Option<Vec<SpeciesDef>>,
     pub vox: Option<Vec<VoxelModel>>,
+    pub models: Option<Vec<WavefrontObj>>,
+    pub colors: Option<Vec<MappedColor>>,
 }
 
 impl RawBundle {
@@ -60,6 +62,12 @@ impl RawBundle {
         }
         if let Some(vox) = &self.vox {
             raws.vox.vox.extend_from_slice(&vox);
+        }
+        if let Some(models) = &self.models {
+            raws.obj_models.models.extend_from_slice(&models);
+        }
+        if let Some(colors) = &self.colors {
+            raws.obj_models.colors.extend_from_slice(&colors);
         }
     }
 }

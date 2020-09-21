@@ -6,6 +6,6 @@ mod passes;
 
 pub use chunks::*;
 pub use gbuffer::GBuffer;
-pub use models::Model;
+pub use models::*;
 pub use palette::Palette;
 pub use passes::{ModelsPass, TerrainPass};

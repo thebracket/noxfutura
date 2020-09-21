@@ -1,15 +1,15 @@
-use crate::modes::playgame::{Camera, CameraUniform, Model, Palette};
+use crate::modes::playgame::{CameraUniform, Models, Palette};
 use bengine::*;
 
 pub struct ModelsPass {
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
     palette_bind_group: gpu::BindGroup,
-    tree_model: Model,
+    models: Models,
 }
 
 impl ModelsPass {
-    pub fn new(palette: &Palette, tree_model: Model, uniforms: &CameraUniform) -> Self {
+    pub fn new(palette: &Palette, models: Models, uniforms: &CameraUniform) -> Self {
         let (terrain_vert, terrain_frag) = helpers::shader_from_bytes(
             bengine::gpu::include_spirv!("models.vert.spv"),
             bengine::gpu::include_spirv!("models.frag.spv"),
@@ -106,7 +106,7 @@ impl ModelsPass {
             bind_group,
             palette_bind_group,
             pipeline,
-            tree_model,
+            models,
         }
     }
 
@@ -143,18 +143,10 @@ impl ModelsPass {
             rpass.set_bind_group(0, &self.bind_group, &[]);
             rpass.set_bind_group(1, &self.palette_bind_group, &[]);
 
-            rpass.set_vertex_buffer(0, self.tree_model.vertex_buffer.slice());
-            rpass.set_index_buffer(self.tree_model.index_buffer.slice(..));
-            rpass.draw_indexed(0..self.tree_model.index_length, 0, 0..1);
-
-            // Draw the model here
-            /*for chunk in chunks.visible_chunks() {
-                let buffer = chunk.maybe_render_chunk(camera_z);
-                if let Some(buffer) = buffer {
-                    rpass.set_vertex_buffer(0, buffer.0.slice());
-                    rpass.draw(0..buffer.1, 0..1);
-                }
-            }*/
+            rpass.set_vertex_buffer(0, self.models.vertex_buffer.slice());
+            rpass.set_index_buffer(self.models.index_buffer.slice(..));
+            let range = self.models.model_map[0].start as u32 .. self.models.model_map[0].end as u32;
+            rpass.draw_indexed(range, 0, 0..1);
         }
         ctx.queue.submit(Some(encoder.finish()));
     }

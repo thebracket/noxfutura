@@ -5,7 +5,7 @@ mod systems;
 mod uniforms;
 
 pub use play::PlayTheGame;
-pub use render::{Chunks, GBuffer, Model, ModelsPass, Palette, TerrainPass};
+pub use render::{Chunks, GBuffer, Models, ModelsPass, Palette, TerrainPass};
 pub use uniforms::{Camera, CameraUniform};
 
 pub struct GameStateResource {
