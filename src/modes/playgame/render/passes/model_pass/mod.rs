@@ -77,7 +77,7 @@ impl ModelsPass {
                 }),
                 rasterization_state: Some(gpu::RasterizationStateDescriptor {
                     front_face: gpu::FrontFace::Ccw,
-                    cull_mode: gpu::CullMode::Back,
+                    cull_mode: gpu::CullMode::None,
                     ..Default::default()
                 }),
                 primitive_topology: gpu::PrimitiveTopology::TriangleList,

@@ -53,7 +53,7 @@ impl LoaderState {
 
             LOADER.write().update(0.05, "Wavefront Models", false);
             let tree_model = crate::modes::playgame::Model::load(
-                "resources/obj/Low_Poly_Forest_treeTall01.obj",
+                "resources/obj/BlenderTree.obj",
                 &palette,
             );
             let model_pass = ModelsPass::new(&palette, tree_model, &terrain_pass.uniforms);

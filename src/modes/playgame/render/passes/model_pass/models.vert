@@ -18,7 +18,7 @@ layout(set = 1, binding = 0) buffer Palette {
 };
 
 void main() {
-    gl_Position = u_view_proj * vec4((a_position / 200.0) + vec3(96.0, 221.0, 128.0), 1.0);
+    gl_Position = u_view_proj * vec4((a_position * .5) + vec3(128.0, 198.0, 100.0), 1.0);
     v_world_pos = a_position;
     v_normal = a_normal;
     int idx = int(a_material);

@@ -67,7 +67,7 @@ impl Chunk {
         }
         self.dirty = false;
         self.vb.clear();
-        self.element_count = [0, 0, 0, 0, 0, 0, 0, 0];
+        self.element_count = [0; CHUNK_SIZE];
 
         let mut count_empty = 0;
         self.cells.iter().for_each(|idx| {
