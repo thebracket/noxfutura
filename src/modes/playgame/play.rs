@@ -155,7 +155,7 @@ impl NoxMode for PlayTheGame {
                 .unwrap()
                 .render(core, &self.chunks, camera_z);
 
-            self.model_pass.as_ref().unwrap().render(core);
+            self.model_pass.as_mut().unwrap().render(core, &mut self.ecs);
         }
 
         result

@@ -8,3 +8,5 @@ mod composite_render;
 pub use composite_render::*;
 mod light;
 pub use light::*;
+mod objmodel;
+pub use objmodel::*;

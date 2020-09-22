@@ -1,11 +1,14 @@
 use crate::modes::playgame::{CameraUniform, Models, Palette};
 use bengine::*;
+use legion::*;
+use crate::components::*;
 
 pub struct ModelsPass {
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
     palette_bind_group: gpu::BindGroup,
     models: Models,
+    instance_buffer: FloatBuffer<f32>
 }
 
 impl ModelsPass {
@@ -17,6 +20,11 @@ impl ModelsPass {
 
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
+
+        let mut instance_buffer = FloatBuffer::new(&[3], 1024, gpu::BufferUsage::VERTEX);
+        instance_buffer.attributes[0].shader_location = 3;
+        instance_buffer.add3(0.0, 0.0, 0.0);
+        instance_buffer.build();
 
         let buffer_template = FloatBuffer::<f32>::new(
             &[3, 3, 1],
@@ -55,6 +63,7 @@ impl ModelsPass {
                 resource: gpu::BindingResource::Buffer(palette.palette_buf.slice(..)),
             }],
         });
+
         let pipeline_layout = ctx
             .device
             .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
@@ -95,7 +104,10 @@ impl ModelsPass {
                 }),
                 vertex_state: gpu::VertexStateDescriptor {
                     index_format: gpu::IndexFormat::Uint16,
-                    vertex_buffers: &[buffer_template.descriptor()],
+                    vertex_buffers: &[
+                        buffer_template.descriptor(),
+                        instance_buffer.instance_descriptor(),
+                    ],
                 },
                 sample_count: 1,
                 sample_mask: !0,
@@ -107,10 +119,11 @@ impl ModelsPass {
             palette_bind_group,
             pipeline,
             models,
+            instance_buffer
         }
     }
 
-    pub fn render(&self, core: &Core) {
+    pub fn render(&mut self, core: &Core, ecs: &mut World) {
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
         let tlock = TEXTURES.read();
@@ -139,14 +152,29 @@ impl ModelsPass {
                 }),
             });
 
+            self.instance_buffer.clear();
+            <(&ObjModel, &Position)>::query().iter(ecs).for_each(|(_, pos)| {
+                if let Some(pt) = pos.as_point3_only_tile() {
+                    self.instance_buffer.add3(
+                        pt.x as f32,
+                        pt.z as f32,
+                        pt.y as f32
+                    );
+                }
+            });
+            self.instance_buffer.build();
+            //println!("{}", self.instance_buffer.len());
+
             rpass.set_pipeline(&self.pipeline);
             rpass.set_bind_group(0, &self.bind_group, &[]);
             rpass.set_bind_group(1, &self.palette_bind_group, &[]);
 
             rpass.set_vertex_buffer(0, self.models.vertex_buffer.slice());
+            rpass.set_vertex_buffer(1, self.instance_buffer.slice());
             rpass.set_index_buffer(self.models.index_buffer.slice(..));
             let range = self.models.model_map[0].start as u32 .. self.models.model_map[0].end as u32;
-            rpass.draw_indexed(range, 0, 0..1);
+
+            rpass.draw_indexed(range, 0, 0..self.instance_buffer.len());
         }
         ctx.queue.submit(Some(encoder.finish()));
     }

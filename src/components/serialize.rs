@@ -44,7 +44,8 @@ fn registry() -> Registry<String> {
         Tagline,
         FieldOfView,
         WorkSchedule,
-        IdentityTag
+        IdentityTag,
+        ObjModel
     );
 
     registry

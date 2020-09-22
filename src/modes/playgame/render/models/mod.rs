@@ -61,10 +61,10 @@ impl Models {
                 index_base += m.mesh.positions.len() as u16 / 3;
                 vertex_buffer.add_slice(&vertices);
                 index_buf.extend_from_slice(&indices);
-                model_map.push(ModelIndex{
-                    start, end: index_buf.len() as u16
-                });
             }
+            model_map.push(ModelIndex{
+                start, end: index_buf.len() as u16
+            });
         }
 
         let ctl = RENDER_CONTEXT.read();

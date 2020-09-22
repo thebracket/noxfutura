@@ -27,15 +27,15 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
 }
 
 pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usize) {
-    let rlock = RAWS.read();
+    //let rlock = RAWS.read();
     ecs.push((
         Tree {},
         IdentityTag::new(),
         Name {
             name: "Tree".to_string(),
         },
-        crate::components::VoxelModel {
-            index: rlock.vox.get_model_idx("tree"),
+        crate::components::ObjModel {
+            index: 0,
             rotation_radians: 0.0,
         },
         Description {

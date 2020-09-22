@@ -14,7 +14,7 @@ pub fn plant_trees(
     region: &mut Region,
     biome: &BiomeType,
     rng: &mut RandomNumberGenerator,
-    _ecs: &mut World,
+    ecs: &mut World,
 ) {
     let mut d_chance = 0;
     let mut e_chance = 0;
@@ -48,18 +48,15 @@ pub fn plant_trees(
                     _ => (false, 0.0),
                 };
 
-                if can_plant {
+                if can_plant && can_see_sky(region, x, y, z) {
                     if (rng.roll_dice(1, 10) as f32) <= quality {
                         let mut die_roll = rng.roll_dice(1, 1000);
                         if die_roll < d_chance {
-                            plant_deciduous(x, y, z, rng, region);
-                        //crate::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
+                            crate::planet::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
                             if die_roll < e_chance {
-                                //plant_evergreen(x, y, z, rng, region);
-                                //crate::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
-                                plant_deciduous(x, y, z, rng, region);
+                                crate::planet::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
                             }
                         }
                     }
@@ -67,33 +64,6 @@ pub fn plant_trees(
             }
         }
     }
-}
-
-#[derive(Debug, Clone)]
-struct Trunk {
-    x: usize,
-    y: usize,
-    z: usize,
-    depth: usize,
-    done: bool,
-}
-
-fn check_collision(list: &[Trunk], x: usize, y: usize, z: usize) -> bool {
-    for l in list.iter() {
-        if l.x == x && l.y == y && l.z == z {
-            return false;
-        }
-    }
-    true
-}
-
-fn plant_deciduous(
-    x: usize,
-    y: usize,
-    z: usize,
-    rng: &mut RandomNumberGenerator,
-    region: &mut Region,
-) {
 }
 
 fn can_see_sky(region: &Region, x: usize, y: usize, z: usize) -> bool {
