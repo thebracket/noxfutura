@@ -61,6 +61,11 @@ impl Chunk {
         *RAWS.read().matmap.get(region.material_idx[idx])
     }
 
+    #[inline]
+    fn water_material(&self) -> usize {
+        100
+    }
+
     pub fn rebuild(&mut self, region: &Region) {
         if !self.dirty {
             return;
@@ -122,6 +127,10 @@ impl Chunk {
                                         );
                                     }
                                     _ => {}
+                                }
+                                // Temporary water 2
+                                if region.water_level[idx] > 0 {
+                                    floors.insert(idx, self.water_material());
                                 }
 
                                 // Add water - temporarily here, it'll have to move
