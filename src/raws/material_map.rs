@@ -19,7 +19,8 @@ impl MaterialMap {
             self.map
                 .insert(idx, palette.find_palette(m.tint.0, m.tint.1, m.tint.2));
         });
-        self.map.insert(100, palette.find_palette(0.0, 1.0, 0.0));
+        //self.map.insert(255, palette.find_palette(0.0, 1.0, 0.0));
+        println!("{:?}", palette.find_palette(0.0, 0.0, 1.0));
     }
 
     pub fn get(&self, idx: usize) -> &usize {

@@ -63,7 +63,7 @@ impl Chunk {
 
     #[inline]
     fn water_material(&self) -> usize {
-        100
+        35
     }
 
     pub fn rebuild(&mut self, region: &Region) {
