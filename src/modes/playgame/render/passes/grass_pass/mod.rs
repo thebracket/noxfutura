@@ -229,7 +229,7 @@ impl GrassPass {
                     attachment: tlock.get_view(0),
                     depth_ops: Some(gpu::Operations {
                         load: gpu::LoadOp::Load,
-                        store: false,
+                        store: true,
                     }),
                     stencil_ops: None,
                 }),
