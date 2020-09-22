@@ -30,7 +30,7 @@ dot_vox = "4.1.0"
 tobj = "2.0.2"
 
 [profile.dev]
-#opt-level = 1
+opt-level = 1
 
 [profile.release]
 incremental = true

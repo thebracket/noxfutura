@@ -6,3 +6,6 @@ glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\terrain_pass\terr
 
 glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\model_pass\models.frag -o ..\..\src\modes\playgame\render\passes\model_pass\models.frag.spv
 glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\model_pass\models.vert -o ..\..\src\modes\playgame\render\passes\model_pass\models.vert.spv
+
+glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\grass_pass\grass.frag -o ..\..\src\modes\playgame\render\passes\grass_pass\grass.frag.spv
+glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\grass_pass\grass.vert -o ..\..\src\modes\playgame\render\passes\grass_pass\grass.vert.spv

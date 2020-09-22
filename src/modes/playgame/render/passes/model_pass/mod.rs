@@ -23,13 +23,13 @@ impl ModelsPass {
             bengine::gpu::include_spirv!("models.frag.spv"),
         );
 
-        let dl = RENDER_CONTEXT.read();
-        let ctx = dl.as_ref().unwrap();
-
         let mut instance_buffer = FloatBuffer::new(&[3], 1024, gpu::BufferUsage::VERTEX);
         instance_buffer.attributes[0].shader_location = 3;
         instance_buffer.add3(0.0, 0.0, 0.0);
         instance_buffer.build();
+
+        let dl = RENDER_CONTEXT.read();
+        let ctx = dl.as_ref().unwrap();
 
         let buffer_template = FloatBuffer::<f32>::new(
             &[3, 3, 1],

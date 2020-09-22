@@ -1,4 +1,4 @@
-use crate::modes::{playgame::ModelsPass, playgame::TerrainPass, GBuffer, Palette};
+use crate::modes::{playgame::ModelsPass, playgame::TerrainPass, GBuffer, Palette, playgame::GrassPass};
 use parking_lot::RwLock;
 use std::thread;
 
@@ -14,6 +14,7 @@ pub struct LoaderState {
     pub g_buffer: Option<GBuffer>,
     pub terrain_pass: Option<TerrainPass>,
     pub model_pass: Option<ModelsPass>,
+    pub grass_pass: Option<GrassPass>
 }
 
 impl LoaderState {
@@ -26,6 +27,7 @@ impl LoaderState {
             palette: None,
             terrain_pass: None,
             model_pass: None,
+            grass_pass: None
         }
     }
 
@@ -55,8 +57,12 @@ impl LoaderState {
             let models = crate::modes::playgame::Models::load_models(&palette);
             let model_pass = ModelsPass::new(&palette, models, &terrain_pass.uniforms);
 
+            LOADER.write().update(0.1, "Mowing the lawn", false);
+            let grassy_gnoll = crate::modes::playgame::GrassPass::new(&terrain_pass.uniforms);
+
             LOADER.write().terrain_pass = Some(terrain_pass);
             LOADER.write().model_pass = Some(model_pass);
+            LOADER.write().grass_pass = Some(grassy_gnoll);
 
             // Finish up by moving the palette
             LOADER.write().palette = Some(palette);
