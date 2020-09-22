@@ -2,13 +2,17 @@ use crate::modes::playgame::{CameraUniform, Models, Palette};
 use bengine::*;
 use legion::*;
 use crate::components::*;
+use std::collections::HashMap;
 
 pub struct ModelsPass {
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
     palette_bind_group: gpu::BindGroup,
     models: Models,
-    instance_buffer: FloatBuffer<f32>
+    instance_buffer: FloatBuffer<f32>,
+    instance_set: HashMap<usize, Vec<(f32, f32, f32)>>,
+    instances: Vec<(usize, u32, u32)>,
+    models_changed: bool
 }
 
 impl ModelsPass {
@@ -119,7 +123,10 @@ impl ModelsPass {
             palette_bind_group,
             pipeline,
             models,
-            instance_buffer
+            instance_buffer,
+            instance_set : HashMap::new(),
+            instances: Vec::new(),
+            models_changed: true
         }
     }
 
@@ -152,18 +159,38 @@ impl ModelsPass {
                 }),
             });
 
-            self.instance_buffer.clear();
-            <(&ObjModel, &Position)>::query().iter(ecs).for_each(|(_, pos)| {
-                if let Some(pt) = pos.as_point3_only_tile() {
-                    self.instance_buffer.add3(
-                        pt.x as f32,
-                        pt.z as f32,
-                        pt.y as f32
-                    );
+            if self.models_changed {
+                self.instance_set.clear();
+                <(&ObjModel, &Position)>::query().iter(ecs).for_each(|(model, pos)| {
+                    if let Some(pt) = pos.as_point3_only_tile() {
+                        if let Some(i) = self.instance_set.get_mut(&model.index) {
+                            i.push((pt.x as f32, pt.z as f32, pt.y as f32));
+                        } else {
+                            self.instance_set.insert(
+                                model.index,
+                                vec![(pt.x as f32, pt.z as f32, pt.y as f32)]
+                            );
+                        }
+                    }
+                });
+
+                self.instances.clear();
+                self.instance_buffer.clear();
+                let mut start = 0;
+                let mut end = 0;
+                for (k,v) in self.instance_set.iter() {
+                    if !v.is_empty() {
+                        for (x,y,z) in v.iter() {
+                            self.instance_buffer.add3(*x, *y, *z);
+                            end += 1;
+                        }
+                        self.instances.push((*k, start as u32, end as u32));
+                        start = end;
+                    }
                 }
-            });
-            self.instance_buffer.build();
-            //println!("{}", self.instance_buffer.len());
+                self.instance_buffer.build();
+                println!("Rebuilt models buffers");
+            }
 
             rpass.set_pipeline(&self.pipeline);
             rpass.set_bind_group(0, &self.bind_group, &[]);
@@ -172,10 +199,14 @@ impl ModelsPass {
             rpass.set_vertex_buffer(0, self.models.vertex_buffer.slice());
             rpass.set_vertex_buffer(1, self.instance_buffer.slice());
             rpass.set_index_buffer(self.models.index_buffer.slice(..));
-            let range = self.models.model_map[0].start as u32 .. self.models.model_map[0].end as u32;
 
-            rpass.draw_indexed(range, 0, 0..self.instance_buffer.len());
+            for render in self.instances.iter() {
+                let range = self.models.model_map[render.0].start as u32 .. self.models.model_map[render.0].end as u32;
+                rpass.draw_indexed(range, 0, render.1 .. render.2);
+            }
         }
         ctx.queue.submit(Some(encoder.finish()));
+
+        self.models_changed = false;
     }
 }
