@@ -114,6 +114,13 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
     crate::components::spawner::spawn_plant(ecs, tag, x, y, z, region_idx)
 }
 
-pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usize) {
-    crate::components::spawner::spawn_tree(ecs, x, y, z, region_idx)
+pub fn spawn_tree(
+    ecs: &mut World,
+    x: usize,
+    y: usize,
+    z: usize,
+    region_idx: usize,
+    model_id: usize,
+) {
+    crate::components::spawner::spawn_tree(ecs, x, y, z, region_idx, model_id)
 }

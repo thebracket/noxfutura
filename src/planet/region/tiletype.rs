@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 pub enum TileType {
     Empty,
     Solid,
-    Floor { plant: Option<usize> },
+    Floor,
     Wall,
     Ramp { direction: RampDirection },
     Stairs { direction: StairsType },

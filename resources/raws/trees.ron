@@ -3,8 +3,38 @@
         WavefrontObj(
             tag: "tree",
             file: "resources/obj/Low_Poly_Forest_treeTall01.obj",
-            scale: 0.008
-        )
+            scale: 0.004
+        ),
+        WavefrontObj(
+            tag: "tree2",
+            file: "resources/obj/Low_Poly_Forest_treeTall02.obj",
+            scale: 0.004
+        ),
+        WavefrontObj(
+            tag: "tree3",
+            file: "resources/obj/Low_Poly_Forest_treeTall03.obj",
+            scale: 0.004
+        ),
+        WavefrontObj(
+            tag: "tree4",
+            file: "resources/obj/Low_Poly_Forest_treeTall04.obj",
+            scale: 0.004
+        ),
+        WavefrontObj(
+            tag: "tree6",
+            file: "resources/obj/Low_Poly_Forest_treeBlob01.obj",
+            scale: 0.004
+        ),
+        WavefrontObj(
+            tag: "tree7",
+            file: "resources/obj/Low_Poly_Forest_treeBlob02.obj",
+            scale: 0.004
+        ),
+        WavefrontObj(
+            tag: "tree8",
+            file: "resources/obj/Low_Poly_Forest_treeBlob03.obj",
+            scale: 0.004
+        ),
     ]),
 
     colors: Some([
@@ -21,7 +51,13 @@
             tag: "leaf_4", r:0.0, g:0.25, b:0.0
         ),
         MappedColor(
-            tag: "bark", r:0.75, g:0.6, b:0.4
-        )
+            tag: "leaf_5", r:0.0, g:0.15, b:0.0
+        ),
+        MappedColor(
+            tag: "bark", r:0.325, g:0.19, b:0.09
+        ),
+        MappedColor(
+            tag: "bark_1", r:0.325, g:0.19, b:0.09
+        ),
     ])
 )

@@ -1,17 +1,17 @@
-use bengine::*;
 use crate::modes::Palette;
+use bengine::*;
 use gpu::util::DeviceExt;
 
 pub struct Models {
     pub vertex_buffer: FloatBuffer<f32>,
     pub index_buffer: gpu::Buffer,
     pub index_length: u32,
-    pub model_map: Vec<ModelIndex>
+    pub model_map: Vec<ModelIndex>,
 }
 
 pub struct ModelIndex {
     pub start: u16,
-    pub end: u16
+    pub end: u16,
 }
 
 impl Models {
@@ -25,22 +25,23 @@ impl Models {
         let mut index_base = 0;
 
         for model_info in rlock.obj_models.models.iter() {
+            let (models, _materials) = tobj::load_obj(&model_info.file, false).unwrap();
 
-            let (models, _materials) = tobj::load_obj(
-                &model_info.file,
-                false
-            )
-            .unwrap();
-
-            let start = index_base;
+            let start = index_buf.len();
 
             for m in models.iter() {
-                let mat_finder = rlock.obj_models.colors.iter().find(|c| c.tag == m.name).unwrap();
-                let mat_index = palette.find_palette(
-                    mat_finder.r,
-                    mat_finder.g,
-                    mat_finder.b,
-                );
+                let mat_finder_opt = rlock
+                    .obj_models
+                    .colors
+                    .iter()
+                    .find(|c| c.tag == m.name);
+                let mat_finder = if mat_finder_opt.is_some() {
+                    mat_finder_opt.unwrap().clone()
+                } else {
+                    println!("Unknown color swatch: {}", m.name);
+                    crate::raws::MappedColor{ tag: "Goodness knows".to_string(), r: 0.5, g: 0.5, b: 0.5 }
+                };
+                let mat_index = palette.find_palette(mat_finder.r, mat_finder.g, mat_finder.b);
 
                 let indices: Vec<u16> = m
                     .mesh
@@ -62,8 +63,9 @@ impl Models {
                 vertex_buffer.add_slice(&vertices);
                 index_buf.extend_from_slice(&indices);
             }
-            model_map.push(ModelIndex{
-                start, end: index_buf.len() as u16
+            model_map.push(ModelIndex {
+                start: start as u16,
+                end: index_buf.len() as u16,
             });
         }
 
@@ -76,13 +78,15 @@ impl Models {
                 contents: bytemuck::cast_slice(&index_buf),
                 usage: gpu::BufferUsage::INDEX,
             });
+        std::mem::drop(ctx);
+        std::mem::drop(ctl);
         vertex_buffer.build();
 
         Self {
             vertex_buffer,
             index_buffer,
             index_length: index_buf.len() as u32,
-            model_map
+            model_map,
         }
     }
 }

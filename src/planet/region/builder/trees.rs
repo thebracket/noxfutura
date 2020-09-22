@@ -48,15 +48,30 @@ pub fn plant_trees(
                     _ => (false, 0.0),
                 };
 
+                const MAX_TREE: usize = 7;
                 if can_plant && can_see_sky(region, x, y, z) {
                     if (rng.roll_dice(1, 10) as f32) <= quality {
                         let mut die_roll = rng.roll_dice(1, 1000);
                         if die_roll < d_chance {
-                            crate::planet::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
+                            crate::planet::spawner::spawn_tree(
+                                ecs,
+                                x,
+                                y,
+                                z,
+                                region.world_idx,
+                                rng.range(0, MAX_TREE) as usize,
+                            )
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
                             if die_roll < e_chance {
-                                crate::planet::spawner::spawn_tree(ecs, x, y, z, region.world_idx)
+                                crate::planet::spawner::spawn_tree(
+                                    ecs,
+                                    x,
+                                    y,
+                                    z,
+                                    region.world_idx,
+                                    rng.range(0, MAX_TREE) as usize,
+                                )
                             }
                         }
                     }

@@ -1,8 +1,9 @@
+use crate::components::*;
 use crate::modes::playgame::{CameraUniform, Models, Palette};
 use bengine::*;
 use legion::*;
-use crate::components::*;
 use std::collections::HashMap;
+use crate::utils::Frustrum;
 
 pub struct ModelsPass {
     pipeline: gpu::RenderPipeline,
@@ -12,7 +13,7 @@ pub struct ModelsPass {
     instance_buffer: FloatBuffer<f32>,
     instance_set: HashMap<usize, Vec<(f32, f32, f32)>>,
     instances: Vec<(usize, u32, u32)>,
-    models_changed: bool
+    pub models_changed: bool,
 }
 
 impl ModelsPass {
@@ -124,13 +125,13 @@ impl ModelsPass {
             pipeline,
             models,
             instance_buffer,
-            instance_set : HashMap::new(),
+            instance_set: HashMap::new(),
             instances: Vec::new(),
-            models_changed: true
+            models_changed: true,
         }
     }
 
-    pub fn render(&mut self, core: &Core, ecs: &mut World) {
+    pub fn render(&mut self, core: &Core, ecs: &mut World, frustrum: &Frustrum) {
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
         let tlock = TEXTURES.read();
@@ -160,27 +161,34 @@ impl ModelsPass {
             });
 
             if self.models_changed {
-                self.instance_set.clear();
-                <(&ObjModel, &Position)>::query().iter(ecs).for_each(|(model, pos)| {
-                    if let Some(pt) = pos.as_point3_only_tile() {
-                        if let Some(i) = self.instance_set.get_mut(&model.index) {
-                            i.push((pt.x as f32, pt.z as f32, pt.y as f32));
-                        } else {
-                            self.instance_set.insert(
-                                model.index,
-                                vec![(pt.x as f32, pt.z as f32, pt.y as f32)]
-                            );
+                let camera_z = <(&Position, &CameraOptions)>::query().iter(ecs).map(|(pos, _)| pos.as_point3())
+                .nth(0).unwrap().z;
+
+                self.instance_set.iter_mut().for_each(|(k, v)| v.clear());
+                <(&ObjModel, &Position)>::query()
+                    .iter(ecs)
+                    .for_each(|(model, pos)| {
+                        if let Some(pt) = pos.as_point3_only_tile() {
+                            if pt.z <= camera_z && pt.z > camera_z - 50 && frustrum.check_sphere(&pos.as_vec3(), 2.0) {
+                                if let Some(i) = self.instance_set.get_mut(&model.index) {
+                                    i.push((pt.x as f32, pt.z as f32, pt.y as f32));
+                                } else {
+                                    self.instance_set.insert(
+                                        model.index,
+                                        vec![(pt.x as f32, pt.z as f32, pt.y as f32)],
+                                    );
+                                }
+                            }
                         }
-                    }
-                });
+                    });
 
                 self.instances.clear();
                 self.instance_buffer.clear();
                 let mut start = 0;
                 let mut end = 0;
-                for (k,v) in self.instance_set.iter() {
+                for (k, v) in self.instance_set.iter() {
                     if !v.is_empty() {
-                        for (x,y,z) in v.iter() {
+                        for (x, y, z) in v.iter() {
                             self.instance_buffer.add3(*x, *y, *z);
                             end += 1;
                         }
@@ -189,7 +197,6 @@ impl ModelsPass {
                     }
                 }
                 self.instance_buffer.build();
-                println!("Rebuilt models buffers");
             }
 
             rpass.set_pipeline(&self.pipeline);
@@ -201,8 +208,9 @@ impl ModelsPass {
             rpass.set_index_buffer(self.models.index_buffer.slice(..));
 
             for render in self.instances.iter() {
-                let range = self.models.model_map[render.0].start as u32 .. self.models.model_map[render.0].end as u32;
-                rpass.draw_indexed(range, 0, render.1 .. render.2);
+                let range = self.models.model_map[render.0].start as u32
+                    .. self.models.model_map[render.0].end as u32;
+                rpass.draw_indexed(range, 0, render.1..render.2);
             }
         }
         ctx.queue.submit(Some(encoder.finish()));

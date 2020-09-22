@@ -114,6 +114,7 @@ impl PlayTheGame {
                     .update(&*pos, &*camopts, size.width, size.height);
                 let camera_matrix = pass.camera.build_view_projection_matrix();
                 self.chunks.on_camera_move(&camera_matrix, &*pos);
+                self.model_pass.as_mut().unwrap().models_changed = true;
                 pass.uniforms.update_view_proj(&pass.camera);
             }
         }
@@ -150,12 +151,14 @@ impl NoxMode for PlayTheGame {
             for (pos, _camopts) in query.iter(&self.ecs) {
                 camera_z = pos.as_point3().z;
             }
-            self.terrain_pass
-                .as_ref()
-                .unwrap()
+            let terrain_pass = self.terrain_pass.as_ref().unwrap();
+            terrain_pass
                 .render(core, &self.chunks, camera_z);
 
-            self.model_pass.as_mut().unwrap().render(core, &mut self.ecs);
+            self.model_pass
+                .as_mut()
+                .unwrap()
+                .render(core, &mut self.ecs, &self.chunks.frustrum);
         }
 
         result

@@ -11,10 +11,10 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
             Name {
                 name: plant.name.clone(),
             },
-            crate::components::VoxelModel {
-                index: rlock.vox.get_model_idx(&plant.vox),
-                rotation_radians: 0.0,
-            },
+            /*crate::components::ObjModel{
+                index: 7,
+                rotation_radians: 0.0
+            },*/
             Description {
                 desc: plant.description.clone(),
             },
@@ -26,7 +26,14 @@ pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, reg
     }
 }
 
-pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usize) {
+pub fn spawn_tree(
+    ecs: &mut World,
+    x: usize,
+    y: usize,
+    z: usize,
+    region_idx: usize,
+    model_id: usize,
+) {
     //let rlock = RAWS.read();
     ecs.push((
         Tree {},
@@ -35,7 +42,7 @@ pub fn spawn_tree(ecs: &mut World, x: usize, y: usize, z: usize, region_idx: usi
             name: "Tree".to_string(),
         },
         crate::components::ObjModel {
-            index: 0,
+            index: model_id,
             rotation_radians: 0.0,
         },
         Description {

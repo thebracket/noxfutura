@@ -77,7 +77,7 @@ fn add_construction(
 ) {
     let plasteel = get_material_by_tag("Plasteel").unwrap();
     let idx = mapidx(x, y, z);
-    region.tile_types[idx] = TileType::Floor { plant: None };
+    region.tile_types[idx] = TileType::Floor;
     region.material_idx[idx] = plasteel;
     region.set_flag(idx, Region::CONSTRUCTED);
     if solid {

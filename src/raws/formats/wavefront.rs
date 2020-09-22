@@ -3,14 +3,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct WavefrontModels {
     pub models: Vec<WavefrontObj>,
-    pub colors: Vec<MappedColor>
+    pub colors: Vec<MappedColor>,
 }
 
 impl WavefrontModels {
     pub fn new() -> Self {
-        Self { 
+        Self {
             models: Vec::new(),
-            colors: Vec::new()
+            colors: Vec::new(),
         }
     }
 
@@ -29,7 +29,7 @@ impl WavefrontModels {
 pub struct WavefrontObj {
     pub tag: String,
     pub file: String,
-    pub scale: f32
+    pub scale: f32,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -37,5 +37,5 @@ pub struct MappedColor {
     pub tag: String,
     pub r: f32,
     pub g: f32,
-    pub b: f32
+    pub b: f32,
 }
