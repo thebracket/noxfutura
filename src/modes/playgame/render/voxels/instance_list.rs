@@ -175,6 +175,5 @@ pub fn build_vox_instances2(
     // Push the buffer update
     if !vox_instances.is_empty() {
         instance_buffer.update_buffer();
-        println!("Updated vox instance buffer");
     }
 }
