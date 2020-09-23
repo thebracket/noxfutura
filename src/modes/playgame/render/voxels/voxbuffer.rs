@@ -1,23 +1,24 @@
 use super::greedy::*;
 use super::modelsize::*;
-use crate::engine::VertexBuffer;
-use nox_raws::*;
+use bengine::*;
+use crate::raws::*;
 use std::collections::HashMap;
+use crate::modes::playgame::Palette;
 
 pub struct VoxBuffer {
-    pub vertices: VertexBuffer<f32>,
+    pub vertices: FloatBuffer<f32>,
     pub offsets: Vec<(u32, u32)>,
 }
 
 impl VoxBuffer {
     pub fn new() -> Self {
         Self {
-            vertices: VertexBuffer::new(&[3, 1, 3]), // Position, normal index, tint
+            vertices: FloatBuffer::new(&[3, 1, 1], 100, gpu::BufferUsage::VERTEX), // Position, normal index, tint
             offsets: Vec::new(),
         }
     }
 
-    pub fn load(&mut self) {
+    pub fn load(&mut self, palette: &Palette) {
         self.vertices.clear();
         let rlock = RAWS.read();
         let mut last_index = 0;
@@ -32,13 +33,13 @@ impl VoxBuffer {
                     let idx = size.vidx(v) as i32;
                     cubes.insert(idx, v.i);
                 }
-                greedy_cubes(&mut cubes, &mut self.vertices.data, &size);
+                greedy_cubes(&mut cubes, &mut self.vertices.data, &size, palette);
                 assert_ne!(last_index, self.vertices.len());
                 self.offsets.push((last_index, self.vertices.len()));
                 last_index = self.vertices.len();
             }
         }
 
-        self.vertices.build(wgpu::BufferUsage::VERTEX);
+        self.vertices.build();
     }
 }

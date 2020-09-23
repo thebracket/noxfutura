@@ -1,8 +1,9 @@
-use super::super::frustrum::Frustrum;
-use crate::engine::VertexBuffer;
-use crate::modes::playgame::vox::VoxBuffer;
+use bengine::*;
+use prelude::Palette;
+use crate::utils::Frustrum;
+use super::VoxBuffer;
 use legion::*;
-use nox_components::*;
+use crate::components::*;
 use std::collections::HashMap;
 
 const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
@@ -10,7 +11,7 @@ const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
 #[derive(Debug)]
 pub struct VMRender {
     position: [f32; 3],
-    tint: [f32; 3],
+    tint: usize,
     rotation: f32,
     greyscale: f32,
 }
@@ -31,7 +32,7 @@ impl VMInstances {
         &mut self,
         model_id: usize,
         position: [f32; 3],
-        tint: [f32; 3],
+        tint: usize,
         rotation: f32,
         greyscale: f32,
     ) {
@@ -62,11 +63,12 @@ pub fn build_vox_instances2(
     ecs: &World,
     camera_z: usize,
     vox_models: &VoxBuffer,
-    instance_buffer: &mut VertexBuffer<f32>,
+    instance_buffer: &mut FloatBuffer<f32>,
     vox_instances: &mut Vec<(u32, u32, u32)>,
     frustrum: &Frustrum,
     mouse_world_pos: &(usize, usize, usize),
     building_to_build: &Option<usize>,
+    palette: &Palette
 ) {
     let mut instances = VMInstances::new();
     instance_buffer.clear();
@@ -98,7 +100,7 @@ pub fn build_vox_instances2(
             instances.add(
                 model.index,
                 [pt.x, pt.z, pt.y],
-                [tint.color.0, tint.color.1, tint.color.2],
+                tint.color,
                 model.rotation_radians,
                 if let Ok(b) = ecs.entry_ref(*entity).unwrap().get_component::<Building>() {
                     if b.complete {
@@ -133,7 +135,7 @@ pub fn build_vox_instances2(
                 instances.add(
                     vm.model,
                     pos.as_xzy_f32(),
-                    [vm.tint.0, vm.tint.1, vm.tint.2],
+                    palette.find_palette(vm.tint.0, vm.tint.1, vm.tint.2),
                     composite.rotation,
                     0.0,
                 );
@@ -149,7 +151,7 @@ pub fn build_vox_instances2(
                 mouse_world_pos.2 as f32,
                 mouse_world_pos.1 as f32,
             ],
-            [0.5, 0.5, 0.5],
+            palette.find_palette(0.5, 0.5, 0.5),
             0.0,
             1.0,
         );
@@ -164,7 +166,7 @@ pub fn build_vox_instances2(
         ));
         i.1.iter().for_each(|vm| {
             instance_buffer.add_slice(&vm.position);
-            instance_buffer.add_slice(&vm.tint);
+            instance_buffer.add(vm.tint as f32);
             instance_buffer.add(vm.rotation);
             instance_buffer.add(vm.greyscale);
         });
@@ -173,5 +175,6 @@ pub fn build_vox_instances2(
     // Push the buffer update
     if !vox_instances.is_empty() {
         instance_buffer.update_buffer();
+        println!("Updated vox instance buffer");
     }
 }

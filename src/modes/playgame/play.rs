@@ -1,4 +1,4 @@
-use super::{loadstate::*, systems::REGION, Chunks, GrassPass, ModelsPass, TerrainPass};
+use super::{loadstate::*, systems::REGION, Chunks, GrassPass, ModelsPass, TerrainPass, VoxPass, Palette};
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
@@ -15,6 +15,9 @@ pub struct PlayTheGame {
     terrain_pass: Option<TerrainPass>,
     model_pass: Option<ModelsPass>,
     grass_pass: Option<GrassPass>,
+    vox_pass: Option<VoxPass>,
+
+    palette: Option<Palette>,
 
     regular_schedule: Schedule,
     paused_schedule: Schedule,
@@ -33,6 +36,8 @@ impl PlayTheGame {
             terrain_pass: None,
             model_pass: None,
             grass_pass: None,
+            vox_pass: None,
+            palette: None,
             regular_schedule: super::systems::build_scheduler(),
             paused_schedule: super::systems::paused_scheduler(),
         }
@@ -67,6 +72,8 @@ impl PlayTheGame {
                     self.terrain_pass = loader_lock.terrain_pass.take();
                     self.model_pass = loader_lock.model_pass.take();
                     self.grass_pass = loader_lock.grass_pass.take();
+                    self.vox_pass = loader_lock.vox_pass.take();
+                    self.palette = loader_lock.palette.take();
 
                     self.chunks.rebuild_all();
                     let mut query = <(&Position, &CameraOptions)>::query();
@@ -119,6 +126,7 @@ impl PlayTheGame {
                 self.chunks.on_camera_move(&camera_matrix, &*pos);
                 self.model_pass.as_mut().unwrap().models_changed = true;
                 self.grass_pass.as_mut().unwrap().models_changed = true;
+                self.vox_pass.as_mut().unwrap().models_changed = true;
                 pass.uniforms.update_view_proj(&pass.camera);
             }
         }
@@ -167,6 +175,11 @@ impl NoxMode for PlayTheGame {
                 .as_mut()
                 .unwrap()
                 .render(core, &mut self.ecs, &self.chunks.frustrum);
+
+            self.vox_pass
+                .as_mut()
+                .unwrap()
+                .render(core, &mut self.ecs, &self.chunks.frustrum, self.palette.as_ref().unwrap());
         }
 
         result

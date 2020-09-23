@@ -9,3 +9,6 @@ glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\model_pass\models
 
 glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\grass_pass\grass.frag -o ..\..\src\modes\playgame\render\passes\grass_pass\grass.frag.spv
 glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\grass_pass\grass.vert -o ..\..\src\modes\playgame\render\passes\grass_pass\grass.vert.spv
+
+glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\vox_pass\vox.frag -o ..\..\src\modes\playgame\render\passes\vox_pass\vox.frag.spv
+glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\vox_pass\vox.vert -o ..\..\src\modes\playgame\render\passes\vox_pass\vox.vert.spv

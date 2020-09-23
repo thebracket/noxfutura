@@ -1,9 +1,10 @@
 use super::modelsize::ModelSize;
 use std::collections::{HashMap, HashSet};
+use crate::modes::playgame::Palette;
 
 pub type VoxMap = HashMap<i32, u8>;
 
-pub fn greedy_cubes(cube_index: &mut VoxMap, output: &mut Vec<f32>, size: &ModelSize) {
+pub fn greedy_cubes(cube_index: &mut VoxMap, output: &mut Vec<f32>, size: &ModelSize, palette: &Palette) {
     let invisible = cube_index
         .iter()
         .filter(|(idx, _)| {
@@ -42,6 +43,7 @@ pub fn greedy_cubes(cube_index: &mut VoxMap, output: &mut Vec<f32>, size: &Model
                 height as f32,
                 depth as f32,
                 mat_idx,
+                palette
             );
         }
     }

@@ -4,3 +4,6 @@ mod model_pass;
 pub use model_pass::ModelsPass;
 mod grass_pass;
 pub use grass_pass::GrassPass;
+mod vox_pass;
+pub use vox_pass::VoxPass;
+
