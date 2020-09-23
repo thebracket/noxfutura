@@ -1,9 +1,9 @@
 use crate::components::*;
 use crate::modes::playgame::{CameraUniform, Models, Palette};
+use crate::utils::Frustrum;
 use bengine::*;
 use legion::*;
 use std::collections::HashMap;
-use crate::utils::Frustrum;
 
 pub struct ModelsPass {
     pipeline: gpu::RenderPipeline,
@@ -161,15 +161,22 @@ impl ModelsPass {
             });
 
             if self.models_changed {
-                let camera_z = <(&Position, &CameraOptions)>::query().iter(ecs).map(|(pos, _)| pos.as_point3())
-                .nth(0).unwrap().z;
+                let camera_z = <(&Position, &CameraOptions)>::query()
+                    .iter(ecs)
+                    .map(|(pos, _)| pos.as_point3())
+                    .nth(0)
+                    .unwrap()
+                    .z;
 
-                self.instance_set.iter_mut().for_each(|(k, v)| v.clear());
+                self.instance_set.iter_mut().for_each(|(_k, v)| v.clear());
                 <(&ObjModel, &Position)>::query()
                     .iter(ecs)
                     .for_each(|(model, pos)| {
                         if let Some(pt) = pos.as_point3_only_tile() {
-                            if pt.z <= camera_z && pt.z > camera_z - 50 && frustrum.check_sphere(&pos.as_vec3(), 2.0) {
+                            if pt.z <= camera_z
+                                && pt.z > camera_z - 50
+                                && frustrum.check_sphere(&pos.as_vec3(), 2.0)
+                            {
                                 if let Some(i) = self.instance_set.get_mut(&model.index) {
                                     i.push((pt.x as f32, pt.z as f32, pt.y as f32));
                                 } else {
@@ -209,7 +216,7 @@ impl ModelsPass {
 
             for render in self.instances.iter() {
                 let range = self.models.model_map[render.0].start as u32
-                    .. self.models.model_map[render.0].end as u32;
+                    ..self.models.model_map[render.0].end as u32;
                 rpass.draw_indexed(range, 0, render.1..render.2);
             }
         }

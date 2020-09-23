@@ -1,9 +1,8 @@
 use crate::components::*;
-use crate::modes::playgame::{CameraUniform, Models, Palette};
+use crate::modes::playgame::CameraUniform;
+use crate::utils::Frustrum;
 use bengine::*;
 use legion::*;
-use std::collections::HashMap;
-use crate::utils::Frustrum;
 
 // The idea here is to build geometry for grass layers above
 // the terrain in a cross-hatch pattern.
@@ -13,9 +12,6 @@ pub struct GrassPass {
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
     pub models_changed: bool,
-    tex_id: usize,
-    tex_layout: gpu::BindGroupLayout
-
 }
 
 impl GrassPass {
@@ -43,50 +39,51 @@ impl GrassPass {
             ctx.device
                 .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
                     label: None,
-                    entries: &[gpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: gpu::ShaderStage::VERTEX,
-                        ty: gpu::BindingType::UniformBuffer {
-                            dynamic: false,
-                            min_binding_size: gpu::BufferSize::new(64),
+                    entries: &[
+                        gpu::BindGroupLayoutEntry {
+                            binding: 0,
+                            visibility: gpu::ShaderStage::VERTEX,
+                            ty: gpu::BindingType::UniformBuffer {
+                                dynamic: false,
+                                min_binding_size: gpu::BufferSize::new(64),
+                            },
+                            count: None,
                         },
-                        count: None,
-                    },
-                    gpu::BindGroupLayoutEntry {
-                        binding: 1,
-                        visibility: gpu::ShaderStage::FRAGMENT,
-                        ty: gpu::BindingType::SampledTexture {
-                            multisampled: false,
-                            dimension: gpu::TextureViewDimension::D2,
-                            component_type: gpu::TextureComponentType::Uint,
+                        gpu::BindGroupLayoutEntry {
+                            binding: 1,
+                            visibility: gpu::ShaderStage::FRAGMENT,
+                            ty: gpu::BindingType::SampledTexture {
+                                multisampled: false,
+                                dimension: gpu::TextureViewDimension::D2,
+                                component_type: gpu::TextureComponentType::Uint,
+                            },
+                            count: None,
                         },
-                        count: None,
-                    },
-                    gpu::BindGroupLayoutEntry {
-                        binding: 2,
-                        visibility: gpu::ShaderStage::FRAGMENT,
-                        ty: gpu::BindingType::Sampler { comparison: false },
-                        count: None,
-                    },
+                        gpu::BindGroupLayoutEntry {
+                            binding: 2,
+                            visibility: gpu::ShaderStage::FRAGMENT,
+                            ty: gpu::BindingType::Sampler { comparison: false },
+                            count: None,
+                        },
                     ],
-                }
-            );
+                });
 
         let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,
             layout: &bind_group_layout,
-            entries: &[gpu::BindGroupEntry {
-                binding: 0,
-                resource: gpu::BindingResource::Buffer(uniforms.uniform_buffer.slice(..)),
-            },
-            gpu::BindGroupEntry {
-                binding: 1,
-                resource: gpu::BindingResource::TextureView(tlock.get_view(tex_id)),
-            },
-            gpu::BindGroupEntry {
-                binding: 2,
-                resource: gpu::BindingResource::Sampler(tlock.get_sampler(tex_id)),
-            }
+            entries: &[
+                gpu::BindGroupEntry {
+                    binding: 0,
+                    resource: gpu::BindingResource::Buffer(uniforms.uniform_buffer.slice(..)),
+                },
+                gpu::BindGroupEntry {
+                    binding: 1,
+                    resource: gpu::BindingResource::TextureView(tlock.get_view(tex_id)),
+                },
+                gpu::BindGroupEntry {
+                    binding: 2,
+                    resource: gpu::BindingResource::Sampler(tlock.get_sampler(tex_id)),
+                },
             ],
         });
 
@@ -130,78 +127,84 @@ impl GrassPass {
                 }),
                 vertex_state: gpu::VertexStateDescriptor {
                     index_format: gpu::IndexFormat::Uint16,
-                    vertex_buffers: &[
-                        grass_buffer.descriptor()
-                    ],
+                    vertex_buffers: &[grass_buffer.descriptor()],
                 },
                 sample_count: 1,
                 sample_mask: !0,
                 alpha_to_coverage_enabled: false,
-            }
-        );
+            });
 
         Self {
             grass_buffer,
             bind_group,
             pipeline,
             models_changed: true,
-            tex_id,
-            tex_layout: bind_group_layout
         }
     }
 
     pub fn render(&mut self, core: &Core, ecs: &mut World, frustrum: &Frustrum) {
         if self.models_changed {
+            let camera_z = <(&Position, &CameraOptions)>::query()
+                .iter(ecs)
+                .map(|(pos, _)| pos.as_point3())
+                .nth(0)
+                .unwrap()
+                .z;
+
             self.grass_buffer.clear();
             <(&Vegetation, &Position)>::query()
                 .iter(ecs)
                 .for_each(|(_, pos)| {
                     if let Some(pt) = pos.as_point3_only_tile() {
-                        // Insert geometry
-                        let bx = pt.x as f32 + 0.5;
-                        let bz = pt.z as f32;
-                        const HEIGHT : f32 = 0.5;
-                        const GRASS_SPACING : f32 = 0.2;
+                        if pt.z <= camera_z
+                            && pt.z > camera_z - 50
+                            && frustrum.check_sphere(&pos.as_vec3(), 2.0)
+                        {
+                            // Insert geometry
+                            let bx = pt.x as f32 + 0.5;
+                            let bz = pt.z as f32;
+                            const HEIGHT: f32 = 0.5;
+                            const GRASS_SPACING: f32 = 0.2;
 
-                        let mut by = pt.y as f32;
-                        while by < pt.y as f32 + 1.01 {
-                            self.grass_buffer.add3(bx - 0.5, bz, by);
-                            self.grass_buffer.add2(0.0, 0.0);
-                            self.grass_buffer.add3(bx + 0.5, bz, by);
-                            self.grass_buffer.add2(1.0, 0.0);
-                            self.grass_buffer.add3(bx + 0.5, bz + HEIGHT, by);
-                            self.grass_buffer.add2(1.0, 1.0);
+                            let mut by = pt.y as f32;
+                            while by < pt.y as f32 + 1.01 {
+                                self.grass_buffer.add3(bx - 0.5, bz, by);
+                                self.grass_buffer.add2(0.0, 0.0);
+                                self.grass_buffer.add3(bx + 0.5, bz, by);
+                                self.grass_buffer.add2(1.0, 0.0);
+                                self.grass_buffer.add3(bx + 0.5, bz + HEIGHT, by);
+                                self.grass_buffer.add2(1.0, 1.0);
 
-                            self.grass_buffer.add3(bx - 0.5, bz, by);
-                            self.grass_buffer.add2(0.0, 0.0);
-                            self.grass_buffer.add3(bx - 0.5, bz + HEIGHT, by);
-                            self.grass_buffer.add2(0.0, 1.0);
-                            self.grass_buffer.add3(bx + 0.5, bz + HEIGHT, by);
-                            self.grass_buffer.add2(1.0, 1.0);
-                            by += GRASS_SPACING;
-                        }
+                                self.grass_buffer.add3(bx - 0.5, bz, by);
+                                self.grass_buffer.add2(0.0, 0.0);
+                                self.grass_buffer.add3(bx - 0.5, bz + HEIGHT, by);
+                                self.grass_buffer.add2(0.0, 1.0);
+                                self.grass_buffer.add3(bx + 0.5, bz + HEIGHT, by);
+                                self.grass_buffer.add2(1.0, 1.0);
+                                by += GRASS_SPACING;
+                            }
 
-                        let by = pt.y as f32 + 0.5;
-                        let mut bx = pt.x as f32;
-                        while bx < pt.x as f32 + 1.01 {
-                            self.grass_buffer.add3(bx, bz, by - 0.5);
-                            self.grass_buffer.add2(0.0, 0.0);
-                            self.grass_buffer.add3(bx, bz, by + 0.5);
-                            self.grass_buffer.add2(1.0, 0.0);
-                            self.grass_buffer.add3(bx, bz + HEIGHT, by + 0.5);
-                            self.grass_buffer.add2(1.0, 1.0);
+                            let by = pt.y as f32 + 0.5;
+                            let mut bx = pt.x as f32;
+                            while bx < pt.x as f32 + 1.01 {
+                                self.grass_buffer.add3(bx, bz, by - 0.5);
+                                self.grass_buffer.add2(0.0, 0.0);
+                                self.grass_buffer.add3(bx, bz, by + 0.5);
+                                self.grass_buffer.add2(1.0, 0.0);
+                                self.grass_buffer.add3(bx, bz + HEIGHT, by + 0.5);
+                                self.grass_buffer.add2(1.0, 1.0);
 
-                            self.grass_buffer.add3(bx, bz, by - 0.5);
-                            self.grass_buffer.add2(0.0, 0.0);
-                            self.grass_buffer.add3(bx, bz + HEIGHT, by - 0.5);
-                            self.grass_buffer.add2(0.0, 1.0);
-                            self.grass_buffer.add3(bx, bz + HEIGHT, by + 0.5);
-                            self.grass_buffer.add2(1.0, 1.0);
-                            bx += GRASS_SPACING;
+                                self.grass_buffer.add3(bx, bz, by - 0.5);
+                                self.grass_buffer.add2(0.0, 0.0);
+                                self.grass_buffer.add3(bx, bz + HEIGHT, by - 0.5);
+                                self.grass_buffer.add2(0.0, 1.0);
+                                self.grass_buffer.add3(bx, bz + HEIGHT, by + 0.5);
+                                self.grass_buffer.add2(1.0, 1.0);
+                                bx += GRASS_SPACING;
+                            }
                         }
                     }
-                }
-            );
+                });
             self.grass_buffer.build();
             self.models_changed = false;
         }
@@ -239,7 +242,7 @@ impl GrassPass {
             rpass.set_bind_group(0, &self.bind_group, &[]);
 
             rpass.set_vertex_buffer(0, self.grass_buffer.slice());
-            rpass.draw(0.. self.grass_buffer.len(), 0..1);
+            rpass.draw(0..self.grass_buffer.len(), 0..1);
         }
         ctx.queue.submit(Some(encoder.finish()));
     }

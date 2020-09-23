@@ -30,16 +30,17 @@ impl Models {
             let start = index_buf.len();
 
             for m in models.iter() {
-                let mat_finder_opt = rlock
-                    .obj_models
-                    .colors
-                    .iter()
-                    .find(|c| c.tag == m.name);
+                let mat_finder_opt = rlock.obj_models.colors.iter().find(|c| c.tag == m.name);
                 let mat_finder = if mat_finder_opt.is_some() {
                     mat_finder_opt.unwrap().clone()
                 } else {
                     println!("Unknown color swatch: {}", m.name);
-                    crate::raws::MappedColor{ tag: "Goodness knows".to_string(), r: 0.5, g: 0.5, b: 0.5 }
+                    crate::raws::MappedColor {
+                        tag: "Goodness knows".to_string(),
+                        r: 0.5,
+                        g: 0.5,
+                        b: 0.5,
+                    }
                 };
                 let mat_index = palette.find_palette(mat_finder.r, mat_finder.g, mat_finder.b);
 

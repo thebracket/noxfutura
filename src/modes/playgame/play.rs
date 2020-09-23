@@ -1,4 +1,4 @@
-use super::{loadstate::*, systems::REGION, Chunks, ModelsPass, TerrainPass, GrassPass};
+use super::{loadstate::*, systems::REGION, Chunks, GrassPass, ModelsPass, TerrainPass};
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
@@ -156,8 +156,7 @@ impl NoxMode for PlayTheGame {
                 camera_z = pos.as_point3().z;
             }
             let terrain_pass = self.terrain_pass.as_ref().unwrap();
-            terrain_pass
-                .render(core, &self.chunks, camera_z);
+            terrain_pass.render(core, &self.chunks, camera_z);
 
             self.model_pass
                 .as_mut()
