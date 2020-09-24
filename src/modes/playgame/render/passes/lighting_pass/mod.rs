@@ -4,13 +4,19 @@ use legion::*;
 use crate::modes::playgame::GBuffer;
 mod light_uniforms;
 use light_uniforms::LightUniformManager;
+mod terrain_lights;
+pub use terrain_lights::TerrainLights;
+
+pub enum LightingDirtyState { Clean, Partial, Full }
 
 pub struct LightingPass {
     vb: FloatBuffer<f32>,
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
     light_uniforms: LightUniformManager,
-    uniform_bind_group: gpu::BindGroup
+    uniform_bind_group: gpu::BindGroup,
+    terrain_lights: TerrainLights,
+    update_status: LightingDirtyState
 }
 
 impl LightingPass {
@@ -20,6 +26,9 @@ impl LightingPass {
             bengine::gpu::include_spirv!("lighting.vert.spv"),
             bengine::gpu::include_spirv!("lighting.frag.spv"),
         );
+
+        // Lighting buffer setup
+        let terrain_lights = TerrainLights::new();
 
         // Uniform setup
         let light_uniforms = LightUniformManager::new();
@@ -130,7 +139,7 @@ impl LightingPass {
             .device
             .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: &[&bind_group_layout, &uniform_bind_group_layout],
+                bind_group_layouts: &[&bind_group_layout, &uniform_bind_group_layout, &terrain_lights.bind_group_layout],
                 push_constant_ranges: &[],
             });
         let pipeline = ctx
@@ -176,11 +185,28 @@ impl LightingPass {
             bind_group,
             pipeline,
             light_uniforms,
-            uniform_bind_group
+            uniform_bind_group,
+            terrain_lights,
+            update_status: LightingDirtyState::Full
         }
     }
 
     pub fn render(&mut self, core: &Core, ecs: &mut World) {
+        match self.update_status {
+            LightingDirtyState::Full => {
+                self.light_uniforms.uniforms.update(ecs, &mut self.terrain_lights.flags);
+                self.light_uniforms.send_buffer_to_gpu();
+                self.terrain_lights.update_buffer();
+                self.update_status = LightingDirtyState::Clean;
+            },
+            LightingDirtyState::Partial => {
+                self.light_uniforms.uniforms.update_partial(ecs);
+                self.light_uniforms.send_buffer_to_gpu();
+                self.update_status = LightingDirtyState::Clean;
+            }
+            LightingDirtyState::Clean => {}
+        }
+
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
 
@@ -204,6 +230,7 @@ impl LightingPass {
             rpass.set_pipeline(&self.pipeline);
             rpass.set_bind_group(0, &self.bind_group, &[]);
             rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
+            rpass.set_bind_group(2, &self.terrain_lights.bind_group, &[]);
 
             rpass.set_vertex_buffer(0, self.vb.slice());
             rpass.draw(0..self.vb.len(), 0..1);

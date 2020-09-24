@@ -19,6 +19,10 @@ uniform Uniforms {
     LightInfo lights[32];
 };
 
+layout(set = 2, binding = 0) buffer LightMap {
+    uint[] light_bits;
+};
+
 void main() {
     vec3 normal = texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb;
     vec3 light_pos = vec3(128.0, 512.0, 0.1);

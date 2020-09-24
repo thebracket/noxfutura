@@ -45,24 +45,25 @@ impl LightUniforms {
 
     pub fn update_partial(
         &mut self,
-        sun_pos: &(Vector3<f32>, Vector3<f32>),
-        camera_pos: &Vector3<f32>,
+        ecs: &World,
     ) {
-        self.camera_position = vec_to_float(camera_pos);
-        self.lights[0].pos = [sun_pos.0.x, sun_pos.0.y, sun_pos.0.z, 512.0];
-        self.lights[0].color = [sun_pos.1.x, sun_pos.1.y, sun_pos.1.z, 1.0];
+        let camera_pos = <(&Position, &CameraOptions)>::query()
+            .iter(ecs)
+            .map(|(pos, _)| pos.as_point3())
+            .nth(0)
+            .unwrap();
+
+        self.camera_position = [camera_pos.x as f32, camera_pos.z as f32, camera_pos.y as f32, 0.0];
+        self.lights[0].pos = [128.0, 512.0, 0.1, 512.0];
+        self.lights[0].color = [1.0, 1.0, 1.0, 1.0];
     }
 
     pub fn update(
         &mut self,
         ecs: &World,
-        sun_pos: &(Vector3<f32>, Vector3<f32>),
-        camera_pos: Vector3<f32>,
         light_bits: &mut [u32],
     ) {
-        self.camera_position = vec_to_float(&camera_pos);
-        self.lights[0].pos = [sun_pos.0.x, sun_pos.0.y, sun_pos.0.z, 512.0];
-        self.lights[0].color = [sun_pos.1.x, sun_pos.1.y, sun_pos.1.z, 1.0];
+        self.update_partial(ecs);
 
         self.lights.iter_mut().skip(1).for_each(|l| {
             l.pos = [0.0, 0.0, 0.0, 0.0];
@@ -85,7 +86,7 @@ impl LightUniforms {
         let mut light_query = <(Read<Position>, Read<Light>, Read<FieldOfView>)>::query();
         light_query.iter(ecs).for_each(|(pos, light, fov)| {
             let pt = pos.as_point3();
-            if index < 32 && pt.z <= camera_pos.y as i32 && light.enabled {
+            if index < 32 && light.enabled { // pt.z <= camera_pos.y ?
                 self.lights[index].color = [
                     light.color.0 * LIGHT_BOOST,
                     light.color.1 * LIGHT_BOOST,
@@ -109,11 +110,6 @@ impl LightUniforms {
         });
         //println!("{:#?}", self.lights);
     }
-}
-
-#[inline]
-fn vec_to_float(v: &Vector3<f32>) -> [f32; 4] {
-    [v.x, v.y, v.z, 0.0]
 }
 
 pub struct LightUniformManager {
