@@ -86,6 +86,22 @@ impl LightingPass {
                             ty: gpu::BindingType::Sampler { comparison: true },
                             count: None,
                         },
+                        gpu::BindGroupLayoutEntry {
+                            binding: 4,
+                            visibility: gpu::ShaderStage::FRAGMENT,
+                            ty: gpu::BindingType::SampledTexture {
+                                multisampled: false,
+                                dimension: gpu::TextureViewDimension::D2,
+                                component_type: gpu::TextureComponentType::Uint,
+                            },
+                            count: None,
+                        },
+                        gpu::BindGroupLayoutEntry {
+                            binding: 5,
+                            visibility: gpu::ShaderStage::FRAGMENT,
+                            ty: gpu::BindingType::Sampler { comparison: true },
+                            count: None,
+                        },
                     ],
                 });
 
@@ -108,6 +124,14 @@ impl LightingPass {
                 gpu::BindGroupEntry {
                     binding: 3,
                     resource: gpu::BindingResource::Sampler(&gbuffer.normal.sampler),
+                },
+                gpu::BindGroupEntry {
+                    binding: 4,
+                    resource: gpu::BindingResource::TextureView(&gbuffer.coords.view),
+                },
+                gpu::BindGroupEntry {
+                    binding: 5,
+                    resource: gpu::BindingResource::Sampler(&gbuffer.coords.sampler),
                 },
             ],
         });

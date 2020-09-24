@@ -120,6 +120,7 @@ fn add_construction(
         }
         "solar_panel" => {
             add_building(region, "solar_panel", x, y, z, ecs);
+            region.tile_types[idx] = TileType::Window;
         }
         "battery" => {
             add_building(region, "battery", x, y, z, ecs);

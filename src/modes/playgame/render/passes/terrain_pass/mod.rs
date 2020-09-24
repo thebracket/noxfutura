@@ -88,14 +88,23 @@ impl TerrainPass {
                 }),
                 primitive_topology: gpu::PrimitiveTopology::TriangleList,
                 color_states: &[
+                    // Albedo
                     gpu::ColorStateDescriptor {
                         format: ctx.swapchain_format,
                         color_blend: gpu::BlendDescriptor::REPLACE,
                         alpha_blend: gpu::BlendDescriptor::REPLACE,
                         write_mask: gpu::ColorWrite::ALL,
                     },
+                    // Normal
                     gpu::ColorStateDescriptor {
                         format: ctx.swapchain_format,
+                        color_blend: gpu::BlendDescriptor::REPLACE,
+                        alpha_blend: gpu::BlendDescriptor::REPLACE,
+                        write_mask: gpu::ColorWrite::ALL,
+                    },
+                    // Coords
+                    gpu::ColorStateDescriptor {
+                        format: gpu::TextureFormat::Rgba32Float,
                         color_blend: gpu::BlendDescriptor::REPLACE,
                         alpha_blend: gpu::BlendDescriptor::REPLACE,
                         write_mask: gpu::ColorWrite::ALL,
@@ -137,6 +146,7 @@ impl TerrainPass {
         {
             let mut rpass = encoder.begin_render_pass(&gpu::RenderPassDescriptor {
                 color_attachments: &[
+                    // Albedo
                     gpu::RenderPassColorAttachmentDescriptor {
                         attachment: &gbuffer.albedo.view,
                         resolve_target: None,
@@ -145,8 +155,18 @@ impl TerrainPass {
                             store: true,
                         },
                     },
+                    // Normal
                     gpu::RenderPassColorAttachmentDescriptor {
                         attachment: &gbuffer.normal.view,
+                        resolve_target: None,
+                        ops: gpu::Operations {
+                            load: gpu::LoadOp::Clear(gpu::Color::BLACK),
+                            store: true,
+                        },
+                    },
+                    // Coords
+                    gpu::RenderPassColorAttachmentDescriptor {
+                        attachment: &gbuffer.coords.view,
                         resolve_target: None,
                         ops: gpu::Operations {
                             load: gpu::LoadOp::Clear(gpu::Color::BLACK),
