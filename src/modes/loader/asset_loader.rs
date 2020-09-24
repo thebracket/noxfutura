@@ -1,6 +1,6 @@
 use crate::modes::{
     playgame::GrassPass, playgame::ModelsPass, playgame::TerrainPass, GBuffer, Palette,
-    playgame::VoxPass,
+    playgame::VoxPass, playgame::LightingPass
 };
 use parking_lot::RwLock;
 use std::thread;
@@ -18,7 +18,8 @@ pub struct LoaderState {
     pub terrain_pass: Option<TerrainPass>,
     pub model_pass: Option<ModelsPass>,
     pub grass_pass: Option<GrassPass>,
-    pub vox_pass: Option<VoxPass>
+    pub vox_pass: Option<VoxPass>,
+    pub lighting_pass: Option<LightingPass>
 }
 
 impl LoaderState {
@@ -32,7 +33,8 @@ impl LoaderState {
             terrain_pass: None,
             model_pass: None,
             grass_pass: None,
-            vox_pass: None
+            vox_pass: None,
+            lighting_pass: None
         }
     }
 
@@ -53,7 +55,6 @@ impl LoaderState {
             }
 
             let gbuffer = GBuffer::new();
-            LOADER.write().g_buffer = Some(gbuffer);
 
             LOADER.write().update(0.04, "Finding the map", false);
             let terrain_pass = TerrainPass::new(&palette);
@@ -68,10 +69,15 @@ impl LoaderState {
             LOADER.write().update(0.2, "Playing with blocks", false);
             let voxels = crate::modes::playgame::VoxPass::new(&terrain_pass.uniforms, &palette);
 
+            LOADER.write().update(0.3, "Turning on the lights", false);
+            let lighting = crate::modes::playgame::LightingPass::new(&gbuffer);
+
+            LOADER.write().g_buffer = Some(gbuffer);
             LOADER.write().terrain_pass = Some(terrain_pass);
             LOADER.write().model_pass = Some(model_pass);
             LOADER.write().grass_pass = Some(grassy_gnoll);
             LOADER.write().vox_pass = Some(voxels);
+            LOADER.write().lighting_pass = Some(lighting);
 
             // Finish up by moving the palette
             LOADER.write().palette = Some(palette);

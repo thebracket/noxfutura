@@ -21,7 +21,7 @@ layout(set = 1, binding = 0) buffer Palette {
 void main() {
     gl_Position = u_view_proj * vec4((a_position + a_world_pos + vec3(0.5, 0.0, 0.5)), 1.0);
     v_world_pos = a_world_pos;
-    v_normal = a_normal;
+    v_normal = normalize(a_normal);
     int idx = int(a_material);
     v_tint = palette[idx].rgb;
 }

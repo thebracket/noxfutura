@@ -3,7 +3,6 @@ use bengine::*;
 pub struct GBuffer {
     pub albedo: GBufferTarget,
     pub normal: GBufferTarget,
-    pub pbr: GBufferTarget,
     pub coords: GBufferTarget,
     pub mouse_buffer: gpu::Buffer,
 }
@@ -20,11 +19,6 @@ impl GBuffer {
         let normal = GBufferTarget::make_texture(
             "Normal",
             gpu::TextureFormat::Rgba32Float,
-            gpu::TextureUsage::SAMPLED | gpu::TextureUsage::OUTPUT_ATTACHMENT,
-        );
-        let pbr = GBufferTarget::make_texture(
-            "PBR",
-            swap_format,
             gpu::TextureUsage::SAMPLED | gpu::TextureUsage::OUTPUT_ATTACHMENT,
         );
         let coords = GBufferTarget::make_texture(
@@ -55,7 +49,6 @@ impl GBuffer {
         Self {
             albedo,
             normal,
-            pbr,
             coords,
             mouse_buffer,
         }

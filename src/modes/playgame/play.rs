@@ -1,4 +1,4 @@
-use super::{loadstate::*, systems::REGION, Chunks, GrassPass, ModelsPass, TerrainPass, VoxPass, Palette};
+use super::{Chunks, GBuffer, GrassPass, ModelsPass, Palette, TerrainPass, VoxPass, LightingPass, loadstate::*, systems::REGION};
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
@@ -16,8 +16,10 @@ pub struct PlayTheGame {
     model_pass: Option<ModelsPass>,
     grass_pass: Option<GrassPass>,
     vox_pass: Option<VoxPass>,
+    lighting_pass: Option<LightingPass>,
 
     palette: Option<Palette>,
+    gbuffer: Option<GBuffer>,
 
     regular_schedule: Schedule,
     paused_schedule: Schedule,
@@ -37,7 +39,9 @@ impl PlayTheGame {
             model_pass: None,
             grass_pass: None,
             vox_pass: None,
+            lighting_pass: None,
             palette: None,
+            gbuffer: None,
             regular_schedule: super::systems::build_scheduler(),
             paused_schedule: super::systems::paused_scheduler(),
         }
@@ -69,11 +73,13 @@ impl PlayTheGame {
                     self.ecs = crate::components::deserialize_world(game.ecs_text);
 
                     let mut loader_lock = crate::modes::LOADER.write();
+                    self.gbuffer = loader_lock.g_buffer.take();
                     self.terrain_pass = loader_lock.terrain_pass.take();
                     self.model_pass = loader_lock.model_pass.take();
                     self.grass_pass = loader_lock.grass_pass.take();
                     self.vox_pass = loader_lock.vox_pass.take();
                     self.palette = loader_lock.palette.take();
+                    self.lighting_pass = loader_lock.lighting_pass.take();
 
                     self.chunks.rebuild_all();
                     let mut query = <(&Position, &CameraOptions)>::query();
@@ -164,22 +170,27 @@ impl NoxMode for PlayTheGame {
                 camera_z = pos.as_point3().z;
             }
             let terrain_pass = self.terrain_pass.as_ref().unwrap();
-            terrain_pass.render(core, &self.chunks, camera_z);
+            terrain_pass.render(core, &self.chunks, camera_z, self.gbuffer.as_ref().unwrap());
 
             self.model_pass
                 .as_mut()
                 .unwrap()
-                .render(core, &mut self.ecs, &self.chunks.frustrum);
+                .render(core, &mut self.ecs, &self.chunks.frustrum, self.gbuffer.as_ref().unwrap());
 
             self.grass_pass
                 .as_mut()
                 .unwrap()
-                .render(core, &mut self.ecs, &self.chunks.frustrum);
+                .render(core, &mut self.ecs, &self.chunks.frustrum, self.gbuffer.as_ref().unwrap());
 
             self.vox_pass
                 .as_mut()
                 .unwrap()
-                .render(core, &mut self.ecs, &self.chunks.frustrum, self.palette.as_ref().unwrap());
+                .render(core, &mut self.ecs, &self.chunks.frustrum, self.palette.as_ref().unwrap(), self.gbuffer.as_ref().unwrap());
+
+            self.lighting_pass
+                .as_mut()
+                .unwrap()
+                .render(core, &mut self.ecs);
         }
 
         result

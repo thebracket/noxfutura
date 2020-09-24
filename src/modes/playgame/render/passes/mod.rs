@@ -6,4 +6,6 @@ mod grass_pass;
 pub use grass_pass::GrassPass;
 mod vox_pass;
 pub use vox_pass::VoxPass;
+mod lighting_pass;
+pub use lighting_pass::*;
 

@@ -1,4 +1,4 @@
-use crate::components::*;
+use crate::{components::*, modes::playgame::GBuffer};
 use crate::modes::playgame::CameraUniform;
 use crate::utils::Frustrum;
 use bengine::*;
@@ -113,12 +113,20 @@ impl GrassPass {
                     ..Default::default()
                 }),
                 primitive_topology: gpu::PrimitiveTopology::TriangleList,
-                color_states: &[gpu::ColorStateDescriptor {
-                    format: ctx.swapchain_format,
-                    color_blend: gpu::BlendDescriptor::REPLACE,
-                    alpha_blend: gpu::BlendDescriptor::REPLACE,
-                    write_mask: gpu::ColorWrite::ALL,
-                }],
+                color_states: &[
+                    gpu::ColorStateDescriptor {
+                        format: ctx.swapchain_format,
+                        color_blend: gpu::BlendDescriptor::REPLACE,
+                        alpha_blend: gpu::BlendDescriptor::REPLACE,
+                        write_mask: gpu::ColorWrite::ALL,
+                    },
+                    gpu::ColorStateDescriptor {
+                        format: gpu::TextureFormat::Rgba32Float,
+                        color_blend: gpu::BlendDescriptor::REPLACE,
+                        alpha_blend: gpu::BlendDescriptor::REPLACE,
+                        write_mask: gpu::ColorWrite::ALL,
+                    },
+                ],
                 depth_stencil_state: Some(gpu::DepthStencilStateDescriptor {
                     format: gpu::TextureFormat::Depth32Float,
                     depth_write_enabled: true,
@@ -142,7 +150,7 @@ impl GrassPass {
         }
     }
 
-    pub fn render(&mut self, core: &Core, ecs: &mut World, frustrum: &Frustrum) {
+    pub fn render(&mut self, core: &Core, ecs: &mut World, frustrum: &Frustrum, gbuffer: &GBuffer) {
         if self.models_changed {
             let camera_z = <(&Position, &CameraOptions)>::query()
                 .iter(ecs)
@@ -220,14 +228,24 @@ impl GrassPass {
 
         {
             let mut rpass = encoder.begin_render_pass(&gpu::RenderPassDescriptor {
-                color_attachments: &[gpu::RenderPassColorAttachmentDescriptor {
-                    attachment: &core.frame.output.view,
-                    resolve_target: None,
-                    ops: gpu::Operations {
-                        load: gpu::LoadOp::Load,
-                        store: true,
+                color_attachments: &[
+                    gpu::RenderPassColorAttachmentDescriptor {
+                        attachment: &gbuffer.albedo.view,
+                        resolve_target: None,
+                        ops: gpu::Operations {
+                            load: gpu::LoadOp::Load,
+                            store: true,
+                        },
                     },
-                }],
+                    gpu::RenderPassColorAttachmentDescriptor {
+                        attachment: &gbuffer.normal.view,
+                        resolve_target: None,
+                        ops: gpu::Operations {
+                            load: gpu::LoadOp::Load,
+                            store: true,
+                        },
+                    }
+                ],
                 depth_stencil_attachment: Some(gpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: tlock.get_view(0),
                     depth_ops: Some(gpu::Operations {
