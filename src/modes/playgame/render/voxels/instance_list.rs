@@ -140,7 +140,9 @@ pub fn build_vox_instances2(
                     0.0,
                 );
             }
-        });
+        }
+    );
+
 
     // Building Projects
     if let Some(tag) = building_to_build {

@@ -51,17 +51,18 @@ void main() {
     vec3 final_position = rotated_position + i_position + 0.5;
 
     int a_idx = int(a_tint);
-    int i_idx = int(v_tint);
+    int i_idx = int(i_tint);
     vec3 a_col = palette[a_idx].rgb;
     vec3 i_col = palette[i_idx].rgb;
+    vec3 final_col = i_col * a_col;
 
     v_normal = (vec4(normal_lut[int(a_normal)], 0.0) * rotation).xyz;
     gl_Position = u_view_proj * vec4(final_position, 1.0);
     v_world_pos = a_position + i_position;
     if (i_grey > 0.0) {
-        float grey = dot(a_col * i_col, vec3(0.299, 0.587, 0.114));
+        float grey = dot(final_col, vec3(0.299, 0.587, 0.114));
         v_tint = vec3(grey, grey, grey);
     } else {
-            v_tint = a_col * i_col;
+            v_tint = final_col;
     }
 }
