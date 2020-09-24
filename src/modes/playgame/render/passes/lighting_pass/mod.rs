@@ -7,7 +7,11 @@ use light_uniforms::LightUniformManager;
 mod terrain_lights;
 pub use terrain_lights::TerrainLights;
 
-pub enum LightingDirtyState { Clean, Partial, Full }
+pub enum LightingDirtyState {
+    Clean,
+    Partial,
+    Full,
+}
 
 pub struct LightingPass {
     vb: FloatBuffer<f32>,
@@ -16,7 +20,7 @@ pub struct LightingPass {
     light_uniforms: LightUniformManager,
     uniform_bind_group: gpu::BindGroup,
     terrain_lights: TerrainLights,
-    update_status: LightingDirtyState
+    update_status: LightingDirtyState,
 }
 
 impl LightingPass {
@@ -34,7 +38,7 @@ impl LightingPass {
         let light_uniforms = LightUniformManager::new();
 
         // Simple quad VB for output
-        let mut vb = FloatBuffer::<f32>::new(&[2, 2],24, gpu::BufferUsage::VERTEX);
+        let mut vb = FloatBuffer::<f32>::new(&[2, 2], 24, gpu::BufferUsage::VERTEX);
         vb.add_slice(&[
             -1.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 0.0, 0.0,
             1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
@@ -66,7 +70,6 @@ impl LightingPass {
                             ty: gpu::BindingType::Sampler { comparison: true },
                             count: None,
                         },
-
                         gpu::BindGroupLayoutEntry {
                             binding: 2,
                             visibility: gpu::ShaderStage::FRAGMENT,
@@ -84,8 +87,7 @@ impl LightingPass {
                             count: None,
                         },
                     ],
-                }
-            );
+                });
 
         let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,
@@ -123,8 +125,7 @@ impl LightingPass {
                         },
                         count: None,
                     }],
-                }
-            );
+                });
 
         let uniform_bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,
@@ -139,7 +140,11 @@ impl LightingPass {
             .device
             .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: &[&bind_group_layout, &uniform_bind_group_layout, &terrain_lights.bind_group_layout],
+                bind_group_layouts: &[
+                    &bind_group_layout,
+                    &uniform_bind_group_layout,
+                    &terrain_lights.bind_group_layout,
+                ],
                 push_constant_ranges: &[],
             });
         let pipeline = ctx
@@ -161,14 +166,12 @@ impl LightingPass {
                     ..Default::default()
                 }),
                 primitive_topology: gpu::PrimitiveTopology::TriangleList,
-                color_states: &[
-                    gpu::ColorStateDescriptor {
-                        format: ctx.swapchain_format,
-                        color_blend: gpu::BlendDescriptor::REPLACE,
-                        alpha_blend: gpu::BlendDescriptor::REPLACE,
-                        write_mask: gpu::ColorWrite::ALL,
-                    },
-                ],
+                color_states: &[gpu::ColorStateDescriptor {
+                    format: ctx.swapchain_format,
+                    color_blend: gpu::BlendDescriptor::REPLACE,
+                    alpha_blend: gpu::BlendDescriptor::REPLACE,
+                    write_mask: gpu::ColorWrite::ALL,
+                }],
                 depth_stencil_state: None,
                 vertex_state: gpu::VertexStateDescriptor {
                     index_format: gpu::IndexFormat::Uint16,
@@ -177,28 +180,29 @@ impl LightingPass {
                 sample_count: 1,
                 sample_mask: !0,
                 alpha_to_coverage_enabled: false,
-            }
-        );
+            });
 
-        Self{
+        Self {
             vb,
             bind_group,
             pipeline,
             light_uniforms,
             uniform_bind_group,
             terrain_lights,
-            update_status: LightingDirtyState::Full
+            update_status: LightingDirtyState::Full,
         }
     }
 
     pub fn render(&mut self, core: &Core, ecs: &mut World) {
         match self.update_status {
             LightingDirtyState::Full => {
-                self.light_uniforms.uniforms.update(ecs, &mut self.terrain_lights.flags);
+                self.light_uniforms
+                    .uniforms
+                    .update(ecs, &mut self.terrain_lights.flags);
                 self.light_uniforms.send_buffer_to_gpu();
                 self.terrain_lights.update_buffer();
                 self.update_status = LightingDirtyState::Clean;
-            },
+            }
             LightingDirtyState::Partial => {
                 self.light_uniforms.uniforms.update_partial(ecs);
                 self.light_uniforms.send_buffer_to_gpu();

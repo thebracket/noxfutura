@@ -1,6 +1,6 @@
-use crate::{components::*, modes::playgame::GBuffer};
 use crate::modes::playgame::CameraUniform;
 use crate::utils::Frustrum;
+use crate::{components::*, modes::playgame::GBuffer};
 use bengine::*;
 use legion::*;
 
@@ -244,7 +244,7 @@ impl GrassPass {
                             load: gpu::LoadOp::Load,
                             store: true,
                         },
-                    }
+                    },
                 ],
                 depth_stencil_attachment: Some(gpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: tlock.get_view(0),

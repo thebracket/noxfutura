@@ -1,10 +1,15 @@
 use super::modelsize::ModelSize;
-use std::collections::{HashMap, HashSet};
 use crate::modes::playgame::Palette;
+use std::collections::{HashMap, HashSet};
 
 pub type VoxMap = HashMap<i32, u8>;
 
-pub fn greedy_cubes(cube_index: &mut VoxMap, output: &mut Vec<f32>, size: &ModelSize, palette: &Palette) {
+pub fn greedy_cubes(
+    cube_index: &mut VoxMap,
+    output: &mut Vec<f32>,
+    size: &ModelSize,
+    palette: &Palette,
+) {
     let invisible = cube_index
         .iter()
         .filter(|(idx, _)| {
@@ -43,7 +48,7 @@ pub fn greedy_cubes(cube_index: &mut VoxMap, output: &mut Vec<f32>, size: &Model
                 height as f32,
                 depth as f32,
                 mat_idx,
-                palette
+                palette,
             );
         }
     }
@@ -86,7 +91,14 @@ fn grow_down(cube_index: &mut VoxMap, idx: u32, width: u32, mat: u8, size: &Mode
     height
 }
 
-fn grow_in(cube_index: &mut VoxMap, idx: u32, width: u32, height: u32, mat: u8, size: &ModelSize) -> u32 {
+fn grow_in(
+    cube_index: &mut VoxMap,
+    idx: u32,
+    width: u32,
+    height: u32,
+    mat: u8,
+    size: &ModelSize,
+) -> u32 {
     let mut depth = 1;
     let layer_size = size.x * size.y;
     let mut candidate_idx = idx + layer_size;

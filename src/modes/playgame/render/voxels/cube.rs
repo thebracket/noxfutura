@@ -10,7 +10,7 @@ pub fn add_cube_geometry(
     h: f32,
     d: f32,
     material_index: u8,
-    palette: &Palette
+    palette: &Palette,
 ) {
     let x0 = x * MODEL_SCALE;
     let x1 = x0 + (w * MODEL_SCALE);

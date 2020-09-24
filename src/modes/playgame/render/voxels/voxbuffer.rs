@@ -1,9 +1,9 @@
 use super::greedy::*;
 use super::modelsize::*;
-use bengine::*;
-use crate::raws::*;
-use std::collections::HashMap;
 use crate::modes::playgame::Palette;
+use crate::raws::*;
+use bengine::*;
+use std::collections::HashMap;
 
 pub struct VoxBuffer {
     pub vertices: FloatBuffer<f32>,

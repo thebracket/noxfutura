@@ -39,8 +39,7 @@ impl Palette {
                 label: None,
                 contents: bytemuck::cast_slice(&palette),
                 usage: gpu::BufferUsage::STORAGE,
-            }
-        );
+            });
 
         let bind_group_layout =
             ctx.device
@@ -56,8 +55,7 @@ impl Palette {
                         },
                         count: None,
                     }],
-                }
-            );
+                });
 
         Self {
             palette_buf,

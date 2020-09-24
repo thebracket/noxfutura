@@ -1,9 +1,9 @@
-use crate::modes::playgame::{CameraUniform, GBuffer, Palette};
 use super::super::VoxBuffer;
-use bengine::*;
-use crate::utils::Frustrum;
-use legion::*;
 use crate::components::*;
+use crate::modes::playgame::{CameraUniform, GBuffer, Palette};
+use crate::utils::Frustrum;
+use bengine::*;
+use legion::*;
 
 pub struct VoxPass {
     pub vox_models: VoxBuffer,
@@ -12,7 +12,7 @@ pub struct VoxPass {
     bind_group: gpu::BindGroup,
     palette_bind_group: gpu::BindGroup,
     pub models_changed: bool,
-    vox_instances: Vec<(u32, u32, u32)>
+    vox_instances: Vec<(u32, u32, u32)>,
 }
 
 impl VoxPass {
@@ -28,7 +28,8 @@ impl VoxPass {
         vox_models.load(palette);
 
         // Instance buffer
-        let mut instance_buffer = FloatBuffer::<f32>::new(&[3, 1, 1, 1], 100, gpu::BufferUsage::VERTEX);
+        let mut instance_buffer =
+            FloatBuffer::<f32>::new(&[3, 1, 1, 1], 100, gpu::BufferUsage::VERTEX);
         instance_buffer.attributes[0].shader_location = 3;
         instance_buffer.attributes[1].shader_location = 4;
         instance_buffer.attributes[2].shader_location = 5;
@@ -44,20 +45,19 @@ impl VoxPass {
         let ctx = dl.as_ref().unwrap();
 
         let bind_group_layout =
-        ctx.device
-            .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
-                label: None,
-                entries: &[gpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: gpu::ShaderStage::VERTEX,
-                    ty: gpu::BindingType::UniformBuffer {
-                        dynamic: false,
-                        min_binding_size: gpu::BufferSize::new(64),
-                    },
-                    count: None,
-                }],
-            }
-        );
+            ctx.device
+                .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
+                    label: None,
+                    entries: &[gpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: gpu::ShaderStage::VERTEX,
+                        ty: gpu::BindingType::UniformBuffer {
+                            dynamic: false,
+                            min_binding_size: gpu::BufferSize::new(64),
+                        },
+                        count: None,
+                    }],
+                });
 
         let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,
@@ -82,8 +82,7 @@ impl VoxPass {
                 label: None,
                 bind_group_layouts: &[&bind_group_layout, &palette.bind_group_layout],
                 push_constant_ranges: &[],
-            }
-        );
+            });
 
         let pipeline = ctx
             .device
@@ -134,21 +133,27 @@ impl VoxPass {
                 sample_count: 1,
                 sample_mask: !0,
                 alpha_to_coverage_enabled: false,
-            }
-        );
+            });
 
-        Self{
+        Self {
             vox_models,
             instance_buffer,
             pipeline,
             palette_bind_group,
             bind_group,
             models_changed: true,
-            vox_instances: Vec::new()
+            vox_instances: Vec::new(),
         }
     }
 
-    pub fn render(&mut self, core: &Core, ecs: &mut World, frustrum: &Frustrum, palette: &Palette, gbuffer: &GBuffer) {
+    pub fn render(
+        &mut self,
+        core: &Core,
+        ecs: &mut World,
+        frustrum: &Frustrum,
+        palette: &Palette,
+        gbuffer: &GBuffer,
+    ) {
         if self.models_changed {
             let camera_z = <(&Position, &CameraOptions)>::query()
                 .iter(ecs)
@@ -166,7 +171,7 @@ impl VoxPass {
                 frustrum,
                 &(0, 0, 0),
                 &None,
-                palette
+                palette,
             );
 
             self.models_changed = false;
@@ -198,7 +203,7 @@ impl VoxPass {
                             load: gpu::LoadOp::Load,
                             store: true,
                         },
-                    }
+                    },
                 ],
                 depth_stencil_attachment: Some(gpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: tlock.get_view(0),

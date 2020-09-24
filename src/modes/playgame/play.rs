@@ -1,4 +1,7 @@
-use super::{Chunks, GBuffer, GrassPass, ModelsPass, Palette, TerrainPass, VoxPass, LightingPass, loadstate::*, systems::REGION};
+use super::{
+    loadstate::*, systems::REGION, Chunks, GBuffer, GrassPass, LightingPass, ModelsPass, Palette,
+    TerrainPass, VoxPass,
+};
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
@@ -172,20 +175,27 @@ impl NoxMode for PlayTheGame {
             let terrain_pass = self.terrain_pass.as_ref().unwrap();
             terrain_pass.render(core, &self.chunks, camera_z, self.gbuffer.as_ref().unwrap());
 
-            self.model_pass
-                .as_mut()
-                .unwrap()
-                .render(core, &mut self.ecs, &self.chunks.frustrum, self.gbuffer.as_ref().unwrap());
+            self.model_pass.as_mut().unwrap().render(
+                core,
+                &mut self.ecs,
+                &self.chunks.frustrum,
+                self.gbuffer.as_ref().unwrap(),
+            );
 
-            self.grass_pass
-                .as_mut()
-                .unwrap()
-                .render(core, &mut self.ecs, &self.chunks.frustrum, self.gbuffer.as_ref().unwrap());
+            self.grass_pass.as_mut().unwrap().render(
+                core,
+                &mut self.ecs,
+                &self.chunks.frustrum,
+                self.gbuffer.as_ref().unwrap(),
+            );
 
-            self.vox_pass
-                .as_mut()
-                .unwrap()
-                .render(core, &mut self.ecs, &self.chunks.frustrum, self.palette.as_ref().unwrap(), self.gbuffer.as_ref().unwrap());
+            self.vox_pass.as_mut().unwrap().render(
+                core,
+                &mut self.ecs,
+                &self.chunks.frustrum,
+                self.palette.as_ref().unwrap(),
+                self.gbuffer.as_ref().unwrap(),
+            );
 
             self.lighting_pass
                 .as_mut()

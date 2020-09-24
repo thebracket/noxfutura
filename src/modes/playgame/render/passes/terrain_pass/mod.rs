@@ -43,8 +43,7 @@ impl TerrainPass {
                         },
                         count: None,
                     }],
-                }
-            );
+                });
 
         let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,
@@ -153,7 +152,7 @@ impl TerrainPass {
                             load: gpu::LoadOp::Clear(gpu::Color::BLACK),
                             store: true,
                         },
-                    }
+                    },
                 ],
                 depth_stencil_attachment: Some(gpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: tlock.get_view(0),

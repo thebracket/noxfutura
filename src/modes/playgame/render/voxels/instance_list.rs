@@ -1,9 +1,9 @@
-use bengine::*;
-use prelude::Palette;
-use crate::utils::Frustrum;
 use super::VoxBuffer;
-use legion::*;
 use crate::components::*;
+use crate::utils::Frustrum;
+use bengine::*;
+use legion::*;
+use prelude::Palette;
 use std::collections::HashMap;
 
 const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
@@ -68,7 +68,7 @@ pub fn build_vox_instances2(
     frustrum: &Frustrum,
     mouse_world_pos: &(usize, usize, usize),
     building_to_build: &Option<usize>,
-    palette: &Palette
+    palette: &Palette,
 ) {
     let mut instances = VMInstances::new();
     instance_buffer.clear();

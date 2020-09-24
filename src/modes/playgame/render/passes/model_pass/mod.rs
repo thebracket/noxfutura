@@ -1,6 +1,6 @@
-use crate::{components::*, modes::playgame::GBuffer};
 use crate::modes::playgame::{CameraUniform, Models, Palette};
 use crate::utils::Frustrum;
+use crate::{components::*, modes::playgame::GBuffer};
 use bengine::*;
 use legion::*;
 use std::collections::HashMap;
@@ -166,7 +166,7 @@ impl ModelsPass {
                             load: gpu::LoadOp::Load,
                             store: true,
                         },
-                    }
+                    },
                 ],
                 depth_stencil_attachment: Some(gpu::RenderPassDepthStencilAttachmentDescriptor {
                     attachment: tlock.get_view(0),

@@ -1,10 +1,10 @@
-use cgmath::Vector3;
-use legion::*;
 use crate::components::*;
 use crate::planet::Region;
-use rayon::prelude::*;
-use bengine::*;
 use bengine::gpu::util::DeviceExt;
+use bengine::*;
+use cgmath::Vector3;
+use legion::*;
+use rayon::prelude::*;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -43,26 +43,24 @@ impl LightUniforms {
         }
     }
 
-    pub fn update_partial(
-        &mut self,
-        ecs: &World,
-    ) {
+    pub fn update_partial(&mut self, ecs: &World) {
         let camera_pos = <(&Position, &CameraOptions)>::query()
             .iter(ecs)
             .map(|(pos, _)| pos.as_point3())
             .nth(0)
             .unwrap();
 
-        self.camera_position = [camera_pos.x as f32, camera_pos.z as f32, camera_pos.y as f32, 0.0];
+        self.camera_position = [
+            camera_pos.x as f32,
+            camera_pos.z as f32,
+            camera_pos.y as f32,
+            0.0,
+        ];
         self.lights[0].pos = [128.0, 512.0, 0.1, 512.0];
         self.lights[0].color = [1.0, 1.0, 1.0, 1.0];
     }
 
-    pub fn update(
-        &mut self,
-        ecs: &World,
-        light_bits: &mut [u32],
-    ) {
+    pub fn update(&mut self, ecs: &World, light_bits: &mut [u32]) {
         self.update_partial(ecs);
 
         self.lights.iter_mut().skip(1).for_each(|l| {
@@ -86,7 +84,8 @@ impl LightUniforms {
         let mut light_query = <(Read<Position>, Read<Light>, Read<FieldOfView>)>::query();
         light_query.iter(ecs).for_each(|(pos, light, fov)| {
             let pt = pos.as_point3();
-            if index < 32 && light.enabled { // pt.z <= camera_pos.y ?
+            if index < 32 && light.enabled {
+                // pt.z <= camera_pos.y ?
                 self.lights[index].color = [
                     light.color.0 * LIGHT_BOOST,
                     light.color.1 * LIGHT_BOOST,
@@ -113,8 +112,8 @@ impl LightUniforms {
 }
 
 pub struct LightUniformManager {
-    pub uniforms : LightUniforms,
-    pub uniform_buffer : gpu::Buffer
+    pub uniforms: LightUniforms,
+    pub uniform_buffer: gpu::Buffer,
 }
 
 impl LightUniformManager {
@@ -130,19 +129,21 @@ impl LightUniformManager {
                 label: Some("LightUniforms"),
                 contents: bytemuck::cast_slice(&[uniforms]),
                 usage: gpu::BufferUsage::UNIFORM | gpu::BufferUsage::COPY_DST,
-            }
-        );
+            });
 
         Self {
             uniforms,
-            uniform_buffer
+            uniform_buffer,
         }
     }
 
     pub fn send_buffer_to_gpu(&mut self) {
         let dcl = RENDER_CONTEXT.read();
         let dc = dcl.as_ref().unwrap();
-        dc.queue
-            .write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[self.uniforms]));
+        dc.queue.write_buffer(
+            &self.uniform_buffer,
+            0,
+            bytemuck::cast_slice(&[self.uniforms]),
+        );
     }
 }

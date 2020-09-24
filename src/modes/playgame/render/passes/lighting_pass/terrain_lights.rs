@@ -1,5 +1,5 @@
-use bengine::*;
 use crate::spatial::REGION_TILES_COUNT;
+use bengine::*;
 use gpu::util::DeviceExt;
 
 pub struct TerrainLights {
@@ -22,8 +22,7 @@ impl TerrainLights {
                 label: None,
                 contents: bytemuck::cast_slice(&flags),
                 usage: gpu::BufferUsage::STORAGE,
-            }
-        );
+            });
 
         let bind_group_layout =
             ctx.device
@@ -39,8 +38,7 @@ impl TerrainLights {
                         },
                         count: None,
                     }],
-                }
-            );
+                });
 
         let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,
@@ -50,7 +48,6 @@ impl TerrainLights {
                 resource: gpu::BindingResource::Buffer(storage_buffer.slice(..)),
             }],
         });
-
 
         Self {
             flags,
@@ -71,8 +68,7 @@ impl TerrainLights {
                 label: None,
                 contents: bytemuck::cast_slice(&self.flags),
                 usage: gpu::BufferUsage::STORAGE,
-            }
-        );
+            });
 
         let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,

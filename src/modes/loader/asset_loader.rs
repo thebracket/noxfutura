@@ -1,6 +1,6 @@
 use crate::modes::{
-    playgame::GrassPass, playgame::ModelsPass, playgame::TerrainPass, GBuffer, Palette,
-    playgame::VoxPass, playgame::LightingPass
+    playgame::GrassPass, playgame::LightingPass, playgame::ModelsPass, playgame::TerrainPass,
+    playgame::VoxPass, GBuffer, Palette,
 };
 use parking_lot::RwLock;
 use std::thread;
@@ -19,7 +19,7 @@ pub struct LoaderState {
     pub model_pass: Option<ModelsPass>,
     pub grass_pass: Option<GrassPass>,
     pub vox_pass: Option<VoxPass>,
-    pub lighting_pass: Option<LightingPass>
+    pub lighting_pass: Option<LightingPass>,
 }
 
 impl LoaderState {
@@ -34,7 +34,7 @@ impl LoaderState {
             model_pass: None,
             grass_pass: None,
             vox_pass: None,
-            lighting_pass: None
+            lighting_pass: None,
         }
     }
 
@@ -59,7 +59,9 @@ impl LoaderState {
             LOADER.write().update(0.04, "Finding the map", false);
             let terrain_pass = TerrainPass::new(&palette);
 
-            LOADER.write().update(0.05, "Making scale models of trees", false);
+            LOADER
+                .write()
+                .update(0.05, "Making scale models of trees", false);
             let models = crate::modes::playgame::Models::load_models(&palette);
             let model_pass = ModelsPass::new(&palette, models, &terrain_pass.uniforms);
 
