@@ -50,7 +50,7 @@ impl LightingPass {
                             ty: gpu::BindingType::Sampler { comparison: true },
                             count: None,
                         },
-                        
+
                         gpu::BindGroupLayoutEntry {
                             binding: 2,
                             visibility: gpu::ShaderStage::FRAGMENT,

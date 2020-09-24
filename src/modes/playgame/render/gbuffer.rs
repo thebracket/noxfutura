@@ -18,7 +18,7 @@ impl GBuffer {
         );
         let normal = GBufferTarget::make_texture(
             "Normal",
-            gpu::TextureFormat::Rgba32Float,
+            swap_format,
             gpu::TextureUsage::SAMPLED | gpu::TextureUsage::OUTPUT_ATTACHMENT,
         );
         let coords = GBufferTarget::make_texture(

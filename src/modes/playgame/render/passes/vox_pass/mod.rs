@@ -112,7 +112,7 @@ impl VoxPass {
                         write_mask: gpu::ColorWrite::ALL,
                     },
                     gpu::ColorStateDescriptor {
-                        format: gpu::TextureFormat::Rgba32Float,
+                        format: ctx.swapchain_format,
                         color_blend: gpu::BlendDescriptor::REPLACE,
                         alpha_blend: gpu::BlendDescriptor::REPLACE,
                         write_mask: gpu::ColorWrite::ALL,
