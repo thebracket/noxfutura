@@ -43,7 +43,8 @@ impl TerrainPass {
                         },
                         count: None,
                     }],
-                });
+                }
+            );
 
         let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
             label: None,

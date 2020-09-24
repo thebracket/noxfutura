@@ -2,11 +2,15 @@ use bengine::*;
 use legion::*;
 
 use crate::modes::playgame::GBuffer;
+mod light_uniforms;
+use light_uniforms::LightUniformManager;
 
 pub struct LightingPass {
     vb: FloatBuffer<f32>,
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
+    light_uniforms: LightUniformManager,
+    uniform_bind_group: gpu::BindGroup
 }
 
 impl LightingPass {
@@ -16,6 +20,9 @@ impl LightingPass {
             bengine::gpu::include_spirv!("lighting.vert.spv"),
             bengine::gpu::include_spirv!("lighting.frag.spv"),
         );
+
+        // Uniform setup
+        let light_uniforms = LightUniformManager::new();
 
         // Simple quad VB for output
         let mut vb = FloatBuffer::<f32>::new(&[2, 2],24, gpu::BufferUsage::VERTEX);
@@ -94,11 +101,36 @@ impl LightingPass {
             ],
         });
 
+        let uniform_bind_group_layout =
+            ctx.device
+                .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
+                    label: None,
+                    entries: &[gpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: gpu::ShaderStage::VERTEX | gpu::ShaderStage::FRAGMENT,
+                        ty: gpu::BindingType::UniformBuffer {
+                            dynamic: false,
+                            min_binding_size: gpu::BufferSize::new(64),
+                        },
+                        count: None,
+                    }],
+                }
+            );
+
+        let uniform_bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
+            label: None,
+            layout: &uniform_bind_group_layout,
+            entries: &[gpu::BindGroupEntry {
+                binding: 0,
+                resource: gpu::BindingResource::Buffer(light_uniforms.uniform_buffer.slice(..)),
+            }],
+        });
+
         let pipeline_layout = ctx
             .device
             .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: &[&bind_group_layout],
+                bind_group_layouts: &[&bind_group_layout, &uniform_bind_group_layout],
                 push_constant_ranges: &[],
             });
         let pipeline = ctx
@@ -142,7 +174,9 @@ impl LightingPass {
         Self{
             vb,
             bind_group,
-            pipeline
+            pipeline,
+            light_uniforms,
+            uniform_bind_group
         }
     }
 
@@ -169,6 +203,7 @@ impl LightingPass {
 
             rpass.set_pipeline(&self.pipeline);
             rpass.set_bind_group(0, &self.bind_group, &[]);
+            rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
 
             rpass.set_vertex_buffer(0, self.vb.slice());
             rpass.draw(0..self.vb.len(), 0..1);
