@@ -140,9 +140,7 @@ pub fn build_vox_instances2(
                     0.0,
                 );
             }
-        }
-    );
-
+        });
 
     // Building Projects
     if let Some(tag) = building_to_build {
@@ -158,6 +156,48 @@ pub fn build_vox_instances2(
             1.0,
         );
     }
+
+    // Stairs from terrain
+    let region = crate::modes::playgame::systems::REGION.read();
+    use crate::planet::{StairsType, TileType};
+    region
+        .tile_types
+        .iter()
+        .enumerate()
+        .filter(|(_idx, tt)| match tt {
+            TileType::Stairs { .. } => true,
+            _ => false,
+        })
+        .map(|(idx, tt)| {
+            let (x, y, z) = crate::spatial::idxmap(idx);
+            (tt, x as f32, y as f32, z as f32)
+        })
+        .filter(|(_tt, x, y, z)| {
+            *z as usize > camera_z - LAYERS_DOWN
+                && *z as usize <= camera_z
+                && frustrum.check_sphere(&(*x, *y, *z).into(), 2.0)
+        })
+        .for_each(|(tt, x, y, z)| match tt {
+            TileType::Stairs {
+                direction: StairsType::Up,
+            } => {
+                let model_id = crate::raws::RAWS.read().vox.get_model_idx("stairs_up");
+                instances.add(model_id, [x as f32, z as f32, y as f32], 0, 0.0, 0.0);
+            }
+            TileType::Stairs {
+                direction: StairsType::Down,
+            } => {
+                let model_id = crate::raws::RAWS.read().vox.get_model_idx("stairs_down");
+                instances.add(model_id, [x as f32, z as f32, y as f32], 0, 0.0, 0.0);
+            }
+            TileType::Stairs {
+                direction: StairsType::UpDown,
+            } => {
+                let model_id = crate::raws::RAWS.read().vox.get_model_idx("stairs_updown");
+                instances.add(model_id, [x as f32, z as f32, y as f32], 0, 0.0, 0.0);
+            }
+            _ => {}
+        });
 
     // Build the instanced data
     instances.instances.iter().for_each(|i| {
