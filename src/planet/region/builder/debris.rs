@@ -1,15 +1,32 @@
-use crate::planet::{ground_z, Region, TileType};
-use crate::spatial::{mapidx, REGION_WIDTH};
+use crate::planet::{ground_z, Region};
+use crate::spatial::REGION_WIDTH;
 use bracket_geometry::prelude::Point;
 use legion::*;
-use std::collections::HashSet;
+pub use legion::systems::CommandBuffer;
+use crate::components::*;
 
-pub fn debris_trail(region: &mut Region, ship_loc: Point, _ecs: &mut World) {
-    for x in ship_loc.x - (REGION_WIDTH as i32 / 4)..ship_loc.x {
-        for y in ship_loc.y - 3..ship_loc.y + 4 {
-            let z = ground_z(region, x as usize, y as usize);
-
-            //TODO : Kill Plants
+pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
+    let mut cb = CommandBuffer::new(ecs);
+    <(Entity, &Position)>::query()
+        .filter(component::<Vegetation>() | component::<Tree>())
+        .iter(ecs)
+        .filter(|(_e, p)|
+        {
+            if let Some(p) = p.as_point3_only_tile() {
+                if p.x >= ship_loc.x - (REGION_WIDTH as i32 / 4) &&
+                    p.x < ship_loc.x &&
+                    p.y >= ship_loc.y - 3 && p.y < ship_loc.y + 4 &&
+                    p.z == ground_z(region, p.x as usize, p.y as usize) as i32
+                {
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
         }
-    }
+        ).for_each(|(e, _)| cb.remove(*e));
+
+    cb.flush(ecs);
 }

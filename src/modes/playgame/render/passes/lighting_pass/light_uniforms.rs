@@ -2,7 +2,6 @@ use crate::components::*;
 use crate::planet::Region;
 use bengine::gpu::util::DeviceExt;
 use bengine::*;
-use cgmath::Vector3;
 use legion::*;
 use rayon::prelude::*;
 
