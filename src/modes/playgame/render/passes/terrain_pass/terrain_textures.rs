@@ -1,12 +1,11 @@
 use bengine::*;
-use crate::raws::RAWS;
+use crate::raws::{ RAWS, TextureMap };
 use std::collections::{ HashSet };
 use std::fs;
 use std::fs::File;
 use std::io::Read;
 
 pub struct TerrainTextures {
-    material_list : Vec<TextureMap>,
     pub bind_group_layout : gpu::BindGroupLayout,
     pub bind_group: gpu::BindGroup
 }
@@ -78,8 +77,10 @@ impl TerrainTextures {
             label: Some("texture_array")
         });
 
+        let mut rlock = RAWS.write();
+        rlock.materials.material_list = Some(material_list);
+
         Self {
-            material_list,
             bind_group_layout,
             bind_group
         }
@@ -93,15 +94,6 @@ fn get_file_as_byte_vec(filename: &String) -> Vec<u8> {
     f.read(&mut buffer).expect("buffer overflow");
 
     buffer
-}
-
-#[derive(Debug)]
-struct TextureMap {
-    id: usize,
-    base: f32,
-    constructed: f32,
-    floor: f32,
-    floor_constructed: f32
 }
 
 fn build_material_list(texture_set: &mut HashSet<String>) -> Vec<(usize, Option<String>, Option<String>, Option<String>, Option<String>)>
@@ -122,18 +114,6 @@ fn build_material_list(texture_set: &mut HashSet<String>) -> Vec<(usize, Option<
             if let Some(base) = &texture_base.base {
                 texture_set.insert(base.clone());
                 mat_map_tmp.1 = Some(base.clone());
-            }
-            if let Some(base) = &texture_base.constructed {
-                texture_set.insert(base.clone());
-                mat_map_tmp.2 = Some(base.clone());
-            }
-            if let Some(base) = &texture_base.floor {
-                texture_set.insert(base.clone());
-                mat_map_tmp.3 = Some(base.clone());
-            }
-            if let Some(base) = &texture_base.floor_constructed {
-                texture_set.insert(base.clone());
-                mat_map_tmp.4 = Some(base.clone());
             }
         }
         material_list_tmp.push(mat_map_tmp);

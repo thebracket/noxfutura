@@ -1,4 +1,5 @@
 use crate::planet::RampDirection;
+use crate::RAWS;
 
 pub fn add_ramp_geometry(
     vb: &mut Vec<f32>,
@@ -9,8 +10,10 @@ pub fn add_ramp_geometry(
     z: f32,
     material_index: usize,
 ) {
-    let mi = material_index as f32;
-    let tex = -1.0;
+    let rlock = RAWS.read();
+    let mi = *rlock.matmap.get(material_index) as f32;
+    let tex = rlock.materials.material_list.as_ref().unwrap()[material_index].base;
+    
     match direction {
         RampDirection::NorthSouth => north_south(vb, element_count, x, y, z, mi, tex),
         RampDirection::SouthNorth => south_north(vb, element_count, x, y, z, mi, tex),

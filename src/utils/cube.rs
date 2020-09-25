@@ -1,3 +1,5 @@
+use crate::RAWS;
+
 pub fn add_cube_geometry(
     vb: &mut Vec<f32>,
     element_count: &mut u32,
@@ -9,8 +11,12 @@ pub fn add_cube_geometry(
     d: f32,
     material_index: usize,
 ) {
-    let mi = material_index as f32;
-    let tex = -1.0;
+    let rlock = RAWS.read();
+    let mi = *rlock.matmap.get(material_index) as f32;
+    let tex = rlock.materials.material_list.as_ref().unwrap()[material_index].base;
+
+    //let mi = material_index as f32;
+    //let tex = -1.0;
     let x0 = x;
     let x1 = x0 + w;
     let y0 = z;

@@ -53,12 +53,12 @@ impl Chunk {
 
     #[inline]
     fn calc_material(&self, idx: usize, region: &Region) -> usize {
-        *RAWS.read().matmap.get(region.material_idx[idx])
+        region.material_idx[idx]
     }
 
     #[inline]
     fn calc_floor_material(&self, idx: usize, region: &Region) -> usize {
-        *RAWS.read().matmap.get(region.material_idx[idx])
+        region.material_idx[idx]
     }
 
     #[inline]

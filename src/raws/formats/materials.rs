@@ -3,12 +3,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Materials {
     pub materials: Vec<MaterialDef>,
+    pub material_list : Option<Vec<TextureMap>>
 }
 
 impl Materials {
     pub fn new() -> Self {
         Self {
             materials: Vec::new(),
+            material_list : None
         }
     }
 }
@@ -16,9 +18,6 @@ impl Materials {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct MaterialTextureSet {
     pub base : Option<String>,
-    pub constructed: Option<String>,
-    pub floor: Option<String>,
-    pub floor_constructed: Option<String>
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -46,4 +45,13 @@ pub enum MaterialLayer {
 pub enum MinesTo {
     Item { name: String },
     Ore { name: String },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TextureMap {
+    pub id: usize,
+    pub base: f32,
+    pub constructed: f32,
+    pub floor: f32,
+    pub floor_constructed: f32
 }
