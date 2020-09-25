@@ -10,6 +10,7 @@ pub fn add_cube_geometry(
     material_index: usize,
 ) {
     let mi = material_index as f32;
+    let tex = -1.0;
     let x0 = x;
     let x1 = x0 + w;
     let y0 = z;
@@ -17,49 +18,53 @@ pub fn add_cube_geometry(
     let z0 = y;
     let z1 = z0 + h;
 
+    let t0 = 0.0f32;
+    let tw = w;
+    let th = h;
+
     #[rustfmt::skip]
     let cube_geometry = [
-        x0, y0, z0,    1.0,  mi,
-        x1, y1, z0,    1.0,  mi,
-        x1, y0, z0,    1.0,  mi,
-        x1, y1, z0,    1.0,  mi,
-        x0, y0, z0,    1.0,  mi,
-        x0, y1, z0,    1.0,  mi,
+        x0, y0, z0,   t0, t0,  1.0,  mi, tex,
+        x1, y1, z0,   tw, th,  1.0,  mi, tex,
+        x1, y0, z0,   tw, t0,  1.0,  mi, tex,
+        x1, y1, z0,   tw, th,  1.0,  mi, tex,
+        x0, y0, z0,   t0, t0,  1.0,  mi, tex,
+        x0, y1, z0,   t0, th,  1.0,  mi, tex,
 
-        x0, y0, z1,    2.0,   mi,
-        x1, y0, z1,    2.0,   mi,
-        x1, y1, z1,    2.0,   mi,
-        x1, y1, z1,    2.0,   mi,
-        x0, y1, z1,    2.0,   mi,
-        x0, y0, z1,    2.0,   mi,
+        x0, y0, z1,    t0, t0,  2.0,   mi, tex,
+        x1, y0, z1,    tw, t0,  2.0,   mi, tex,
+        x1, y1, z1,    tw, th,  2.0,   mi, tex,
+        x1, y1, z1,    tw, th,  2.0,   mi, tex,
+        x0, y1, z1,    t0, th,  2.0,   mi, tex,
+        x0, y0, z1,    t0, t0,  2.0,   mi, tex,
 
-        x0, y1, z1,    3.0,   mi,
-        x0, y1, z0,    3.0,   mi,
-        x0, y0, z0,    3.0,   mi,
-        x0, y0, z0,    3.0,   mi,
-        x0, y0, z1,    3.0,   mi,
-        x0, y1, z1,    3.0,   mi,
+        x0, y1, z1,    tw, th,  3.0,   mi, tex,
+        x0, y1, z0,    tw, t0,  3.0,   mi, tex,
+        x0, y0, z0,    t0, t0,  3.0,   mi, tex,
+        x0, y0, z0,    t0, t0,  3.0,   mi, tex,
+        x0, y0, z1,    t0, th,  3.0,   mi, tex,
+        x0, y1, z1,    tw, th,  3.0,   mi, tex,
 
-        x1, y1, z1,    4.0,  mi,
-        x1, y0, z0,    4.0,  mi,
-        x1, y1, z0,    4.0,  mi,
-        x1, y0, z0,    4.0,  mi,
-        x1, y1, z1,    4.0,  mi,
-        x1, y0, z1,    4.0,  mi,
+        x1, y1, z1,   tw, th,  4.0,  mi, tex,
+        x1, y0, z0,   t0, t0,  4.0,  mi, tex,
+        x1, y1, z0,   tw, t0,  4.0,  mi, tex,
+        x1, y0, z0,   t0, t0,  4.0,  mi, tex,
+        x1, y1, z1,   tw, th,  4.0,  mi, tex,
+        x1, y0, z1,   t0, th,  4.0,  mi, tex,
 
-        x0, y0, z0,   5.0,   mi,
-        x1, y0, z0,   5.0,   mi,
-        x1, y0, z1,   5.0,   mi,
-        x1, y0, z1,   5.0,   mi,
-        x0, y0, z1,   5.0,   mi,
-        x0, y0, z0,   5.0,   mi,
+        x0, y0, z0,  tw, th,  5.0,   mi, tex,
+        x1, y0, z0,  tw, t0,  5.0,   mi, tex,
+        x1, y0, z1,  t0, t0,  5.0,   mi, tex,
+        x1, y0, z1,  t0, t0,  5.0,   mi, tex,
+        x0, y0, z1,  t0, th,  5.0,   mi, tex,
+        x0, y0, z0,  tw, th,  5.0,   mi, tex,
 
-        x1, y1, z1,   0.0,    mi,
-        x1, y1, z0,   0.0,    mi,
-        x0, y1, z0,   0.0,    mi,
-        x0, y1, z0,   0.0,    mi,
-        x0, y1, z1,   0.0,    mi,
-        x1, y1, z1,   0.0,    mi,
+        x1, y1, z1,   tw, th, 0.0,    mi, tex,
+        x1, y1, z0,   tw, t0, 0.0,    mi, tex,
+        x0, y1, z0,   t0, t0, 0.0,    mi, tex,
+        x0, y1, z0,   t0, t0, 0.0,    mi, tex,
+        x0, y1, z1,   t0, th, 0.0,    mi, tex,
+        x1, y1, z1,   tw, th, 0.0,    mi, tex,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 12;

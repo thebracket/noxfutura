@@ -1,5 +1,7 @@
 use crate::modes::playgame::{Camera, CameraUniform, Chunks, GBuffer, Palette};
 use bengine::*;
+mod terrain_textures;
+use terrain_textures::TerrainTextures;
 
 pub struct TerrainPass {
     pipeline: gpu::RenderPipeline,
@@ -7,10 +9,13 @@ pub struct TerrainPass {
     palette_bind_group: gpu::BindGroup,
     pub uniforms: CameraUniform,
     pub camera: Camera,
+    terrain_textures: TerrainTextures
 }
 
 impl TerrainPass {
     pub fn new(palette: &Palette) -> Self {
+        let terrain_textures =  TerrainTextures::new();
+
         let (terrain_vert, terrain_frag) = helpers::shader_from_bytes(
             bengine::gpu::include_spirv!("terrain.vert.spv"),
             bengine::gpu::include_spirv!("terrain.frag.spv"),
@@ -25,7 +30,7 @@ impl TerrainPass {
         uniforms.update_view_proj(&mut camera);
 
         let buffer_template = FloatBuffer::<f32>::new(
-            &[3, 1, 1],
+            &[3, 2, 1, 1, 1],
             1,
             gpu::BufferUsage::VERTEX | gpu::BufferUsage::COPY_DST,
         );
@@ -65,7 +70,7 @@ impl TerrainPass {
             .device
             .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: &[&bind_group_layout, &palette.bind_group_layout],
+                bind_group_layouts: &[&bind_group_layout, &palette.bind_group_layout, &terrain_textures.bind_group_layout],
                 push_constant_ranges: &[],
             });
         let pipeline = ctx
@@ -131,6 +136,7 @@ impl TerrainPass {
             bind_group,
             palette_bind_group,
             pipeline,
+            terrain_textures
         }
     }
 
@@ -187,6 +193,7 @@ impl TerrainPass {
             rpass.set_pipeline(&self.pipeline);
             rpass.set_bind_group(0, &self.bind_group, &[]);
             rpass.set_bind_group(1, &self.palette_bind_group, &[]);
+            rpass.set_bind_group(2, &self.terrain_textures.bind_group, &[]);
 
             for chunk in chunks.visible_chunks() {
                 let buffer = chunk.maybe_render_chunk(camera_z);

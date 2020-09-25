@@ -11,7 +11,7 @@ pub(crate) fn from_image(
     img: &image::DynamicImage,
     label: Option<&str>,
 ) -> Result<TextureRef, failure::Error> {
-    let rgba = img.as_rgba8().unwrap();
+    let rgba = img.as_rgba8().expect("Unable to get RGBA8 buffer");
     let dimensions = img.dimensions();
 
     let rcl = RENDER_CONTEXT.read();

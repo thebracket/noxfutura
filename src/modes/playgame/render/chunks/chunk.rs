@@ -37,7 +37,7 @@ impl Chunk {
             cells,
             dirty: true,
             vb: FloatBuffer::new(
-                &[3, 1, 1],
+                &[3, 2, 1, 1, 1],
                 10,
                 gpu::BufferUsage::VERTEX | gpu::BufferUsage::COPY_DST,
             ),
@@ -129,27 +129,8 @@ impl Chunk {
                                     _ => {}
                                 }
                                 // Temporary water 2
-                                if region.water_level[idx] > 0 {
+                                /*if region.water_level[idx] > 0 {
                                     floors.insert(idx, self.water_material());
-                                }
-
-                                // Add water - temporarily here, it'll have to move
-                                /*let wl = region.water_level[idx];
-                                if wl > 0 {
-                                    let mat = MappedTexture {
-                                        texture: RAWS.read().matmap.water_id,
-                                        tint: (1.0, 1.0, 1.0),
-                                    };
-                                    add_floor_geometry(
-                                        &mut self.vb.data,
-                                        &mut self.element_count[z],
-                                        x as f32 + self.base.0 as f32,
-                                        y as f32 + self.base.1 as f32,
-                                        z as f32 + self.base.2 as f32 + (wl as f32 / 10.0),
-                                        1.0,
-                                        1.0,
-                                        mat,
-                                    )
                                 }*/
                             }
                         }

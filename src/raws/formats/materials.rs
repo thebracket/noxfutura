@@ -14,6 +14,14 @@ impl Materials {
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct MaterialTextureSet {
+    pub base : Option<String>,
+    pub constructed: Option<String>,
+    pub floor: Option<String>,
+    pub floor_constructed: Option<String>
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct MaterialDef {
     pub name: String,
     pub layer: MaterialLayer,
@@ -21,6 +29,7 @@ pub struct MaterialDef {
     pub mines_to: Vec<MinesTo>,
     pub description: String,
     pub tint: (f32, f32, f32),
+    pub texture: Option<MaterialTextureSet>
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]

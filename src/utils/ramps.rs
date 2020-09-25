@@ -10,15 +10,16 @@ pub fn add_ramp_geometry(
     material_index: usize,
 ) {
     let mi = material_index as f32;
+    let tex = -1.0;
     match direction {
-        RampDirection::NorthSouth => north_south(vb, element_count, x, y, z, mi),
-        RampDirection::SouthNorth => south_north(vb, element_count, x, y, z, mi),
-        RampDirection::EastWest => east_west(vb, element_count, x, y, z, mi),
-        RampDirection::WestEast => west_east(vb, element_count, x, y, z, mi), //_ => {}
+        RampDirection::NorthSouth => north_south(vb, element_count, x, y, z, mi, tex),
+        RampDirection::SouthNorth => south_north(vb, element_count, x, y, z, mi, tex),
+        RampDirection::EastWest => east_west(vb, element_count, x, y, z, mi, tex),
+        RampDirection::WestEast => west_east(vb, element_count, x, y, z, mi, tex), //_ => {}
     }
 }
 
-fn north_south(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32) {
+fn north_south(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32, tex:f32) {
     let w = 1.0;
     let h = 1.0;
     let d = 1.0;
@@ -30,48 +31,52 @@ fn north_south(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
     let z0 = y;
     let z1 = z0 + h;
 
+    let t0 = 0.0f32;
+    let tw = w;
+    let th = h;
+
     #[rustfmt::skip]
     let cube_geometry = [
-        x0, y0, z0,    1.0, mi,
-        x1, y1, z0,    1.0, mi,
-        x1, y0, z0,    1.0, mi,
-        x1, y1, z0,    1.0, mi,
-        x0, y0, z0,    1.0, mi,
-        x0, y1, z0,    1.0, mi,
+        x0, y0, z0, t0, t0,   1.0, mi, tex,
+        x1, y1, z0, tw, th,   1.0, mi, tex,
+        x1, y0, z0, tw, t0,   1.0, mi, tex,
+        x1, y1, z0, tw, th,   1.0, mi, tex,
+        x0, y0, z0, t0, t0,   1.0, mi, tex,
+        x0, y1, z0, t0, th,   1.0, mi, tex,
 
         // Left side
-        x0, y0, z0,   5.0,  mi,
-        x0, y1, z0,   5.0,  mi,
-        x0, y0, z1,   5.0,  mi,
+        x0, y0, z0, tw, th,  5.0,  mi, tex,
+        x0, y1, z0, tw, t0,  5.0,  mi, tex,
+        x0, y0, z1, t0, t0,  5.0,  mi, tex,
 
 
         // Right side
-        x1, y0, z0,    3.0,  mi,
-        x1, y1, z0,    3.0,  mi,
-        x1, y0, z1,    3.0,  mi,
+        x1, y0, z0,  tw, th,  3.0,  mi, tex,
+        x1, y1, z0,  tw, t0,  3.0,  mi, tex,
+        x1, y0, z1,  t0, t0,  3.0,  mi, tex,
 
         // Base - unchanged
-        x0, y0, z0,   5.0,  mi,
-        x1, y0, z0,   5.0,  mi,
-        x1, y0, z1,   5.0,  mi,
-        x1, y0, z1,   5.0,  mi,
-        x0, y0, z1,   5.0,  mi,
-        x0, y0, z0,   5.0,  mi,
+        x0, y0, z0, tw, th,  5.0,  mi, tex,
+        x1, y0, z0, tw, t0,  5.0,  mi, tex,
+        x1, y0, z1, t0, t0,  5.0,  mi, tex,
+        x1, y0, z1, t0, t0,  5.0,  mi, tex,
+        x0, y0, z1, t0, th,  5.0,  mi, tex,
+        x0, y0, z0, tw, th,  5.0,  mi, tex,
 
         // Top - needs to slope
-        x1, y0, z1,   6.0,    mi,
-        x1, y1, z0,   6.0,    mi,
-        x0, y1, z0,   6.0,    mi,
-        x0, y1, z0,   6.0,    mi,
-        x0, y0, z1,   6.0,    mi,
-        x1, y0, z1,   6.0,    mi,
+        x1, y0, z1, tw, th,  6.0,    mi, tex,
+        x1, y1, z0, tw, t0,  6.0,    mi, tex,
+        x0, y1, z0, t0, t0,  6.0,    mi, tex,
+        x0, y1, z0, t0, t0,  6.0,    mi, tex,
+        x0, y0, z1, t0, th,  6.0,    mi, tex,
+        x1, y0, z1, tw, th,  6.0,    mi, tex,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 8;
 }
 
 // still needs work
-fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32) {
+fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32, tex:f32) {
     let w = 1.0;
     let h = 1.0;
     let d = 1.0;
@@ -82,6 +87,10 @@ fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
     let y1 = y0 + d;
     let z0 = y;
     let z1 = z0 + h;
+
+    let t0 = 0.0f32;
+    let tw = w;
+    let th = h;
 
     #[rustfmt::skip]
     let cube_geometry = [
@@ -93,12 +102,12 @@ fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
         x0, y0, z0,    1.0,  t0, t0,
         x0, y1, z0,    1.0,  t0, th,*/
 
-        x0, y0, z1,    2.0,  mi,
-        x1, y0, z1,    2.0,  mi,
-        x1, y1, z1,    2.0,  mi,
-        x1, y1, z1,    2.0,  mi,
-        x0, y1, z1,    2.0,  mi,
-        x0, y0, z1,    2.0,  mi,
+        x0, y0, z1, t0, t0,   2.0,  mi, tex,
+        x1, y0, z1, tw, t0,   2.0,  mi, tex,
+        x1, y1, z1, tw, th,   2.0,  mi, tex,
+        x1, y1, z1, tw, th,   2.0,  mi, tex,
+        x0, y1, z1, t0, th,   2.0,  mi, tex,
+        x0, y0, z1, t0, t0,   2.0,  mi, tex,
 
         /*
         x0, y1, z1,   5.0,   tw, th,
@@ -108,9 +117,9 @@ fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
         x0, y0, z1,   5.0,   t0, th,
         x0, y1, z1,   5.0,   tw, th,
         */
-        x0, y0, z0,   5.0,  mi,
-        x0, y0, z1,   5.0,  mi,
-        x0, y1, z1,   5.0,  mi,
+        x0, y0, z0, tw, th,  5.0,  mi, tex,
+        x0, y0, z1, tw, t0,  5.0,  mi, tex,
+        x0, y1, z1, t0, t0,  5.0,  mi, tex,
 
         /*
         x1, y1, z1,    3.0,  tw, th,
@@ -120,31 +129,31 @@ fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
         x1, y1, z1,    3.0,  tw, th,
         x1, y0, z1,    3.0,  t0, th,
         */
-        x1, y0, z0,    3.0, mi,
-        x1, y1, z1,    3.0, mi,
-        x1, y0, z1,    3.0, mi,
+        x1, y0, z0,  tw, th,  3.0, mi, tex,
+        x1, y1, z1,  t0, t0,  3.0, mi, tex,
+        x1, y0, z1,  tw, t0,  3.0, mi, tex,
 
         // Base
-        x0, y0, z0,   5.0, mi,
-        x1, y0, z0,   5.0, mi,
-        x1, y0, z1,   5.0, mi,
-        x1, y0, z1,   5.0, mi,
-        x0, y0, z1,   5.0, mi,
-        x0, y0, z0,   5.0, mi,
+        x0, y0, z0, tw, th,  5.0, mi, tex,
+        x1, y0, z0, tw, t0,  5.0, mi, tex,
+        x1, y0, z1, t0, t0,  5.0, mi, tex,
+        x1, y0, z1, t0, t0,  5.0, mi, tex,
+        x0, y0, z1, t0, th,  5.0, mi, tex,
+        x0, y0, z0, tw, th,  5.0, mi, tex,
 
         // Top
-        x1, y1, z1,   7.0,  mi,
-        x1, y0, z0,   7.0,  mi,
-        x0, y0, z0,   7.0,  mi,
-        x0, y0, z0,   7.0,  mi,
-        x0, y1, z1,   7.0,  mi,
-        x1, y1, z1,   7.0,  mi,
+        x1, y1, z1, tw, th,  7.0,  mi, tex,
+        x1, y0, z0, tw, t0,  7.0,  mi, tex,
+        x0, y0, z0, t0, t0,  7.0,  mi, tex,
+        x0, y0, z0, t0, t0,  7.0,  mi, tex,
+        x0, y1, z1, t0, th,  7.0,  mi, tex,
+        x1, y1, z1, tw, th,  7.0,  mi, tex,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 8;
 }
 
-fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32) {
+fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32, tex:f32) {
     let w = 1.0;
     let h = 1.0;
     let d = 1.0;
@@ -155,6 +164,10 @@ fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
     let y1 = y0 + d;
     let z0 = y;
     let z1 = z0 + h;
+
+    let t0 = 0.0f32;
+    let tw = w;
+    let th = h;
 
     #[rustfmt::skip]
     let cube_geometry = [
@@ -165,9 +178,9 @@ fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
         x1, y1, z0,    1.0,  tw, th,
         x0, y0, z0,    1.0,  t0, t0,
         x0, y1, z0,    1.0,  t0, th,*/
-        x1, y0, z0,    1.0, mi,
-        x0, y0, z0,    1.0, mi,
-        x0, y1, z0,    1.0, mi,
+        x1, y0, z0, t0, t0,   1.0, mi, tex,
+        x0, y0, z0, tw, th,   1.0, mi, tex,
+        x0, y1, z0, tw, t0,   1.0, mi, tex,
 
         /*
         x0, y0, z1,    2.0,   t0, t0,
@@ -177,16 +190,16 @@ fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
         x0, y1, z1,    2.0,   t0, th,
         x0, y0, z1,    2.0,   t0, t0,
         */
-        x1, y0, z1,    2.0, mi,
-        x0, y0, z1,    2.0, mi,
-        x0, y1, z1,    2.0, mi,
+        x1, y0, z1,  t0, t0,  2.0, mi, tex,
+        x0, y0, z1,  tw, t0,  2.0, mi, tex,
+        x0, y1, z1,  tw, th,  2.0, mi, tex,
 
-        x0, y1, z1,   5.0, mi,
-        x0, y1, z0,   5.0, mi,
-        x0, y0, z0,   5.0, mi,
-        x0, y0, z0,   5.0, mi,
-        x0, y0, z1,   5.0, mi,
-        x0, y1, z1,   5.0, mi,
+        x0, y1, z1, tw, th,  5.0, mi, tex,
+        x0, y1, z0, tw, t0,  5.0, mi, tex,
+        x0, y0, z0, t0, t0,  5.0, mi, tex,
+        x0, y0, z0, t0, t0,  5.0, mi, tex,
+        x0, y0, z1, t0, th,  5.0, mi, tex,
+        x0, y1, z1, tw, th,  5.0, mi, tex,
 
         /*x1, y1, z1,    3.0,  tw, th,
         x1, y0, z0,    3.0,  t0, t0,
@@ -196,26 +209,26 @@ fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
         x1, y0, z1,    3.0,  t0, th,*/
 
         // Base
-        x0, y0, z0,   5.0,  mi,
-        x1, y0, z0,   5.0,  mi,
-        x1, y0, z1,   5.0,  mi,
-        x1, y0, z1,   5.0,  mi,
-        x0, y0, z1,   5.0,  mi,
-        x0, y0, z0,   5.0,  mi,
+        x0, y0, z0, tw, th,  5.0,  mi, tex,
+        x1, y0, z0, tw, t0,  5.0,  mi, tex,
+        x1, y0, z1, t0, t0,  5.0,  mi, tex,
+        x1, y0, z1, t0, t0,  5.0,  mi, tex,
+        x0, y0, z1, t0, th,  5.0,  mi, tex,
+        x0, y0, z0, tw, th,  5.0,  mi, tex,
 
         // Top - slope me
-        x1, y0, z1,   8.0,  mi,
-        x1, y0, z0,   8.0,  mi,
-        x0, y1, z0,   8.0,  mi,
-        x0, y1, z0,   8.0,  mi,
-        x0, y1, z1,   8.0,  mi,
-        x1, y0, z1,   8.0,  mi,
+        x1, y0, z1, tw, th,  8.0,  mi, tex,
+        x1, y0, z0, tw, t0,  8.0,  mi, tex,
+        x0, y1, z0, t0, t0,  8.0,  mi, tex,
+        x0, y1, z0, t0, t0,  8.0,  mi, tex,
+        x0, y1, z1, t0, th,  8.0,  mi, tex,
+        x1, y0, z1, tw, th,  8.0,  mi, tex,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 8;
 }
 
-fn west_east(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32) {
+fn west_east(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32, tex:f32) {
     let w = 1.0;
     let h = 1.0;
     let d = 1.0;
@@ -226,6 +239,10 @@ fn west_east(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
     let y1 = y0 + d;
     let z0 = y;
     let z1 = z0 + h;
+
+    let t0 = 0.0f32;
+    let tw = w;
+    let th = h;
 
     #[rustfmt::skip]
     let cube_geometry = [
@@ -237,9 +254,9 @@ fn west_east(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
         x0, y0, z0,    1.0,  t0, t0,
         x0, y1, z0,    1.0,  t0, th,
         */
-        x0, y0, z0,    1.0,  mi,
-        x1, y1, z0,    1.0,  mi,
-        x1, y0, z0,    1.0,  mi,
+        x0, y0, z0, t0, t0,   1.0,  mi, tex,
+        x1, y1, z0, tw, th,   1.0,  mi, tex,
+        x1, y0, z0, tw, t0,   1.0,  mi, tex,
 
         /*
         x0, y0, z1,    2.0,   t0, t0,
@@ -249,32 +266,32 @@ fn west_east(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
         x0, y1, z1,    2.0,   t0, th,
         x0, y0, z1,    2.0,   t0, t0,
         */
-        x0, y0, z1,    2.0,  mi,
-        x1, y0, z1,    2.0,  mi,
-        x1, y1, z1,    2.0,  mi,
+        x0, y0, z1,  t0, t0,  2.0,  mi, tex,
+        x1, y0, z1,  tw, t0,  2.0,  mi, tex,
+        x1, y1, z1,  tw, th,  2.0,  mi, tex,
 
-        x1, y1, z1,    3.0, mi,
-        x1, y0, z0,    3.0, mi,
-        x1, y1, z0,    3.0, mi,
-        x1, y0, z0,    3.0, mi,
-        x1, y1, z1,    3.0, mi,
-        x1, y0, z1,    3.0, mi,
+        x1, y1, z1,  tw, th,  3.0, mi, tex,
+        x1, y0, z0,  t0, t0,  3.0, mi, tex,
+        x1, y1, z0,  tw, t0,  3.0, mi, tex,
+        x1, y0, z0,  t0, t0,  3.0, mi, tex,
+        x1, y1, z1,  tw, th,  3.0, mi, tex,
+        x1, y0, z1,  t0, th,  3.0, mi, tex,
 
         // Base - unchanged
-        x0, y0, z0,   5.0, mi,
-        x1, y0, z0,   5.0, mi,
-        x1, y0, z1,   5.0, mi,
-        x1, y0, z1,   5.0, mi,
-        x0, y0, z1,   5.0, mi,
-        x0, y0, z0,   5.0, mi,
+        x0, y0, z0, tw, th,  5.0, mi, tex,
+        x1, y0, z0, tw, t0,  5.0, mi, tex,
+        x1, y0, z1, t0, t0,  5.0, mi, tex,
+        x1, y0, z1, t0, t0,  5.0, mi, tex,
+        x0, y0, z1, t0, th,  5.0, mi, tex,
+        x0, y0, z0, tw, th,  5.0, mi, tex,
 
         // Top - needs to slope
-        x1, y1, z1,   9.0, mi,
-        x1, y1, z0,   9.0, mi,
-        x0, y0, z0,   9.0, mi,
-        x0, y0, z0,   9.0, mi,
-        x0, y0, z1,   9.0, mi,
-        x1, y1, z1,   9.0, mi,
+        x1, y1, z1, tw, th,  9.0, mi, tex,
+        x1, y1, z0, tw, t0,  9.0, mi, tex,
+        x0, y0, z0, t0, t0,  9.0, mi, tex,
+        x0, y0, z0, t0, t0,  9.0, mi, tex,
+        x0, y0, z1, t0, th,  9.0, mi, tex,
+        x1, y1, z1, tw, th,  9.0, mi, tex,
     ];
     vb.extend_from_slice(&cube_geometry);
     *element_count += 8;

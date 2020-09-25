@@ -6,7 +6,15 @@
             hit_points: 200,
             mines_to: [ ],
             description: "A nano-hybrid combining plastic and steel at a molecular level.",
-            tint: (0.5, 0.5, 0.5)
+            tint: (1.0, 1.0, 1.0),
+            texture: Some(
+                MaterialTextureSet(
+                    base: Some("metalfloor"),
+                    constructed: Some("metalfloor"),
+                    floor: Some("titanium"),
+                    floor_constructed: Some("plasteeltile")
+                )
+            ),
         ),
 
         MaterialDef(
