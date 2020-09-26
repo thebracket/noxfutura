@@ -42,6 +42,6 @@ void main() {
     // TODO: Lookup the tint from the palette buffer
     int idx = int(a_material);
     v_tint = palette[idx].rgb;
-    v_texture = a_texture / 255.0;
+    v_texture = a_texture;
     v_uv = a_uv;
 }

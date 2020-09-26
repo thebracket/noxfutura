@@ -12,7 +12,7 @@ pub fn add_floor_geometry(
 ) {
     let rlock = RAWS.read();
     let mi = *rlock.matmap.get(material_index) as f32;
-    let tex = rlock.materials.material_list.as_ref().unwrap()[material_index].base;
+    let tex = rlock.materials.material_list.as_ref().unwrap()[material_index].floor;
 
     let x0 = x;
     let x1 = x0 + w;

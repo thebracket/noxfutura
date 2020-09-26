@@ -9,7 +9,8 @@
             tint: (1.0, 1.0, 1.0),
             texture: Some(
                 MaterialTextureSet(
-                    base: Some("plasteeltile"),
+                    base: Some("titanium"),
+                    floor: Some("metalfloor")
                 )
             ),
         ),

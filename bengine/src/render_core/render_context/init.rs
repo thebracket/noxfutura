@@ -22,7 +22,9 @@ pub(crate) async fn get_device_and_queue(adapter: &Adapter) -> (Device, Queue) {
     adapter
         .request_device(
             &DeviceDescriptor {
-                features: wgpu::Features::SAMPLED_TEXTURE_BINDING_ARRAY,
+                features: wgpu::Features::SAMPLED_TEXTURE_BINDING_ARRAY 
+                | wgpu::Features::SAMPLED_TEXTURE_ARRAY_DYNAMIC_INDEXING
+                | wgpu::Features::UNSIZED_BINDING_ARRAY,
                 limits: Limits::default(),
                 shader_validation: true,
             },

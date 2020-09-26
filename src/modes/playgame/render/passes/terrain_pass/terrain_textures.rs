@@ -24,6 +24,7 @@ impl TerrainTextures {
             let texture_filename = format!("resources/terrain/{}.png", base_fn);
             tex_views.push(build_texture_view(&texture_filename));
         });
+        println!("{:#?}", texture_list);
 
         let rcl = RENDER_CONTEXT.read();
         let rc = rcl.as_ref().unwrap();
@@ -36,6 +37,7 @@ impl TerrainTextures {
             }
         );
 
+        println!("Binding layout for {} textures",texture_list.len() as u32);
         let bind_group_layout = rc.device.create_bind_group_layout(
             &gpu::BindGroupLayoutDescriptor {
                 label: Some("tabgl"),
@@ -115,6 +117,18 @@ fn build_material_list(texture_set: &mut HashSet<String>) -> Vec<(usize, Option<
                 texture_set.insert(base.clone());
                 mat_map_tmp.1 = Some(base.clone());
             }
+            /*if let Some(base) = &texture_base.constructed {
+                texture_set.insert(base.clone());
+                mat_map_tmp.2 = Some(base.clone());
+            }*/
+            if let Some(floor) = &texture_base.floor {
+                texture_set.insert(floor.clone());
+                mat_map_tmp.3 = Some(floor.clone());
+            }
+            /*if let Some(base) = &texture_base.floor_constructed {
+                texture_set.insert(base.clone());
+                mat_map_tmp.4 = Some(base.clone());
+            }*/
         }
         material_list_tmp.push(mat_map_tmp);
     });
@@ -170,6 +184,7 @@ fn build_texture_list(
 }
 
 fn build_texture_view(filename: &str) -> gpu::TextureView {
+    println!("Loading texture: [{}]", filename);
     use image::GenericImageView;
 
     let bytes = get_file_as_byte_vec(&filename.to_string());
