@@ -119,7 +119,15 @@ void main() {
                 vec3 lightDir = normalize(lights[i].pos.rgb - position);
                 float diff = max(dot(normal, lightDir), 0.0);
                 light_output += diff * albedo.rgb * lights[i].color.rgb * attenuation;
+
+                // Phong
+                vec3 viewDir = normalize(camera_position.xyz - position);
+                vec3 reflectDir = reflect(-lightDir, normal);
+                float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+                vec3 specular = 0.5 * spec * lights[i].color.rgb;
+                light_output += specular;
             }
+
 
         }
     }
