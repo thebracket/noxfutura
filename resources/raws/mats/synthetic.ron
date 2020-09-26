@@ -10,7 +10,9 @@
             texture: Some(
                 MaterialTextureSet(
                     base: Some("titanium"),
-                    floor: Some("metalfloor")
+                    floor: Some("metalfloor"),
+                    constructed: Some("metalfloor"),
+                    floor_constructed: Some("plasteeltile")
                 )
             ),
         ),

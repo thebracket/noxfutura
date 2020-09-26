@@ -117,18 +117,18 @@ fn build_material_list(texture_set: &mut HashSet<String>) -> Vec<(usize, Option<
                 texture_set.insert(base.clone());
                 mat_map_tmp.1 = Some(base.clone());
             }
-            /*if let Some(base) = &texture_base.constructed {
+            if let Some(base) = &texture_base.constructed {
                 texture_set.insert(base.clone());
                 mat_map_tmp.2 = Some(base.clone());
-            }*/
+            }
             if let Some(floor) = &texture_base.floor {
                 texture_set.insert(floor.clone());
                 mat_map_tmp.3 = Some(floor.clone());
             }
-            /*if let Some(base) = &texture_base.floor_constructed {
+            if let Some(base) = &texture_base.floor_constructed {
                 texture_set.insert(base.clone());
                 mat_map_tmp.4 = Some(base.clone());
-            }*/
+            }
         }
         material_list_tmp.push(mat_map_tmp);
     });

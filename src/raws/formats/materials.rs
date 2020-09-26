@@ -18,7 +18,9 @@ impl Materials {
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct MaterialTextureSet {
     pub base : Option<String>,
-    pub floor : Option<String>
+    pub floor : Option<String>,
+    pub constructed : Option<String>,
+    pub floor_constructed : Option<String>
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

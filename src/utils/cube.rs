@@ -9,11 +9,15 @@ pub fn add_cube_geometry(
     w: f32,
     h: f32,
     d: f32,
-    material_index: usize,
+    material_index: (usize, bool),
 ) {
     let rlock = RAWS.read();
-    let mi = *rlock.matmap.get(material_index) as f32;
-    let tex = rlock.materials.material_list.as_ref().unwrap()[material_index].base;
+    let mi = *rlock.matmap.get(material_index.0) as f32;
+    let tex = if material_index.1 {
+        rlock.materials.material_list.as_ref().unwrap()[material_index.0].constructed
+    } else {
+        rlock.materials.material_list.as_ref().unwrap()[material_index.0].base
+    };
 
     //let mi = material_index as f32;
     //let tex = -1.0;

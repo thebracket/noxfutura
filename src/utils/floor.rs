@@ -8,11 +8,15 @@ pub fn add_floor_geometry(
     z: f32,
     w: f32,
     h: f32,
-    material_index: usize,
+    material_index: (usize, bool),
 ) {
     let rlock = RAWS.read();
-    let mi = *rlock.matmap.get(material_index) as f32;
-    let tex = rlock.materials.material_list.as_ref().unwrap()[material_index].floor;
+    let mi = *rlock.matmap.get(material_index.0) as f32;
+    let tex = if material_index.1 {
+        rlock.materials.material_list.as_ref().unwrap()[material_index.0].floor_constructed
+    } else {
+        rlock.materials.material_list.as_ref().unwrap()[material_index.0].floor
+    };
 
     let x0 = x;
     let x1 = x0 + w;

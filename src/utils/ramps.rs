@@ -8,12 +8,16 @@ pub fn add_ramp_geometry(
     x: f32,
     y: f32,
     z: f32,
-    material_index: usize,
+    material_index: (usize, bool),
 ) {
     let rlock = RAWS.read();
-    let mi = *rlock.matmap.get(material_index) as f32;
-    let tex = rlock.materials.material_list.as_ref().unwrap()[material_index].base;
-    
+    let mi = *rlock.matmap.get(material_index.0) as f32;
+    let tex = if material_index.1 {
+        rlock.materials.material_list.as_ref().unwrap()[material_index.0].constructed
+    } else {
+        rlock.materials.material_list.as_ref().unwrap()[material_index.0].base
+    };
+
     match direction {
         RampDirection::NorthSouth => north_south(vb, element_count, x, y, z, mi, tex),
         RampDirection::SouthNorth => south_north(vb, element_count, x, y, z, mi, tex),
