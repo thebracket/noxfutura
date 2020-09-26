@@ -53,12 +53,18 @@ impl Chunk {
 
     #[inline]
     fn calc_material(&self, idx: usize, region: &Region) -> (usize, bool) {
-        (region.material_idx[idx], region.flag(idx, Region::CONSTRUCTED))
+        (
+            region.material_idx[idx],
+            region.flag(idx, Region::CONSTRUCTED),
+        )
     }
 
     #[inline]
     fn calc_floor_material(&self, idx: usize, region: &Region) -> (usize, bool) {
-        (region.material_idx[idx], region.flag(idx, Region::CONSTRUCTED))
+        (
+            region.material_idx[idx],
+            region.flag(idx, Region::CONSTRUCTED),
+        )
     }
 
     #[inline]

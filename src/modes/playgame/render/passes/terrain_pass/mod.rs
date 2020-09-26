@@ -9,12 +9,12 @@ pub struct TerrainPass {
     palette_bind_group: gpu::BindGroup,
     pub uniforms: CameraUniform,
     pub camera: Camera,
-    terrain_textures: TerrainTextures
+    terrain_textures: TerrainTextures,
 }
 
 impl TerrainPass {
     pub fn new(palette: &Palette) -> Self {
-        let terrain_textures =  TerrainTextures::new();
+        let terrain_textures = TerrainTextures::new();
 
         let (terrain_vert, terrain_frag) = helpers::shader_from_bytes(
             bengine::gpu::include_spirv!("terrain.vert.spv"),
@@ -70,7 +70,11 @@ impl TerrainPass {
             .device
             .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: &[&bind_group_layout, &palette.bind_group_layout, &terrain_textures.bind_group_layout],
+                bind_group_layouts: &[
+                    &bind_group_layout,
+                    &palette.bind_group_layout,
+                    &terrain_textures.bind_group_layout,
+                ],
                 push_constant_ranges: &[],
             });
         let pipeline = ctx
@@ -136,7 +140,7 @@ impl TerrainPass {
             bind_group,
             palette_bind_group,
             pipeline,
-            terrain_textures
+            terrain_textures,
         }
     }
 

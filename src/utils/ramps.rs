@@ -26,7 +26,15 @@ pub fn add_ramp_geometry(
     }
 }
 
-fn north_south(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32, tex:f32) {
+fn north_south(
+    vb: &mut Vec<f32>,
+    element_count: &mut u32,
+    x: f32,
+    y: f32,
+    z: f32,
+    mi: f32,
+    tex: f32,
+) {
     let w = 1.0;
     let h = 1.0;
     let d = 1.0;
@@ -83,7 +91,15 @@ fn north_south(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
 }
 
 // still needs work
-fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32, tex:f32) {
+fn south_north(
+    vb: &mut Vec<f32>,
+    element_count: &mut u32,
+    x: f32,
+    y: f32,
+    z: f32,
+    mi: f32,
+    tex: f32,
+) {
     let w = 1.0;
     let h = 1.0;
     let d = 1.0;
@@ -160,7 +176,15 @@ fn south_north(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f3
     *element_count += 8;
 }
 
-fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32, tex:f32) {
+fn east_west(
+    vb: &mut Vec<f32>,
+    element_count: &mut u32,
+    x: f32,
+    y: f32,
+    z: f32,
+    mi: f32,
+    tex: f32,
+) {
     let w = 1.0;
     let h = 1.0;
     let d = 1.0;
@@ -235,7 +259,15 @@ fn east_west(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32,
     *element_count += 8;
 }
 
-fn west_east(vb: &mut Vec<f32>, element_count: &mut u32, x: f32, y: f32, z: f32, mi: f32, tex:f32) {
+fn west_east(
+    vb: &mut Vec<f32>,
+    element_count: &mut u32,
+    x: f32,
+    y: f32,
+    z: f32,
+    mi: f32,
+    tex: f32,
+) {
     let w = 1.0;
     let h = 1.0;
     let d = 1.0;
