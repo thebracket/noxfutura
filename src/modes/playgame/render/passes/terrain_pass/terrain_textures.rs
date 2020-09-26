@@ -23,6 +23,10 @@ impl TerrainTextures {
         texture_list.iter().for_each(|base_fn| {
             let texture_filename = format!("resources/terrain/{}.png", base_fn);
             tex_views.push(build_texture_view(&texture_filename));
+
+            let texture_filename = format!("resources/terrain/{}-n.png", base_fn);
+            tex_views.push(build_texture_view(&texture_filename));
+
         });
         println!("{:#?}", texture_list);
 
@@ -49,7 +53,7 @@ impl TerrainTextures {
                                 dimension: gpu::TextureViewDimension::D2,
                                 multisampled: false,
                             },
-                            count: std::num::NonZeroU32::new(texture_list.len() as u32),
+                            count: std::num::NonZeroU32::new(texture_list.len() as u32 * 2),
                         },
                         gpu::BindGroupLayoutEntry {
                             binding: 1,
