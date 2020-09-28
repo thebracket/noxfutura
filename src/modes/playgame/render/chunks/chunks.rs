@@ -51,7 +51,7 @@ impl Chunks {
             .enumerate()
             .filter(|(_i, c)| {
                 self.frustrum
-                    .check_sphere(&c.center_pos, CHUNK_SIZE as f32 / 1.5)
+                    .check_sphere(&c.center_pos, CHUNK_SIZE as f32)
             })
             .map(|(i, c)| {
                 (

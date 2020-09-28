@@ -71,7 +71,7 @@ const mat3 TBN[10] = mat3[10](
 
 void main() {
     int texId = int(v_texture);
-    vec3 texture_color = texId > -1 ? texture(sampler2D(u_Textures[texId*2], u_Sampler), v_uv).rgb : vec3(1.0, 1.0, 1.0);
+    vec3 texture_color = texId > -1 ? pow(texture(sampler2D(u_Textures[texId*2], u_Sampler), v_uv).rgb, vec3(1.0/2.2)) : vec3(1.0, 1.0, 1.0);
     int normalId = int(v_normal);
     f_color = vec4(v_tint.rgb * texture_color, 1.0);
     f_normal = texId > -1 ? vec4(TBN[normalId] * texture(sampler2D(u_Textures[(texId*2)+1], u_Sampler), v_uv).rgb, 1.0) : vec4(normal_lut[normalId], 0.0);
