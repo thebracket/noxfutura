@@ -168,7 +168,7 @@ impl LightingPass {
                     &bind_group_layout,
                     &uniform_bind_group_layout,
                     &terrain_lights.bind_group_layout,
-                    &gbuffer.bind_group_layout
+                    &gbuffer.bind_group_layout,
                 ],
                 push_constant_ranges: &[],
             });
@@ -222,9 +222,11 @@ impl LightingPass {
         let mouse_pos = core.imgui.io().mouse_pos;
         match self.update_status {
             LightingDirtyState::Full => {
-                self.light_uniforms
-                    .uniforms
-                    .update(ecs, &mut self.terrain_lights.flags, &mouse_pos);
+                self.light_uniforms.uniforms.update(
+                    ecs,
+                    &mut self.terrain_lights.flags,
+                    &mouse_pos,
+                );
                 self.light_uniforms.send_buffer_to_gpu();
                 self.terrain_lights.update_buffer();
                 self.update_status = LightingDirtyState::Clean;

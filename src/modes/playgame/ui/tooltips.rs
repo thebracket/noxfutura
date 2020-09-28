@@ -1,9 +1,9 @@
-use bengine::gui::*;
-use legion::*;
 use crate::components::*;
+use crate::modes::playgame::systems::REGION;
 use crate::planet::Region;
 use crate::spatial::*;
-use crate::modes::playgame::systems::REGION;
+use bengine::gui::*;
+use legion::*;
 
 pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui: &Ui) {
     if imgui.io().want_capture_mouse {
@@ -24,7 +24,10 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
 
         // Type info
         let mi = r.material_idx[idx];
-        lines.push((false, crate::RAWS.read().materials.materials[mi].name.clone()));
+        lines.push((
+            false,
+            crate::RAWS.read().materials.materials[mi].name.clone(),
+        ));
 
         // Flags
         let mut l = String::new();

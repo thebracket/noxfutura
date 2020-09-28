@@ -129,7 +129,7 @@ void main() {
                 vec3 viewDir = normalize(camera_position.xyz - position);
                 vec3 reflectDir = reflect(-lightDir, normal);
                 float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-                vec3 specular = 0.5 * spec * lights[i].color.rgb;
+                vec3 specular = 0.5 * spec * lights[i].color.rgb * albedo.rgb;
                 light_output += specular;
             }
 

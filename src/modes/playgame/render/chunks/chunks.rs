@@ -49,10 +49,7 @@ impl Chunks {
             .chunks
             .iter()
             .enumerate()
-            .filter(|(_i, c)| {
-                self.frustrum
-                    .check_sphere(&c.center_pos, CHUNK_SIZE as f32)
-            })
+            .filter(|(_i, c)| self.frustrum.check_sphere(&c.center_pos, CHUNK_SIZE as f32))
             .map(|(i, c)| {
                 (
                     DistanceAlg::PythagorasSquared.distance3d(

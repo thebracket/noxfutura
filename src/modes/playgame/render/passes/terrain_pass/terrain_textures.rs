@@ -26,7 +26,6 @@ impl TerrainTextures {
 
             let texture_filename = format!("resources/terrain/{}-n.png", base_fn);
             tex_views.push(build_texture_view(&texture_filename));
-
         });
         println!("{:#?}", texture_list);
 

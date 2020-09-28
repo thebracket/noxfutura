@@ -5,8 +5,8 @@ pub struct GBuffer {
     pub normal: GBufferTarget,
     pub coords: GBufferTarget,
     pub mouse_buffer: gpu::Buffer,
-    pub bind_group_layout : gpu::BindGroupLayout,
-    pub bind_group : gpu::BindGroup
+    pub bind_group_layout: gpu::BindGroupLayout,
+    pub bind_group: gpu::BindGroup,
 }
 
 impl GBuffer {
@@ -39,13 +39,16 @@ impl GBuffer {
 
             let buffer = context.device.create_buffer(&gpu::BufferDescriptor {
                 size,
-                usage: gpu::BufferUsage::MAP_READ | gpu::BufferUsage::COPY_DST | gpu::BufferUsage::STORAGE,
+                usage: gpu::BufferUsage::MAP_READ
+                    | gpu::BufferUsage::COPY_DST
+                    | gpu::BufferUsage::STORAGE,
                 label: None,
                 mapped_at_creation: false,
             });
 
             let bind_group_layout =
-                context.device
+                context
+                    .device
                     .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
                         label: None,
                         entries: &[gpu::BindGroupLayoutEntry {
@@ -78,7 +81,7 @@ impl GBuffer {
             coords,
             mouse_buffer,
             bind_group_layout,
-            bind_group
+            bind_group,
         }
     }
 }

@@ -64,7 +64,7 @@ impl LightUniforms {
         self.lights[0].color = [1.0, 1.0, 1.0, 1.0];
     }
 
-    pub fn update(&mut self, ecs: &World, light_bits: &mut [u32],  mouse_position: &[f32]) {
+    pub fn update(&mut self, ecs: &World, light_bits: &mut [u32], mouse_position: &[f32]) {
         self.update_partial(ecs, mouse_position);
 
         self.lights.iter_mut().skip(1).for_each(|l| {

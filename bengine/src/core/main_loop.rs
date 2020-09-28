@@ -113,7 +113,7 @@ where
                     } else {
                         None
                     },
-                    mouse_world_pos
+                    mouse_world_pos,
                 };
                 std::mem::drop(rc);
                 std::mem::drop(rcl);

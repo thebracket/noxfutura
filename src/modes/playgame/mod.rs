@@ -2,8 +2,8 @@ mod loadstate;
 mod play;
 mod render;
 mod systems;
-mod uniforms;
 mod ui;
+mod uniforms;
 
 pub use play::PlayTheGame;
 pub use render::{

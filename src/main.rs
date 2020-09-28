@@ -75,7 +75,7 @@ impl BEngineGame for NoxFutura {
     fn get_mouse_buffer(&self) -> Option<&gpu::Buffer> {
         match self.current_mode {
             GameMode::PlayGame => self.modes[4].get_mouse_buffer(),
-            _ => None
+            _ => None,
         }
     }
 }
