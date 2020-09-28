@@ -3,6 +3,7 @@ mod play;
 mod render;
 mod systems;
 mod uniforms;
+mod ui;
 
 pub use play::PlayTheGame;
 pub use render::{

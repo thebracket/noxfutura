@@ -209,6 +209,9 @@ impl NoxMode for PlayTheGame {
                 .as_mut()
                 .unwrap()
                 .render(core, &mut self.ecs, self.gbuffer.as_ref().unwrap());
+
+            // Phase 3: Draw the UI
+            super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
         }
 
         result
