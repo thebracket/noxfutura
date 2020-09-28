@@ -17,6 +17,7 @@ struct LightInfo {
 
 layout(set=1, binding=0) 
 uniform Uniforms {
+    vec4 screen_info;
     vec4 camera_position;
     LightInfo lights[32];
 };
@@ -99,6 +100,10 @@ vec3(-0.355966233058895, -0.146968676804214, 0.265689179962858),
 vec3(-0.145761658046816, 0.373878060261686, 0.65622220492727)
 );
 
+layout(set = 3, binding = 0) buffer MouseBuffer {
+    vec4[] mouse_buffer;
+};
+
 void main() {
     vec4 albedo = texture(sampler2D(t_diffuse, s_diffuse), v_tex_coords);
     vec3 normal = normalize(texture(sampler2D(t_normal, s_normal), v_tex_coords).rgb);
@@ -147,5 +152,11 @@ void main() {
     }
     SSAO = clamp((occlusion / kernelSize), 0.0, 1.0);
 
+    // Write the color output
     f_color = vec4(light_output, 1.0) * vec4(SSAO, SSAO, SSAO, 1.0);
+
+    // Write the mouse buffer output if we're at the mouse position
+    if (int(gl_FragCoord.x) == int(screen_info.x) && int(gl_FragCoord.y) == int(screen_info.y)) {
+        mouse_buffer[0] = vec4(position, 0.0);
+    }
 }

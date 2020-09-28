@@ -168,6 +168,7 @@ impl LightingPass {
                     &bind_group_layout,
                     &uniform_bind_group_layout,
                     &terrain_lights.bind_group_layout,
+                    &gbuffer.bind_group_layout
                 ],
                 push_constant_ranges: &[],
             });
@@ -217,22 +218,22 @@ impl LightingPass {
         }
     }
 
-    pub fn render(&mut self, core: &Core, ecs: &mut World) {
+    pub fn render(&mut self, core: &Core, ecs: &mut World, gbuffer: &GBuffer) {
+        let mouse_pos = core.imgui.io().mouse_pos;
         match self.update_status {
             LightingDirtyState::Full => {
                 self.light_uniforms
                     .uniforms
-                    .update(ecs, &mut self.terrain_lights.flags);
+                    .update(ecs, &mut self.terrain_lights.flags, &mouse_pos);
                 self.light_uniforms.send_buffer_to_gpu();
                 self.terrain_lights.update_buffer();
                 self.update_status = LightingDirtyState::Clean;
             }
-            LightingDirtyState::Partial => {
-                self.light_uniforms.uniforms.update_partial(ecs);
+            _ => {
+                self.light_uniforms.uniforms.update_partial(ecs, &mouse_pos);
                 self.light_uniforms.send_buffer_to_gpu();
                 self.update_status = LightingDirtyState::Clean;
             }
-            LightingDirtyState::Clean => {}
         }
 
         let dl = RENDER_CONTEXT.read();
@@ -259,6 +260,7 @@ impl LightingPass {
             rpass.set_bind_group(0, &self.bind_group, &[]);
             rpass.set_bind_group(1, &self.uniform_bind_group, &[]);
             rpass.set_bind_group(2, &self.terrain_lights.bind_group, &[]);
+            rpass.set_bind_group(3, &gbuffer.bind_group, &[]);
 
             rpass.set_vertex_buffer(0, self.vb.slice());
             rpass.draw(0..self.vb.len(), 0..1);

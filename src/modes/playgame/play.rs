@@ -143,6 +143,14 @@ impl PlayTheGame {
 }
 
 impl NoxMode for PlayTheGame {
+    fn get_mouse_buffer(&self) -> Option<&gpu::Buffer> {
+        if let Some(gb) = self.gbuffer.as_ref() {
+            Some(&gb.mouse_buffer)
+        } else {
+            None
+        }
+    }
+
     fn tick(&mut self, core: &mut Core, shared: &SharedResources) -> GameMode {
         use gui::*;
         let result = GameMode::PlayGame;
@@ -200,7 +208,7 @@ impl NoxMode for PlayTheGame {
             self.lighting_pass
                 .as_mut()
                 .unwrap()
-                .render(core, &mut self.ecs);
+                .render(core, &mut self.ecs, self.gbuffer.as_ref().unwrap());
         }
 
         result

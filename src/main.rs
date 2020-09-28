@@ -22,6 +22,9 @@ pub enum GameMode {
 
 trait NoxMode {
     fn tick(&mut self, core: &mut Core, shared: &SharedResources) -> GameMode;
+    fn get_mouse_buffer(&self) -> Option<&gpu::Buffer> {
+        None
+    }
 }
 
 struct NoxFutura {
@@ -67,6 +70,13 @@ impl BEngineGame for NoxFutura {
         };
         self.current_mode = new_mode;
         true
+    }
+
+    fn get_mouse_buffer(&self) -> Option<&gpu::Buffer> {
+        match self.current_mode {
+            GameMode::PlayGame => self.modes[4].get_mouse_buffer(),
+            _ => None
+        }
     }
 }
 

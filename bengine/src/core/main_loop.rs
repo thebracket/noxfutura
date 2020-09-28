@@ -64,7 +64,7 @@ where
     let mut last_frame = Instant::now();
     let mut last_cursor = None;
     let mut keycode: Option<winit::event::VirtualKeyCode> = None;
-    //let mut mouse_world_pos = (0usize, 0usize, 0usize);
+    let mut mouse_world_pos = (0usize, 0usize, 0usize);
 
     program.init();
 
@@ -102,7 +102,7 @@ where
                 platform
                     .prepare_frame(imgui.io_mut(), &window)
                     .expect("Failed to prepare frame");
-                //let mouse_position = imgui.io().mouse_pos;
+                let mouse_position = imgui.io().mouse_pos;
                 let ui = imgui.frame();
 
                 let mut core = Core {
@@ -113,7 +113,9 @@ where
                     } else {
                         None
                     },
+                    mouse_world_pos
                 };
+                std::mem::drop(rc);
                 std::mem::drop(rcl);
                 let should_continue = program.tick(&mut core);
                 if !should_continue {
@@ -126,25 +128,18 @@ where
                 keycode = None;
 
                 // Mouse buffer insanity
-                /*
                 if let Some(buf) = program.get_mouse_buffer() {
-                    let mut context_lock = DEVICE_CONTEXT.write();
-                    let context = context_lock.as_mut().unwrap();
+                    let context_lock = RENDER_CONTEXT.read();
+                    let context = context_lock.as_ref().unwrap();
 
-                    let mx = mouse_position[0] as u32;
-                    let my = mouse_position[1] as u32;
-                    let mouse_index = (my * context.size.width) + mx;
-
-                    let size = 4 * std::mem::size_of::<f32>() as u64;
-                    let mbuf_pixel = mouse_index as u64 * size;
-
-                    let future = buf.map_read(mbuf_pixel, size);
+                    let buf_slice = buf.slice(..);
+                    let future = buf_slice.map_async(wgpu::MapMode::Read);
                     context.device.poll(wgpu::Maintain::Wait);
                     let mapping = futures::executor::block_on(future);
-                    if let Ok(mapping) = mapping {
+                    if let Ok(_mapping) = mapping {
                         unsafe {
-                            mapping
-                                .as_slice()
+                            buf_slice
+                                .get_mapped_range()
                                 .align_to::<[f32; 4]>()
                                 .1
                                 .iter()
@@ -158,8 +153,12 @@ where
                                     );
                                 });
                         }
+                        //println!("{:#?}", mouse_world_pos);
+
+                        // Don't forget to clean up!
+                        buf.unmap();
                     }
-                }*/
+                }
 
                 {
                     use imgui::*;

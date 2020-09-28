@@ -5,6 +5,8 @@ pub struct GBuffer {
     pub normal: GBufferTarget,
     pub coords: GBufferTarget,
     pub mouse_buffer: gpu::Buffer,
+    pub bind_group_layout : gpu::BindGroupLayout,
+    pub bind_group : gpu::BindGroup
 }
 
 impl GBuffer {
@@ -29,21 +31,45 @@ impl GBuffer {
                 | gpu::TextureUsage::COPY_SRC,
         );
 
-        let mouse_buffer = {
+        let (mouse_buffer, bind_group_layout, bind_group) = {
             let mut ctx_lock = RENDER_CONTEXT.write();
             let context = ctx_lock.as_mut().unwrap();
 
-            let size = context.size.width as u64
-                * context.size.height as u64
-                * 4
-                * std::mem::size_of::<f32>() as u64;
+            let size = 4 * std::mem::size_of::<f32>() as u64;
 
-            context.device.create_buffer(&gpu::BufferDescriptor {
+            let buffer = context.device.create_buffer(&gpu::BufferDescriptor {
                 size,
-                usage: gpu::BufferUsage::MAP_READ | gpu::BufferUsage::COPY_DST,
+                usage: gpu::BufferUsage::MAP_READ | gpu::BufferUsage::COPY_DST | gpu::BufferUsage::STORAGE,
                 label: None,
                 mapped_at_creation: false,
-            })
+            });
+
+            let bind_group_layout =
+                context.device
+                    .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
+                        label: None,
+                        entries: &[gpu::BindGroupLayoutEntry {
+                            binding: 0,
+                            visibility: gpu::ShaderStage::FRAGMENT,
+                            ty: gpu::BindingType::StorageBuffer {
+                                dynamic: false,
+                                min_binding_size: gpu::BufferSize::new(16),
+                                readonly: false,
+                            },
+                            count: None,
+                        }],
+                    });
+
+            let bind_group = context.device.create_bind_group(&gpu::BindGroupDescriptor {
+                label: None,
+                layout: &bind_group_layout,
+                entries: &[gpu::BindGroupEntry {
+                    binding: 0,
+                    resource: gpu::BindingResource::Buffer(buffer.slice(..)),
+                }],
+            });
+
+            (buffer, bind_group_layout, bind_group)
         };
 
         Self {
@@ -51,38 +77,9 @@ impl GBuffer {
             normal,
             coords,
             mouse_buffer,
+            bind_group_layout,
+            bind_group
         }
-    }
-
-    pub fn copy_mouse_buffer(&self) {
-        let mut ctx_lock = RENDER_CONTEXT.write();
-        let context = ctx_lock.as_mut().unwrap();
-
-        let command_buffer = {
-            let mut encoder = context
-                .device
-                .create_command_encoder(&gpu::CommandEncoderDescriptor { label: None });
-            encoder.copy_texture_to_buffer(
-                gpu::TextureCopyView {
-                    texture: &self.coords.texture,
-                    mip_level: 0,
-                    origin: gpu::Origin3d::ZERO,
-                },
-                gpu::BufferCopyView {
-                    buffer: &self.mouse_buffer,
-                    layout: gpu::TextureDataLayout {
-                        offset: 0,
-                        bytes_per_row: context.size.width as u32
-                            * 4
-                            * std::mem::size_of::<f32>() as u32,
-                        rows_per_image: 0,
-                    },
-                },
-                self.coords.extent,
-            );
-            encoder.finish()
-        };
-        context.queue.submit(Some(command_buffer));
     }
 }
 

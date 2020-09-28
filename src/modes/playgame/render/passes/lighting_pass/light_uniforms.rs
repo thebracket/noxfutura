@@ -8,6 +8,7 @@ use rayon::prelude::*;
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct LightUniforms {
+    pub screen_info: [f32; 4],
     pub camera_position: [f32; 4],
     pub lights: [LightInfo; 32],
 }
@@ -37,17 +38,21 @@ unsafe impl bytemuck::Zeroable for LightInfo {}
 impl LightUniforms {
     pub fn new() -> Self {
         Self {
+            screen_info: [0.0, 0.0, 0.0, 0.0],
             camera_position: [0.0, 0.0, 0.0, 0.0],
             lights: [LightInfo::new(); 32],
         }
     }
 
-    pub fn update_partial(&mut self, ecs: &World) {
+    pub fn update_partial(&mut self, ecs: &World, mouse_position: &[f32]) {
         let camera_pos = <(&Position, &CameraOptions)>::query()
             .iter(ecs)
             .map(|(pos, _)| pos.as_point3())
             .nth(0)
             .unwrap();
+
+        self.screen_info[0] = mouse_position[0];
+        self.screen_info[1] = mouse_position[1];
 
         self.camera_position = [
             camera_pos.x as f32,
@@ -59,8 +64,8 @@ impl LightUniforms {
         self.lights[0].color = [1.0, 1.0, 1.0, 1.0];
     }
 
-    pub fn update(&mut self, ecs: &World, light_bits: &mut [u32]) {
-        self.update_partial(ecs);
+    pub fn update(&mut self, ecs: &World, light_bits: &mut [u32],  mouse_position: &[f32]) {
+        self.update_partial(ecs, mouse_position);
 
         self.lights.iter_mut().skip(1).for_each(|l| {
             l.pos = [0.0, 0.0, 0.0, 0.0];
