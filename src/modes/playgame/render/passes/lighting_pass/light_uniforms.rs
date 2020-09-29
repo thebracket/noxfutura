@@ -4,6 +4,7 @@ use bengine::gpu::util::DeviceExt;
 use bengine::*;
 use legion::*;
 use rayon::prelude::*;
+use cgmath::Vector3;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -45,11 +46,19 @@ impl LightUniforms {
     }
 
     pub fn update_partial(&mut self, ecs: &World, mouse_position: &[f32]) {
+        use cgmath::num_traits::identities::Zero;
+
         let camera_pos = <(&Position, &CameraOptions)>::query()
             .iter(ecs)
             .map(|(pos, _)| pos.as_point3())
             .nth(0)
             .unwrap();
+
+        let mut query = <Read<Calendar>>::query();
+        let mut sun_pos = (Vector3::zero(), Vector3::zero());
+        for c in query.iter(ecs) {
+            sun_pos = c.calculate_sun_moon();
+        }
 
         self.screen_info[0] = mouse_position[0];
         self.screen_info[1] = mouse_position[1];
@@ -60,8 +69,8 @@ impl LightUniforms {
             camera_pos.y as f32,
             0.0,
         ];
-        self.lights[0].pos = [128.0, 512.0, 0.1, 512.0];
-        self.lights[0].color = [1.0, 1.0, 1.0, 1.0];
+        self.lights[0].pos = [sun_pos.0.x, sun_pos.0.y, sun_pos.0.z, 512.0];
+        self.lights[0].color = [sun_pos.1.x, sun_pos.1.y, sun_pos.1.z, 1.0];
     }
 
     pub fn update(&mut self, ecs: &World, light_bits: &mut [u32], mouse_position: &[f32]) {

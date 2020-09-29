@@ -121,7 +121,7 @@ void main() {
             float distance = distance(lights[i].pos.xyz, position);
             if (radius > 0.0 && distance < radius) {
                 float attenuation = radius > 64.0 ? 1.0 : 1.0 / (distance*distance);
-                vec3 lightDir = normalize(lights[i].pos.rgb - position);
+                vec3 lightDir = i > 0 ? normalize(lights[i].pos.rgb - position) : normalize(lights[i].pos.rgb);
                 float diff = max(dot(normal, lightDir), 0.0);
                 light_output += diff * albedo.rgb * lights[i].color.rgb * attenuation;
 
@@ -136,7 +136,7 @@ void main() {
 
         }
     }
-    light_output += vec3(0.05) * albedo.rgb; // Ambient component
+    light_output += vec3(0.1) * albedo.rgb; // Ambient component
 
     // SSAO. Again.
     float SSAO = 0.0;
