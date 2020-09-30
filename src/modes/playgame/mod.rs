@@ -4,7 +4,9 @@ mod render;
 mod systems;
 mod ui;
 mod uniforms;
+mod run_state;
 
+pub use run_state::*;
 pub use play::PlayTheGame;
 pub use render::{
     Chunks, GBuffer, GrassPass, LightingPass, Models, ModelsPass, Palette, TerrainPass, VoxPass,

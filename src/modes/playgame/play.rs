@@ -1,6 +1,6 @@
 use super::{
     loadstate::*, systems::REGION, Chunks, GBuffer, GrassPass, LightingPass, ModelsPass, Palette,
-    TerrainPass, VoxPass,
+    TerrainPass, VoxPass, RunState
 };
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
@@ -26,6 +26,8 @@ pub struct PlayTheGame {
 
     regular_schedule: Schedule,
     paused_schedule: Schedule,
+
+    frame_time_accumulator: f32
 }
 
 impl PlayTheGame {
@@ -47,6 +49,7 @@ impl PlayTheGame {
             gbuffer: None,
             regular_schedule: super::systems::build_scheduler(),
             paused_schedule: super::systems::paused_scheduler(),
+            frame_time_accumulator: 0.0
         }
     }
 
@@ -97,20 +100,7 @@ impl PlayTheGame {
                     }
 
                     self.ecs_resources.insert(super::GameStateResource::new());
-                    /*
-                    self.planet = Some(game.planet);
-                    *REGION.write() = game.current_region;
-                    self.ecs = nox_components::deserialize_world(game.ecs_text);
-
-                    let mut loader_lock = crate::modes::loader::LOADER.write();
-                    self.rpass = loader_lock.rpass.take();
-                    self.sunlight_pass = loader_lock.sun_render.take();
-                    self.vox_pass = loader_lock.vpass.take();
-                    self.cursor_pass = loader_lock.cpass.take();
-
-                    self.scheduler = Some(systems::build_scheduler());
-                    self.paused_scheduler = Some(systems::paused_scheduler());
-                    */
+                    self.ecs_resources.insert(RunState::Paused);
                     println!("Finished loading");
                     self.ready = true;
                 }
@@ -169,8 +159,31 @@ impl NoxMode for PlayTheGame {
                 let mut shared_state = self.ecs_resources.get_mut::<super::GameStateResource>();
                 shared_state.as_mut().unwrap().frame_update(core.keycode);
             }
-            self.regular_schedule
-                .execute(&mut self.ecs, &mut self.ecs_resources);
+
+            let run_state = self.ecs_resources.get::<RunState>().unwrap().clone();
+            match run_state {
+                RunState::Paused | RunState::Design{..} => self.paused_schedule.execute(&mut self.ecs, &mut self.ecs_resources),
+                RunState::SlowMo => {
+                    self.frame_time_accumulator += core.frame_time;
+                    if self.frame_time_accumulator > 0.3 {
+                        self.frame_time_accumulator = 0.0;
+                        self.regular_schedule.execute(&mut self.ecs, &mut self.ecs_resources);
+                    } else {
+                        self.paused_schedule.execute(&mut self.ecs, &mut self.ecs_resources);
+                    }
+                }
+                RunState::Running => {
+                    self.frame_time_accumulator += core.frame_time;
+                    if self.frame_time_accumulator > 0.1 {
+                        self.frame_time_accumulator = 0.0;
+                        self.regular_schedule.execute(&mut self.ecs, &mut self.ecs_resources);
+                    } else {
+                        self.paused_schedule.execute(&mut self.ecs, &mut self.ecs_resources);
+                    }
+                }
+                RunState::FullSpeed => self.regular_schedule.execute(&mut self.ecs, &mut self.ecs_resources),
+            }
+            std::mem::drop(run_state);
 
             // Phase 2: Actually render stuff
             self.update_camera();
@@ -212,8 +225,10 @@ impl NoxMode for PlayTheGame {
             );
 
             // Phase 3: Draw the UI
+            let mut rs = self.ecs_resources.get_mut::<RunState>();
+            let run_state = rs.as_mut().unwrap();
             super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
-            super::ui::draw_main_menu(&self.ecs, &core.imgui);
+            super::ui::draw_main_menu(&self.ecs, run_state, &core.imgui);
         }
 
         result

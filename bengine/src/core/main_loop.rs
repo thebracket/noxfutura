@@ -114,6 +114,7 @@ where
                         None
                     },
                     mouse_world_pos,
+                    frame_time: ui.io().delta_time
                 };
                 std::mem::drop(rc);
                 std::mem::drop(rcl);

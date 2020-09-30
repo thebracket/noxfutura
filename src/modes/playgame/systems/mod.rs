@@ -3,6 +3,7 @@ use bracket_random::prelude::RandomNumberGenerator;
 use legion::*;
 use parking_lot::{Mutex, RwLock};
 mod camera_control;
+mod pause_control;
 mod viewshed;
 mod calendar;
 
@@ -19,6 +20,7 @@ pub fn build_scheduler() -> Schedule {
         .add_system(calendar::calendar_system())
         .add_system(viewshed::viewshed_system())
         .add_system(camera_control::camera_control_system())
+        .add_system(pause_control::pause_control_system())
         .build()
 }
 
@@ -26,5 +28,6 @@ pub fn paused_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(viewshed::viewshed_system())
         .add_system(camera_control::camera_control_system())
+        .add_system(pause_control::pause_control_system())
         .build()
 }
