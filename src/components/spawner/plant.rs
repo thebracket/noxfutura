@@ -2,11 +2,11 @@ use crate::components::*;
 use crate::raws::*;
 use legion::*;
 
-pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) {
+pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize, size: f32) {
     let rlock = RAWS.read();
     if let Some(plant) = rlock.plants.plant_by_tag(tag) {
         ecs.push((
-            Vegetation {},
+            Vegetation { size },
             IdentityTag::new(),
             Name {
                 name: plant.name.clone(),
@@ -33,6 +33,7 @@ pub fn spawn_tree(
     z: usize,
     region_idx: usize,
     model_id: usize,
+    size: f32,
 ) {
     //let rlock = RAWS.read();
     ecs.push((
@@ -44,6 +45,7 @@ pub fn spawn_tree(
         crate::components::ObjModel {
             index: model_id,
             rotation_radians: 0.0,
+            scale: size
         },
         Description {
             desc: "A tree".to_string(),

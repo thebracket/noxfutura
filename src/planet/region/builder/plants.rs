@@ -1,8 +1,13 @@
-use crate::planet::{ground_z, Region, TileType};
+use crate::planet::{ground_z, Region};
 use crate::raws::*;
 use crate::spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 use bracket_random::prelude::RandomNumberGenerator;
 use legion::*;
+
+fn random_plant_height(rng: &mut RandomNumberGenerator) -> f32 {
+    let n = rng.range(10, 100);
+    n as f32 / 100.0
+}
 
 pub fn grow_plants(
     region: &mut Region,
@@ -22,8 +27,6 @@ pub fn grow_plants(
                     MaterialLayer::Soil { quality } => quality,
                     _ => 1,
                 };
-                //println!("Soil quality: {}", soil_quality);
-                //println!("Topmost layer: {:#?}", rlock.materials.materials[region.material_idx[idx]].layer);
 
                 let available_plants = rlock
                     .plants
@@ -32,9 +35,6 @@ pub fn grow_plants(
                     if (rng.roll_dice(1, 15) as u8) <= soil_quality {
                         let chosen_plant = rng.random_slice_entry(&available_plants);
                         if let Some(plant_idx) = chosen_plant {
-                            //region.tile_types[mapidx(x, y, z)] = TileType::Floor {
-                            //    plant: Some(*plant_idx),
-                            //};
                             crate::planet::spawn_plant(
                                 ecs,
                                 &RAWS.read().plants.plants[*plant_idx].tag,
@@ -42,12 +42,11 @@ pub fn grow_plants(
                                 y,
                                 z,
                                 region.world_idx,
+                                random_plant_height(rng)
                             );
                         } else {
                             println!("Rejecting because no plant type was received");
                         }
-                    } else {
-                        //println!("Rejecting from dice roll");
                     }
                 } else {
                     println!("Rejecting for lack of plant types");

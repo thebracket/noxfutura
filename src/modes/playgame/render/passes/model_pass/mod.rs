@@ -11,7 +11,7 @@ pub struct ModelsPass {
     palette_bind_group: gpu::BindGroup,
     models: Models,
     instance_buffer: FloatBuffer<f32>,
-    instance_set: HashMap<usize, Vec<(f32, f32, f32)>>,
+    instance_set: HashMap<usize, Vec<(f32, f32, f32, f32)>>,
     instances: Vec<(usize, u32, u32)>,
     pub models_changed: bool,
 }
@@ -23,9 +23,11 @@ impl ModelsPass {
             bengine::gpu::include_spirv!("models.frag.spv"),
         );
 
-        let mut instance_buffer = FloatBuffer::new(&[3], 1024, gpu::BufferUsage::VERTEX);
+        let mut instance_buffer = FloatBuffer::new(&[3, 1], 1024, gpu::BufferUsage::VERTEX);
         instance_buffer.attributes[0].shader_location = 3;
+        instance_buffer.attributes[1].shader_location = 4;
         instance_buffer.add3(0.0, 0.0, 0.0);
+        instance_buffer.add(1.0);
         instance_buffer.build();
 
         let dl = RENDER_CONTEXT.read();
@@ -91,7 +93,7 @@ impl ModelsPass {
                 }),
                 rasterization_state: Some(gpu::RasterizationStateDescriptor {
                     front_face: gpu::FrontFace::Ccw,
-                    cull_mode: gpu::CullMode::None,
+                    cull_mode: gpu::CullMode::Back,
                     ..Default::default()
                 }),
                 primitive_topology: gpu::PrimitiveTopology::TriangleList,
@@ -216,11 +218,11 @@ impl ModelsPass {
                                 && frustrum.check_sphere(&pos.as_vec3(), 2.0)
                             {
                                 if let Some(i) = self.instance_set.get_mut(&model.index) {
-                                    i.push((pt.x as f32, pt.z as f32, pt.y as f32));
+                                    i.push((pt.x as f32, pt.z as f32, pt.y as f32, model.scale));
                                 } else {
                                     self.instance_set.insert(
                                         model.index,
-                                        vec![(pt.x as f32, pt.z as f32, pt.y as f32)],
+                                        vec![(pt.x as f32, pt.z as f32, pt.y as f32, model.scale)],
                                     );
                                 }
                             }
@@ -233,8 +235,8 @@ impl ModelsPass {
                 let mut end = 0;
                 for (k, v) in self.instance_set.iter() {
                     if !v.is_empty() {
-                        for (x, y, z) in v.iter() {
-                            self.instance_buffer.add3(*x, *y, *z);
+                        for (x, y, z, scale) in v.iter() {
+                            self.instance_buffer.add4(*x, *y, *z, *scale);
                             end += 1;
                         }
                         self.instances.push((*k, start as u32, end as u32));

@@ -17,7 +17,9 @@ pub struct Item {}
 pub struct Sentient {}
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-pub struct Vegetation {}
+pub struct Vegetation {
+    pub size: f32
+}
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Tree {}

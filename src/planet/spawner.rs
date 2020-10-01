@@ -110,8 +110,8 @@ pub fn spawn_item_carried(
     }
 }
 
-pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize) {
-    crate::components::spawner::spawn_plant(ecs, tag, x, y, z, region_idx)
+pub fn spawn_plant(ecs: &mut World, tag: &str, x: usize, y: usize, z: usize, region_idx: usize, size: f32) {
+    crate::components::spawner::spawn_plant(ecs, tag, x, y, z, region_idx, size)
 }
 
 pub fn spawn_tree(
@@ -121,6 +121,7 @@ pub fn spawn_tree(
     z: usize,
     region_idx: usize,
     model_id: usize,
+    size: f32
 ) {
-    crate::components::spawner::spawn_tree(ecs, x, y, z, region_idx, model_id)
+    crate::components::spawner::spawn_tree(ecs, x, y, z, region_idx, model_id, size)
 }

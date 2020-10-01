@@ -8,10 +8,76 @@ use legion::*;
 // the terrain in a cross-hatch pattern.
 
 pub struct GrassPass {
-    grass_buffer: FloatBuffer<f32>,
+    grass_template: FloatBuffer<f32>,
+    instance_buffer: FloatBuffer<f32>,
     pipeline: gpu::RenderPipeline,
     bind_group: gpu::BindGroup,
     pub models_changed: bool,
+}
+
+pub fn build_grass_geometry() -> FloatBuffer<f32> {
+    let mut grass_template = FloatBuffer::new(&[3, 2, 1], 100, gpu::BufferUsage::VERTEX);
+    grass_template.build();
+
+    let bx = 0.5;
+    let bz = 0.0;
+    const HEIGHT: f32 = 0.5;
+    const GRASS_SPACING: f32 = 0.2;
+
+    let mut by = -0.5;
+    while by < 0.51 {
+        // Front
+        grass_template.add3(bx - 0.5, bz, by);
+        grass_template.add2(0.0, 0.0);
+        grass_template.add(2.0);
+        grass_template.add3(bx + 0.5, bz, by);
+        grass_template.add2(1.0, 0.0);
+        grass_template.add(2.0);
+        grass_template.add3(bx + 0.5, bz + HEIGHT, by);
+        grass_template.add2(1.0, 1.0);
+        grass_template.add(2.0);
+
+        grass_template.add3(bx - 0.5, bz, by);
+        grass_template.add2(0.0, 0.0);
+        grass_template.add(2.0);
+        grass_template.add3(bx - 0.5, bz + HEIGHT, by);
+        grass_template.add2(0.0, 1.0);
+        grass_template.add(2.0);
+        grass_template.add3(bx + 0.5, bz + HEIGHT, by);
+        grass_template.add2(1.0, 1.0);
+        grass_template.add(2.0);
+
+        by += GRASS_SPACING;
+    }
+
+    let by = 0.5;
+    let mut bx = 0.0;
+    while bx < 1.01 {
+        grass_template.add3(bx, bz, by - 0.5);
+        grass_template.add2(0.0, 0.0);
+        grass_template.add(4.0);
+        grass_template.add3(bx, bz, by + 0.5);
+        grass_template.add2(1.0, 0.0);
+        grass_template.add(4.0);
+        grass_template.add3(bx, bz + HEIGHT, by + 0.5);
+        grass_template.add2(1.0, 1.0);
+        grass_template.add(4.0);
+
+        grass_template.add3(bx, bz, by - 0.5);
+        grass_template.add2(0.0, 0.0);
+        grass_template.add(4.0);
+        grass_template.add3(bx, bz + HEIGHT, by - 0.5);
+        grass_template.add2(0.0, 1.0);
+        grass_template.add(4.0);
+        grass_template.add3(bx, bz + HEIGHT, by + 0.5);
+        grass_template.add2(1.0, 1.0);
+        grass_template.add(4.0);
+        bx += GRASS_SPACING;
+    }
+
+    grass_template.build();
+
+    grass_template
 }
 
 impl GrassPass {
@@ -26,11 +92,17 @@ impl GrassPass {
         let mut tlock = TEXTURES.write();
         let tex_id = tlock.load_texture_from_bytes(include_bytes!("grass.png"), "Grass");
 
-        // Make template grass buffer
-        let mut grass_buffer = FloatBuffer::new(&[3, 2], 1000, gpu::BufferUsage::VERTEX);
-        grass_buffer.add3(0.0, 0.0, 0.0);
-        grass_buffer.add2(0.0, 0.0);
-        grass_buffer.build();
+        // Make the grass template (to be instanced)
+        let grass_template = build_grass_geometry();
+
+        // Make placeholder instance buffer
+        // Format: x/y/z/scale
+        let mut instance_buffer = FloatBuffer::new(&[3, 1], 1000, gpu::BufferUsage::VERTEX);
+        instance_buffer.attributes[0].shader_location = 3;
+        instance_buffer.attributes[1].shader_location = 4;
+        instance_buffer.add3(0.0, 0.0, 0.0);
+        instance_buffer.add(0.0);
+        instance_buffer.build();
 
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
@@ -135,7 +207,10 @@ impl GrassPass {
                 }),
                 vertex_state: gpu::VertexStateDescriptor {
                     index_format: gpu::IndexFormat::Uint16,
-                    vertex_buffers: &[grass_buffer.descriptor()],
+                    vertex_buffers: &[
+                        grass_template.descriptor(),
+                        instance_buffer.instance_descriptor()
+                    ],
                 },
                 sample_count: 1,
                 sample_mask: !0,
@@ -143,14 +218,15 @@ impl GrassPass {
             });
 
         Self {
-            grass_buffer,
+            grass_template,
+            instance_buffer,
             bind_group,
             pipeline,
             models_changed: true,
         }
     }
 
-    pub fn render(&mut self, core: &Core, ecs: &mut World, frustrum: &Frustrum, gbuffer: &GBuffer) {
+    pub fn render(&mut self, _core: &Core, ecs: &mut World, frustrum: &Frustrum, gbuffer: &GBuffer) {
         if self.models_changed {
             let camera_z = <(&Position, &CameraOptions)>::query()
                 .iter(ecs)
@@ -159,61 +235,21 @@ impl GrassPass {
                 .unwrap()
                 .z;
 
-            self.grass_buffer.clear();
+            self.instance_buffer.clear();
             <(&Vegetation, &Position)>::query()
                 .iter(ecs)
-                .for_each(|(_, pos)| {
+                .for_each(|(veg, pos)| {
                     if let Some(pt) = pos.as_point3_only_tile() {
                         if pt.z <= camera_z
                             && pt.z > camera_z - 50
                             && frustrum.check_sphere(&pos.as_vec3(), 2.0)
                         {
-                            // Insert geometry
-                            let bx = pt.x as f32 + 0.5;
-                            let bz = pt.z as f32;
-                            const HEIGHT: f32 = 0.5;
-                            const GRASS_SPACING: f32 = 0.2;
-
-                            let mut by = pt.y as f32;
-                            while by < pt.y as f32 + 1.01 {
-                                self.grass_buffer.add3(bx - 0.5, bz, by);
-                                self.grass_buffer.add2(0.0, 0.0);
-                                self.grass_buffer.add3(bx + 0.5, bz, by);
-                                self.grass_buffer.add2(1.0, 0.0);
-                                self.grass_buffer.add3(bx + 0.5, bz + HEIGHT, by);
-                                self.grass_buffer.add2(1.0, 1.0);
-
-                                self.grass_buffer.add3(bx - 0.5, bz, by);
-                                self.grass_buffer.add2(0.0, 0.0);
-                                self.grass_buffer.add3(bx - 0.5, bz + HEIGHT, by);
-                                self.grass_buffer.add2(0.0, 1.0);
-                                self.grass_buffer.add3(bx + 0.5, bz + HEIGHT, by);
-                                self.grass_buffer.add2(1.0, 1.0);
-                                by += GRASS_SPACING;
-                            }
-
-                            let by = pt.y as f32 + 0.5;
-                            let mut bx = pt.x as f32;
-                            while bx < pt.x as f32 + 1.01 {
-                                self.grass_buffer.add3(bx, bz, by - 0.5);
-                                self.grass_buffer.add2(0.0, 0.0);
-                                self.grass_buffer.add3(bx, bz, by + 0.5);
-                                self.grass_buffer.add2(1.0, 0.0);
-                                self.grass_buffer.add3(bx, bz + HEIGHT, by + 0.5);
-                                self.grass_buffer.add2(1.0, 1.0);
-
-                                self.grass_buffer.add3(bx, bz, by - 0.5);
-                                self.grass_buffer.add2(0.0, 0.0);
-                                self.grass_buffer.add3(bx, bz + HEIGHT, by - 0.5);
-                                self.grass_buffer.add2(0.0, 1.0);
-                                self.grass_buffer.add3(bx, bz + HEIGHT, by + 0.5);
-                                self.grass_buffer.add2(1.0, 1.0);
-                                bx += GRASS_SPACING;
-                            }
+                            self.instance_buffer.add3(pt.x as f32, pt.z as f32, pt.y as f32);
+                            self.instance_buffer.add(veg.size);
                         }
                     }
                 });
-            self.grass_buffer.build();
+            self.instance_buffer.build();
             self.models_changed = false;
         }
 
@@ -250,7 +286,7 @@ impl GrassPass {
                     attachment: tlock.get_view(0),
                     depth_ops: Some(gpu::Operations {
                         load: gpu::LoadOp::Load,
-                        store: true,
+                        store: false,
                     }),
                     stencil_ops: None,
                 }),
@@ -259,8 +295,10 @@ impl GrassPass {
             rpass.set_pipeline(&self.pipeline);
             rpass.set_bind_group(0, &self.bind_group, &[]);
 
-            rpass.set_vertex_buffer(0, self.grass_buffer.slice());
-            rpass.draw(0..self.grass_buffer.len(), 0..1);
+            rpass.set_vertex_buffer(0, self.grass_template.slice());
+            rpass.set_vertex_buffer(1, self.instance_buffer.slice());
+            rpass.draw(0..self.grass_template.len(), 0..self.instance_buffer.len());
+            //println!("{}-{}", self.grass_template.len(), self.instance_buffer.len());
         }
         ctx.queue.submit(Some(encoder.finish()));
     }

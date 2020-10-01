@@ -2,6 +2,7 @@
 
 layout(location=0) in vec3 v_world_pos;
 layout(location=1) in vec2 v_uv;
+layout(location=2) in vec3 v_normal;
 
 layout(location=0) out vec4 f_color;
 layout(location=1) out vec4 f_normal;
@@ -15,5 +16,5 @@ void main() {
         discard;
     }
     f_color = base_color;
-    f_normal = vec4(1.0, 0.0, 1.0, 0.0);
+    f_normal = vec4(v_normal, 1.0);
 }

@@ -10,6 +10,11 @@ lazy_static! {
     static ref TREE_COUNTER: RwLock<usize> = RwLock::new(1);
 }
 
+fn random_tree_height(rng: &mut RandomNumberGenerator) -> f32 {
+    let n = rng.range(40, 100);
+    n as f32 / 100.0
+}
+
 pub fn plant_trees(
     region: &mut Region,
     biome: &BiomeType,
@@ -25,7 +30,7 @@ pub fn plant_trees(
             e_chance = t.freq as i32;
         }
     }
-    println!("{}, {}, {}", d_chance, e_chance, biome.name);
+    //println!("{}, {}, {}", d_chance, e_chance, biome.name);
 
     for y in 10..REGION_HEIGHT - 10 {
         for x in 10..REGION_WIDTH - 10 {
@@ -60,6 +65,7 @@ pub fn plant_trees(
                                 z,
                                 region.world_idx,
                                 rng.range(0, MAX_TREE) as usize,
+                                random_tree_height(rng)
                             )
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
@@ -71,6 +77,7 @@ pub fn plant_trees(
                                     z,
                                     region.world_idx,
                                     rng.range(0, MAX_TREE) as usize,
+                                    random_tree_height(rng)
                                 )
                             }
                         }
