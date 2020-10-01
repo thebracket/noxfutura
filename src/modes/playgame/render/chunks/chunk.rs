@@ -68,8 +68,11 @@ impl Chunk {
     }
 
     #[inline]
-    fn water_material(&self) -> usize {
-        35
+    fn water_material(&self) -> (usize, bool) {
+        (
+            crate::raws::get_material_by_tag("Water").unwrap(),
+            false
+        )
     }
 
     pub fn rebuild(&mut self, region: &Region) {
@@ -135,9 +138,9 @@ impl Chunk {
                                     _ => {}
                                 }
                                 // Temporary water 2
-                                /*if region.water_level[idx] > 0 {
+                                if region.water_level[idx] > 0 {
                                     floors.insert(idx, self.water_material());
-                                }*/
+                                }
                             }
                         }
                     }

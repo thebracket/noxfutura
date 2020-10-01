@@ -25,5 +25,14 @@
             description: "A nano-hybrid cloth.",
             tint: (1.0, 1.0, 1.0)
         ),
+
+        MaterialDef(
+            name: "Water",
+            layer: Synthetic,
+            hit_points: 10,
+            mines_to: [ ],
+            description: "Temporary Water",
+            tint: (0.1, 0.1, 1.0)
+        ),
     ])
 )
