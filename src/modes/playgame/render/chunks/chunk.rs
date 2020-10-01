@@ -14,8 +14,10 @@ pub struct Chunk {
     pub base: (usize, usize, usize),
     cells: Vec<usize>,
     pub dirty: bool,
+    floors: FloatBuffer<f32>,
     vb: FloatBuffer<f32>,
     element_count: [u32; CHUNK_SIZE],
+    floor_element_count: [u32; CHUNK_SIZE],
     pub center_pos: Vector3<f32>,
 }
 
@@ -41,7 +43,13 @@ impl Chunk {
                 10,
                 gpu::BufferUsage::VERTEX | gpu::BufferUsage::COPY_DST,
             ),
+            floors: FloatBuffer::new(
+                &[3, 2, 1, 1, 1],
+                10,
+                gpu::BufferUsage::VERTEX | gpu::BufferUsage::COPY_DST,
+            ),
             element_count: [0; CHUNK_SIZE],
+            floor_element_count: [0; CHUNK_SIZE],
             center_pos: (
                 (x * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,
                 (y * CHUNK_SIZE) as f32 + (CHUNK_SIZE / 2) as f32,
@@ -89,7 +97,9 @@ impl Chunk {
         }
         self.dirty = false;
         self.vb.clear();
+        self.floors.clear();
         self.element_count = [0; CHUNK_SIZE];
+        self.floor_element_count = [0; CHUNK_SIZE];
 
         let mut count_empty = 0;
         self.cells.iter().for_each(|idx| {
@@ -146,15 +156,15 @@ impl Chunk {
                                     floors.insert(idx, self.water_material());
                                 }
                             } else {
-                                cubes.insert(idx, self.hidden_material());
+                                floors.insert(idx, self.hidden_material());
                             }
                         }
                     }
 
                     super::greedy::greedy_floors(
                         &mut floors,
-                        &mut self.vb.data,
-                        &mut self.element_count[z],
+                        &mut self.floors.data,
+                        &mut self.floor_element_count[z],
                     );
                     super::greedy::greedy_cubes(
                         &mut cubes,
@@ -169,6 +179,9 @@ impl Chunk {
         if self.vb.len() > 0 {
             //println!("Updated buffer");
             self.vb.update_buffer();
+        }
+        if self.floors.len() > 0 {
+            self.floors.update_buffer();
         }
     }
 
@@ -188,6 +201,27 @@ impl Chunk {
 
         if n_elements > 0 {
             Some((&self.vb, n_elements * 3))
+        } else {
+            None
+        }
+    }
+
+    pub fn maybe_render_chunk_floors(&self, camera_z: i32) -> Option<(&FloatBuffer<f32>, u32)> {
+        if self.t == ChunkType::Empty {
+            return None;
+        }
+
+        //let camera_ceiling = camera_z + 20;
+        let mut n_elements = 0;
+        for z in 0..CHUNK_SIZE {
+            let layer_z = z + self.base.2;
+            if layer_z <= camera_z as usize {
+                n_elements += self.floor_element_count[z];
+            }
+        }
+
+        if n_elements > 0 {
+            Some((&self.floors, n_elements * 3))
         } else {
             None
         }

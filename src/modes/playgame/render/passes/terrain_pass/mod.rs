@@ -122,7 +122,7 @@ impl TerrainPass {
                 depth_stencil_state: Some(gpu::DepthStencilStateDescriptor {
                     format: gpu::TextureFormat::Depth32Float,
                     depth_write_enabled: true,
-                    depth_compare: gpu::CompareFunction::LessEqual,
+                    depth_compare: gpu::CompareFunction::Less,
                     stencil: gpu::StencilStateDescriptor::default(),
                 }),
                 vertex_state: gpu::VertexStateDescriptor {
@@ -199,6 +199,13 @@ impl TerrainPass {
             rpass.set_bind_group(1, &self.palette_bind_group, &[]);
             rpass.set_bind_group(2, &self.terrain_textures.bind_group, &[]);
 
+            for chunk in chunks.visible_chunks() {
+                let buffer = chunk.maybe_render_chunk_floors(camera_z);
+                if let Some(buffer) = buffer {
+                    rpass.set_vertex_buffer(0, buffer.0.slice());
+                    rpass.draw(0..buffer.1, 0..1);
+                }
+            }
             for chunk in chunks.visible_chunks() {
                 let buffer = chunk.maybe_render_chunk(camera_z);
                 if let Some(buffer) = buffer {

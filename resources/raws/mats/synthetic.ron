@@ -41,7 +41,15 @@
             hit_points: 10,
             mines_to: [ ],
             description: "You haven't revealed this tile, yet.",
-            tint: (1.0, 0.0, 1.0)
+            tint: (1.0, 1.0, 1.0),
+            texture: Some(
+                MaterialTextureSet(
+                    base: Some("hidden"),
+                    floor: Some("hidden"),
+                    constructed: Some("hidden"),
+                    floor_constructed: Some("hidden")
+                )
+            ),
         ),
     ])
 )

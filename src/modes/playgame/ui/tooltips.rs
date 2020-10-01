@@ -21,6 +21,9 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
     {
         let idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
         let r = REGION.read();
+        if !r.revealed[idx] {
+            return;
+        }
 
         // Type info
         let mi = r.material_idx[idx];
