@@ -57,7 +57,7 @@ where
         depth_texture,
         mut imgui,
         mut imgui_renderer,
-        mut hidpi_factor,
+        mut _hidpi_factor,
         mut platform,
     ) = bootstrap(title);
 
@@ -73,12 +73,12 @@ where
         match event {
             Event::NewEvents(_) => last_frame = imgui.io_mut().update_delta_time(last_frame),
             Event::MainEventsCleared => window.request_redraw(),
-            Event::WindowEvent {
+            /*Event::WindowEvent {
                 event: WindowEvent::ScaleFactorChanged { scale_factor, .. },
                 ..
             } => {
-                hidpi_factor = scale_factor;
-            }
+                //hidpi_factor = scale_factor;
+            }*/
             Event::WindowEvent {
                 event: WindowEvent::Resized(size),
                 ..
@@ -102,7 +102,7 @@ where
                 platform
                     .prepare_frame(imgui.io_mut(), &window)
                     .expect("Failed to prepare frame");
-                let mouse_position = imgui.io().mouse_pos;
+                //let mouse_position = imgui.io().mouse_pos;
                 let ui = imgui.frame();
 
                 let mut core = Core {
