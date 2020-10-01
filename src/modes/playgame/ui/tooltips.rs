@@ -1,6 +1,6 @@
 use crate::components::*;
 use crate::modes::playgame::systems::REGION;
-use crate::planet::Region;
+use crate::planet::{ Region, TileType };
 use crate::spatial::*;
 use bengine::gui::*;
 use legion::*;
@@ -27,12 +27,27 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
 
         // Type info
         let mi = r.material_idx[idx];
-        lines.push((
-            false,
-            crate::RAWS.read().materials.materials[mi].name.clone(),
-        ));
+        lines.push(
+            (
+                true,
+                format!("{} ({})",
+                    match r.tile_types[idx] {
+                        TileType::Empty => "Empty Space",
+                        TileType::Floor => "Floor",
+                        TileType::SemiMoltenRock => "Semi-Molten Rock",
+                        TileType::Solid => "Solid",
+                        TileType::Stairs{..} => "Stairs",
+                        TileType::Wall => "Wall",
+                        TileType::Ramp{..} => "Ramp",
+                        _ => ""
+                    }.to_string(),
+                    crate::RAWS.read().materials.materials[mi].name.clone()
+                )
+            )
+        );
 
         // Flags
+        /*
         let mut l = String::new();
         if r.flag(idx, Region::SOLID) {
             l += "SOLID|";
@@ -60,7 +75,7 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
         }
         if !l.is_empty() {
             lines.push((false, l));
-        }
+        }*/
     }
 
     // This is eating a ton of frame time!
