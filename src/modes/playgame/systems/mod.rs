@@ -10,6 +10,8 @@ mod initiative;
 mod settler_scheduler;
 mod end_turn;
 mod leisure_shift;
+mod sleep_shift;
+mod work_shift;
 mod move_randomly;
 
 use super::messaging;
@@ -33,6 +35,8 @@ pub fn build_scheduler() -> Schedule {
         .add_system(settler_scheduler::settler_schedule_system())
         .flush()
         .add_system(leisure_shift::leisure_shift_system())
+        .add_system(sleep_shift::sleep_shift_system())
+        .add_system(work_shift::work_shift_system())
         .flush()
         .add_system(move_randomly::move_randomly_system())
         .flush()
