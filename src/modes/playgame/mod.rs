@@ -5,6 +5,7 @@ mod systems;
 mod ui;
 mod uniforms;
 mod run_state;
+mod messaging;
 
 pub use run_state::*;
 pub use play::PlayTheGame;
@@ -12,10 +13,12 @@ pub use render::{
     Chunks, GBuffer, GrassPass, LightingPass, Models, ModelsPass, Palette, TerrainPass, VoxPass,
 };
 pub use uniforms::{Camera, CameraUniform};
+pub use messaging::*;
 
 pub struct GameStateResource {
     keycode: Option<bengine::VirtualKeyCode>,
     pub camera_changed: bool,
+    pub vox_moved: bool,
 }
 
 impl GameStateResource {
@@ -23,6 +26,7 @@ impl GameStateResource {
         Self {
             keycode: None,
             camera_changed: false,
+            vox_moved: false
         }
     }
 

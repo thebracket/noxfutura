@@ -112,21 +112,26 @@ impl PlayTheGame {
 
     #[inline(always)]
     fn update_camera(&mut self) {
-        let mut shared_state = self.ecs_resources.get_mut::<super::GameStateResource>();
-        if shared_state.as_mut().unwrap().camera_changed {
-            shared_state.as_mut().unwrap().camera_changed = false;
-            let mut camera_changed = <(&Position, &CameraOptions)>::query();
-            for (pos, camopts) in camera_changed.iter(&self.ecs) {
-                let size = RENDER_CONTEXT.read().as_ref().unwrap().size;
-                let pass = self.terrain_pass.as_mut().unwrap();
-                pass.camera
-                    .update(&*pos, &*camopts, size.width, size.height);
-                let camera_matrix = pass.camera.build_view_projection_matrix();
-                self.chunks.on_camera_move(&camera_matrix, &*pos);
-                self.model_pass.as_mut().unwrap().models_changed = true;
-                self.grass_pass.as_mut().unwrap().models_changed = true;
+        if let Some(mut shared_state) = self.ecs_resources.get_mut::<super::GameStateResource>() {
+            if shared_state.camera_changed {
+                shared_state.camera_changed = false;
+                let mut camera_changed = <(&Position, &CameraOptions)>::query();
+                for (pos, camopts) in camera_changed.iter(&self.ecs) {
+                    let size = RENDER_CONTEXT.read().as_ref().unwrap().size;
+                    let pass = self.terrain_pass.as_mut().unwrap();
+                    pass.camera
+                        .update(&*pos, &*camopts, size.width, size.height);
+                    let camera_matrix = pass.camera.build_view_projection_matrix();
+                    self.chunks.on_camera_move(&camera_matrix, &*pos);
+                    self.model_pass.as_mut().unwrap().models_changed = true;
+                    self.grass_pass.as_mut().unwrap().models_changed = true;
+                    self.vox_pass.as_mut().unwrap().models_changed = true;
+                    pass.uniforms.update_view_proj(&pass.camera);
+                }
+            }
+            if shared_state.vox_moved {
+                shared_state.vox_moved = false;
                 self.vox_pass.as_mut().unwrap().models_changed = true;
-                pass.uniforms.update_view_proj(&pass.camera);
             }
         }
     }
@@ -184,6 +189,9 @@ impl NoxMode for PlayTheGame {
                 RunState::FullSpeed => self.regular_schedule.execute(&mut self.ecs, &mut self.ecs_resources),
             }
             std::mem::drop(run_state);
+
+            // 1a -> Handle messages
+            super::messaging::process_queues(&mut self.ecs, &mut self.ecs_resources);
 
             // Phase 2: Actually render stuff
             self.update_camera();
