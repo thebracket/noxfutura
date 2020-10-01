@@ -254,11 +254,14 @@ impl ModelsPass {
             rpass.set_vertex_buffer(1, self.instance_buffer.slice());
             rpass.set_index_buffer(self.models.index_buffer.slice(..));
 
+            //let mut n_instances = 0;
             for render in self.instances.iter() {
                 let range = self.models.model_map[render.0].start as u32
                     ..self.models.model_map[render.0].end as u32;
                 rpass.draw_indexed(range, 0, render.1..render.2);
+                //n_instances += render.2 - render.1;
             }
+            //println!("{} Trees", n_instances);
         }
         ctx.queue.submit(Some(encoder.finish()));
 
