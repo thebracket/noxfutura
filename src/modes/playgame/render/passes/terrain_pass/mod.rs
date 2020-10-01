@@ -122,7 +122,7 @@ impl TerrainPass {
                 depth_stencil_state: Some(gpu::DepthStencilStateDescriptor {
                     format: gpu::TextureFormat::Depth32Float,
                     depth_write_enabled: true,
-                    depth_compare: gpu::CompareFunction::Less,
+                    depth_compare: gpu::CompareFunction::LessEqual,
                     stencil: gpu::StencilStateDescriptor::default(),
                 }),
                 vertex_state: gpu::VertexStateDescriptor {

@@ -75,6 +75,14 @@ impl Chunk {
         )
     }
 
+    #[inline]
+    fn hidden_material(&self) -> (usize, bool) {
+        (
+            crate::raws::get_material_by_tag("Hidden").unwrap(),
+            false
+        )
+    }
+
     pub fn rebuild(&mut self, region: &Region) {
         if !self.dirty {
             return;
@@ -85,13 +93,9 @@ impl Chunk {
 
         let mut count_empty = 0;
         self.cells.iter().for_each(|idx| {
-            if !region.revealed[*idx] {
-                count_empty += 1;
-            } else {
-                match region.tile_types[*idx] {
-                    TileType::Empty => count_empty += 1,
-                    _ => {}
-                }
+            match region.tile_types[*idx] {
+                TileType::Empty => count_empty += 1,
+                _ => {}
             }
         });
 
@@ -141,6 +145,8 @@ impl Chunk {
                                 if region.water_level[idx] > 0 {
                                     floors.insert(idx, self.water_material());
                                 }
+                            } else {
+                                cubes.insert(idx, self.hidden_material());
                             }
                         }
                     }
