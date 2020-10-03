@@ -8,3 +8,5 @@ mod vox_pass;
 pub use vox_pass::VoxPass;
 mod lighting_pass;
 pub use lighting_pass::*;
+mod cursors_pass;
+pub use cursors_pass::*;

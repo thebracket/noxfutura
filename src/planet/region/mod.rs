@@ -20,7 +20,6 @@ pub struct Region {
     pub biome_raw_idx: usize,
     pub revealed: Vec<bool>,
     pub water_level: Vec<u8>,
-    pub tree_bases: HashMap<usize, usize>,
     flags: Vec<u16>,
     pub jobs_board: JobsBoard,
 }
@@ -37,7 +36,6 @@ impl Region {
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
             jobs_board: JobsBoard::new(),
-            tree_bases: HashMap::new(),
         }
     }
 
@@ -52,7 +50,6 @@ impl Region {
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
             jobs_board: JobsBoard::new(),
-            tree_bases: HashMap::new(),
         }
     }
 

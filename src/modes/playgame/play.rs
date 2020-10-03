@@ -1,7 +1,5 @@
-use super::{
-    loadstate::*, systems::REGION, Chunks, GBuffer, GrassPass, LightingPass, ModelsPass, Palette,
-    TerrainPass, VoxPass, RunState
-};
+use super::{Chunks, DesignMode, GBuffer, GrassPass, LightingPass, ModelsPass, Palette, 
+    RunState, TerrainPass, VoxPass, loadstate::*, systems::REGION, CursorPass};
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
@@ -20,6 +18,7 @@ pub struct PlayTheGame {
     grass_pass: Option<GrassPass>,
     vox_pass: Option<VoxPass>,
     lighting_pass: Option<LightingPass>,
+    cursor_pass: Option<CursorPass>,
 
     palette: Option<Palette>,
     gbuffer: Option<GBuffer>,
@@ -45,6 +44,7 @@ impl PlayTheGame {
             grass_pass: None,
             vox_pass: None,
             lighting_pass: None,
+            cursor_pass: None,
             palette: None,
             gbuffer: None,
             regular_schedule: super::systems::build_scheduler(),
@@ -86,6 +86,7 @@ impl PlayTheGame {
                     self.vox_pass = loader_lock.vox_pass.take();
                     self.palette = loader_lock.palette.take();
                     self.lighting_pass = loader_lock.lighting_pass.take();
+                    self.cursor_pass = loader_lock.cursor_pass.take();
 
                     self.chunks.rebuild_all();
                     let mut query = <(&Position, &CameraOptions)>::query();
@@ -232,13 +233,29 @@ impl NoxMode for PlayTheGame {
                 self.gbuffer.as_ref().unwrap(),
             );
 
-            // Phase 3: Draw the UI
             let mut rs = self.ecs_resources.get_mut::<RunState>();
             let run_state = rs.as_mut().unwrap();
+            self.cursor_pass.as_mut().unwrap().render(
+                core,
+                &mut self.ecs,
+                &run_state
+            );
+
+            // Phase 3: Draw the UI
             super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
             super::ui::draw_main_menu(&self.ecs, run_state, &core.imgui);
+            design_ui(run_state, core, &self.ecs);
         }
 
         result
+    }
+}
+
+fn design_ui(run_state: &RunState, core: &mut Core, ecs: &World) {
+    match run_state {
+        RunState::Design{ mode: DesignMode::Lumberjack } => {
+            super::ui::lumberjack_display(core.imgui, ecs, &core.mouse_world_pos);
+        },
+        _ => {}
     }
 }

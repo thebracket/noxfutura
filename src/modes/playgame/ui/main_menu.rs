@@ -1,4 +1,4 @@
-use crate::components::*;
+use crate::{components::*, modes::playgame::DesignMode};
 use bengine::gui::*;
 use legion::*;
 use super::super::RunState;
@@ -53,10 +53,9 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
                 .shortcut(im_str!("T"))
                 .build(imgui)
             {
-                /*
                 *run_state = RunState::Design {
                     mode: DesignMode::Lumberjack,
-                };*/
+                };
             }
             if MenuItem::new(im_str!("\u{f1b3} Mining"))
                 .shortcut(im_str!("D"))

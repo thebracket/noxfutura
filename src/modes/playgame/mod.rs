@@ -11,6 +11,7 @@ pub use run_state::*;
 pub use play::PlayTheGame;
 pub use render::{
     Chunks, GBuffer, GrassPass, LightingPass, Models, ModelsPass, Palette, TerrainPass, VoxPass,
+    CursorPass
 };
 pub use uniforms::{Camera, CameraUniform};
 pub use messaging::*;

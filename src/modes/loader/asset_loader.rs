@@ -1,6 +1,6 @@
 use crate::modes::{
     playgame::GrassPass, playgame::LightingPass, playgame::ModelsPass, playgame::TerrainPass,
-    playgame::VoxPass, GBuffer, Palette,
+    playgame::VoxPass, playgame::CursorPass, GBuffer, Palette,
 };
 use parking_lot::RwLock;
 use std::thread;
@@ -20,6 +20,7 @@ pub struct LoaderState {
     pub grass_pass: Option<GrassPass>,
     pub vox_pass: Option<VoxPass>,
     pub lighting_pass: Option<LightingPass>,
+    pub cursor_pass: Option<CursorPass>
 }
 
 impl LoaderState {
@@ -35,6 +36,7 @@ impl LoaderState {
             grass_pass: None,
             vox_pass: None,
             lighting_pass: None,
+            cursor_pass: None
         }
     }
 
@@ -74,12 +76,16 @@ impl LoaderState {
             LOADER.write().update(0.3, "Turning on the lights", false);
             let lighting = crate::modes::playgame::LightingPass::new(&gbuffer);
 
+            LOADER.write().update(0.4, "Hypnotized by blinking cursors", false);
+            let cursors = crate::modes::playgame::CursorPass::new(&terrain_pass.uniforms);
+
             LOADER.write().g_buffer = Some(gbuffer);
             LOADER.write().terrain_pass = Some(terrain_pass);
             LOADER.write().model_pass = Some(model_pass);
             LOADER.write().grass_pass = Some(grassy_gnoll);
             LOADER.write().vox_pass = Some(voxels);
             LOADER.write().lighting_pass = Some(lighting);
+            LOADER.write().cursor_pass = Some(cursors);
 
             // Finish up by moving the palette
             LOADER.write().palette = Some(palette);

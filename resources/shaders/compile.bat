@@ -15,3 +15,6 @@ glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\vox_pass\vox.vert
 
 glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\lighting_pass\lighting.frag -o ..\..\src\modes\playgame\render\passes\lighting_pass\lighting.frag.spv
 glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\lighting_pass\lighting.vert -o ..\..\src\modes\playgame\render\passes\lighting_pass\lighting.vert.spv
+
+glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\cursors_pass\cursors.frag -o ..\..\src\modes\playgame\render\passes\cursors_pass\cursors.frag.spv
+glslangValidator.exe -V ..\..\src\modes\playgame\render\passes\cursors_pass\cursors.vert -o ..\..\src\modes\playgame\render\passes\cursors_pass\cursors.vert.spv

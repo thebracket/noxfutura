@@ -9,5 +9,5 @@ pub use chunks::*;
 pub use gbuffer::GBuffer;
 pub use models::*;
 pub use palette::Palette;
-pub use passes::{GrassPass, LightingPass, ModelsPass, TerrainPass, VoxPass};
+pub use passes::{GrassPass, LightingPass, ModelsPass, TerrainPass, VoxPass, CursorPass};
 pub use voxels::*;

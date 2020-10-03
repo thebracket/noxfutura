@@ -1,3 +1,4 @@
+use crate::modes::playgame::DesignMode;
 use super::super::GameStateResource;
 use bengine::VirtualKeyCode;
 use legion::*;
@@ -11,6 +12,7 @@ pub fn pause_control(#[resource] state: &mut GameStateResource, #[resource] run_
             VirtualKeyCode::Key1 => *run_state = RunState::SlowMo,
             VirtualKeyCode::Key2 => *run_state = RunState::Running,
             VirtualKeyCode::Key3 => *run_state = RunState::FullSpeed,
+            VirtualKeyCode::T => *run_state = RunState::Design { mode: DesignMode::Lumberjack },
             _ => {},
         }
     }
