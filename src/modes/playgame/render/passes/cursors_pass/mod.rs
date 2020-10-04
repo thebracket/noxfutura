@@ -187,9 +187,9 @@ impl CursorPass {
                         pt.x as f32,
                         pt.y as f32,
                         pt.z as f32,
-                        3.0,
-                        3.0,
-                        3.0,
+                        1.0,
+                        1.0,
+                        2.0,
                         1.0,
                     );
                 }

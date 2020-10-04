@@ -13,6 +13,7 @@ mod leisure_shift;
 mod sleep_shift;
 mod work_shift;
 mod move_randomly;
+mod lumberjack;
 
 use super::messaging;
 
@@ -38,6 +39,7 @@ pub fn build_scheduler() -> Schedule {
         .add_system(sleep_shift::sleep_shift_system())
         .add_system(work_shift::work_shift_system())
         .flush()
+        .add_system(lumberjack::lumberjack_system())
         .add_system(move_randomly::move_randomly_system())
         .flush()
         .add_system(end_turn::end_turn_system())

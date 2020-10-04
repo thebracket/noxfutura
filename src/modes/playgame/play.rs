@@ -134,6 +134,10 @@ impl PlayTheGame {
                 shared_state.vox_moved = false;
                 self.vox_pass.as_mut().unwrap().models_changed = true;
             }
+            if shared_state.models_moved {
+                shared_state.models_moved = false;
+                self.model_pass.as_mut().unwrap().models_changed = true;
+            }
         }
     }
 }

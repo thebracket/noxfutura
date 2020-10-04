@@ -9,7 +9,6 @@ pub use terrain_lights::TerrainLights;
 
 pub enum LightingDirtyState {
     Clean,
-    Partial,
     Full,
 }
 

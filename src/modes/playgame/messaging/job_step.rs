@@ -15,4 +15,6 @@ pub enum JobStep {
     DeleteItem { id: usize },
     FinishBuilding { building_id: usize },
     DeleteBuilding { building_id: usize },
+    VoxMoved,
+    ModelsMoved
 }

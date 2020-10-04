@@ -20,6 +20,7 @@ pub struct GameStateResource {
     keycode: Option<bengine::VirtualKeyCode>,
     pub camera_changed: bool,
     pub vox_moved: bool,
+    pub models_moved: bool
 }
 
 impl GameStateResource {
@@ -27,7 +28,8 @@ impl GameStateResource {
         Self {
             keycode: None,
             camera_changed: false,
-            vox_moved: false
+            vox_moved: false,
+            models_moved: false
         }
     }
 
