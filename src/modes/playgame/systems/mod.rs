@@ -14,6 +14,7 @@ mod settler_scheduler;
 mod sleep_shift;
 mod viewshed;
 mod work_shift;
+mod construct_building;
 
 use super::messaging;
 
@@ -40,6 +41,7 @@ pub fn build_scheduler() -> Schedule {
         .add_system(work_shift::work_shift_system())
         .flush()
         .add_system(lumberjack::lumberjack_system())
+        .add_system(construct_building::construction_system())
         .add_system(move_randomly::move_randomly_system())
         .flush()
         .add_system(end_turn::end_turn_system())

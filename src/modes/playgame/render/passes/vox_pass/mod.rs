@@ -1,5 +1,5 @@
 use super::super::VoxBuffer;
-use crate::components::*;
+use crate::{components::*, modes::playgame::RunState, modes::playgame::DesignMode};
 use crate::modes::playgame::{CameraUniform, GBuffer, Palette};
 use crate::utils::Frustrum;
 use bengine::*;
@@ -162,8 +162,17 @@ impl VoxPass {
         frustrum: &Frustrum,
         palette: &Palette,
         gbuffer: &GBuffer,
+        run_state: &RunState
     ) {
-        if self.models_changed {
+        if self.models_changed || match run_state {
+            RunState::Design{mode} => {
+                match mode {
+                    DesignMode::Buildings{..} => true,
+                    _ => false
+                }
+            }
+            _ => false,
+        } {
             let camera_z = <(&Position, &CameraOptions)>::query()
                 .iter(ecs)
                 .map(|(pos, _)| pos.as_point3())
@@ -178,8 +187,14 @@ impl VoxPass {
                 &mut self.instance_buffer,
                 &mut self.vox_instances,
                 frustrum,
-                &(0, 0, 0),
-                &None,
+                &core.mouse_world_pos,
+                match run_state {
+                    RunState::Design { mode } => match mode {
+                        DesignMode::Buildings { vox, .. } => vox,
+                        _ => &None,
+                    },
+                    _ => &None,
+                },
                 palette,
             );
 

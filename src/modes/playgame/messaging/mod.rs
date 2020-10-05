@@ -69,3 +69,23 @@ pub fn vox_moved() {
 pub fn models_moved() {
     JOBS_QUEUE.lock().push_back(JobStep::ModelsMoved);
 }
+
+pub fn lights_changed() {
+    JOBS_QUEUE.lock().push_back(JobStep::LightsChanged);
+}
+
+pub fn delete_item(id: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::DeleteItem { id });
+}
+
+pub fn delete_building(building_id: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::DeleteBuilding { building_id });
+}
+
+pub fn finish_building(building_id: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::FinishBuilding { building_id });
+}

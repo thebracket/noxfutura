@@ -8,6 +8,7 @@ use legion::*;
 pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
     let mut vox_moved = false;
     let mut models_moved = false;
+    let mut lights_changed = false;
     MOVER_LIST.lock().clear();
     loop {
         let js = super::JOBS_QUEUE.lock().pop_front();
@@ -15,6 +16,7 @@ pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
             match js {
                 JobStep::VoxMoved => vox_moved = true,
                 JobStep::ModelsMoved => models_moved = true,
+                JobStep::LightsChanged => lights_changed = true,
                 _ => apply(ecs, &mut js),
             }
         } else {
@@ -23,7 +25,7 @@ pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
     }
     movers(ecs, resources);
 
-    if vox_moved || models_moved {
+    if vox_moved || models_moved || lights_changed {
         let mut gs = resources.get_mut::<GameStateResource>();
         let gsr = gs.as_mut().unwrap();
         if vox_moved {
@@ -31,6 +33,9 @@ pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
         }
         if models_moved {
             gsr.models_moved = true;
+        }
+        if lights_changed {
+            gsr.lights_changed = true;
         }
     }
 }
@@ -205,6 +210,54 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     );
                 }
                 super::vox_moved();
+            }
+        }
+        JobStep::DeleteItem { id } => {
+            let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(_, _, idt)| idt.0 == *id)
+                .map(|(e, _, _)| *e)
+                .nth(0);
+            if let Some(i) = i {
+                ecs.remove(i);
+            }
+            super::vox_moved();
+        }
+
+        JobStep::DeleteBuilding { building_id } => {
+            let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
+                .iter(ecs)
+                .filter(|(_, _, idt)| idt.0 == *building_id)
+                .map(|(e, _, _)| *e)
+                .nth(0);
+            if let Some(i) = i {
+                ecs.remove(i);
+            }
+            super::vox_moved();
+            super::lights_changed();
+        }
+
+        JobStep::FinishBuilding { building_id } => {
+            println!("Finish building called for id {}", building_id);
+            let e = <(Entity, Read<Position>, Read<IdentityTag>, Read<Building>)>::query()
+                .iter(ecs)
+                .filter(|(_, _, idt, _)| idt.0 == *building_id)
+                .map(|(e, _, _, _)| *e)
+                .nth(0);
+
+            if let Some(e) = e {
+                println!("Entity located");
+                if let Some(mut en) = ecs.entry(e) {
+                    println!("Entry obtained");
+                    if let Ok(b) = en.get_component_mut::<Building>() {
+                        println!("Building updated");
+                        b.complete = true;
+                    }
+                    if let Ok(mut l) = en.get_component_mut::<Light>() {
+                        l.enabled = true;
+                        super::lights_changed();
+                    }
+                }
             }
         }
         _ => {}

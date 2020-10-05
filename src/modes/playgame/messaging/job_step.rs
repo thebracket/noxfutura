@@ -16,4 +16,5 @@ pub enum JobStep {
     DeleteBuilding { building_id: usize },
     VoxMoved,
     ModelsMoved,
+    LightsChanged,
 }

@@ -140,6 +140,10 @@ impl PlayTheGame {
                 shared_state.models_moved = false;
                 self.model_pass.as_mut().unwrap().models_changed = true;
             }
+            if shared_state.lights_changed {
+                shared_state.lights_changed = false;
+                self.lighting_pass.as_mut().unwrap().lighting_changed = true;
+            }
         }
     }
 }
@@ -233,13 +237,17 @@ impl NoxMode for PlayTheGame {
                 self.gbuffer.as_ref().unwrap(),
             );
 
-            self.vox_pass.as_mut().unwrap().render(
-                core,
-                &mut self.ecs,
-                &self.chunks.frustrum,
-                self.palette.as_ref().unwrap(),
-                self.gbuffer.as_ref().unwrap(),
-            );
+            {
+                let run_state = self.ecs_resources.get::<RunState>().unwrap().clone();
+                self.vox_pass.as_mut().unwrap().render(
+                    core,
+                    &mut self.ecs,
+                    &self.chunks.frustrum,
+                    self.palette.as_ref().unwrap(),
+                    self.gbuffer.as_ref().unwrap(),
+                    &run_state
+                );
+            }
 
             self.lighting_pass.as_mut().unwrap().render(
                 core,
@@ -257,19 +265,27 @@ impl NoxMode for PlayTheGame {
             // Phase 3: Draw the UI
             super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
             super::ui::draw_main_menu(&self.ecs, run_state, &core.imgui);
-            design_ui(run_state, core, &self.ecs);
+            design_ui(run_state, core, &mut self.ecs);
         }
 
         result
     }
 }
 
-fn design_ui(run_state: &RunState, core: &mut Core, ecs: &World) {
+fn design_ui(run_state: &mut RunState, core: &mut Core, ecs: &mut World) {
     match run_state {
         RunState::Design {
             mode: DesignMode::Lumberjack,
         } => {
             super::ui::lumberjack_display(core.imgui, ecs, &core.mouse_world_pos);
+        }
+        RunState::Design {
+            mode: DesignMode::Buildings{bidx, .. },
+        } => {
+            let (bidx, vox) = super::ui::building_display(core.imgui, ecs, &core.mouse_world_pos, *bidx);
+            *run_state = RunState::Design {
+                mode: DesignMode::Buildings { bidx, vox },
+            };
         }
         _ => {}
     }

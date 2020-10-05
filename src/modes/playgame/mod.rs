@@ -11,7 +11,7 @@ pub use messaging::*;
 pub use play::PlayTheGame;
 pub use render::{
     Chunks, CursorPass, GBuffer, GrassPass, LightingPass, Models, ModelsPass, Palette, TerrainPass,
-    VoxPass,
+    VoxPass, 
 };
 pub use run_state::*;
 pub use uniforms::{Camera, CameraUniform};
@@ -21,6 +21,7 @@ pub struct GameStateResource {
     pub camera_changed: bool,
     pub vox_moved: bool,
     pub models_moved: bool,
+    pub lights_changed: bool,
 }
 
 impl GameStateResource {
@@ -30,6 +31,7 @@ impl GameStateResource {
             camera_changed: false,
             vox_moved: false,
             models_moved: false,
+            lights_changed: false,
         }
     }
 

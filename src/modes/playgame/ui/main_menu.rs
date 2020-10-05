@@ -70,10 +70,9 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
                 .shortcut(im_str!("B"))
                 .build(imgui)
             {
-                /*
                 *run_state = RunState::Design {
                     mode: DesignMode::Buildings { bidx: 0, vox: None },
-                };*/
+                };
             }
             menu.end(imgui);
         }

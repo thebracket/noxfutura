@@ -7,11 +7,6 @@ use light_uniforms::LightUniformManager;
 mod terrain_lights;
 pub use terrain_lights::TerrainLights;
 
-pub enum LightingDirtyState {
-    Clean,
-    Full,
-}
-
 pub struct LightingPass {
     vb: FloatBuffer<f32>,
     pipeline: gpu::RenderPipeline,
@@ -19,7 +14,7 @@ pub struct LightingPass {
     light_uniforms: LightUniformManager,
     uniform_bind_group: gpu::BindGroup,
     terrain_lights: TerrainLights,
-    update_status: LightingDirtyState,
+    pub lighting_changed: bool,
 }
 
 impl LightingPass {
@@ -213,28 +208,25 @@ impl LightingPass {
             light_uniforms,
             uniform_bind_group,
             terrain_lights,
-            update_status: LightingDirtyState::Full,
+            lighting_changed: true,
         }
     }
 
     pub fn render(&mut self, core: &Core, ecs: &mut World, gbuffer: &GBuffer) {
         let mouse_pos = core.imgui.io().mouse_pos;
-        match self.update_status {
-            LightingDirtyState::Full => {
-                self.light_uniforms.uniforms.update(
-                    ecs,
-                    &mut self.terrain_lights.flags,
-                    &mouse_pos,
-                );
-                self.light_uniforms.send_buffer_to_gpu();
-                self.terrain_lights.update_buffer();
-                self.update_status = LightingDirtyState::Clean;
-            }
-            _ => {
-                self.light_uniforms.uniforms.update_partial(ecs, &mouse_pos);
-                self.light_uniforms.send_buffer_to_gpu();
-                self.update_status = LightingDirtyState::Clean;
-            }
+        if self.lighting_changed {
+            self.light_uniforms.uniforms.update(
+                ecs,
+                &mut self.terrain_lights.flags,
+                &mouse_pos,
+            );
+            self.light_uniforms.send_buffer_to_gpu();
+            self.terrain_lights.update_buffer();
+            self.lighting_changed = false;
+        } else {
+            self.light_uniforms.uniforms.update_partial(ecs, &mouse_pos);
+            self.light_uniforms.send_buffer_to_gpu();
+            self.lighting_changed = false;
         }
 
         let dl = RENDER_CONTEXT.read();

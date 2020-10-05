@@ -20,6 +20,11 @@ pub fn pause_control(
                     mode: DesignMode::Lumberjack,
                 }
             }
+            VirtualKeyCode::B => {
+                *run_state = RunState::Design {
+                    mode: DesignMode::Buildings { bidx: 0, vox: None },
+                };
+            }
             _ => {}
         }
     }
