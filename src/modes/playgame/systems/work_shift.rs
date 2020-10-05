@@ -1,6 +1,6 @@
-use legion::*;
-use crate::components::*;
 use super::REGION;
+use crate::components::*;
+use legion::*;
 
 #[system(for_each)]
 pub fn work_shift(turn: &mut MyTurn, pos: &Position, id: &IdentityTag) {

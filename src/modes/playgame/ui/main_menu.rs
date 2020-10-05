@@ -1,7 +1,7 @@
+use super::super::RunState;
 use crate::{components::*, modes::playgame::DesignMode};
 use bengine::gui::*;
 use legion::*;
-use super::super::RunState;
 
 pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
     if let Some(menu_bar) = imgui.begin_main_menu_bar() {

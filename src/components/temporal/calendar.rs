@@ -56,7 +56,7 @@ impl Calendar {
             )
         } else {
             (
-                (x, y, 0.2).into(),      // Position
+                (x, y, 0.2).into(),     // Position
                 (1.0, 0.9, 0.8).into(), // Color
             )
         }

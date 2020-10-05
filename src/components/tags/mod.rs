@@ -18,7 +18,7 @@ pub struct Sentient {}
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Vegetation {
-    pub size: f32
+    pub size: f32,
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]

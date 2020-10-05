@@ -1,11 +1,11 @@
-mod queue_backend;
-mod job_step;
 mod apply;
+mod job_step;
+mod queue_backend;
 
 use bracket_geometry::prelude::Point3;
-use queue_backend::*;
 use job_step::*;
 use legion::*;
+use queue_backend::*;
 
 use crate::components::JobType;
 

@@ -1,6 +1,6 @@
+use crate::components::*;
 use legion::*;
 use world::SubWorld;
-use crate::components::*;
 
 #[system]
 #[write_component(MyTurn)]
@@ -16,6 +16,5 @@ pub fn settler_schedule(ecs: &mut SubWorld) {
         .for_each(|(mut turn, schedule)| {
             turn.shift = schedule.hours[hour];
             //turn.shift = ScheduleTime::Leisure;
-        }
-    );
+        });
 }

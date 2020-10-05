@@ -1,5 +1,7 @@
-use super::{Chunks, DesignMode, GBuffer, GrassPass, LightingPass, ModelsPass, Palette, 
-    RunState, TerrainPass, VoxPass, loadstate::*, systems::REGION, CursorPass};
+use super::{
+    loadstate::*, systems::REGION, Chunks, CursorPass, DesignMode, GBuffer, GrassPass,
+    LightingPass, ModelsPass, Palette, RunState, TerrainPass, VoxPass,
+};
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
@@ -26,7 +28,7 @@ pub struct PlayTheGame {
     regular_schedule: Schedule,
     paused_schedule: Schedule,
 
-    frame_time_accumulator: f32
+    frame_time_accumulator: f32,
 }
 
 impl PlayTheGame {
@@ -49,7 +51,7 @@ impl PlayTheGame {
             gbuffer: None,
             regular_schedule: super::systems::build_scheduler(),
             paused_schedule: super::systems::paused_scheduler(),
-            frame_time_accumulator: 0.0
+            frame_time_accumulator: 0.0,
         }
     }
 
@@ -172,26 +174,34 @@ impl NoxMode for PlayTheGame {
 
             let run_state = self.ecs_resources.get::<RunState>().unwrap().clone();
             match run_state {
-                RunState::Paused | RunState::Design{..} => self.paused_schedule.execute(&mut self.ecs, &mut self.ecs_resources),
+                RunState::Paused | RunState::Design { .. } => self
+                    .paused_schedule
+                    .execute(&mut self.ecs, &mut self.ecs_resources),
                 RunState::SlowMo => {
                     self.frame_time_accumulator += core.frame_time;
                     if self.frame_time_accumulator > 0.3 {
                         self.frame_time_accumulator = 0.0;
-                        self.regular_schedule.execute(&mut self.ecs, &mut self.ecs_resources);
+                        self.regular_schedule
+                            .execute(&mut self.ecs, &mut self.ecs_resources);
                     } else {
-                        self.paused_schedule.execute(&mut self.ecs, &mut self.ecs_resources);
+                        self.paused_schedule
+                            .execute(&mut self.ecs, &mut self.ecs_resources);
                     }
                 }
                 RunState::Running => {
                     self.frame_time_accumulator += core.frame_time;
                     if self.frame_time_accumulator > 0.1 {
                         self.frame_time_accumulator = 0.0;
-                        self.regular_schedule.execute(&mut self.ecs, &mut self.ecs_resources);
+                        self.regular_schedule
+                            .execute(&mut self.ecs, &mut self.ecs_resources);
                     } else {
-                        self.paused_schedule.execute(&mut self.ecs, &mut self.ecs_resources);
+                        self.paused_schedule
+                            .execute(&mut self.ecs, &mut self.ecs_resources);
                     }
                 }
-                RunState::FullSpeed => self.regular_schedule.execute(&mut self.ecs, &mut self.ecs_resources),
+                RunState::FullSpeed => self
+                    .regular_schedule
+                    .execute(&mut self.ecs, &mut self.ecs_resources),
             }
             std::mem::drop(run_state);
 
@@ -239,11 +249,10 @@ impl NoxMode for PlayTheGame {
 
             let mut rs = self.ecs_resources.get_mut::<RunState>();
             let run_state = rs.as_mut().unwrap();
-            self.cursor_pass.as_mut().unwrap().render(
-                core,
-                &mut self.ecs,
-                &run_state
-            );
+            self.cursor_pass
+                .as_mut()
+                .unwrap()
+                .render(core, &mut self.ecs, &run_state);
 
             // Phase 3: Draw the UI
             super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
@@ -257,9 +266,11 @@ impl NoxMode for PlayTheGame {
 
 fn design_ui(run_state: &RunState, core: &mut Core, ecs: &World) {
     match run_state {
-        RunState::Design{ mode: DesignMode::Lumberjack } => {
+        RunState::Design {
+            mode: DesignMode::Lumberjack,
+        } => {
             super::ui::lumberjack_display(core.imgui, ecs, &core.mouse_world_pos);
-        },
+        }
         _ => {}
     }
 }

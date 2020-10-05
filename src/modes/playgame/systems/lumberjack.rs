@@ -1,15 +1,18 @@
 use super::super::messaging;
-use crate::modes::playgame::systems::REGION;
-use legion::*;
 use crate::components::*;
+use crate::modes::playgame::systems::REGION;
 use crate::planet::pathfinding::a_star_search;
+use legion::*;
 
 #[system(for_each)]
 pub fn lumberjack(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
-    if turn.active && turn.shift == ScheduleTime::Work && match turn.job {
-        JobType::FellTree { .. } => true,
-        _ => false,
-    } {
+    if turn.active
+        && turn.shift == ScheduleTime::Work
+        && match turn.job {
+            JobType::FellTree { .. } => true,
+            _ => false,
+        }
+    {
         if let JobType::FellTree {
             tree_id,
             tree_pos,
@@ -28,9 +31,7 @@ pub fn lumberjack(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
                     if let Some((tool_id, tool_pos)) = maybe_tool_pos {
                         let path = a_star_search(pos.get_idx(), tool_pos, &*rlock);
                         if !path.success {
-                            println!(
-                                "No path to tool available - abandoning lumberjacking"
-                            );
+                            println!("No path to tool available - abandoning lumberjacking");
                             messaging::cancel_job(id.0);
                             messaging::relinquish_claim(tool_id, tool_pos);
                         } else {
@@ -39,9 +40,7 @@ pub fn lumberjack(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
                                 JobType::FellTree {
                                     tree_id: *tree_id,
                                     tree_pos: *tree_pos,
-                                    step: LumberjackSteps::TravelToAxe {
-                                        path: path.steps,
-                                    },
+                                    step: LumberjackSteps::TravelToAxe { path: path.steps },
                                     tool_id: Some(tool_id),
                                 },
                             );
@@ -91,16 +90,12 @@ pub fn lumberjack(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
                             JobType::FellTree {
                                 tree_id: *tree_id,
                                 tree_pos: *tree_pos,
-                                step: LumberjackSteps::TravelToTree {
-                                    path: path.steps,
-                                },
+                                step: LumberjackSteps::TravelToTree { path: path.steps },
                                 tool_id: *tool_id,
                             },
                         );
                     } else {
-                        println!(
-                            "No path to tree available - abandoning lumberjacking"
-                        );
+                        println!("No path to tree available - abandoning lumberjacking");
                         messaging::cancel_job(id.0);
                         if let Some(tool_id) = tool_id {
                             messaging::relinquish_claim(*tool_id, pos.get_idx());

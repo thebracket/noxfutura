@@ -65,7 +65,7 @@ pub fn plant_trees(
                                 z,
                                 region.world_idx,
                                 rng.range(0, MAX_TREE) as usize,
-                                random_tree_height(rng)
+                                random_tree_height(rng),
                             )
                         } else {
                             die_roll = rng.roll_dice(1, 1000);
@@ -77,7 +77,7 @@ pub fn plant_trees(
                                     z,
                                     region.world_idx,
                                     rng.range(0, MAX_TREE) as usize,
-                                    random_tree_height(rng)
+                                    random_tree_height(rng),
                                 )
                             }
                         }

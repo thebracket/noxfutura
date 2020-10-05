@@ -1,7 +1,7 @@
 use super::{REGION, RNG};
-use legion::*;
 use crate::components::*;
 use crate::planet::Region;
+use legion::*;
 
 #[system(for_each)]
 pub fn move_randomly(pos: &mut Position, turn: &MyTurn, id: &IdentityTag) {

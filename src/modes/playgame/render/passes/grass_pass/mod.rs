@@ -209,7 +209,7 @@ impl GrassPass {
                     index_format: gpu::IndexFormat::Uint16,
                     vertex_buffers: &[
                         grass_template.descriptor(),
-                        instance_buffer.instance_descriptor()
+                        instance_buffer.instance_descriptor(),
                     ],
                 },
                 sample_count: 1,
@@ -226,7 +226,13 @@ impl GrassPass {
         }
     }
 
-    pub fn render(&mut self, _core: &Core, ecs: &mut World, frustrum: &Frustrum, gbuffer: &GBuffer) {
+    pub fn render(
+        &mut self,
+        _core: &Core,
+        ecs: &mut World,
+        frustrum: &Frustrum,
+        gbuffer: &GBuffer,
+    ) {
         if self.models_changed {
             let camera_z = <(&Position, &CameraOptions)>::query()
                 .iter(ecs)
@@ -244,7 +250,8 @@ impl GrassPass {
                             && pt.z > camera_z - 50
                             && frustrum.check_sphere(&pos.as_vec3(), 2.0)
                         {
-                            self.instance_buffer.add3(pt.x as f32, pt.z as f32, pt.y as f32);
+                            self.instance_buffer
+                                .add3(pt.x as f32, pt.z as f32, pt.y as f32);
                             self.instance_buffer.add(veg.size);
                         }
                     }

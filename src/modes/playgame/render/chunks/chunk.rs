@@ -77,18 +77,12 @@ impl Chunk {
 
     #[inline]
     fn water_material(&self) -> (usize, bool) {
-        (
-            crate::raws::get_material_by_tag("Water").unwrap(),
-            false
-        )
+        (crate::raws::get_material_by_tag("Water").unwrap(), false)
     }
 
     #[inline]
     fn hidden_material(&self) -> (usize, bool) {
-        (
-            crate::raws::get_material_by_tag("Hidden").unwrap(),
-            false
-        )
+        (crate::raws::get_material_by_tag("Hidden").unwrap(), false)
     }
 
     pub fn rebuild(&mut self, region: &Region) {
@@ -102,12 +96,12 @@ impl Chunk {
         self.floor_element_count = [0; CHUNK_SIZE];
 
         let mut count_empty = 0;
-        self.cells.iter().for_each(|idx| {
-            match region.tile_types[*idx] {
+        self.cells
+            .iter()
+            .for_each(|idx| match region.tile_types[*idx] {
                 TileType::Empty => count_empty += 1,
                 _ => {}
-            }
-        });
+            });
 
         let len = self.cells.len();
 

@@ -42,7 +42,7 @@ pub fn grow_plants(
                                 y,
                                 z,
                                 region.world_idx,
-                                random_plant_height(rng)
+                                random_plant_height(rng),
                             );
                         } else {
                             println!("Rejecting because no plant type was received");

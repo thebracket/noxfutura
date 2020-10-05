@@ -2,18 +2,18 @@ use crate::planet::Region;
 use bracket_random::prelude::RandomNumberGenerator;
 use legion::*;
 use parking_lot::{Mutex, RwLock};
-mod camera_control;
-mod pause_control;
-mod viewshed;
 mod calendar;
-mod initiative;
-mod settler_scheduler;
+mod camera_control;
 mod end_turn;
+mod initiative;
 mod leisure_shift;
-mod sleep_shift;
-mod work_shift;
-mod move_randomly;
 mod lumberjack;
+mod move_randomly;
+mod pause_control;
+mod settler_scheduler;
+mod sleep_shift;
+mod viewshed;
+mod work_shift;
 
 use super::messaging;
 

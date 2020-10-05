@@ -1,6 +1,5 @@
-use bracket_geometry::prelude::Point3;
 use crate::components::JobType;
-
+use bracket_geometry::prelude::Point3;
 
 pub enum JobStep {
     EntityMoved { id: usize, end: Point3 },
@@ -16,5 +15,5 @@ pub enum JobStep {
     FinishBuilding { building_id: usize },
     DeleteBuilding { building_id: usize },
     VoxMoved,
-    ModelsMoved
+    ModelsMoved,
 }

@@ -1,26 +1,26 @@
 mod loadstate;
+mod messaging;
 mod play;
 mod render;
+mod run_state;
 mod systems;
 mod ui;
 mod uniforms;
-mod run_state;
-mod messaging;
 
-pub use run_state::*;
+pub use messaging::*;
 pub use play::PlayTheGame;
 pub use render::{
-    Chunks, GBuffer, GrassPass, LightingPass, Models, ModelsPass, Palette, TerrainPass, VoxPass,
-    CursorPass
+    Chunks, CursorPass, GBuffer, GrassPass, LightingPass, Models, ModelsPass, Palette, TerrainPass,
+    VoxPass,
 };
+pub use run_state::*;
 pub use uniforms::{Camera, CameraUniform};
-pub use messaging::*;
 
 pub struct GameStateResource {
     keycode: Option<bengine::VirtualKeyCode>,
     pub camera_changed: bool,
     pub vox_moved: bool,
-    pub models_moved: bool
+    pub models_moved: bool,
 }
 
 impl GameStateResource {
@@ -29,7 +29,7 @@ impl GameStateResource {
             keycode: None,
             camera_changed: false,
             vox_moved: false,
-            models_moved: false
+            models_moved: false,
         }
     }
 

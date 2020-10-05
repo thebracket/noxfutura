@@ -58,43 +58,40 @@ impl CursorPass {
                                 dimension: gpu::TextureViewDimension::D2,
                                 component_type: gpu::TextureComponentType::Uint,
                             },
-                            count: None
+                            count: None,
                         },
                         gpu::BindGroupLayoutEntry {
                             binding: 2,
                             visibility: gpu::ShaderStage::FRAGMENT,
                             ty: gpu::BindingType::Sampler { comparison: false },
-                            count: None
+                            count: None,
                         },
                     ],
                     label: Some("texture_bind_group_layout"),
                 });
 
-        let texture_bind_group = context
-            .device
-            .create_bind_group(&gpu::BindGroupDescriptor {
-                layout: &texture_bind_group_layout,
-                entries: &[
-                    gpu::BindGroupEntry {
-                        binding: 0,
-                        resource: gpu::BindingResource::Buffer(uniforms.uniform_buffer.slice(..)),
-                    },
-                    gpu::BindGroupEntry {
-                        binding: 1,
-                        resource: gpu::BindingResource::TextureView(
-                            TEXTURES.read().get_view(texture_id),
-                        ),
-                    },
-                    gpu::BindGroupEntry {
-                        binding: 2,
-                        resource: gpu::BindingResource::Sampler(
-                            TEXTURES.read().get_sampler(texture_id),
-                        ),
-                    },
-                ],
-                label: Some("diffuse_bind_group"),
-            }
-        );
+        let texture_bind_group = context.device.create_bind_group(&gpu::BindGroupDescriptor {
+            layout: &texture_bind_group_layout,
+            entries: &[
+                gpu::BindGroupEntry {
+                    binding: 0,
+                    resource: gpu::BindingResource::Buffer(uniforms.uniform_buffer.slice(..)),
+                },
+                gpu::BindGroupEntry {
+                    binding: 1,
+                    resource: gpu::BindingResource::TextureView(
+                        TEXTURES.read().get_view(texture_id),
+                    ),
+                },
+                gpu::BindGroupEntry {
+                    binding: 2,
+                    resource: gpu::BindingResource::Sampler(
+                        TEXTURES.read().get_sampler(texture_id),
+                    ),
+                },
+            ],
+            label: Some("diffuse_bind_group"),
+        });
 
         let pipeline_layout =
             context
@@ -102,7 +99,7 @@ impl CursorPass {
                 .create_pipeline_layout(&gpu::PipelineLayoutDescriptor {
                     bind_group_layouts: &[&texture_bind_group_layout],
                     label: None,
-                    push_constant_ranges: &[]
+                    push_constant_ranges: &[],
                 });
         let render_pipeline =
             context
@@ -124,7 +121,7 @@ impl CursorPass {
                         depth_bias: 0,
                         depth_bias_slope_scale: 0.0,
                         depth_bias_clamp: 0.0,
-                        clamp_depth: false
+                        clamp_depth: false,
                     }),
                     primitive_topology: gpu::PrimitiveTopology::TriangleList,
                     color_states: &[gpu::ColorStateDescriptor {
@@ -164,12 +161,7 @@ impl CursorPass {
         }
     }
 
-    pub fn render(
-        &mut self,
-        core: &Core,
-        ecs: &World,
-        run_state: &RunState
-    ) {
+    pub fn render(&mut self, core: &Core, ecs: &World, run_state: &RunState) {
         use crate::components::*;
         if let RunState::Design { .. } = run_state {
             self.vb.clear();
@@ -192,8 +184,7 @@ impl CursorPass {
                         2.0,
                         1.0,
                     );
-                }
-            );
+                });
             if self.vb.len() == 0 {
                 return;
             }
@@ -216,14 +207,16 @@ impl CursorPass {
                             store: true,
                         },
                     }],
-                    depth_stencil_attachment: Some(gpu::RenderPassDepthStencilAttachmentDescriptor {
-                        attachment: tlock.get_view(0),
-                        depth_ops: Some(gpu::Operations {
-                            load: gpu::LoadOp::Load,
-                            store: true,
-                        }),
-                        stencil_ops: None,
-                    }),
+                    depth_stencil_attachment: Some(
+                        gpu::RenderPassDepthStencilAttachmentDescriptor {
+                            attachment: tlock.get_view(0),
+                            depth_ops: Some(gpu::Operations {
+                                load: gpu::LoadOp::Load,
+                                store: true,
+                            }),
+                            stencil_ops: None,
+                        },
+                    ),
                 });
 
                 rpass.set_pipeline(&self.render_pipeline);

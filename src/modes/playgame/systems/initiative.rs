@@ -1,10 +1,10 @@
 use super::RNG;
+use crate::components::*;
 use crate::utils::attribute_modifier;
 use legion::*;
-use crate::components::*;
 
 #[system(for_each)]
-pub fn initiative(i: &mut Initiative, t: &mut MyTurn, attrib : &Attributes) {
+pub fn initiative(i: &mut Initiative, t: &mut MyTurn, attrib: &Attributes) {
     i.initiative -= 1;
     if i.initiative + i.modifier < 1 {
         // Re-roll initiative

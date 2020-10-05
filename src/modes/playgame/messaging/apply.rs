@@ -1,9 +1,9 @@
-use super::{ MOVER_LIST, JobStep };
-use legion::*;
-use crate::components::*;
 use super::super::GameStateResource;
+use super::{JobStep, MOVER_LIST};
+use crate::components::*;
 use crate::modes::playgame::systems::REGION;
 use crate::spatial::*;
+use legion::*;
 
 pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
     let mut vox_moved = false;
@@ -176,14 +176,14 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
 
             let mut to_remove = Vec::new();
             let mut to_spawn = Vec::new();
-            <(Entity, &Position, &IdentityTag)>::query().filter(component::<Tree>())
+            <(Entity, &Position, &IdentityTag)>::query()
+                .filter(component::<Tree>())
                 .iter(ecs)
                 .filter(|(_, _, id)| id.0 == *tree_id)
                 .for_each(|(entity, pos, _)| {
                     to_remove.push(*entity);
                     to_spawn.push(pos.get_idx());
-                }
-            );
+                });
             if !to_remove.is_empty() {
                 let mut cb = legion::systems::CommandBuffer::new(ecs);
                 to_remove.iter().for_each(|e| cb.remove(*e));
@@ -194,7 +194,15 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 let wood = crate::raws::get_material_by_tag("Wood").unwrap();
                 for idx in to_spawn.iter() {
                     let (tx, ty, tz) = idxmap(*idx);
-                    crate::planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock, wood);
+                    crate::planet::spawn_item_on_ground(
+                        ecs,
+                        "wood_log",
+                        tx,
+                        ty,
+                        tz,
+                        &mut *rlock,
+                        wood,
+                    );
                 }
                 super::vox_moved();
             }

@@ -1,5 +1,5 @@
-use legion::*;
 use crate::components::*;
+use legion::*;
 
 #[system(for_each)]
 pub fn leisure_shift(turn: &mut MyTurn) {
