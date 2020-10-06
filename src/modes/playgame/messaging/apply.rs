@@ -212,18 +212,6 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 super::vox_moved();
             }
         }
-        JobStep::DeleteItem { id } => {
-            let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
-                .iter(ecs)
-                .filter(|(_, _, idt)| idt.0 == *id)
-                .map(|(e, _, _)| *e)
-                .nth(0);
-            if let Some(i) = i {
-                ecs.remove(i);
-            }
-            super::vox_moved();
-        }
-
         JobStep::DeleteBuilding { building_id } => {
             let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
                 .iter(ecs)

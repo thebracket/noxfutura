@@ -150,7 +150,7 @@ impl ModelsPass {
         }
     }
 
-    pub fn render(&mut self, core: &Core, ecs: &mut World, frustrum: &Frustrum, gbuffer: &GBuffer) {
+    pub fn render(&mut self, _core: &Core, ecs: &mut World, frustrum: &Frustrum, gbuffer: &GBuffer) {
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
         let tlock = TEXTURES.read();

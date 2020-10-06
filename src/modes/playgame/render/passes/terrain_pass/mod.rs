@@ -144,7 +144,7 @@ impl TerrainPass {
         }
     }
 
-    pub fn render(&self, core: &Core, chunks: &Chunks, camera_z: i32, gbuffer: &GBuffer) {
+    pub fn render(&self, _core: &Core, chunks: &Chunks, camera_z: i32, gbuffer: &GBuffer) {
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
         let tlock = TEXTURES.read();

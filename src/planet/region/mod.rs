@@ -9,7 +9,6 @@ mod jobs;
 use bracket_geometry::prelude::*;
 use jobs::JobsBoard;
 use smallvec::SmallVec;
-use std::collections::HashMap;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Region {
