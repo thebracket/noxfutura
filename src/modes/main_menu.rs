@@ -74,17 +74,9 @@ impl NoxMode for MainMenu {
         let ui = core.imgui;
 
         let size = get_window_size();
-        let thanks = gui::Window::new(im_str!("Thanks to our supporters"));
-        thanks
-            .position([size.width as f32 - 300.0, 125.0], Condition::Always)
-            .size([400.0, 400.0], Condition::FirstUseEver)
-            .always_auto_resize(true)
-            .collapsible(false)
-            .build(ui, || {
-                ui.text(im_str!("Noah Bogart via Patreon"));
-            });
+        let ver_string = ImString::new(format!("Nox Futura, {}", env!("CARGO_PKG_VERSION")));
 
-        let copyright = gui::Window::new(im_str!("Copyright"));
+        let copyright = gui::Window::new(&ver_string);
         copyright
             .position([10.0, size.height as f32 - 50.0], Condition::Always)
             .size([400.0, 400.0], Condition::FirstUseEver)
