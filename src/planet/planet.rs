@@ -15,6 +15,7 @@ pub struct Planet {
     pub water_height: u8,
     pub plains_height: u8,
     pub hills_height: u8,
+    pub lacunarity: f32,
 
     pub landblocks: Vec<Block>,
     pub biomes: Vec<Biome>,
@@ -35,6 +36,7 @@ impl Planet {
             water_height: 0,
             plains_height: 0,
             hills_height: 0,
+            lacunarity: 0.0,
             landblocks: Vec::new(),
             biomes: Vec::new(),
             rivers: Vec::new(),

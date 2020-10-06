@@ -10,8 +10,8 @@ edition = "2018"
 wgpu = "0.6.0"
 winit = { version = "0.22.2", features = ["web-sys"] }
 futures = { version = "0.3" }
-imgui = "0.4.0"
-imgui-winit-support = { version = "0.4", default-features = false, features = [ "winit-22" ] }
+imgui = "0.5.0"
+imgui-winit-support = { version = "0.5", default-features = false, features = [ "winit-22" ] }
 bytemuck = "1.4.0"
 smallvec = "1.4.2"
 image = "0.23.8"

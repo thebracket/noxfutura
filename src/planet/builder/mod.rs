@@ -17,6 +17,7 @@ pub struct PlanetParams {
     pub starting_settlers: i32,
     pub strict_beamdown: bool,
     pub extra_noise: bool,
+    pub bumpiness: f32,
 }
 
 pub struct PlanetBuilder {
@@ -36,6 +37,7 @@ impl PlanetBuilder {
                 starting_settlers: 6,
                 strict_beamdown: true,
                 extra_noise: true,
+                bumpiness: 2.0
             },
             planet: Planet::new(),
             done: false,
@@ -55,6 +57,7 @@ pub fn start_building_planet(params: PlanetParams) {
     lock.planet.plains_divisor = params.plains_level;
     lock.planet.starting_settlers = params.starting_settlers;
     lock.planet.strict_beamdown = params.strict_beamdown;
+    lock.planet.lacunarity = params.bumpiness;
     lock.params = params;
     std::mem::drop(lock);
     std::thread::spawn(threaded_builder);

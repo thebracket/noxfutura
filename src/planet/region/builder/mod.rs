@@ -41,7 +41,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
         &mut hm,
         crash_site,
         planet.perlin_seed,
-        planet.landblocks[planet_idx(crash_site.x as usize, crash_site.y as usize)].variance,
+        planet.lacunarity,
     );
 
     set_worldgen_status("Locating Sub-Biomes");

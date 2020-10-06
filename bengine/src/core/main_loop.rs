@@ -72,7 +72,11 @@ where
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
         match event {
-            Event::NewEvents(_) => last_frame = imgui.io_mut().update_delta_time(last_frame),
+            Event::NewEvents(_) => {
+                let now = Instant::now();
+                imgui.io_mut().update_delta_time(now - last_frame);
+                last_frame = now;
+            }
             Event::MainEventsCleared => window.request_redraw(),
             /*Event::WindowEvent {
                 event: WindowEvent::ScaleFactorChanged { scale_factor, .. },

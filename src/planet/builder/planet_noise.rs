@@ -16,12 +16,13 @@ pub(crate) fn zero_fill() {
 pub(crate) fn planetary_noise() {
     set_worldgen_status("Dividing the heavens from the earth");
     let perlin_seed = PLANET_BUILD.lock().planet.perlin_seed;
+    let lacunarity = PLANET_BUILD.lock().planet.lacunarity;
     let mut noise = FastNoise::seeded(perlin_seed);
     noise.set_noise_type(NoiseType::SimplexFractal);
     noise.set_fractal_type(FractalType::FBM);
     noise.set_fractal_octaves(5);
     noise.set_fractal_gain(0.5);
-    noise.set_fractal_lacunarity(3.0);
+    noise.set_fractal_lacunarity(lacunarity);
     noise.set_frequency(0.01);
 
     let max_temperature = 56.7;
