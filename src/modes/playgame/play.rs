@@ -157,6 +157,13 @@ impl NoxMode for PlayTheGame {
         }
     }
 
+    fn on_resize(&mut self) {
+        if self.gbuffer.is_some() {
+            self.gbuffer = Some(GBuffer::new());
+            self.lighting_pass.as_mut().unwrap().on_resize(self.gbuffer.as_ref().unwrap());
+        }
+    }
+
     fn tick(&mut self, core: &mut Core, shared: &SharedResources) -> GameMode {
         use gui::*;
         let result = GameMode::PlayGame;

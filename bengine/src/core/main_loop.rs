@@ -23,6 +23,7 @@ fn bootstrap(
     let event_loop = EventLoop::new();
     let window = Window::new(&event_loop).unwrap();
     window.set_title(title);
+    window.set_resizable(true);
     init_render_context(&window);
 
     let mut textures = TEXTURES.write();
@@ -92,7 +93,7 @@ where
                 std::mem::drop(rcl);
                 let mut textures = TEXTURES.write();
                 textures.replace_depth_texture(depth_texture, "depth");
-                // TODO: program.on_resize();
+                program.on_resize();
             }
             Event::RedrawRequested(_) => {
                 let mut rcl = RENDER_CONTEXT.write();

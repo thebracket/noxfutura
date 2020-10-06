@@ -10,6 +10,7 @@ pub use terrain_lights::TerrainLights;
 pub struct LightingPass {
     vb: FloatBuffer<f32>,
     pipeline: gpu::RenderPipeline,
+    bind_group_layout: gpu::BindGroupLayout,
     bind_group: gpu::BindGroup,
     light_uniforms: LightUniformManager,
     uniform_bind_group: gpu::BindGroup,
@@ -203,6 +204,7 @@ impl LightingPass {
 
         Self {
             vb,
+            bind_group_layout,
             bind_group,
             pipeline,
             light_uniforms,
@@ -210,6 +212,42 @@ impl LightingPass {
             terrain_lights,
             lighting_changed: true,
         }
+    }
+
+    pub fn on_resize(&mut self, gbuffer: &GBuffer) {
+        let dl = RENDER_CONTEXT.read();
+        let ctx = dl.as_ref().unwrap();
+        let bind_group = ctx.device.create_bind_group(&gpu::BindGroupDescriptor {
+            label: None,
+            layout: &self.bind_group_layout,
+            entries: &[
+                gpu::BindGroupEntry {
+                    binding: 0,
+                    resource: gpu::BindingResource::TextureView(&gbuffer.albedo.view),
+                },
+                gpu::BindGroupEntry {
+                    binding: 1,
+                    resource: gpu::BindingResource::Sampler(&gbuffer.albedo.sampler),
+                },
+                gpu::BindGroupEntry {
+                    binding: 2,
+                    resource: gpu::BindingResource::TextureView(&gbuffer.normal.view),
+                },
+                gpu::BindGroupEntry {
+                    binding: 3,
+                    resource: gpu::BindingResource::Sampler(&gbuffer.normal.sampler),
+                },
+                gpu::BindGroupEntry {
+                    binding: 4,
+                    resource: gpu::BindingResource::TextureView(&gbuffer.coords.view),
+                },
+                gpu::BindGroupEntry {
+                    binding: 5,
+                    resource: gpu::BindingResource::Sampler(&gbuffer.coords.sampler),
+                },
+            ],
+        });
+        self.bind_group = bind_group;
     }
 
     pub fn render(&mut self, core: &Core, ecs: &mut World, gbuffer: &GBuffer) {

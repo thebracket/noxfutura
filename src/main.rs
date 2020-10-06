@@ -22,9 +22,12 @@ pub enum GameMode {
 
 trait NoxMode {
     fn tick(&mut self, core: &mut Core, shared: &SharedResources) -> GameMode;
+
     fn get_mouse_buffer(&self) -> Option<&gpu::Buffer> {
         None
     }
+
+    fn on_resize(&mut self) {}
 }
 
 struct NoxFutura {
@@ -77,6 +80,10 @@ impl BEngineGame for NoxFutura {
             GameMode::PlayGame => self.modes[4].get_mouse_buffer(),
             _ => None,
         }
+    }
+
+    fn on_resize(&mut self) {
+        self.modes.iter_mut().for_each(|m| m.on_resize());
     }
 }
 
