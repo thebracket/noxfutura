@@ -15,6 +15,8 @@ mod sleep_shift;
 mod viewshed;
 mod work_shift;
 mod construct_building;
+mod mining_map;
+mod mining;
 
 use super::messaging;
 
@@ -28,6 +30,7 @@ lazy_static! {
 
 pub fn build_scheduler() -> Schedule {
     Schedule::builder()
+        .add_system(mining_map::mining_map_system())
         .add_system(calendar::calendar_system())
         .add_system(viewshed::viewshed_system())
         .add_system(camera_control::camera_control_system())
@@ -42,6 +45,7 @@ pub fn build_scheduler() -> Schedule {
         .flush()
         .add_system(lumberjack::lumberjack_system())
         .add_system(construct_building::construction_system())
+        .add_system(mining::mining_system())
         .add_system(move_randomly::move_randomly_system())
         .flush()
         .add_system(end_turn::end_turn_system())

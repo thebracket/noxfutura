@@ -6,6 +6,7 @@ mod run_state;
 mod systems;
 mod ui;
 mod uniforms;
+mod mining_map;
 
 pub use messaging::*;
 pub use play::PlayTheGame;
@@ -15,6 +16,7 @@ pub use render::{
 };
 pub use run_state::*;
 pub use uniforms::{Camera, CameraUniform};
+pub use mining_map::*;
 
 pub struct GameStateResource {
     keycode: Option<bengine::VirtualKeyCode>,

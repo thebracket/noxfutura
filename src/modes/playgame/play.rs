@@ -1,6 +1,6 @@
 use super::{
     loadstate::*, systems::REGION, Chunks, CursorPass, DesignMode, GBuffer, GrassPass,
-    LightingPass, ModelsPass, Palette, RunState, TerrainPass, VoxPass,
+    LightingPass, ModelsPass, Palette, RunState, TerrainPass, VoxPass, MiningMap
 };
 use crate::components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
@@ -104,6 +104,7 @@ impl PlayTheGame {
 
                     self.ecs_resources.insert(super::GameStateResource::new());
                     self.ecs_resources.insert(RunState::Paused);
+                    self.ecs_resources.insert(MiningMap::new());
                     println!("Finished loading");
                     self.ready = true;
                 }
@@ -272,14 +273,16 @@ impl NoxMode for PlayTheGame {
             // Phase 3: Draw the UI
             super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
             super::ui::draw_main_menu(&self.ecs, run_state, &core.imgui);
-            design_ui(run_state, core, &mut self.ecs);
+            let mut mine_state = self.ecs_resources.get_mut::<MiningMap>();
+            let ms = mine_state.as_mut().unwrap();
+            design_ui(run_state, core, &mut self.ecs, ms);
         }
 
         result
     }
 }
 
-fn design_ui(run_state: &mut RunState, core: &mut Core, ecs: &mut World) {
+fn design_ui(run_state: &mut RunState, core: &mut Core, ecs: &mut World, mine_state: &mut MiningMap) {
     match run_state {
         RunState::Design {
             mode: DesignMode::Lumberjack,
@@ -295,7 +298,7 @@ fn design_ui(run_state: &mut RunState, core: &mut Core, ecs: &mut World) {
             };
         }
         RunState::Design { mode: DesignMode::Mining{ mode } } => {
-            super::ui::mining_display(core.imgui, ecs, &core.mouse_world_pos, mode);
+            super::ui::mining_display(core.imgui, ecs, &core.mouse_world_pos, mode, mine_state);
         }
         _ => {}
     }

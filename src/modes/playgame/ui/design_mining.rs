@@ -1,16 +1,16 @@
-use crate::modes::playgame::{MiningMode, systems::REGION};
+use crate::modes::playgame::{MiningMap, MiningMode, systems::REGION};
 use bengine::gui::*;
 use legion::*;
 use crate::components::*;
 use crate::planet::*;
-use crate::raws::*;
 use crate::spatial::mapidx;
 
 pub fn mining_display(
     imgui: &Ui,
     ecs: &mut World,
     mouse_world_pos: &(usize, usize, usize),
-    mining_mode: &mut MiningMode
+    mining_mode: &mut MiningMode,
+    mine_state: &mut MiningMap
 ) {
     let dig_modes = [
         im_str!("Dig"),
@@ -91,12 +91,12 @@ pub fn mining_display(
             }
         }
 
-        // TODO: Validation
         let mut rlock = REGION.write();
         if *mining_mode == MiningMode::Clear {
             rlock.jobs_board.mining_designations.remove(&idx);
         } else {
             rlock.jobs_board.mining_designations.insert(idx, *mining_mode);
         }
+        mine_state.is_dirty = true;
     }
 }

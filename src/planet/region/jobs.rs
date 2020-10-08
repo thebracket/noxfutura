@@ -3,7 +3,7 @@ use crate::spatial::idxmap;
 use bracket_geometry::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
-use crate::modes::MiningMode;
+use crate::modes::{MiningMode, MiningMap};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct JobsBoard {
@@ -25,7 +25,7 @@ impl JobsBoard {
         }
     }
 
-    pub fn evaluate_jobs(&mut self, identity: usize, pos: &Position) -> Option<JobType> {
+    pub fn evaluate_jobs(&mut self, identity: usize, pos: &Position, mining_map: &MiningMap) -> Option<JobType> {
         let mut available_jobs: Vec<(usize, f32)> = self
             .all_jobs
             .iter()
@@ -33,6 +33,11 @@ impl JobsBoard {
             .filter(|(_, j)| j.claimed.is_none() && self.is_possible(j))
             .map(|(i, j)| (i, job_cost(pos, &j.job)))
             .collect();
+
+        let idx = pos.get_idx();
+        if mining_map.dijkstra[idx] < f32::MAX {
+            println!("Mining job {} steps away", mining_map.dijkstra[idx]);
+        }
 
         if available_jobs.is_empty() {
             return None;
