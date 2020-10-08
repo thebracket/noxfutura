@@ -1,9 +1,10 @@
 mod cubes;
-use crate::modes::playgame::{CameraUniform, RunState};
+use crate::modes::playgame::{CameraUniform, DesignMode, RunState};
 use cubes::add_cube_geometry;
 use legion::*;
-//use nox_components::*;
+use crate::components::*;
 use bengine::*;
+use crate::spatial::*;
 
 pub struct CursorPass {
     pub render_pipeline: gpu::RenderPipeline,
@@ -161,73 +162,108 @@ impl CursorPass {
         }
     }
 
+    fn lumberjack(&mut self, ecs: &World) {
+        self.vb.clear();
+
+        let rlock = crate::modes::playgame::systems::REGION.read();
+
+        <(&Position, &IdentityTag)>::query()
+            .filter(component::<Tree>())
+            .iter(ecs)
+            .filter(|(_, id)| rlock.jobs_board.get_trees().contains(&id.0))
+            .for_each(|(pos, _)| {
+                let pt = pos.as_point3();
+                add_cube_geometry(
+                    &mut self.vb.data,
+                    pt.x as f32,
+                    pt.y as f32,
+                    pt.z as f32,
+                    1.0,
+                    1.0,
+                    2.0,
+                    1.0,
+                );
+            });
+        if self.vb.len() == 0 {
+            return;
+        }
+        self.vb.update_buffer();
+    }
+
+    fn mining(&mut self) {
+        self.vb.clear();
+
+        let rlock = crate::modes::playgame::systems::REGION.read();
+        rlock.jobs_board.mining_designations.iter().for_each(|(idx, t)| {
+            let (x, y, z) = idxmap(*idx);
+            add_cube_geometry(
+                &mut self.vb.data,
+                x as f32,
+                y as f32,
+                z as f32,
+                1.0,
+                1.0,
+                1.0,
+            1.0
+            );
+        });
+
+        if self.vb.len() == 0 {
+            return;
+        }
+        self.vb.update_buffer();
+    }
+
     pub fn render(&mut self, core: &Core, ecs: &World, run_state: &RunState) {
-        use crate::components::*;
-        if let RunState::Design { .. } = run_state {
-            self.vb.clear();
-
-            let rlock = crate::modes::playgame::systems::REGION.read();
-
-            <(&Position, &IdentityTag)>::query()
-                .filter(component::<Tree>())
-                .iter(ecs)
-                .filter(|(_, id)| rlock.jobs_board.get_trees().contains(&id.0))
-                .for_each(|(pos, _)| {
-                    let pt = pos.as_point3();
-                    add_cube_geometry(
-                        &mut self.vb.data,
-                        pt.x as f32,
-                        pt.y as f32,
-                        pt.z as f32,
-                        1.0,
-                        1.0,
-                        2.0,
-                        1.0,
-                    );
-                });
-            if self.vb.len() == 0 {
-                return;
+        if let RunState::Design { mode } = run_state {
+            match mode {
+                DesignMode::Lumberjack => self.lumberjack(ecs),
+                DesignMode::Mining{..} => self.mining(),
+                _ => {}
             }
-            self.vb.update_buffer();
+        }
 
-            let tlock = TEXTURES.read();
-            let mut ctx_lock = RENDER_CONTEXT.write();
-            let context = ctx_lock.as_mut().unwrap();
-            let mut encoder = context
-                .device
-                .create_command_encoder(&gpu::CommandEncoderDescriptor { label: None });
+        if self.vb.len() == 0 {
+            return;
+        }
 
-            {
-                let mut rpass = encoder.begin_render_pass(&gpu::RenderPassDescriptor {
-                    color_attachments: &[gpu::RenderPassColorAttachmentDescriptor {
-                        attachment: &core.frame.output.view,
-                        resolve_target: None,
-                        ops: gpu::Operations {
+        let tlock = TEXTURES.read();
+        let mut ctx_lock = RENDER_CONTEXT.write();
+        let context = ctx_lock.as_mut().unwrap();
+        let mut encoder = context
+            .device
+            .create_command_encoder(&gpu::CommandEncoderDescriptor { label: None });
+
+        {
+            let mut rpass = encoder.begin_render_pass(&gpu::RenderPassDescriptor {
+                color_attachments: &[gpu::RenderPassColorAttachmentDescriptor {
+                    attachment: &core.frame.output.view,
+                    resolve_target: None,
+                    ops: gpu::Operations {
+                        load: gpu::LoadOp::Load,
+                        store: true,
+                    },
+                }],
+                depth_stencil_attachment: Some(
+                    gpu::RenderPassDepthStencilAttachmentDescriptor {
+                        attachment: tlock.get_view(0),
+                        depth_ops: Some(gpu::Operations {
                             load: gpu::LoadOp::Load,
                             store: true,
-                        },
-                    }],
-                    depth_stencil_attachment: Some(
-                        gpu::RenderPassDepthStencilAttachmentDescriptor {
-                            attachment: tlock.get_view(0),
-                            depth_ops: Some(gpu::Operations {
-                                load: gpu::LoadOp::Load,
-                                store: true,
-                            }),
-                            stencil_ops: None,
-                        },
-                    ),
-                });
+                        }),
+                        stencil_ops: None,
+                    },
+                ),
+            });
 
-                rpass.set_pipeline(&self.render_pipeline);
-                rpass.set_bind_group(0, &self.texture_bind_group, &[]);
+            rpass.set_pipeline(&self.render_pipeline);
+            rpass.set_bind_group(0, &self.texture_bind_group, &[]);
 
-                if self.vb.len() > 0 {
-                    rpass.set_vertex_buffer(0, self.vb.buffer.as_ref().unwrap().slice(..));
-                    rpass.draw(0..self.vb.len(), 0..1);
-                }
+            if self.vb.len() > 0 {
+                rpass.set_vertex_buffer(0, self.vb.buffer.as_ref().unwrap().slice(..));
+                rpass.draw(0..self.vb.len(), 0..1);
             }
-            context.queue.submit(Some(encoder.finish()));
         }
+        context.queue.submit(Some(encoder.finish()));
     }
 }

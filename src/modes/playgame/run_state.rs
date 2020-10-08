@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 #[derive(PartialEq, Clone)]
 pub enum RunState {
     Paused,
@@ -14,7 +16,7 @@ pub enum DesignMode {
     Mining { mode: MiningMode },
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub enum MiningMode {
     Dig,
     Channel,
@@ -22,4 +24,5 @@ pub enum MiningMode {
     Up,
     Down,
     UpDown,
+    Clear
 }

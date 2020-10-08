@@ -1,6 +1,6 @@
 use super::super::GameStateResource;
 use super::super::RunState;
-use crate::modes::playgame::DesignMode;
+use crate::modes::playgame::{DesignMode, MiningMode};
 use bengine::VirtualKeyCode;
 use legion::*;
 
@@ -23,6 +23,11 @@ pub fn pause_control(
             VirtualKeyCode::B => {
                 *run_state = RunState::Design {
                     mode: DesignMode::Buildings { bidx: 0, vox: None },
+                };
+            }
+            VirtualKeyCode::D => {
+                *run_state = RunState::Design {
+                    mode: DesignMode::Mining { mode: MiningMode::Dig },
                 };
             }
             _ => {}

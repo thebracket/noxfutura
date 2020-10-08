@@ -3,6 +3,7 @@ use crate::spatial::idxmap;
 use bracket_geometry::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
+use crate::modes::MiningMode;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct JobsBoard {
@@ -10,6 +11,7 @@ pub struct JobsBoard {
     all_jobs: Vec<JobBoardListing>,
     tool_ownership: HashMap<usize, ToolClaim>,
     component_ownership: HashMap<usize, ComponentClaim>,
+    pub mining_designations: HashMap<usize, MiningMode>
 }
 
 impl JobsBoard {
@@ -19,6 +21,7 @@ impl JobsBoard {
             all_jobs: Vec::new(),
             tool_ownership: HashMap::new(),
             component_ownership: HashMap::new(),
+            mining_designations: HashMap::new()
         }
     }
 

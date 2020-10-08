@@ -1,5 +1,5 @@
 use super::super::RunState;
-use crate::{components::*, modes::playgame::DesignMode};
+use crate::{components::*, modes::playgame::DesignMode, modes::playgame::MiningMode};
 use bengine::gui::*;
 use legion::*;
 
@@ -61,10 +61,9 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
                 .shortcut(im_str!("D"))
                 .build(imgui)
             {
-                /*
                 *run_state = RunState::Design {
                     mode: DesignMode::Mining{ mode: MiningMode::Dig },
-                };*/
+                };
             }
             if MenuItem::new(im_str!("\u{f015} Buildings"))
                 .shortcut(im_str!("B"))

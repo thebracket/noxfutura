@@ -294,6 +294,9 @@ fn design_ui(run_state: &mut RunState, core: &mut Core, ecs: &mut World) {
                 mode: DesignMode::Buildings { bidx, vox },
             };
         }
+        RunState::Design { mode: DesignMode::Mining{ mode } } => {
+            super::ui::mining_display(core.imgui, ecs, &core.mouse_world_pos, mode);
+        }
         _ => {}
     }
 }
