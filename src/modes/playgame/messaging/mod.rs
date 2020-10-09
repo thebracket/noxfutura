@@ -97,7 +97,21 @@ pub fn dig_at(id: usize, pos: usize) {
 }
 
 pub fn tile_dirty(pos: usize) {
-    JOBS_QUEUE
-        .lock()
-        .push_back(JobStep::TileDirty{ pos });
+    use crate::spatial::*;
+    let mut jql = JOBS_QUEUE.lock();
+    let (x,y,z) = idxmap(pos);
+    for tz in -1i32 ..= 1 {
+        for ty in -1i32 ..= 1 
+        {
+            for tx in -1i32 ..= 1 {
+                let idx = mapidx(
+                    (x as i32 + tx) as usize,
+                    (y as i32 + ty) as usize,
+                    (z as i32 + tz) as usize,
+                );
+                jql.push_back(JobStep::TileDirty{ pos: idx });
+            }
+        }
+    }
+    jql.push_back(JobStep::TileDirty{ pos });
 }

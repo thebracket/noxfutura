@@ -149,9 +149,13 @@ impl PlayTheGame {
             if !shared_state.dirty_tiles.is_empty() {
                 self.chunks.mark_dirty(&shared_state.dirty_tiles);
                 //TODO: This could be parallel
+                {
+                    let mut rlock = REGION.write();
+                    rlock.reset_all_flags();
+                    crate::planet::rebuild_flags(&mut rlock);
+                }
+
                 self.chunks.rebuild_all();
-                let mut rlock = REGION.write();
-                // Rebuild flags
                 shared_state.dirty_tiles.clear();
                 self.ecs_resources.get_mut::<MiningMap>().as_mut().unwrap().is_dirty = true;
             }
