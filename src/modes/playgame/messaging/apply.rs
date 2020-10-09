@@ -301,15 +301,12 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                         println!("Changed tile");
                         rlock.tile_types[mine_id] = TileType::Floor;
                         super::super::tile_dirty(mine_id);
-                        super::super::tile_dirty(mine_id-1);
-                        super::super::tile_dirty(mine_id+1);
-                        super::super::tile_dirty(mine_id-REGION_WIDTH);
-                        super::super::tile_dirty(mine_id+REGION_WIDTH);
                     }
                     _ => {}
                 }
                 println!("Undesignating");
                 rlock.jobs_board.mining_designations.remove(&mine_id);
+                <&mut FieldOfView>::query().iter_mut(ecs).for_each(|f| f.is_dirty = true);
             }
         }
         _ => {}

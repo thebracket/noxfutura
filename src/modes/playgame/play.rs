@@ -151,22 +151,7 @@ impl PlayTheGame {
                 //TODO: This could be parallel
                 self.chunks.rebuild_all();
                 let mut rlock = REGION.write();
-                for idx in &shared_state.dirty_tiles {
-                    crate::planet::rebuild_flags(&mut rlock, *idx);
-                    crate::planet::rebuild_flags(&mut rlock, *idx-1);
-                    crate::planet::rebuild_flags(&mut rlock, *idx+1);
-                    crate::planet::rebuild_flags(&mut rlock, *idx-REGION_WIDTH);
-                    crate::planet::rebuild_flags(&mut rlock, *idx+REGION_WIDTH);
-                    rlock.revealed[*idx] = true;
-                    rlock.revealed[*idx-1] = true;
-                    rlock.revealed[*idx+1] = true;
-                    rlock.revealed[*idx-REGION_WIDTH] = true;
-                    rlock.revealed[*idx+REGION_WIDTH] = true;
-                    rlock.revealed[*idx-(REGION_WIDTH-1)] = true;
-                    rlock.revealed[*idx-(REGION_WIDTH+1)] = true;
-                    rlock.revealed[*idx+(REGION_WIDTH-1)] = true;
-                    rlock.revealed[*idx+(REGION_WIDTH+1)] = true;
-                }
+                // Rebuild flags
                 shared_state.dirty_tiles.clear();
                 self.ecs_resources.get_mut::<MiningMap>().as_mut().unwrap().is_dirty = true;
             }
