@@ -55,12 +55,13 @@ fn movers(ecs: &mut World, resources: &mut Resources) {
         if let Some(mut gs) = resources.get_mut::<GameStateResource>() {
             gs.vox_moved = true;
         }
-        <(Read<IdentityTag>, Write<Position>)>::query()
+        <(&IdentityTag, &mut Position, &mut FieldOfView)>::query()
             .iter_mut(ecs)
-            .filter(|(idt, _)| movers.contains_key(&idt.0))
-            .for_each(|(id, pos)| {
+            .filter(|(idt, _, _)| movers.contains_key(&idt.0))
+            .for_each(|(id, pos, fov)| {
                 if let Some(destination) = movers.get(&id.0) {
                     pos.set_tile_loc(destination);
+                    fov.is_dirty = true;
                 }
             });
     }
