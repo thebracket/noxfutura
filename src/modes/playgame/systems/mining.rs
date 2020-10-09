@@ -31,6 +31,7 @@ pub fn mining(turn: &MyTurn, pos: &Position, id: &IdentityTag, #[resource] minin
                         .find_and_claim_tool(ToolType::Digging, id.0);
                     if let Some((tool_id, tool_pos)) = maybe_tool_pos {
                         let path = a_star_search(pos.get_idx(), tool_pos, &*rlock);
+                        std::mem::drop(rlock);
                         if !path.success {
                             println!("No path to tool available - abandoning mining");
                             messaging::cancel_job(id.0);
