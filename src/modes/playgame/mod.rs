@@ -24,6 +24,7 @@ pub struct GameStateResource {
     pub vox_moved: bool,
     pub models_moved: bool,
     pub lights_changed: bool,
+    pub dirty_tiles : Vec<usize>
 }
 
 impl GameStateResource {
@@ -34,6 +35,7 @@ impl GameStateResource {
             vox_moved: false,
             models_moved: false,
             lights_changed: false,
+            dirty_tiles: Vec::new()
         }
     }
 

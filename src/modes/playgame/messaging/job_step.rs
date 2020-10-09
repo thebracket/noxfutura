@@ -17,4 +17,6 @@ pub enum JobStep {
     VoxMoved,
     ModelsMoved,
     LightsChanged,
+    DigAt { id: usize, pos: usize },
+    TileDirty { pos: usize }
 }

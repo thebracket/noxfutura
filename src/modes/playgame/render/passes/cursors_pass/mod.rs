@@ -215,6 +215,7 @@ impl CursorPass {
     }
 
     pub fn render(&mut self, core: &Core, ecs: &World, run_state: &RunState) {
+        self.vb.clear();
         if let RunState::Design { mode } = run_state {
             match mode {
                 DesignMode::Lumberjack => self.lumberjack(ecs),

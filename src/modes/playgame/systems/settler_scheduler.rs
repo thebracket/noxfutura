@@ -15,6 +15,6 @@ pub fn settler_schedule(ecs: &mut SubWorld) {
         .filter(|(turn, _)| turn.active)
         .for_each(|(mut turn, schedule)| {
             turn.shift = schedule.hours[hour];
-            //turn.shift = ScheduleTime::Leisure;
+            turn.shift = ScheduleTime::Work; // Remove me
         });
 }

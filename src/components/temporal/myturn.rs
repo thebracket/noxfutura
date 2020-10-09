@@ -25,6 +25,10 @@ pub enum JobType {
         step: BuildingSteps,
         components: Vec<(usize, usize, bool)>,
     },
+    Mining {
+        step: MiningSteps,
+        tool_id: Option<usize>,
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -35,6 +39,15 @@ pub enum LumberjackSteps {
     FindTree,
     TravelToTree { path: Vec<usize> },
     ChopTree,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum MiningSteps {
+    FindPick,
+    TravelToPick { path: Vec<usize> },
+    CollectPick,
+    TravelToMine,
+    Dig,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

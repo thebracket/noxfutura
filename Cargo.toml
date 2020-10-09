@@ -33,7 +33,6 @@ tobj = "2.0.2"
 opt-level = 1
 
 [profile.release]
-incremental = true
 #lto = "thin"
 #debug = true # Disable when not profiling
 

@@ -1,6 +1,6 @@
 use super::super::GameStateResource;
 use super::{JobStep, MOVER_LIST};
-use crate::components::*;
+use crate::{components::*, modes::MiningMode, planet::TileType};
 use crate::modes::playgame::systems::REGION;
 use crate::spatial::*;
 use legion::*;
@@ -9,6 +9,7 @@ pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
     let mut vox_moved = false;
     let mut models_moved = false;
     let mut lights_changed = false;
+    let mut tiles_dirty = Vec::new();
     MOVER_LIST.lock().clear();
     loop {
         let js = super::JOBS_QUEUE.lock().pop_front();
@@ -17,6 +18,11 @@ pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
                 JobStep::VoxMoved => vox_moved = true,
                 JobStep::ModelsMoved => models_moved = true,
                 JobStep::LightsChanged => lights_changed = true,
+                JobStep::TileDirty{pos} => {
+                    tiles_dirty.push(pos);
+                    vox_moved = true;
+                    lights_changed = true;
+                }
                 _ => apply(ecs, &mut js),
             }
         } else {
@@ -36,6 +42,9 @@ pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
         }
         if lights_changed {
             gsr.lights_changed = true;
+        }
+        if !tiles_dirty.is_empty() {
+            gsr.dirty_tiles.extend_from_slice(&tiles_dirty);
         }
     }
 }
@@ -112,6 +121,18 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                         let path = match step {
                             LumberjackSteps::TravelToAxe { path, .. } => Some(path),
                             LumberjackSteps::TravelToTree { path } => Some(path),
+                            _ => None,
+                        };
+                        if let Some(path) = path {
+                            let destination = path[0];
+                            path.remove(0);
+                            let (x, y, z) = idxmap(destination);
+                            MOVER_LIST.lock().insert(*id, (x, y, z));
+                        }
+                    }
+                    JobType::Mining { step, .. } => {
+                        let path = match step {
+                            MiningSteps::TravelToPick { path, .. } => Some(path),
                             _ => None,
                         };
                         if let Some(path) = path {
@@ -246,6 +267,49 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                         super::lights_changed();
                     }
                 }
+            }
+        }
+        JobStep::DigAt { id, pos } => {
+            use bracket_geometry::prelude::*;
+            println!("Looking for digging to perform at {}", pos);
+            let (x, y, z) = idxmap(*pos);
+            let my_pos = Point3::new(x, y, z);
+            let mut rlock = REGION.write();
+            let mut nearby = rlock.jobs_board.mining_designations.iter()
+                .map(|(idx, task)| {
+                    let (mx, my, mz) = idxmap(*idx);
+                    let distance = DistanceAlg::Pythagoras.distance3d(
+                        my_pos,
+                        Point3::new(mx, my, mz)
+                    );
+                    (idx, task, distance)
+                })
+                .filter(|(idx, task, distance)| *distance < 1.2)
+                .map(|(idx, task, distance)| (*idx, *task, distance))
+                .collect::<Vec<(usize, MiningMode, f32)>>();
+
+            println!("Nearby jobs: {:?}", nearby);
+
+            if !nearby.is_empty() {
+                nearby.sort_by(|a, b| {
+                    a.2.partial_cmp(&b.2).unwrap()
+                });
+                println!("Applying: {:?}", nearby[0]);
+                let (mine_id, task, _distance) = nearby[0];
+                match task {
+                    MiningMode::Dig => {
+                        println!("Changed tile");
+                        rlock.tile_types[mine_id] = TileType::Floor;
+                        super::super::tile_dirty(mine_id);
+                        super::super::tile_dirty(mine_id-1);
+                        super::super::tile_dirty(mine_id+1);
+                        super::super::tile_dirty(mine_id-REGION_WIDTH);
+                        super::super::tile_dirty(mine_id+REGION_WIDTH);
+                    }
+                    _ => {}
+                }
+                println!("Undesignating");
+                rlock.jobs_board.mining_designations.remove(&mine_id);
             }
         }
         _ => {}

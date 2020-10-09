@@ -36,7 +36,16 @@ impl JobsBoard {
 
         let idx = pos.get_idx();
         if mining_map.dijkstra[idx] < f32::MAX {
-            println!("Mining job {} steps away", mining_map.dijkstra[idx]);
+            let available_tools = self
+                    .tool_ownership
+                    .iter()
+                    .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == ToolType::Digging)
+                    .count();
+            if available_tools > 0 {
+                available_jobs.push(
+                    (usize::MAX, mining_map.dijkstra[idx])
+                );
+            }
         }
 
         if available_jobs.is_empty() {
@@ -45,8 +54,14 @@ impl JobsBoard {
 
         available_jobs.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
         let job_index = available_jobs[0].0;
-        self.all_jobs[job_index].claimed = Some(identity);
-        Some(self.all_jobs[job_index].job.clone())
+        if job_index == usize::MAX {
+            // Mining
+            Some(JobType::Mining{ step: MiningSteps::FindPick, tool_id: None })
+        } else {
+            // Everything else
+            self.all_jobs[job_index].claimed = Some(identity);
+            Some(self.all_jobs[job_index].job.clone())
+        }
     }
 
     pub fn get_trees(&self) -> &HashSet<usize> {

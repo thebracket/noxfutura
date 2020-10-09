@@ -16,7 +16,7 @@ pub enum DesignMode {
     Mining { mode: MiningMode },
 }
 
-#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize, Debug)]
 pub enum MiningMode {
     Dig,
     Channel,

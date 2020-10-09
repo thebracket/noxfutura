@@ -69,6 +69,10 @@ impl Region {
         self.flags.iter_mut().for_each(|f| *f = 0);
     }
 
+    pub fn reset_all_flags_at(&mut self, idx: &usize) {
+        self.flags[*idx] = 0;
+    }
+
     pub fn reset_flags(&mut self, idx: usize) {
         self.flags[idx] = 0;
     }

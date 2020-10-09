@@ -2,10 +2,11 @@ use super::{
     loadstate::*, systems::REGION, Chunks, CursorPass, DesignMode, GBuffer, GrassPass,
     LightingPass, ModelsPass, Palette, RunState, TerrainPass, VoxPass, MiningMap
 };
-use crate::components::{CameraOptions, Position};
+use crate::{components::{CameraOptions, Position}};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
+use crate::spatial::*;
 
 pub struct PlayTheGame {
     ready: bool,
@@ -144,6 +145,30 @@ impl PlayTheGame {
             if shared_state.lights_changed {
                 shared_state.lights_changed = false;
                 self.lighting_pass.as_mut().unwrap().lighting_changed = true;
+            }
+            if !shared_state.dirty_tiles.is_empty() {
+                self.chunks.mark_dirty(&shared_state.dirty_tiles);
+                //TODO: This could be parallel
+                self.chunks.rebuild_all();
+                let mut rlock = REGION.write();
+                for idx in &shared_state.dirty_tiles {
+                    crate::planet::rebuild_flags(&mut rlock, *idx);
+                    crate::planet::rebuild_flags(&mut rlock, *idx-1);
+                    crate::planet::rebuild_flags(&mut rlock, *idx+1);
+                    crate::planet::rebuild_flags(&mut rlock, *idx-REGION_WIDTH);
+                    crate::planet::rebuild_flags(&mut rlock, *idx+REGION_WIDTH);
+                    rlock.revealed[*idx] = true;
+                    rlock.revealed[*idx-1] = true;
+                    rlock.revealed[*idx+1] = true;
+                    rlock.revealed[*idx-REGION_WIDTH] = true;
+                    rlock.revealed[*idx+REGION_WIDTH] = true;
+                    rlock.revealed[*idx-(REGION_WIDTH-1)] = true;
+                    rlock.revealed[*idx-(REGION_WIDTH+1)] = true;
+                    rlock.revealed[*idx+(REGION_WIDTH-1)] = true;
+                    rlock.revealed[*idx+(REGION_WIDTH+1)] = true;
+                }
+                shared_state.dirty_tiles.clear();
+                self.ecs_resources.get_mut::<MiningMap>().as_mut().unwrap().is_dirty = true;
             }
         }
     }

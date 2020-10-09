@@ -89,3 +89,15 @@ pub fn finish_building(building_id: usize) {
         .lock()
         .push_back(JobStep::FinishBuilding { building_id });
 }
+
+pub fn dig_at(id: usize, pos: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::DigAt{ id, pos });
+}
+
+pub fn tile_dirty(pos: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::TileDirty{ pos });
+}
