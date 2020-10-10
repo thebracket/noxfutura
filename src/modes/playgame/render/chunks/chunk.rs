@@ -1,10 +1,10 @@
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
-use crate::planet::{Region, TileType};
+use nox_planet::{Region, TileType};
 use nox_spatial::mapidx;
-use crate::utils::add_ramp_geometry;
+use nox_utils::add_ramp_geometry;
 use bengine::*;
-use cgmath::Vector3;
+use bengine::uv::Vec3;
 
 pub struct Chunk {
     pub t: ChunkType,
@@ -16,7 +16,7 @@ pub struct Chunk {
     vb: FloatBuffer<f32>,
     element_count: [u32; CHUNK_SIZE],
     floor_element_count: [u32; CHUNK_SIZE],
-    pub center_pos: Vector3<f32>,
+    pub center_pos: Vec3,
 }
 
 impl Chunk {

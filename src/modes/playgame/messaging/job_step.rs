@@ -1,4 +1,4 @@
-use crate::components::JobType;
+use nox_components::JobType;
 use bengine::geometry::Point3;
 
 pub enum JobStep {

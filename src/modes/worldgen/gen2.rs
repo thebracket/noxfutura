@@ -1,5 +1,5 @@
 use super::worldgen_uniforms::*;
-use crate::planet::WORLDGEN_RENDER;
+use nox_planet::WORLDGEN_RENDER;
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::gui::*;
 use bengine::*;
@@ -119,7 +119,7 @@ impl NoxMode for WorldGen2 {
             .collapsible(false)
             .build(core.imgui, || {
                 core.imgui
-                    .text(ImString::new(crate::planet::get_worldgen_status()));
+                    .text(ImString::new(nox_planet::get_worldgen_status()));
             });
 
         let mut renderlock = WORLDGEN_RENDER.lock();
@@ -168,7 +168,7 @@ impl NoxMode for WorldGen2 {
             ctx.queue.submit(Some(encoder.finish()));
         }
 
-        if crate::planet::is_worldgen_done() {
+        if nox_planet::is_worldgen_done() {
             result = GameMode::MainMenu;
         }
 

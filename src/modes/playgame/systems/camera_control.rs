@@ -1,5 +1,5 @@
 use super::super::GameStateResource;
-use crate::components::{CameraMode, CameraOptions, Position};
+use nox_components::{CameraMode, CameraOptions, Position};
 use bengine::VirtualKeyCode;
 use legion::world::SubWorld;
 use legion::*;

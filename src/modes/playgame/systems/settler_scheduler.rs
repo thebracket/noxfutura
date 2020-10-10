@@ -1,4 +1,4 @@
-use crate::components::*;
+use nox_components::*;
 use legion::*;
 use world::SubWorld;
 

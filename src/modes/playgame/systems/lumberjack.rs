@@ -1,7 +1,7 @@
 use super::super::messaging;
-use crate::components::*;
+use nox_components::*;
 use crate::modes::playgame::systems::REGION;
-use crate::planet::pathfinding::a_star_search;
+use nox_planet::pathfinding::a_star_search;
 use legion::*;
 
 #[system(for_each)]

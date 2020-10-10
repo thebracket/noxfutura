@@ -1,7 +1,7 @@
 use legion::*;
-use super::super::MiningMap;
+use nox_planet::MiningMap;
 use super::REGION;
-use crate::planet::Region;
+use nox_planet::Region;
 use nox_spatial::*;
 use std::collections::VecDeque;
 

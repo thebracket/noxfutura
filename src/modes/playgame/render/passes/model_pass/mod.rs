@@ -1,6 +1,7 @@
 use crate::modes::playgame::{CameraUniform, Models};
-use crate::utils::Frustrum;
-use crate::{components::*, modes::playgame::GBuffer};
+use nox_utils::Frustrum;
+use nox_components::*;
+use crate::modes::playgame::GBuffer;
 use bengine::*;
 use legion::*;
 use std::collections::HashMap;

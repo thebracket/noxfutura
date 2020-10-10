@@ -1,5 +1,7 @@
 use super::super::RunState;
-use crate::{components::*, modes::playgame::DesignMode, modes::playgame::MiningMode};
+use nox_components::*;
+use nox_planet::MiningMode;
+use crate::modes::playgame::DesignMode;
 use bengine::gui::*;
 use legion::*;
 

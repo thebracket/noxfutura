@@ -1,6 +1,7 @@
 use super::super::GameStateResource;
 use super::{JobStep, MOVER_LIST};
-use crate::{components::*, modes::MiningMode, planet::TileType};
+use nox_components::*;
+use nox_planet::{MiningMode, TileType};
 use crate::modes::playgame::systems::REGION;
 use nox_spatial::*;
 use legion::*;
@@ -221,7 +222,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 let wood = nox_raws::get_material_by_tag("Wood").unwrap();
                 for idx in to_spawn.iter() {
                     let (tx, ty, tz) = idxmap(*idx);
-                    crate::planet::spawn_item_on_ground(
+                    nox_planet::spawn_item_on_ground(
                         ecs,
                         "wood_log",
                         tx,

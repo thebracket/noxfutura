@@ -1,4 +1,4 @@
-use crate::planet::PlanetParams;
+use nox_planet::PlanetParams;
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use bengine::random::RandomNumberGenerator;
@@ -55,7 +55,7 @@ impl NoxMode for WorldGen1 {
             core.imgui
                 .checkbox(im_str!("Extra Noise Level"), &mut self.params.extra_noise);
             if core.imgui.button(im_str!("Build Planet"), [400.0, 50.0]) {
-                crate::planet::start_building_planet(self.params.clone());
+                nox_planet::start_building_planet(self.params.clone());
                 result = GameMode::WorldGen2;
             }
         });

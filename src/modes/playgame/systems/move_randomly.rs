@@ -1,6 +1,6 @@
 use super::{REGION, RNG};
-use crate::components::*;
-use crate::planet::Region;
+use nox_components::*;
+use nox_planet::Region;
 use legion::*;
 
 #[system(for_each)]

@@ -1,9 +1,9 @@
 use super::{Chunk, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
-use crate::components::Position;
+use nox_components::Position;
 use crate::modes::playgame::systems::REGION;
-use crate::utils::Frustrum;
+use nox_utils::Frustrum;
 use bengine::geometry::*;
-use cgmath::Matrix4;
+use bengine::uv::Mat4;
 use rayon::prelude::*;
 
 pub struct Chunks {
@@ -42,7 +42,7 @@ impl Chunks {
         self.chunks.par_iter_mut().for_each(|c| c.rebuild(&rlock));
     }
 
-    pub fn on_camera_move(&mut self, camera_matrix: &Matrix4<f32>, camera_position: &Position) {
+    pub fn on_camera_move(&mut self, camera_matrix: &Mat4, camera_position: &Position) {
         let cp = camera_position.as_point3();
         self.frustrum.update(camera_matrix);
         self.visible_chunks = self

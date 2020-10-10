@@ -1,8 +1,8 @@
-use crate::components::*;
-use crate::planet::Region;
+use nox_components::*;
+use nox_planet::Region;
 use bengine::gpu::util::DeviceExt;
 use bengine::*;
-use cgmath::Vector3;
+use bengine::uv::Vec3;
 use legion::*;
 use rayon::prelude::*;
 
@@ -46,8 +46,6 @@ impl LightUniforms {
     }
 
     pub fn update_partial(&mut self, ecs: &World, mouse_position: &[f32]) {
-        use cgmath::num_traits::identities::Zero;
-
         let camera_pos = <(&Position, &CameraOptions)>::query()
             .iter(ecs)
             .map(|(pos, _)| pos.as_point3())
@@ -55,7 +53,7 @@ impl LightUniforms {
             .unwrap();
 
         let mut query = <Read<Calendar>>::query();
-        let mut sun_pos = (Vector3::zero(), Vector3::zero());
+        let mut sun_pos = (Vec3::zero(), Vec3::zero());
         for c in query.iter(ecs) {
             sun_pos = c.calculate_sun_moon();
         }

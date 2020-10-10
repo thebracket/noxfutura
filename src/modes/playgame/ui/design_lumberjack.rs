@@ -1,4 +1,4 @@
-use crate::components::*;
+use nox_components::*;
 use crate::modes::playgame::systems::REGION;
 use nox_spatial::mapidx;
 use bengine::gui::*;

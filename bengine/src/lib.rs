@@ -24,6 +24,12 @@ pub mod geometry {
 pub mod vox {
     pub use dot_vox::*;
 }
+pub mod noise {
+    pub use bracket_noise::prelude::*;
+}
+pub mod uv {
+    pub use ultraviolet::*;
+}
 
 pub mod gui {
     pub use imgui::*;

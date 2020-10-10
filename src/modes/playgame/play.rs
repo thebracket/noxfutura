@@ -1,8 +1,9 @@
 use super::{
     loadstate::*, systems::REGION, Chunks, CursorPass, DesignMode, GBuffer, GrassPass,
-    LightingPass, ModelsPass, RunState, TerrainPass, VoxPass, MiningMap
+    LightingPass, ModelsPass, RunState, TerrainPass, VoxPass
 };
-use crate::{components::{CameraOptions, Position}};
+use nox_planet::MiningMap;
+use nox_components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
@@ -10,7 +11,7 @@ use legion::*;
 pub struct PlayTheGame {
     ready: bool,
     started_loader: bool,
-    planet: Option<crate::planet::Planet>,
+    planet: Option<nox_planet::Planet>,
     ecs: World,
     ecs_resources: Resources,
     chunks: Chunks,
@@ -63,7 +64,7 @@ impl PlayTheGame {
             }
             std::thread::spawn(|| {
                 LOAD_STATE.write().state = LoadState::Loading;
-                let lg = crate::planet::load_game();
+                let lg = nox_planet::load_game();
                 println!("Loader process complete");
                 LOAD_STATE.write().state = LoadState::Loaded { game: lg };
                 println!("Unlocked loader");
@@ -78,7 +79,7 @@ impl PlayTheGame {
                     LOAD_STATE.write().state = LoadState::Idle;
                     self.planet = Some(game.planet);
                     *REGION.write() = game.current_region;
-                    self.ecs = crate::components::deserialize_world(game.ecs_text);
+                    self.ecs = nox_components::deserialize_world(game.ecs_text);
 
                     let mut loader_lock = crate::modes::LOADER.write();
                     self.gbuffer = loader_lock.g_buffer.take();
@@ -151,7 +152,7 @@ impl PlayTheGame {
                 {
                     let mut rlock = REGION.write();
                     rlock.reset_all_flags();
-                    crate::planet::rebuild_flags(&mut rlock);
+                    nox_planet::rebuild_flags(&mut rlock);
                 }
 
                 self.chunks.rebuild_all();

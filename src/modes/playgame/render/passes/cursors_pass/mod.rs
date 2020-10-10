@@ -2,7 +2,7 @@ mod cubes;
 use crate::modes::playgame::{CameraUniform, DesignMode, RunState};
 use cubes::add_cube_geometry;
 use legion::*;
-use crate::components::*;
+use nox_components::*;
 use bengine::*;
 use nox_spatial::*;
 

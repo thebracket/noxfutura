@@ -1,8 +1,9 @@
-use crate::modes::playgame::{MiningMap, MiningMode, systems::REGION};
+use nox_planet::{MiningMap, MiningMode};
+use crate::modes::playgame::systems::REGION;
 use bengine::gui::*;
 use legion::*;
-use crate::components::*;
-use crate::planet::*;
+use nox_components::*;
+use nox_planet::*;
 use nox_spatial::mapidx;
 
 pub fn mining_display(

@@ -1,6 +1,6 @@
 use super::RNG;
-use crate::components::*;
-use crate::utils::attribute_modifier;
+use nox_components::*;
+use nox_utils::attribute_modifier;
 use legion::*;
 
 #[system(for_each)]

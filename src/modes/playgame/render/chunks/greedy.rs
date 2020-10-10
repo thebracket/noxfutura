@@ -18,7 +18,7 @@ pub fn greedy_cubes(cube_index: &mut CubeMap, layer: &mut Vec<f32>, element_coun
             //let depth = grow_in(&mut cube_index, idx, width, height);
             let depth = 1;
 
-            crate::utils::add_cube_geometry(
+            nox_utils::add_cube_geometry(
                 layer,
                 element_count,
                 x as f32,
@@ -46,7 +46,7 @@ pub fn greedy_floors(cube_index: &mut CubeMap, layer: &mut Vec<f32>, element_cou
             let width = grow_right(cube_index, idx, mat_idx);
             let height = grow_down(cube_index, idx, width, mat_idx);
 
-            crate::utils::add_floor_geometry(
+            nox_utils::add_floor_geometry(
                 layer,
                 element_count,
                 x as f32,

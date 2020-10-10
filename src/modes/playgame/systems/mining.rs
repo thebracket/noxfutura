@@ -1,9 +1,9 @@
 use super::super::messaging;
-use crate::components::*;
+use nox_components::*;
 use crate::modes::playgame::systems::REGION;
-use crate::planet::pathfinding::a_star_search;
+use nox_planet::pathfinding::a_star_search;
 use legion::*;
-use super::super::MiningMap;
+use nox_planet::MiningMap;
 use nox_spatial::idxmap;
 use bengine::geometry::Point3;
 
@@ -91,7 +91,8 @@ pub fn mining(turn: &MyTurn, pos: &Position, id: &IdentityTag, #[resource] minin
                             );
                         } else {
                             // Walk the Dijkstra
-                            if let Some(exit) = mining.find_lowest_exit(idx) {
+                            let rlock = REGION.read();
+                            if let Some(exit) = mining.find_lowest_exit(idx, &rlock) {
                                 let (nx, ny, nz) = idxmap(exit);
                                 messaging::entity_moved(id.0, &Point3::new(nx, ny, nz));
                             } else {

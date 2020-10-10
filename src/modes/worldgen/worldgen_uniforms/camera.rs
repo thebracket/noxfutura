@@ -1,18 +1,9 @@
-use cgmath::EuclideanSpace;
-use cgmath::{Matrix4, Point3, Vector3};
-
-#[cfg_attr(rustfmt, rustfmt_skip)]
-const OPENGL_TO_WGPU_MATRIX: cgmath::Matrix4<f32> = Matrix4::new(
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 0.5, 0.0,
-    0.0, 0.0, 0.5, 1.0,
-);
+use bengine::uv::{Mat4, Vec3};
 
 pub struct Camera {
-    eye: Vector3<f32>,
-    target: Vector3<f32>,
-    up: Vector3<f32>,
+    eye: Vec3,
+    target: Vec3,
+    up: Vec3,
     aspect: f32,
     fovy: f32,
     znear: f32,
@@ -24,7 +15,7 @@ impl Camera {
         Self {
             eye: (0.0, 2.0, 2.0).into(),
             target: (0.0, 0.0, 0.0).into(),
-            up: Vector3::unit_y(),
+            up: Vec3::unit_y(),
             aspect: width as f32 / height as f32,
             fovy: 0.785398,
             znear: 0.01,
@@ -32,13 +23,13 @@ impl Camera {
         }
     }
 
-    pub fn build_view_projection_matrix(&self) -> Matrix4<f32> {
-        let view = Matrix4::look_at(
-            Point3::from_vec(self.eye),
-            Point3::from_vec(self.target),
+    pub fn build_view_projection_matrix(&self) -> Mat4 {
+        let view = Mat4::look_at(
+            self.eye,
+            self.target,
             self.up,
         );
-        let proj = cgmath::perspective(cgmath::Rad(self.fovy), self.aspect, self.znear, self.zfar);
-        OPENGL_TO_WGPU_MATRIX * proj * view
+        let proj = bengine::uv::projection::perspective_wgpu_dx(self.fovy, self.aspect, self.znear, self.zfar);
+        proj * view
     }
 }

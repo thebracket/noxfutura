@@ -1,4 +1,4 @@
-use crate::planet::SavedGame;
+use nox_planet::SavedGame;
 use parking_lot::RwLock;
 
 #[derive(Clone)]

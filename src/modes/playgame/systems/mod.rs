@@ -1,4 +1,4 @@
-use crate::planet::Region;
+use nox_planet::Region;
 use bengine::random::RandomNumberGenerator;
 use legion::*;
 use parking_lot::{Mutex, RwLock};
@@ -15,8 +15,8 @@ mod sleep_shift;
 mod viewshed;
 mod work_shift;
 mod construct_building;
-mod mining_map;
 mod mining;
+mod mining_map;
 
 use super::messaging;
 

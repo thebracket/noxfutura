@@ -7,7 +7,7 @@ use job_step::*;
 use legion::*;
 use queue_backend::*;
 
-use crate::components::JobType;
+use nox_components::JobType;
 
 pub fn process_queues(ecs: &mut World, resources: &mut Resources) {
     apply::apply_jobs_queue(ecs, resources);

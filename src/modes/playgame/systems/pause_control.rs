@@ -1,6 +1,7 @@
 use super::super::GameStateResource;
 use super::super::RunState;
-use crate::modes::playgame::{DesignMode, MiningMode};
+use crate::modes::playgame::DesignMode;
+use nox_planet::MiningMode;
 use bengine::VirtualKeyCode;
 use legion::*;
 

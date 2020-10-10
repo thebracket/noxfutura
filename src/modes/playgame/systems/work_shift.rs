@@ -1,5 +1,6 @@
 use super::REGION;
-use crate::{components::*, modes::playgame::MiningMap};
+use nox_components::*;
+use nox_planet::MiningMap;
 use legion::*;
 
 #[system(for_each)]

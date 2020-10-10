@@ -1,8 +1,8 @@
-use cgmath::{Matrix4, SquareMatrix};
 mod camera;
 use bengine::gpu::util::DeviceExt;
 use bengine::*;
 pub use camera::*;
+use bengine::uv::Mat4;
 
 #[repr(C)]
 pub struct Uniforms {
@@ -13,7 +13,7 @@ pub struct Uniforms {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct UniformData {
-    view_proj: Matrix4<f32>,
+    view_proj: Mat4,
     rot_angle: f32,
 }
 
@@ -25,7 +25,7 @@ impl Uniforms {
         let dcl = RENDER_CONTEXT.read();
         let dc = dcl.as_ref().unwrap();
         let data = UniformData {
-            view_proj: Matrix4::identity(),
+            view_proj: Mat4::identity(),
             rot_angle: 0.0,
         };
         let uniform_buffer = dc

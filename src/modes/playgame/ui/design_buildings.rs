@@ -1,8 +1,8 @@
 use crate::modes::playgame::systems::REGION;
 use bengine::gui::*;
 use legion::*;
-use crate::components::*;
-use crate::planet::*;
+use nox_components::*;
+use nox_planet::*;
 use nox_raws::*;
 use nox_spatial::mapidx;
 
@@ -124,7 +124,7 @@ pub fn building_display(
         if can_build && !imgui.io().want_capture_mouse {
             if imgui.io().mouse_down[0] {
                 // Issue build order
-                let new_building_id = crate::planet::spawn_building(
+                let new_building_id = nox_planet::spawn_building(
                     ecs,
                     &rtag,
                     mouse_world_pos.0,

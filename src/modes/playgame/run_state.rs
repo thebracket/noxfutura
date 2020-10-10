@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use nox_planet::MiningMode;
 
 #[derive(PartialEq, Clone)]
 pub enum RunState {
@@ -16,13 +16,3 @@ pub enum DesignMode {
     Mining { mode: MiningMode },
 }
 
-#[derive(PartialEq, Copy, Clone, Serialize, Deserialize, Debug)]
-pub enum MiningMode {
-    Dig,
-    Channel,
-    Ramp,
-    Up,
-    Down,
-    UpDown,
-    Clear
-}

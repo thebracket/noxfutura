@@ -1,9 +1,9 @@
 use super::VoxBuffer;
-use crate::components::*;
-use crate::utils::Frustrum;
+use nox_components::*;
+use nox_utils::Frustrum;
 use bengine::*;
 use legion::*;
-use prelude::Palette;
+use bengine::Palette;
 use std::collections::HashMap;
 
 const FRUSTRUM_CHECK_RANGE: f32 = 2.0;
@@ -159,7 +159,7 @@ pub fn build_vox_instances2(
 
     // Stairs from terrain
     let region = crate::modes::playgame::systems::REGION.read();
-    use crate::planet::{StairsType, TileType};
+    use nox_planet::{StairsType, TileType};
     region
         .tile_types
         .iter()

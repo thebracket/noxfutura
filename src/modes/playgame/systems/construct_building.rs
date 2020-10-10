@@ -1,8 +1,8 @@
 use super::messaging;
 use super::REGION;
 use legion::*;
-use crate::components::*;
-use crate::planet::pathfinding::a_star_search;
+use nox_components::*;
+use nox_planet::pathfinding::a_star_search;
 
 #[system(for_each)]
 pub fn construction(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
