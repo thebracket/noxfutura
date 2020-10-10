@@ -1,6 +1,6 @@
 use crate::components::*;
 use crate::planet::{ground_z, Region};
-use crate::spatial::REGION_WIDTH;
+use nox_spatial::REGION_WIDTH;
 use bengine::geometry::Point;
 pub use legion::systems::CommandBuffer;
 use legion::*;

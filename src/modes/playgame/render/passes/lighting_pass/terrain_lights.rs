@@ -1,4 +1,4 @@
-use crate::spatial::REGION_TILES_COUNT;
+use nox_spatial::REGION_TILES_COUNT;
 use bengine::*;
 use gpu::util::DeviceExt;
 

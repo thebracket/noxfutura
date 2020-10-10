@@ -1,4 +1,4 @@
-use crate::spatial::{idxmap, REGION_WIDTH};
+use nox_spatial::{idxmap, REGION_WIDTH};
 use std::collections::HashMap;
 
 pub type CubeMap = HashMap<usize, (usize, bool)>;

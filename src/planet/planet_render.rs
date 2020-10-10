@@ -2,7 +2,7 @@ use crate::planet::{
     noise_helper::{lat_to_y, lon_to_x},
     planet_idx, sphere_vertex, Block,
 };
-use crate::spatial::{WORLD_HEIGHT, WORLD_WIDTH};
+use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use bengine::FloatBuffer;
 use bengine::geometry::Degrees;
 use cgmath::Vector3;

@@ -1,5 +1,5 @@
 use crate::components::*;
-use crate::spatial::idxmap;
+use nox_spatial::idxmap;
 use bengine::geometry::*;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};

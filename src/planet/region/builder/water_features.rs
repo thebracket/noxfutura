@@ -1,6 +1,6 @@
 use super::Region;
 use crate::planet::{Planet, TileType};
-use crate::spatial::*;
+use nox_spatial::*;
 use bengine::geometry::*;
 use bengine::random::RandomNumberGenerator;
 use std::collections::HashSet;

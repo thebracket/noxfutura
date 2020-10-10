@@ -1,6 +1,6 @@
 use crate::planet::{ground_z, Region};
 use nox_raws::*;
-use crate::spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
+use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 use bengine::random::RandomNumberGenerator;
 use legion::*;
 

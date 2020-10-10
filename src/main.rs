@@ -6,7 +6,6 @@ mod modes;
 use modes::*;
 pub mod components;
 pub mod planet;
-pub mod spatial;
 pub mod utils;
 
 pub enum GameMode {

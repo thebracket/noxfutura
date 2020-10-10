@@ -1,7 +1,7 @@
 use crate::components::*;
 use crate::modes::playgame::systems::REGION;
 use crate::planet::{Region, TileType};
-use crate::spatial::*;
+use nox_spatial::*;
 use bengine::gui::*;
 use legion::*;
 

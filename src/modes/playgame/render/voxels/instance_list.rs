@@ -169,7 +169,7 @@ pub fn build_vox_instances2(
             _ => false,
         })
         .map(|(idx, tt)| {
-            let (x, y, z) = crate::spatial::idxmap(idx);
+            let (x, y, z) = nox_spatial::idxmap(idx);
             (tt, x as f32, y as f32, z as f32)
         })
         .filter(|(_tt, x, y, z)| {

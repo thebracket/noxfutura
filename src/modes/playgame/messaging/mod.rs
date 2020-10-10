@@ -97,7 +97,7 @@ pub fn dig_at(id: usize, pos: usize) {
 }
 
 pub fn tile_dirty(pos: usize) {
-    use crate::spatial::*;
+    use nox_spatial::*;
     let mut jql = JOBS_QUEUE.lock();
     let (x,y,z) = idxmap(pos);
     for tz in -1i32 ..= 1 {

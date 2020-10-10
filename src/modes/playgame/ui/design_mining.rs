@@ -3,7 +3,7 @@ use bengine::gui::*;
 use legion::*;
 use crate::components::*;
 use crate::planet::*;
-use crate::spatial::mapidx;
+use nox_spatial::mapidx;
 
 pub fn mining_display(
     imgui: &Ui,

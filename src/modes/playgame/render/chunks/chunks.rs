@@ -31,7 +31,7 @@ impl Chunks {
 
     pub fn mark_dirty(&mut self, tiles: &Vec<usize>) {
         tiles.iter().for_each(|idx| {
-            let (x, y, z) = crate::spatial::idxmap(*idx);
+            let (x, y, z) = nox_spatial::idxmap(*idx);
             let chunk_id = super::chunk_id_by_world(x, y, z);
             self.chunks[chunk_id].dirty = true;
         });

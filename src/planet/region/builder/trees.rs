@@ -1,6 +1,6 @@
 use crate::planet::{ground_z, Region, TileType};
 use nox_raws::*;
-use crate::spatial::*;
+use nox_spatial::*;
 use bengine::geometry::*;
 use bengine::random::*;
 use legion::*;

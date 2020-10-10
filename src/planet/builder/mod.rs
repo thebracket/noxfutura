@@ -104,7 +104,7 @@ fn save_world(region: Region, world: legion::World) {
 }
 
 fn find_crash_site() -> Point {
-    use crate::spatial::{WORLD_HEIGHT, WORLD_WIDTH};
+    use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
     set_worldgen_status("Deciding where to crash");
     let seed = PLANET_BUILD.lock().planet.rng_seed;
     let mut rng = RandomNumberGenerator::seeded(seed);

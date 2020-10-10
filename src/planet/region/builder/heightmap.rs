@@ -1,5 +1,5 @@
 use crate::planet::sphere_vertex;
-use crate::spatial::{REGION_HEIGHT, REGION_WIDTH};
+use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 use bengine::geometry::*;
 use bracket_noise::prelude::*;
 use bengine::random::*;

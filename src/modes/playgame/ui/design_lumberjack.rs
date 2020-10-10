@@ -1,6 +1,6 @@
 use crate::components::*;
 use crate::modes::playgame::systems::REGION;
-use crate::spatial::mapidx;
+use nox_spatial::mapidx;
 use bengine::gui::*;
 use legion::*;
 

@@ -1,5 +1,5 @@
 use crate::planet::{Region, StairsType, TileType};
-use crate::spatial::*;
+use nox_spatial::*;
 
 pub fn set_flags(region: &mut Region) {
     // Set the solid flag

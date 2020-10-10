@@ -4,7 +4,7 @@ use legion::*;
 use crate::components::*;
 use crate::planet::*;
 use nox_raws::*;
-use crate::spatial::mapidx;
+use nox_spatial::mapidx;
 
 struct AvailableBuilding {
     tag: String,

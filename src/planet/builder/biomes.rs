@@ -1,6 +1,6 @@
 use super::{set_worldgen_status, PLANET_BUILD};
 use crate::planet::{planet_idx, Biome, Planet};
-use crate::spatial::{WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
+use nox_spatial::{WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 use bengine::geometry::*;
 use bengine::random::*;
 use std::collections::HashMap;

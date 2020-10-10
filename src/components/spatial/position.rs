@@ -1,5 +1,5 @@
 use crate::components::prelude::*;
-use crate::spatial::*;
+use nox_spatial::*;
 use bengine::geometry::Point3;
 use cgmath::Vector3;
 use components::IdentityTag;

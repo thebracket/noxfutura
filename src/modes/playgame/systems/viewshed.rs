@@ -1,7 +1,7 @@
 use crate::components::*;
 use crate::modes::playgame::systems::REGION;
 use crate::planet::Region;
-use crate::spatial::*;
+use nox_spatial::*;
 use cgmath::{InnerSpace, Vector3};
 use legion::world::SubWorld;
 use legion::*;

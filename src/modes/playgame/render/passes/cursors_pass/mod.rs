@@ -4,7 +4,7 @@ use cubes::add_cube_geometry;
 use legion::*;
 use crate::components::*;
 use bengine::*;
-use crate::spatial::*;
+use nox_spatial::*;
 
 pub struct CursorPass {
     pub render_pipeline: gpu::RenderPipeline,

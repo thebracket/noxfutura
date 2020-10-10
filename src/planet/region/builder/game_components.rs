@@ -1,5 +1,5 @@
 use crate::components::*;
-use crate::spatial::{REGION_WIDTH, WORLD_WIDTH};
+use nox_spatial::{REGION_WIDTH, WORLD_WIDTH};
 use bengine::geometry::Point;
 use legion::*;
 

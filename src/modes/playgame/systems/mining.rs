@@ -4,7 +4,7 @@ use crate::modes::playgame::systems::REGION;
 use crate::planet::pathfinding::a_star_search;
 use legion::*;
 use super::super::MiningMap;
-use crate::spatial::idxmap;
+use nox_spatial::idxmap;
 use bengine::geometry::Point3;
 
 #[system(for_each)]

@@ -1,5 +1,5 @@
 pub use crate::planet::Planet;
-use crate::spatial::{idxmap, mapidx, REGION_TILES_COUNT};
+use nox_spatial::{idxmap, mapidx, REGION_TILES_COUNT};
 use serde::{Deserialize, Serialize};
 mod tiletype;
 pub use tiletype::*;

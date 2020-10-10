@@ -1396,6 +1396,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "nox_spatial"
+version = "0.1.0"
+
+[[package]]
 name = "noxfutura"
 version = "0.2.0"
 dependencies = [
@@ -1413,6 +1417,7 @@ dependencies = [
  "legion",
  "miniz_oxide 0.4.2",
  "nox_raws",
+ "nox_spatial",
  "parking_lot 0.11.0",
  "rayon",
  "ron",

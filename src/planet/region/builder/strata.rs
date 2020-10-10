@@ -1,6 +1,6 @@
 use crate::planet::{Region, TileType};
 use nox_raws::*;
-use crate::spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use bracket_noise::prelude::*;
 use bengine::random::RandomNumberGenerator;
 

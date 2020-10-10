@@ -1,7 +1,7 @@
 use crate::components::*;
 use crate::planet::{ground_z, rex::*, Region, StairsType, TileType};
 use nox_raws::get_material_by_tag;
-use crate::spatial::mapidx;
+use nox_spatial::mapidx;
 use bengine::geometry::*;
 use legion::*;
 use std::fs::File;

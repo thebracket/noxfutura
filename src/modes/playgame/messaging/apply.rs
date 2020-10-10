@@ -2,7 +2,7 @@ use super::super::GameStateResource;
 use super::{JobStep, MOVER_LIST};
 use crate::{components::*, modes::MiningMode, planet::TileType};
 use crate::modes::playgame::systems::REGION;
-use crate::spatial::*;
+use nox_spatial::*;
 use legion::*;
 
 pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {

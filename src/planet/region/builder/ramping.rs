@@ -1,5 +1,5 @@
 use crate::planet::{ground_z, RampDirection, Region, TileType};
-use crate::spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
+use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 
 pub fn build_ramps(region: &mut Region) {
     for y in 1..REGION_HEIGHT - 1 {

@@ -1,7 +1,7 @@
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::planet::{Region, TileType};
-use crate::spatial::mapidx;
+use nox_spatial::mapidx;
 use crate::utils::add_ramp_geometry;
 use bengine::*;
 use cgmath::Vector3;
