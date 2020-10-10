@@ -1,7 +1,7 @@
 use super::super::GameStateResource;
 use super::{JobStep, MOVER_LIST};
 use nox_components::*;
-use nox_planet::{MiningMode, TileType};
+use nox_planet::{MiningMode, StairsType, TileType};
 use crate::modes::playgame::systems::REGION;
 use nox_spatial::*;
 use legion::*;
@@ -302,6 +302,28 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     MiningMode::Dig => {
                         println!("Changed tile");
                         rlock.tile_types[mine_id] = TileType::Floor;
+                        super::super::tile_dirty(mine_id);
+                    }
+                    MiningMode::Channel => {
+                        println!("Changed tile");
+                        rlock.tile_types[mine_id] = TileType::Empty;
+                        rlock.tile_types[mine_id - (REGION_WIDTH * REGION_HEIGHT)] = TileType::Floor;
+                        super::super::tile_dirty(mine_id);
+                        super::super::tile_dirty(mine_id - (REGION_WIDTH * REGION_HEIGHT));
+                    }
+                    MiningMode::Up => {
+                        println!("Changed tile");
+                        rlock.tile_types[mine_id] = TileType::Stairs { direction: StairsType::Up };
+                        super::super::tile_dirty(mine_id);
+                    }
+                    MiningMode::Down => {
+                        println!("Changed tile");
+                        rlock.tile_types[mine_id] = TileType::Stairs { direction: StairsType::Down };
+                        super::super::tile_dirty(mine_id);
+                    }
+                    MiningMode::UpDown => {
+                        println!("Changed tile");
+                        rlock.tile_types[mine_id] = TileType::Stairs { direction: StairsType::UpDown };
                         super::super::tile_dirty(mine_id);
                     }
                     _ => {}

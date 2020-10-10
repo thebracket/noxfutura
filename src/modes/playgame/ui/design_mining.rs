@@ -58,7 +58,7 @@ pub fn mining_display(
         _ => MiningMode::Clear,
     };
 
-    if imgui.io().mouse_down[0] {
+    if !imgui.io().want_capture_mouse() && imgui.io().mouse_down[0] {
         let camera_pos = <&Position>::query()
             .filter(component::<CameraOptions>())
             .iter(ecs)
