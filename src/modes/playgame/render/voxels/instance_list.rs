@@ -181,19 +181,19 @@ pub fn build_vox_instances2(
             TileType::Stairs {
                 direction: StairsType::Up,
             } => {
-                let model_id = crate::raws::RAWS.read().vox.get_model_idx("stairs_up");
+                let model_id = nox_raws::RAWS.read().vox.get_model_idx("stairs_up");
                 instances.add(model_id, [x as f32, z as f32, y as f32], 0, 0.0, 0.0);
             }
             TileType::Stairs {
                 direction: StairsType::Down,
             } => {
-                let model_id = crate::raws::RAWS.read().vox.get_model_idx("stairs_down");
+                let model_id = nox_raws::RAWS.read().vox.get_model_idx("stairs_down");
                 instances.add(model_id, [x as f32, z as f32, y as f32], 0, 0.0, 0.0);
             }
             TileType::Stairs {
                 direction: StairsType::UpDown,
             } => {
-                let model_id = crate::raws::RAWS.read().vox.get_model_idx("stairs_updown");
+                let model_id = nox_raws::RAWS.read().vox.get_model_idx("stairs_updown");
                 instances.add(model_id, [x as f32, z as f32, y as f32], 0, 0.0, 0.0);
             }
             _ => {}

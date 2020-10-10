@@ -1,5 +1,5 @@
 const MODEL_SCALE: f32 = 1.0 / 32.0;
-use crate::modes::playgame::Palette;
+use bengine::Palette;
 
 pub fn add_cube_geometry(
     vb: &mut Vec<f32>,

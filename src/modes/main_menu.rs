@@ -1,6 +1,6 @@
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
-use bracket_random::prelude::RandomNumberGenerator;
+use bengine::random::RandomNumberGenerator;
 
 pub struct MainMenu {
     tagline: String,

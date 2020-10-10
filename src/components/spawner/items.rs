@@ -1,5 +1,5 @@
 use crate::components::*;
-use crate::raws::*;
+use nox_raws::*;
 use legion::*;
 
 fn spawn_item_common(ecs: &mut World, tag: &str, material: usize) -> Option<(Entity, usize)> {

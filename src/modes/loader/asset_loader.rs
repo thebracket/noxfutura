@@ -1,9 +1,10 @@
 use crate::modes::{
     playgame::CursorPass, playgame::GrassPass, playgame::LightingPass, playgame::ModelsPass,
-    playgame::TerrainPass, playgame::VoxPass, GBuffer, Palette,
+    playgame::TerrainPass, playgame::VoxPass, GBuffer,
 };
 use parking_lot::RwLock;
 use std::thread;
+use bengine::Palette;
 
 lazy_static! {
     pub static ref LOADER: RwLock<LoaderState> = RwLock::new(LoaderState::new());
@@ -44,14 +45,14 @@ impl LoaderState {
         thread::spawn(|| {
             LOADER.write().update(0.01, "Loading Raw Files", false);
 
-            crate::load_raws();
+            nox_raws::load_raws();
 
             LOADER.write().update(0.02, "Fingerpainting", false);
-            let palette = super::super::Palette::new();
+            let palette = Palette::new();
 
             LOADER.write().update(0.03, "Baking Materials", false);
             {
-                let mut rawlock = crate::RAWS.write();
+                let mut rawlock = nox_raws::RAWS.write();
                 let mats = rawlock.materials.materials.clone();
                 rawlock.matmap.build(&mats, &palette);
             }

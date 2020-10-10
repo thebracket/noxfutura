@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 bengine = { path = "bengine/" }
-bracket-random = "0.8.0"
+nox_raws = { path = "nox_raws/" }
 bracket-geometry = { version = "0.8.1", features = ["serde"] }
 bracket-noise = "0.8.1"
 lazy_static = "1.4.0"
@@ -39,4 +39,5 @@ opt-level = 1
 [workspace]
 members = [ 
     "bengine",
+    "nox_raws"
 ]

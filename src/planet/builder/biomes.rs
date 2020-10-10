@@ -1,9 +1,10 @@
 use super::{set_worldgen_status, PLANET_BUILD};
-use crate::planet::{planet_idx, Biome, BlockType, Planet};
+use crate::planet::{planet_idx, Biome, Planet};
 use crate::spatial::{WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 use bracket_geometry::prelude::*;
-use bracket_random::prelude::*;
+use bengine::random::*;
 use std::collections::HashMap;
+use nox_raws::BlockType;
 
 type BiomeCounts = HashMap<BlockType, i32>;
 
@@ -135,7 +136,7 @@ fn biome_membership(planet: &mut Planet, idx: usize) -> BiomeCounts {
 }
 
 fn find_possible_biomes(membership: &BiomeCounts, biome: &Biome) -> Vec<(usize, i32)> {
-    use crate::RAWS;
+    use nox_raws::RAWS;
     let mut result: Vec<(usize, i32)> = Vec::new();
 
     let raws = RAWS.read();

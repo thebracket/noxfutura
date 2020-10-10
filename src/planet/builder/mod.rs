@@ -1,4 +1,4 @@
-use super::{Block, BlockType, Planet};
+use super::{Block, Planet};
 use parking_lot::Mutex;
 mod biomes;
 pub mod noise_helper;
@@ -7,7 +7,8 @@ mod planet_noise;
 mod rivers;
 use super::Region;
 use bracket_geometry::prelude::Point;
-use bracket_random::prelude::RandomNumberGenerator;
+use bengine::random::RandomNumberGenerator;
+use nox_raws::BlockType;
 
 #[derive(Clone)]
 pub struct PlanetParams {

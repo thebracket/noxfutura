@@ -1,5 +1,5 @@
 use crate::planet::{ground_z, Region};
-use crate::raws::get_material_by_tag;
+use nox_raws::get_material_by_tag;
 use crate::spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 
 pub fn build_beaches(region: &mut Region) {

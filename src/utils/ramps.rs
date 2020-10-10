@@ -1,5 +1,5 @@
 use crate::planet::RampDirection;
-use crate::RAWS;
+use nox_raws::RAWS;
 
 pub fn add_ramp_geometry(
     vb: &mut Vec<f32>,

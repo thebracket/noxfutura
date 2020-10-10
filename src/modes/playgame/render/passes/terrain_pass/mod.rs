@@ -1,4 +1,4 @@
-use crate::modes::playgame::{Camera, CameraUniform, Chunks, GBuffer, Palette};
+use crate::modes::playgame::{Camera, CameraUniform, Chunks, GBuffer};
 use bengine::*;
 mod terrain_textures;
 use terrain_textures::TerrainTextures;

@@ -1,9 +1,7 @@
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
 use crate::planet::{Region, TileType};
-use crate::raws::RAWS;
 use crate::spatial::mapidx;
-use crate::utils::add_floor_geometry;
 use crate::utils::add_ramp_geometry;
 use bengine::*;
 use cgmath::Vector3;
@@ -77,12 +75,12 @@ impl Chunk {
 
     #[inline]
     fn water_material(&self) -> (usize, bool) {
-        (crate::raws::get_material_by_tag("Water").unwrap(), false)
+        (nox_raws::get_material_by_tag("Water").unwrap(), false)
     }
 
     #[inline]
     fn hidden_material(&self) -> (usize, bool) {
-        (crate::raws::get_material_by_tag("Hidden").unwrap(), false)
+        (nox_raws::get_material_by_tag("Hidden").unwrap(), false)
     }
 
     pub fn rebuild(&mut self, region: &Region) {

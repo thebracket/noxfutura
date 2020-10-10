@@ -1,5 +1,5 @@
 use crate::components::*;
-use crate::raws::*;
+use nox_raws::*;
 use legion::*;
 
 pub fn spawn_plant(

@@ -1,6 +1,6 @@
 use super::super::VoxBuffer;
 use crate::{components::*, modes::playgame::RunState, modes::playgame::DesignMode};
-use crate::modes::playgame::{CameraUniform, GBuffer, Palette};
+use crate::modes::playgame::{CameraUniform, GBuffer};
 use crate::utils::Frustrum;
 use bengine::*;
 use legion::*;

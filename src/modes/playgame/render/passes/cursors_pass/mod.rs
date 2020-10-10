@@ -194,7 +194,7 @@ impl CursorPass {
         self.vb.clear();
 
         let rlock = crate::modes::playgame::systems::REGION.read();
-        rlock.jobs_board.mining_designations.iter().for_each(|(idx, t)| {
+        rlock.jobs_board.mining_designations.iter().for_each(|(idx, _t)| {
             let (x, y, z) = idxmap(*idx);
             add_cube_geometry(
                 &mut self.vb.data,

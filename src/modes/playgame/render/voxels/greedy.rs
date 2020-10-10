@@ -1,5 +1,5 @@
 use super::modelsize::ModelSize;
-use crate::modes::playgame::Palette;
+use bengine::Palette;
 use std::collections::{HashMap, HashSet};
 
 pub type VoxMap = HashMap<i32, u8>;

@@ -1,7 +1,7 @@
 use crate::planet::{planet_idx, set_worldgen_status, Planet, Region};
 use crate::spatial::{REGION_HEIGHT, REGION_WIDTH};
 use bracket_geometry::prelude::Point;
-use bracket_random::prelude::RandomNumberGenerator;
+use bengine::random::RandomNumberGenerator;
 mod beaches;
 mod buildings;
 mod debris;
@@ -18,7 +18,7 @@ mod water_features;
 use legion::*;
 pub use primitive::Primitive;
 mod flags;
-use crate::raws::RAWS;
+use nox_raws::RAWS;
 pub use flags::set_flags as rebuild_flags;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {

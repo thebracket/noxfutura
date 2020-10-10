@@ -1,7 +1,7 @@
 use crate::planet::PlanetParams;
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
-use bracket_random::prelude::RandomNumberGenerator;
+use bengine::random::RandomNumberGenerator;
 
 pub struct WorldGen1 {
     params: PlanetParams,

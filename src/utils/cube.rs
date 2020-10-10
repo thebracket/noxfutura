@@ -1,4 +1,4 @@
-use crate::RAWS;
+use nox_raws::RAWS;
 
 pub fn add_cube_geometry(
     vb: &mut Vec<f32>,

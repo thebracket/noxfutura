@@ -1,8 +1,8 @@
 use crate::planet::{Region, TileType};
-use crate::raws::*;
+use nox_raws::*;
 use crate::spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use bracket_noise::prelude::*;
-use bracket_random::prelude::*;
+use bengine::random::RandomNumberGenerator;
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
     let mlock = RAWS.read();

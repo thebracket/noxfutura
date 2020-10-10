@@ -1,11 +1,12 @@
 use crate::planet::{
     noise_helper::{lat_to_y, lon_to_x},
-    planet_idx, sphere_vertex, Block, BlockType,
+    planet_idx, sphere_vertex, Block,
 };
 use crate::spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use bengine::FloatBuffer;
 use bracket_geometry::prelude::Degrees;
 use cgmath::Vector3;
+use nox_raws::BlockType;
 
 pub type LatLonIdx = (f32, f32, usize);
 pub type LatLonQuad = [LatLonIdx; 6];

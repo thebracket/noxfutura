@@ -132,7 +132,9 @@ checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 name = "bengine"
 version = "0.1.0"
 dependencies = [
+ "bracket-random",
  "bytemuck",
+ "dot_vox",
  "failure",
  "futures",
  "glsl-to-spirv",
@@ -1381,6 +1383,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "nox_raws"
+version = "0.1.0"
+dependencies = [
+ "Inflector",
+ "bengine",
+ "lazy_static",
+ "parking_lot 0.11.0",
+ "ron",
+ "serde",
+]
+
+[[package]]
 name = "noxfutura"
 version = "0.2.0"
 dependencies = [
@@ -1390,7 +1404,6 @@ dependencies = [
  "bracket-color",
  "bracket-geometry",
  "bracket-noise",
- "bracket-random",
  "bytemuck",
  "byteorder",
  "cgmath",
@@ -1401,6 +1414,7 @@ dependencies = [
  "lazy_static",
  "legion",
  "miniz_oxide 0.4.2",
+ "nox_raws",
  "parking_lot 0.11.0",
  "rayon",
  "ron",

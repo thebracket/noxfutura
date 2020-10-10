@@ -1,4 +1,4 @@
-use bracket_random::prelude::RandomNumberGenerator;
+use bengine::random::RandomNumberGenerator;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 

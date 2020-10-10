@@ -7,12 +7,17 @@ mod game;
 pub mod helpers;
 mod imgui_wgpu;
 mod render_core;
+mod nf;
 
 pub use crate::assets::*;
 pub use crate::core::Core;
 pub use crate::render_core::*;
 pub use game::BEngineGame;
 pub use winit::event::VirtualKeyCode;
+pub use nf::*;
+pub mod random {
+    pub use bracket_random::prelude::*;
+}
 
 pub mod gui {
     pub use imgui::*;

@@ -38,7 +38,7 @@ pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
             cb.remove(*e)
         });
     cb.flush(ecs);
-    let wood = crate::raws::get_material_by_tag("Wood").unwrap();
+    let wood = nox_raws::get_material_by_tag("Wood").unwrap();
     wood_to_spawn.iter().for_each(|(x, y, z)| {
         crate::planet::spawn_item_on_ground(
             ecs,

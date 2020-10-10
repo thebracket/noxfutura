@@ -1,5 +1,6 @@
 use super::formats::MaterialDef;
 use std::collections::HashMap;
+use bengine::Palette;
 
 pub struct MaterialMap {
     map: HashMap<usize, usize>, // Map containing key as material index, value as palette entry
@@ -12,7 +13,7 @@ impl MaterialMap {
         }
     }
 
-    pub fn build(&mut self, materials: &[MaterialDef], palette: &crate::modes::Palette) {
+    pub fn build(&mut self, materials: &[MaterialDef], palette: &Palette) {
         self.map.clear();
 
         materials.iter().enumerate().for_each(|(idx, m)| {

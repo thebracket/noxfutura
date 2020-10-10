@@ -11,7 +11,7 @@ mod mining_map;
 pub use messaging::*;
 pub use play::PlayTheGame;
 pub use render::{
-    Chunks, CursorPass, GBuffer, GrassPass, LightingPass, Models, ModelsPass, Palette, TerrainPass,
+    Chunks, CursorPass, GBuffer, GrassPass, LightingPass, Models, ModelsPass, TerrainPass,
     VoxPass, 
 };
 pub use run_state::*;

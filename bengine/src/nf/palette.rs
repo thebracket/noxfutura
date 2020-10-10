@@ -1,10 +1,10 @@
-use bengine::*;
-use gpu::util::DeviceExt;
+use wgpu::util::DeviceExt;
+use crate::RENDER_CONTEXT;
 
 pub struct Palette {
-    pub palette_buf: gpu::Buffer,
+    pub palette_buf: wgpu::Buffer,
     color_finder: Vec<(f32, f32, f32)>,
-    pub bind_group_layout: gpu::BindGroupLayout,
+    pub bind_group_layout: wgpu::BindGroupLayout,
 }
 
 impl Palette {
@@ -35,22 +35,22 @@ impl Palette {
         let ctx = ctl.as_ref().unwrap();
         let palette_buf = ctx
             .device
-            .create_buffer_init(&gpu::util::BufferInitDescriptor {
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: None,
                 contents: bytemuck::cast_slice(&palette),
-                usage: gpu::BufferUsage::STORAGE,
+                usage: wgpu::BufferUsage::STORAGE,
             });
 
         let bind_group_layout =
             ctx.device
-                .create_bind_group_layout(&gpu::BindGroupLayoutDescriptor {
+                .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                     label: None,
-                    entries: &[gpu::BindGroupLayoutEntry {
+                    entries: &[wgpu::BindGroupLayoutEntry {
                         binding: 0,
-                        visibility: gpu::ShaderStage::VERTEX,
-                        ty: gpu::BindingType::StorageBuffer {
+                        visibility: wgpu::ShaderStage::VERTEX,
+                        ty: wgpu::BindingType::StorageBuffer {
                             dynamic: false,
-                            min_binding_size: gpu::BufferSize::new(64),
+                            min_binding_size: wgpu::BufferSize::new(64),
                             readonly: true,
                         },
                         count: None,

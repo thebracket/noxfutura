@@ -1,4 +1,4 @@
-use crate::modes::playgame::{CameraUniform, Models, Palette};
+use crate::modes::playgame::{CameraUniform, Models};
 use crate::utils::Frustrum;
 use crate::{components::*, modes::playgame::GBuffer};
 use bengine::*;

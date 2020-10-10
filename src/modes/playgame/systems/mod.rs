@@ -1,5 +1,5 @@
 use crate::planet::Region;
-use bracket_random::prelude::RandomNumberGenerator;
+use bengine::random::RandomNumberGenerator;
 use legion::*;
 use parking_lot::{Mutex, RwLock};
 mod calendar;

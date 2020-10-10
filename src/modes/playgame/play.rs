@@ -1,12 +1,11 @@
 use super::{
     loadstate::*, systems::REGION, Chunks, CursorPass, DesignMode, GBuffer, GrassPass,
-    LightingPass, ModelsPass, Palette, RunState, TerrainPass, VoxPass, MiningMap
+    LightingPass, ModelsPass, RunState, TerrainPass, VoxPass, MiningMap
 };
 use crate::{components::{CameraOptions, Position}};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
-use crate::spatial::*;
 
 pub struct PlayTheGame {
     ready: bool,

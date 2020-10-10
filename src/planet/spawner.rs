@@ -1,7 +1,7 @@
 use crate::components::*;
 use crate::planet::Region;
 use crate::spatial::mapidx;
-use bracket_random::prelude::RandomNumberGenerator;
+use bengine::random::RandomNumberGenerator;
 use legion::*;
 
 fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {

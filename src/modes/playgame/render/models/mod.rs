@@ -1,4 +1,3 @@
-use crate::modes::Palette;
 use bengine::*;
 use gpu::util::DeviceExt;
 
@@ -16,7 +15,7 @@ pub struct ModelIndex {
 
 impl Models {
     pub fn load_models(palette: &Palette) -> Self {
-        use crate::RAWS;
+        use nox_raws::RAWS;
 
         let mut model_map = Vec::new();
         let rlock = RAWS.read();
@@ -35,7 +34,7 @@ impl Models {
                     mat_finder_opt.unwrap().clone()
                 } else {
                     println!("Unknown color swatch: {}", m.name);
-                    crate::raws::MappedColor {
+                    nox_raws::MappedColor {
                         tag: "Goodness knows".to_string(),
                         r: 0.5,
                         g: 0.5,

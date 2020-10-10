@@ -42,7 +42,7 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
                     _ => "",
                 }
                 .to_string(),
-                crate::RAWS.read().materials.materials[mi].name.clone()
+                nox_raws::RAWS.read().materials.materials[mi].name.clone()
             ),
         ));
 

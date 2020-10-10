@@ -1,5 +1,6 @@
 use crate::components::*;
 use legion::*;
+use nox_raws::*;
 
 pub fn spawn_building(
     ecs: &mut World,
@@ -8,7 +9,6 @@ pub fn spawn_building(
     region_idx: usize,
     complete: bool,
 ) -> usize {
-    use crate::raws::*;
     let mut result = 0;
     let rlock = RAWS.read();
     if let Some(building_def) = rlock.buildings.building_by_tag(tag) {

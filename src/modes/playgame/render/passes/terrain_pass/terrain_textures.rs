@@ -1,4 +1,4 @@
-use crate::raws::{TextureMap, RAWS};
+use nox_raws::{TextureMap, RAWS};
 use bengine::*;
 use std::collections::HashSet;
 use std::fs;

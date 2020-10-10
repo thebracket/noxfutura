@@ -1,4 +1,4 @@
-use super::BlockType;
+use nox_raws::BlockType;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]

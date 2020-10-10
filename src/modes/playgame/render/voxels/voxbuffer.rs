@@ -1,7 +1,6 @@
 use super::greedy::*;
 use super::modelsize::*;
-use crate::modes::playgame::Palette;
-use crate::raws::*;
+use nox_raws::*;
 use bengine::*;
 use std::collections::HashMap;
 

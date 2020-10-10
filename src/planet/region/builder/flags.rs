@@ -142,7 +142,7 @@ fn valid_exit(region: &Region, x: usize, y: usize, z: usize) -> bool {
     }
 }
 
-pub fn localized_flags(region: &mut Region, idx: usize) {
+/*pub fn localized_flags(region: &mut Region, idx: usize) {
     let (x, y, z) = idxmap(idx);
 
     region.clear_flag(idx, Region::CAN_GO_DOWN);
@@ -265,3 +265,4 @@ pub fn localized_flags(region: &mut Region, idx: usize) {
         }
     }
 }
+*/

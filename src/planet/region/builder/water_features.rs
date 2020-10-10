@@ -2,7 +2,7 @@ use super::Region;
 use crate::planet::{Planet, TileType};
 use crate::spatial::*;
 use bracket_geometry::prelude::*;
-use bracket_random::prelude::RandomNumberGenerator;
+use bengine::random::RandomNumberGenerator;
 use std::collections::HashSet;
 
 pub fn just_add_water(

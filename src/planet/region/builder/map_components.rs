@@ -1,6 +1,6 @@
 use crate::components::*;
 use crate::planet::{Region, StairsType, TileType};
-use crate::raws::*;
+use nox_raws::*;
 use legion::*;
 
 pub fn transform_terrain_to_ecs(region: &mut Region, ecs: &mut World) {

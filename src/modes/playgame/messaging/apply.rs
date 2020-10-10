@@ -218,7 +218,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 super::models_moved();
             }
             if !to_spawn.is_empty() {
-                let wood = crate::raws::get_material_by_tag("Wood").unwrap();
+                let wood = nox_raws::get_material_by_tag("Wood").unwrap();
                 for idx in to_spawn.iter() {
                     let (tx, ty, tz) = idxmap(*idx);
                     crate::planet::spawn_item_on_ground(
@@ -270,7 +270,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 }
             }
         }
-        JobStep::DigAt { id, pos } => {
+        JobStep::DigAt { pos, .. } => {
             use bracket_geometry::prelude::*;
             println!("Looking for digging to perform at {}", pos);
             let (x, y, z) = idxmap(*pos);
@@ -285,7 +285,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     );
                     (idx, task, distance)
                 })
-                .filter(|(idx, task, distance)| *distance < 1.2)
+                .filter(|(_idx, _task, distance)| *distance < 1.2)
                 .map(|(idx, task, distance)| (*idx, *task, distance))
                 .collect::<Vec<(usize, MiningMode, f32)>>();
 

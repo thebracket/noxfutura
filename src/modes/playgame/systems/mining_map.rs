@@ -1,5 +1,4 @@
 use legion::*;
-use crate::modes::MiningMode;
 use super::super::MiningMap;
 use super::REGION;
 use crate::planet::Region;
