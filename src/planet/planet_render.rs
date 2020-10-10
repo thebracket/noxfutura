@@ -4,7 +4,7 @@ use crate::planet::{
 };
 use crate::spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use bengine::FloatBuffer;
-use bracket_geometry::prelude::Degrees;
+use bengine::geometry::Degrees;
 use cgmath::Vector3;
 use nox_raws::BlockType;
 

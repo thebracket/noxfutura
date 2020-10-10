@@ -6,7 +6,7 @@ pub use tiletype::*;
 mod builder;
 pub use builder::*;
 mod jobs;
-use bracket_geometry::prelude::*;
+use bengine::geometry::*;
 use jobs::JobsBoard;
 use smallvec::SmallVec;
 

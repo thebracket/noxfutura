@@ -2,7 +2,7 @@ mod apply;
 mod job_step;
 mod queue_backend;
 
-use bracket_geometry::prelude::Point3;
+use bengine::geometry::Point3;
 use job_step::*;
 use legion::*;
 use queue_backend::*;

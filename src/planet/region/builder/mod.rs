@@ -1,6 +1,6 @@
 use crate::planet::{planet_idx, set_worldgen_status, Planet, Region};
 use crate::spatial::{REGION_HEIGHT, REGION_WIDTH};
-use bracket_geometry::prelude::Point;
+use bengine::geometry::Point;
 use bengine::random::RandomNumberGenerator;
 mod beaches;
 mod buildings;

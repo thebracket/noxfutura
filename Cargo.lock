@@ -132,6 +132,7 @@ checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 name = "bengine"
 version = "0.1.0"
 dependencies = [
+ "bracket-geometry",
  "bracket-random",
  "bytemuck",
  "dot_vox",
@@ -1398,16 +1399,13 @@ dependencies = [
 name = "noxfutura"
 version = "0.2.0"
 dependencies = [
- "Inflector",
  "bengine",
  "bincode",
  "bracket-color",
- "bracket-geometry",
  "bracket-noise",
  "bytemuck",
  "byteorder",
  "cgmath",
- "dot_vox",
  "failure",
  "flate2",
  "image",

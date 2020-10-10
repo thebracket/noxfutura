@@ -1,7 +1,7 @@
 use super::{set_worldgen_status, PLANET_BUILD};
 use crate::planet::{planet_idx, Planet, River, RiverStep};
 use crate::spatial::{WORLD_HEIGHT, WORLD_WIDTH};
-use bracket_geometry::prelude::*;
+use bengine::geometry::*;
 use bengine::random::*;
 use std::collections::HashSet;
 use nox_raws::BlockType;

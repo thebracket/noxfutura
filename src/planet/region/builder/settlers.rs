@@ -1,6 +1,6 @@
 use crate::components::*;
 use nox_raws::*;
-use bracket_geometry::prelude::*;
+use bengine::geometry::*;
 use bengine::random::*;
 use legion::*;
 

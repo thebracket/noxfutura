@@ -1,6 +1,6 @@
 use crate::components::*;
 use crate::spatial::idxmap;
-use bracket_geometry::prelude::*;
+use bengine::geometry::*;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use crate::modes::{MiningMode, MiningMap};

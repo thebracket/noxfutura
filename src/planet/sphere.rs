@@ -1,4 +1,4 @@
-use bracket_geometry::prelude::Radians;
+use bengine::geometry::Radians;
 
 pub fn sphere_vertex<A: Into<Radians>>(altitude: f32, lat: A, lon: A) -> (f32, f32, f32) {
     let rlat = lat.into();

@@ -1,5 +1,5 @@
 use crate::components::JobType;
-use bracket_geometry::prelude::Point3;
+use bengine::geometry::Point3;
 
 pub enum JobStep {
     EntityMoved { id: usize, end: Point3 },

@@ -19,7 +19,7 @@ pub fn add_cube_geometry(
     let z0 = y * MODEL_SCALE;
     let z1 = z0 + (h * MODEL_SCALE);
 
-    let color_bytes = dot_vox::DEFAULT_PALETTE[material_index as usize];
+    let color_bytes = bengine::vox::DEFAULT_PALETTE[material_index as usize];
 
     let rr: u8 = ((color_bytes & 0x00ff0000) >> 16) as u8;
     let rg: u8 = ((color_bytes & 0x0000ff00) >> 8) as u8;

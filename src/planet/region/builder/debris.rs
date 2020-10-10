@@ -1,7 +1,7 @@
 use crate::components::*;
 use crate::planet::{ground_z, Region};
 use crate::spatial::REGION_WIDTH;
-use bracket_geometry::prelude::Point;
+use bengine::geometry::Point;
 pub use legion::systems::CommandBuffer;
 use legion::*;
 use std::collections::HashSet;

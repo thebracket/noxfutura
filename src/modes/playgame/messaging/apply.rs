@@ -271,7 +271,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             }
         }
         JobStep::DigAt { pos, .. } => {
-            use bracket_geometry::prelude::*;
+            use bengine::geometry::*;
             println!("Looking for digging to perform at {}", pos);
             let (x, y, z) = idxmap(*pos);
             let my_pos = Point3::new(x, y, z);

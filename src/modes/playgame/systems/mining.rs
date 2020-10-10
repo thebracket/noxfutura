@@ -5,7 +5,7 @@ use crate::planet::pathfinding::a_star_search;
 use legion::*;
 use super::super::MiningMap;
 use crate::spatial::idxmap;
-use bracket_geometry::prelude::Point3;
+use bengine::geometry::Point3;
 
 #[system(for_each)]
 pub fn mining(turn: &MyTurn, pos: &Position, id: &IdentityTag, #[resource] mining: &MiningMap) {

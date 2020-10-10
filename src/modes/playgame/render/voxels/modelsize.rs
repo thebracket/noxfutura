@@ -5,7 +5,7 @@ pub struct ModelSize {
 }
 
 impl ModelSize {
-    pub fn new(sz: dot_vox::Size) -> Self {
+    pub fn new(sz: bengine::vox::Size) -> Self {
         Self {
             x: sz.x,
             y: sz.y,
@@ -17,7 +17,7 @@ impl ModelSize {
         (z as u32 * self.x * self.y) + (y as u32 * self.x) + x as u32
     }
 
-    pub fn vidx(&self, v: &dot_vox::Voxel) -> u32 {
+    pub fn vidx(&self, v: &bengine::vox::Voxel) -> u32 {
         self.idx(v.x as u32, v.y as u32, v.z as u32)
     }
 

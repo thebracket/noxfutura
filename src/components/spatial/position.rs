@@ -1,6 +1,6 @@
 use crate::components::prelude::*;
 use crate::spatial::*;
-use bracket_geometry::prelude::Point3;
+use bengine::geometry::Point3;
 use cgmath::Vector3;
 use components::IdentityTag;
 

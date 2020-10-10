@@ -23,7 +23,7 @@ impl VoxBuffer {
         let mut last_index = 0;
         for modelfile in rlock.vox.vox.iter() {
             let filename = format!("resources/vox/{}.vox", modelfile.file);
-            let rawvox = dot_vox::load(&filename).unwrap();
+            let rawvox = bengine::vox::load(&filename).unwrap();
 
             let mut cubes: HashMap<i32, u8> = HashMap::new();
             for model in rawvox.models.iter() {

@@ -1,7 +1,7 @@
 use super::Region;
 use crate::planet::{Planet, TileType};
 use crate::spatial::*;
-use bracket_geometry::prelude::*;
+use bengine::geometry::*;
 use bengine::random::RandomNumberGenerator;
 use std::collections::HashSet;
 

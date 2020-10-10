@@ -1,4 +1,4 @@
-use bracket_geometry::prelude::Point;
+use bengine::geometry::Point;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]

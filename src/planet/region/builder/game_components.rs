@@ -1,6 +1,6 @@
 use crate::components::*;
 use crate::spatial::{REGION_WIDTH, WORLD_WIDTH};
-use bracket_geometry::prelude::Point;
+use bengine::geometry::Point;
 use legion::*;
 
 pub fn add_game_components(world: &mut World, hm: &[u8], crash_site: Point) {

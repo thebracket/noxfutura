@@ -18,6 +18,12 @@ pub use nf::*;
 pub mod random {
     pub use bracket_random::prelude::*;
 }
+pub mod geometry {
+    pub use bracket_geometry::prelude::*;
+}
+pub mod vox {
+    pub use dot_vox::*;
+}
 
 pub mod gui {
     pub use imgui::*;

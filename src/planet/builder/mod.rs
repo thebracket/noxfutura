@@ -6,7 +6,7 @@ mod planet_categories;
 mod planet_noise;
 mod rivers;
 use super::Region;
-use bracket_geometry::prelude::Point;
+use bengine::geometry::Point;
 use bengine::random::RandomNumberGenerator;
 use nox_raws::BlockType;
 
