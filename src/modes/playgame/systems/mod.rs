@@ -15,6 +15,7 @@ mod move_randomly;
 mod pause_control;
 mod settler_scheduler;
 mod sleep_shift;
+pub mod toolfinder;
 mod viewshed;
 mod work_shift;
 

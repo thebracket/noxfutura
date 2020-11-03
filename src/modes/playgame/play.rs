@@ -214,6 +214,7 @@ impl NoxMode for PlayTheGame {
                     self.frame_time_accumulator += core.frame_time;
                     if self.frame_time_accumulator > 0.3 {
                         self.frame_time_accumulator = 0.0;
+                        super::systems::toolfinder::tool_finder(&self.ecs);
                         self.regular_schedule
                             .execute(&mut self.ecs, &mut self.ecs_resources);
                     } else {
@@ -225,6 +226,7 @@ impl NoxMode for PlayTheGame {
                     self.frame_time_accumulator += core.frame_time;
                     if self.frame_time_accumulator > 0.1 {
                         self.frame_time_accumulator = 0.0;
+                        super::systems::toolfinder::tool_finder(&self.ecs);
                         self.regular_schedule
                             .execute(&mut self.ecs, &mut self.ecs_resources);
                     } else {
@@ -232,9 +234,11 @@ impl NoxMode for PlayTheGame {
                             .execute(&mut self.ecs, &mut self.ecs_resources);
                     }
                 }
-                RunState::FullSpeed => self
-                    .regular_schedule
-                    .execute(&mut self.ecs, &mut self.ecs_resources),
+                RunState::FullSpeed => {
+                    super::systems::toolfinder::tool_finder(&self.ecs);
+                    self.regular_schedule
+                        .execute(&mut self.ecs, &mut self.ecs_resources);
+                }
             }
             std::mem::drop(run_state);
 

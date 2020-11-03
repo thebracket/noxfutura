@@ -138,6 +138,34 @@ impl Position {
         }
     }
 
+    pub fn effective_location_sw(&self, ecs: &legion::world::SubWorld) -> usize {
+        use legion::*;
+        match self.loc {
+            Location::Tile { idx } => idx,
+            Location::Stored { container } => <(&Position, &IdentityTag)>::query()
+                .iter(ecs)
+                .filter(|(_, id)| id.0 == container)
+                .map(|(pos, _)| *pos)
+                .nth(0)
+                .unwrap()
+                .effective_location_sw(ecs),
+            Location::Carried { by } => <(&Position, &IdentityTag)>::query()
+                .iter(ecs)
+                .filter(|(_, id)| id.0 == by)
+                .map(|(pos, _)| *pos)
+                .nth(0)
+                .unwrap()
+                .effective_location_sw(ecs),
+            Location::Worn { by } => <(&Position, &IdentityTag)>::query()
+                .iter(ecs)
+                .filter(|(_, id)| id.0 == by)
+                .map(|(pos, _)| *pos)
+                .nth(0)
+                .unwrap()
+                .effective_location_sw(ecs),
+        }
+    }
+
     #[inline]
     pub fn set_tile_loc(&mut self, pos: &(usize, usize, usize)) {
         self.loc = Location::Tile {

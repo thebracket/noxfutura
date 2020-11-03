@@ -7,13 +7,18 @@ use nox_planet::MiningMap;
 pub fn work_shift(
     turn: &mut MyTurn,
     pos: &Position,
+    settler: &Settler,
     id: &IdentityTag,
     #[resource] mining: &MiningMap,
 ) {
     if turn.active && turn.shift == ScheduleTime::Work && turn.job == JobType::None {
         turn.order = WorkOrder::None;
         // todo: include more attributes
-        if let Some(job) = REGION.write().jobs_board.evaluate_jobs(id.0, &*pos, mining) {
+        if let Some(job) = REGION
+            .write()
+            .jobs_board
+            .evaluate_jobs(id.0, &*pos, settler, mining)
+        {
             turn.job = job;
             println!("Assigned job: {:?}", turn.job);
         } else {

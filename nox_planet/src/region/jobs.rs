@@ -29,24 +29,20 @@ impl JobsBoard {
         &mut self,
         identity: usize,
         pos: &Position,
+        settler: &Settler,
         mining_map: &MiningMap,
     ) -> Option<JobType> {
         let mut available_jobs: Vec<(usize, f32)> = self
             .all_jobs
             .iter()
             .enumerate()
-            .filter(|(_, j)| j.claimed.is_none() && self.is_possible(j))
+            .filter(|(_, j)| j.claimed.is_none() && self.is_possible(j, settler))
             .map(|(i, j)| (i, job_cost(pos, &j.job)))
             .collect();
 
-        let idx = pos.get_idx();
-        if mining_map.dijkstra[idx] < f32::MAX {
-            let available_tools = self
-                .tool_ownership
-                .iter()
-                .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == ToolType::Digging)
-                .count();
-            if available_tools > 0 {
+        if settler.miner {
+            let idx = pos.get_idx();
+            if mining_map.dijkstra[idx] < f32::MAX {
                 available_jobs.push((usize::MAX, mining_map.dijkstra[idx]));
             }
         }
@@ -128,12 +124,39 @@ impl JobsBoard {
         );
     }
 
+    pub fn update_tool(&mut self, tool_id: usize, usage: ToolType, effective_location: usize) {
+        let claimed = if let Some(claim) = self.tool_ownership.get(&tool_id) {
+            claim.claimed
+        } else {
+            None
+        };
+        self.add_tool(tool_id, claimed, usage, effective_location);
+    }
+
     pub fn available_tool_count(&self, tool_type: ToolType) -> bool {
         self.tool_ownership
             .iter()
             .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == tool_type)
             .count()
             > 0
+    }
+
+    pub fn find_my_tool(&self, user_id: usize) -> Option<(usize, usize)> {
+        let maybe_target_tool = self
+            .tool_ownership
+            .iter()
+            .filter(|(_, tool)| match tool.claimed {
+                Some(owner) => owner == user_id,
+                None => false,
+            })
+            .map(|(id, tool)| (*id, tool.effective_location))
+            .nth(0);
+
+        if let Some((id, effective_location)) = maybe_target_tool {
+            return Some((id, effective_location));
+        }
+
+        None
     }
 
     pub fn find_and_claim_tool(
@@ -158,16 +181,9 @@ impl JobsBoard {
         None
     }
 
-    fn is_possible(&self, job: &JobBoardListing) -> bool {
+    fn is_possible(&self, job: &JobBoardListing, settler: &Settler) -> bool {
         match job.job {
-            JobType::FellTree { .. } => {
-                let available_tools = self
-                    .tool_ownership
-                    .iter()
-                    .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == ToolType::Chopping)
-                    .count();
-                available_tools > 0
-            }
+            JobType::FellTree { .. } => settler.lumberjack,
             _ => true,
         }
     }

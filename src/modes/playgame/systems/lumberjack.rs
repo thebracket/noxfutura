@@ -5,7 +5,7 @@ use nox_components::*;
 use nox_planet::pathfinding::a_star_search;
 
 #[system(for_each)]
-pub fn lumberjack(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
+pub fn lumberjack(turn: &MyTurn, pos: &Position, id: &IdentityTag, settler: &Settler) {
     if turn.active
         && turn.shift == ScheduleTime::Work
         && match turn.job {
@@ -24,26 +24,38 @@ pub fn lumberjack(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
             match step {
                 LumberjackSteps::FindAxe => {
                     println!("Step: FindAxe");
-                    let mut rlock = REGION.write();
-                    let maybe_tool_pos = rlock
-                        .jobs_board
-                        .find_and_claim_tool(ToolType::Chopping, id.0);
+                    // Do I already have an axe?
+
+                    let rlock = REGION.read();
+                    let maybe_tool_pos = rlock.jobs_board.find_my_tool(id.0);
                     if let Some((tool_id, tool_pos)) = maybe_tool_pos {
-                        let path = a_star_search(pos.get_idx(), tool_pos, &*rlock);
-                        if !path.success {
-                            println!("No path to tool available - abandoning lumberjacking");
-                            messaging::cancel_job(id.0);
-                            messaging::relinquish_claim(tool_id, tool_pos);
-                        } else {
+                        if tool_pos == pos.get_idx() {
                             messaging::job_changed(
                                 id.0,
                                 JobType::FellTree {
                                     tree_id: *tree_id,
                                     tree_pos: *tree_pos,
-                                    step: LumberjackSteps::TravelToAxe { path: path.steps },
+                                    step: LumberjackSteps::FindTree {},
                                     tool_id: Some(tool_id),
                                 },
                             );
+                        } else {
+                            let path = a_star_search(pos.get_idx(), tool_pos, &*rlock);
+                            if !path.success {
+                                println!("No path to tool available - abandoning lumberjacking");
+                                messaging::cancel_job(id.0);
+                                messaging::relinquish_claim(tool_id, tool_pos);
+                            } else {
+                                messaging::job_changed(
+                                    id.0,
+                                    JobType::FellTree {
+                                        tree_id: *tree_id,
+                                        tree_pos: *tree_pos,
+                                        step: LumberjackSteps::TravelToAxe { path: path.steps },
+                                        tool_id: Some(tool_id),
+                                    },
+                                );
+                            }
                         }
                     } else {
                         println!("No tool available - abandoning lumberjacking");
@@ -124,8 +136,10 @@ pub fn lumberjack(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
                     println!("Step: ChopTree");
                     messaging::chop_tree(id.0, *tree_id);
                     messaging::conclude_job(id.0);
-                    messaging::drop_item(tool_id.unwrap(), pos.get_idx());
-                    messaging::relinquish_claim(tool_id.unwrap(), pos.get_idx());
+                    if !settler.lumberjack {
+                        messaging::drop_item(tool_id.unwrap(), pos.get_idx());
+                        messaging::relinquish_claim(tool_id.unwrap(), pos.get_idx());
+                    }
                 }
             }
         } else {

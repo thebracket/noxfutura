@@ -60,7 +60,7 @@ pub fn settler_list_display(imgui: &Ui, ecs: &World) {
                     if settler.lumberjack {
                         let label = format!("\u{f05e} Lumberjack");
                         if imgui.button(&ImString::new(label), [100.0, 20.0]) {
-                            crate::modes::playgame::fire_miner(id.0);
+                            crate::modes::playgame::fire_lumberjack(id.0);
                         }
                     } else {
                         if REGION
