@@ -1,3 +1,5 @@
+use nox_spatial::idxmap;
+
 use crate::Region;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
@@ -104,8 +106,10 @@ impl AStar {
     /// Adds a successor; if we're at the end, marks success.
     fn add_successor(&mut self, q: Node, idx: usize, cost: f32, map: &Region) -> bool {
         let distance = self.distance_to_end(idx, map);
+        let (_dx, _dy, dz) = idxmap(idx);
+        let (_ex, _ey, ez) = idxmap(self.end);
         // Did we reach our goal?
-        if distance < 1.4 {
+        if distance < 1.4 && dz == ez {
             self.parents.insert(idx, q.idx);
             self.parents.insert(self.end, idx);
             true
