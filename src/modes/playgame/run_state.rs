@@ -14,5 +14,5 @@ pub enum DesignMode {
     Lumberjack,
     Buildings { bidx: i32, vox: Option<usize> },
     Mining { mode: MiningMode },
+    SettlerList,
 }
-

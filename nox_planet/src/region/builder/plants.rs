@@ -1,8 +1,8 @@
 use crate::{ground_z, Region};
-use nox_raws::*;
-use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 use bengine::random::RandomNumberGenerator;
 use legion::*;
+use nox_raws::*;
+use nox_spatial::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 
 fn random_plant_height(rng: &mut RandomNumberGenerator) -> f32 {
     let n = rng.range(10, 100);

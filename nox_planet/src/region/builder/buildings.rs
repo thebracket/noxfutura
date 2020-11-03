@@ -1,9 +1,9 @@
-use nox_components::*;
 use crate::{ground_z, rex::*, Region, StairsType, TileType};
-use nox_raws::get_material_by_tag;
-use nox_spatial::mapidx;
 use bengine::geometry::*;
 use legion::*;
+use nox_components::*;
+use nox_raws::get_material_by_tag;
+use nox_spatial::mapidx;
 use std::fs::File;
 
 fn load_ship() -> XpFile {
@@ -158,15 +158,9 @@ fn add_construction(
                 region,
                 plasteel,
             );
-            crate::spawner::spawn_item_in_container(
-                ecs, "fire_axe", storage_id, region, plasteel,
-            );
-            crate::spawner::spawn_item_in_container(
-                ecs, "pickaxe", storage_id, region, plasteel,
-            );
-            crate::spawner::spawn_item_in_container(
-                ecs, "hoe", storage_id, region, plasteel,
-            );
+            crate::spawner::spawn_item_in_container(ecs, "fire_axe", storage_id, region, plasteel);
+            crate::spawner::spawn_item_in_container(ecs, "pickaxe", storage_id, region, plasteel);
+            crate::spawner::spawn_item_in_container(ecs, "hoe", storage_id, region, plasteel);
         }
         "cordex" => {
             add_building(region, "cordex", x, y, z, ecs);

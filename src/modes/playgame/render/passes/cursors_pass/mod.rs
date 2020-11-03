@@ -1,9 +1,9 @@
 mod cubes;
 use crate::modes::playgame::{CameraUniform, DesignMode, RunState};
+use bengine::*;
 use cubes::add_cube_geometry;
 use legion::*;
 use nox_components::*;
-use bengine::*;
 use nox_spatial::*;
 
 pub struct CursorPass {
@@ -194,19 +194,23 @@ impl CursorPass {
         self.vb.clear();
 
         let rlock = crate::modes::playgame::systems::REGION.read();
-        rlock.jobs_board.mining_designations.iter().for_each(|(idx, _t)| {
-            let (x, y, z) = idxmap(*idx);
-            add_cube_geometry(
-                &mut self.vb.data,
-                x as f32,
-                y as f32,
-                z as f32,
-                1.0,
-                1.0,
-                1.0,
-            1.0
-            );
-        });
+        rlock
+            .jobs_board
+            .mining_designations
+            .iter()
+            .for_each(|(idx, _t)| {
+                let (x, y, z) = idxmap(*idx);
+                add_cube_geometry(
+                    &mut self.vb.data,
+                    x as f32,
+                    y as f32,
+                    z as f32,
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                );
+            });
 
         if self.vb.len() == 0 {
             return;
@@ -219,7 +223,7 @@ impl CursorPass {
         if let RunState::Design { mode } = run_state {
             match mode {
                 DesignMode::Lumberjack => self.lumberjack(ecs),
-                DesignMode::Mining{..} => self.mining(),
+                DesignMode::Mining { .. } => self.mining(),
                 _ => {}
             }
         }
@@ -245,16 +249,14 @@ impl CursorPass {
                         store: true,
                     },
                 }],
-                depth_stencil_attachment: Some(
-                    gpu::RenderPassDepthStencilAttachmentDescriptor {
-                        attachment: tlock.get_view(0),
-                        depth_ops: Some(gpu::Operations {
-                            load: gpu::LoadOp::Load,
-                            store: true,
-                        }),
-                        stencil_ops: None,
-                    },
-                ),
+                depth_stencil_attachment: Some(gpu::RenderPassDepthStencilAttachmentDescriptor {
+                    attachment: tlock.get_view(0),
+                    depth_ops: Some(gpu::Operations {
+                        load: gpu::LoadOp::Load,
+                        store: true,
+                    }),
+                    stencil_ops: None,
+                }),
             });
 
             rpass.set_pipeline(&self.render_pipeline);

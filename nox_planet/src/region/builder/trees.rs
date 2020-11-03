@@ -1,9 +1,9 @@
 use crate::{ground_z, Region, TileType};
-use nox_raws::*;
-use nox_spatial::*;
 use bengine::geometry::*;
 use bengine::random::*;
 use legion::*;
+use nox_raws::*;
+use nox_spatial::*;
 use parking_lot::RwLock;
 
 lazy_static! {

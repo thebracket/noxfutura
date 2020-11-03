@@ -1,7 +1,7 @@
 use super::greedy::*;
 use super::modelsize::*;
-use nox_raws::*;
 use bengine::*;
+use nox_raws::*;
 use std::collections::HashMap;
 
 pub struct VoxBuffer {

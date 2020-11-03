@@ -1,8 +1,8 @@
 mod camera;
 use bengine::gpu::util::DeviceExt;
+use bengine::uv::Mat4;
 use bengine::*;
 pub use camera::*;
-use bengine::uv::Mat4;
 
 #[repr(C)]
 pub struct Uniforms {

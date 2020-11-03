@@ -2,10 +2,10 @@ use crate::{
     noise_helper::{lat_to_y, lon_to_x},
     planet_idx, sphere_vertex, Block,
 };
-use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
-use bengine::FloatBuffer;
 use bengine::geometry::Degrees;
+use bengine::FloatBuffer;
 use nox_raws::BlockType;
+use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 
 pub type LatLonIdx = (f32, f32, usize);
 pub type LatLonQuad = [LatLonIdx; 6];

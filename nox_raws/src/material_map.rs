@@ -1,6 +1,6 @@
 use super::formats::MaterialDef;
-use std::collections::HashMap;
 use bengine::Palette;
+use std::collections::HashMap;
 
 pub struct MaterialMap {
     map: HashMap<usize, usize>, // Map containing key as material index, value as palette entry

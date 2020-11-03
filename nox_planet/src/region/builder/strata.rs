@@ -1,8 +1,8 @@
 use crate::{Region, TileType};
-use nox_raws::*;
-use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 use bengine::noise::*;
 use bengine::random::RandomNumberGenerator;
+use nox_raws::*;
+use nox_spatial::{mapidx, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
     let mlock = RAWS.read();

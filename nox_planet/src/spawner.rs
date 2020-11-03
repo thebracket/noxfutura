@@ -1,8 +1,8 @@
-use nox_components::*;
 use crate::Region;
-use nox_spatial::mapidx;
 use bengine::random::RandomNumberGenerator;
 use legion::*;
+use nox_components::*;
+use nox_spatial::mapidx;
 
 fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {
     <(Read<Tool>, Read<IdentityTag>)>::query()
@@ -58,15 +58,9 @@ pub fn spawn_item_on_ground(
     region: &mut Region,
     material: usize,
 ) {
-    if let Some(id) = nox_components::spawner::spawn_item_on_ground(
-        ecs,
-        tag,
-        x,
-        y,
-        z,
-        region.world_idx,
-        material,
-    ) {
+    if let Some(id) =
+        nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx, material)
+    {
         add_tool_info(ecs, id, region, None);
     }
 }

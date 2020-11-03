@@ -1,8 +1,8 @@
 use crate::sphere_vertex;
-use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 use bengine::geometry::*;
 use bengine::noise::*;
 use bengine::random::*;
+use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 
 pub fn build_empty_heightmap() -> Vec<u8> {
     vec![0u8; (REGION_WIDTH * REGION_HEIGHT) as usize]

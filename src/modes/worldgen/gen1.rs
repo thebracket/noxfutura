@@ -1,7 +1,7 @@
-use nox_planet::PlanetParams;
 use crate::{GameMode, NoxMode, SharedResources};
-use bengine::*;
 use bengine::random::RandomNumberGenerator;
+use bengine::*;
+use nox_planet::PlanetParams;
 
 pub struct WorldGen1 {
     params: PlanetParams,
@@ -18,7 +18,7 @@ impl WorldGen1 {
                 starting_settlers: 6,
                 strict_beamdown: true,
                 extra_noise: true,
-                bumpiness: 2.0
+                bumpiness: 2.0,
             },
         }
     }
@@ -37,16 +37,16 @@ impl NoxMode for WorldGen1 {
                 .input_int(im_str!("World Seed"), &mut self.params.world_seed)
                 .build();
             Slider::new(im_str!("Water Level"))
-                .range( 1 ..= 4 )
+                .range(1..=4)
                 .build(core.imgui, &mut self.params.water_level);
             Slider::new(im_str!("Plains Level"))
-                .range(1 ..= 4)
+                .range(1..=4)
                 .build(core.imgui, &mut self.params.plains_level);
             Slider::new(im_str!("Starting Settlers"))
-                .range(1 ..= 20)
+                .range(1..=20)
                 .build(core.imgui, &mut self.params.starting_settlers);
             Slider::new(im_str!("Map Bumpiness"))
-                .range(1.0 ..= 5.0)
+                .range(1.0..=5.0)
                 .build(core.imgui, &mut self.params.bumpiness);
             core.imgui.checkbox(
                 im_str!("Require Teleport Beacon"),

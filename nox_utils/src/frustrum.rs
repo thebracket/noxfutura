@@ -1,4 +1,7 @@
-use bengine::uv::{mat::Mat4, vec::{Vec3, Vec4}};
+use bengine::uv::{
+    mat::Mat4,
+    vec::{Vec3, Vec4},
+};
 
 const LEFT: usize = 0;
 const RIGHT: usize = 1;

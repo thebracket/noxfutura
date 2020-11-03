@@ -1,6 +1,6 @@
 use crate::*;
-use nox_raws::*;
 use legion::*;
+use nox_raws::*;
 
 pub fn spawn_plant(
     ecs: &mut World,

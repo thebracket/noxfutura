@@ -1,10 +1,10 @@
 use super::{set_worldgen_status, PLANET_BUILD};
 use crate::{planet_idx, Planet, River, RiverStep};
-use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
 use bengine::geometry::*;
 use bengine::random::*;
-use std::collections::HashSet;
 use nox_raws::BlockType;
+use nox_spatial::{WORLD_HEIGHT, WORLD_WIDTH};
+use std::collections::HashSet;
 
 pub fn run_rivers() {
     set_worldgen_status("Running Rivers");

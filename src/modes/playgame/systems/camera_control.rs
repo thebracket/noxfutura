@@ -1,8 +1,8 @@
 use super::super::GameStateResource;
-use nox_components::{CameraMode, CameraOptions, Position};
 use bengine::VirtualKeyCode;
 use legion::world::SubWorld;
 use legion::*;
+use nox_components::{CameraMode, CameraOptions, Position};
 
 #[system]
 #[write_component(Position)]

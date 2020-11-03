@@ -1,10 +1,10 @@
-use nox_components::*;
 use crate::modes::playgame::systems::REGION;
-use nox_planet::Region;
-use nox_spatial::*;
 use bengine::uv::Vec3;
 use legion::world::SubWorld;
 use legion::*;
+use nox_components::*;
+use nox_planet::Region;
+use nox_spatial::*;
 
 #[system]
 #[read_component(Position)]

@@ -1,9 +1,9 @@
 use super::super::RunState;
-use nox_components::*;
-use nox_planet::MiningMode;
 use crate::modes::playgame::DesignMode;
 use bengine::gui::*;
 use legion::*;
+use nox_components::*;
+use nox_planet::MiningMode;
 
 pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
     if let Some(menu_bar) = imgui.begin_main_menu_bar() {
@@ -50,6 +50,18 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
             menu.end(imgui);
         }
 
+        if let Some(menu) = imgui.begin_menu(im_str!("\u{f03a} Info"), true) {
+            if MenuItem::new(im_str!("\u{f2c2} Manage Settlers"))
+                .shortcut(im_str!("S"))
+                .build(imgui)
+            {
+                *run_state = RunState::Design {
+                    mode: DesignMode::SettlerList,
+                };
+            }
+            menu.end(imgui);
+        }
+
         if let Some(menu) = imgui.begin_menu(im_str!("\u{f1b3} Design"), true) {
             if MenuItem::new(im_str!("\u{f1bb} Lumberjack"))
                 .shortcut(im_str!("T"))
@@ -64,7 +76,9 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
                 .build(imgui)
             {
                 *run_state = RunState::Design {
-                    mode: DesignMode::Mining{ mode: MiningMode::Dig },
+                    mode: DesignMode::Mining {
+                        mode: MiningMode::Dig,
+                    },
                 };
             }
             if MenuItem::new(im_str!("\u{f015} Buildings"))

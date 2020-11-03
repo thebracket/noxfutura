@@ -1,10 +1,10 @@
 use super::super::VoxBuffer;
-use nox_components::*;
-use crate::{modes::playgame::RunState, modes::playgame::DesignMode};
 use crate::modes::playgame::{CameraUniform, GBuffer};
-use nox_utils::Frustrum;
+use crate::{modes::playgame::DesignMode, modes::playgame::RunState};
 use bengine::*;
 use legion::*;
+use nox_components::*;
+use nox_utils::Frustrum;
 
 pub struct VoxPass {
     pub vox_models: VoxBuffer,
@@ -163,17 +163,17 @@ impl VoxPass {
         frustrum: &Frustrum,
         palette: &Palette,
         gbuffer: &GBuffer,
-        run_state: &RunState
+        run_state: &RunState,
     ) {
-        if self.models_changed || match run_state {
-            RunState::Design{mode} => {
-                match mode {
-                    DesignMode::Buildings{..} => true,
-                    _ => false
-                }
+        if self.models_changed
+            || match run_state {
+                RunState::Design { mode } => match mode {
+                    DesignMode::Buildings { .. } => true,
+                    _ => false,
+                },
+                _ => false,
             }
-            _ => false,
-        } {
+        {
             let camera_z = <(&Position, &CameraOptions)>::query()
                 .iter(ecs)
                 .map(|(pos, _)| pos.as_point3())

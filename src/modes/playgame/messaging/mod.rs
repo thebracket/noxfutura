@@ -91,27 +91,42 @@ pub fn finish_building(building_id: usize) {
 }
 
 pub fn dig_at(id: usize, pos: usize) {
-    JOBS_QUEUE
-        .lock()
-        .push_back(JobStep::DigAt{ id, pos });
+    JOBS_QUEUE.lock().push_back(JobStep::DigAt { id, pos });
 }
 
 pub fn tile_dirty(pos: usize) {
     use nox_spatial::*;
     let mut jql = JOBS_QUEUE.lock();
-    let (x,y,z) = idxmap(pos);
-    for tz in -1i32 ..= 1 {
-        for ty in -1i32 ..= 1 
-        {
-            for tx in -1i32 ..= 1 {
+    let (x, y, z) = idxmap(pos);
+    for tz in -1i32..=1 {
+        for ty in -1i32..=1 {
+            for tx in -1i32..=1 {
                 let idx = mapidx(
                     (x as i32 + tx) as usize,
                     (y as i32 + ty) as usize,
                     (z as i32 + tz) as usize,
                 );
-                jql.push_back(JobStep::TileDirty{ pos: idx });
+                jql.push_back(JobStep::TileDirty { pos: idx });
             }
         }
     }
-    jql.push_back(JobStep::TileDirty{ pos });
+    jql.push_back(JobStep::TileDirty { pos });
+}
+
+pub fn become_miner(id: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::BecomeMiner { id });
+}
+
+pub fn become_lumberjack(id: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::BecomeLumberjack { id });
+}
+
+pub fn fire_miner(id: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::FireMiner { id });
+}
+
+pub fn fire_lumberjack(id: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::FireLumberjack { id });
 }

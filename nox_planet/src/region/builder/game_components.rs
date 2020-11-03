@@ -1,7 +1,7 @@
-use nox_components::*;
-use nox_spatial::{REGION_WIDTH, WORLD_WIDTH};
 use bengine::geometry::Point;
 use legion::*;
+use nox_components::*;
+use nox_spatial::{REGION_WIDTH, WORLD_WIDTH};
 
 pub fn add_game_components(world: &mut World, hm: &[u8], crash_site: Point) {
     world.push((

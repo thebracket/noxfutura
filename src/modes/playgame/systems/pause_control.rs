@@ -1,9 +1,9 @@
 use super::super::GameStateResource;
 use super::super::RunState;
 use crate::modes::playgame::DesignMode;
-use nox_planet::MiningMode;
 use bengine::VirtualKeyCode;
 use legion::*;
+use nox_planet::MiningMode;
 
 #[system]
 pub fn pause_control(
@@ -28,7 +28,14 @@ pub fn pause_control(
             }
             VirtualKeyCode::D => {
                 *run_state = RunState::Design {
-                    mode: DesignMode::Mining { mode: MiningMode::Dig },
+                    mode: DesignMode::Mining {
+                        mode: MiningMode::Dig,
+                    },
+                };
+            }
+            VirtualKeyCode::S => {
+                *run_state = RunState::Design {
+                    mode: DesignMode::SettlerList,
                 };
             }
             _ => {}

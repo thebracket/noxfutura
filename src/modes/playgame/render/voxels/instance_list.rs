@@ -1,9 +1,9 @@
 use super::VoxBuffer;
-use nox_components::*;
-use nox_utils::Frustrum;
+use bengine::Palette;
 use bengine::*;
 use legion::*;
-use bengine::Palette;
+use nox_components::*;
+use nox_utils::Frustrum;
 use std::collections::HashMap;
 
 const FRUSTRUM_CHECK_RANGE: f32 = 2.0;

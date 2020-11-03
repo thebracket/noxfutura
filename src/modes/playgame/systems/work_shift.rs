@@ -1,10 +1,15 @@
 use super::REGION;
+use legion::*;
 use nox_components::*;
 use nox_planet::MiningMap;
-use legion::*;
 
 #[system(for_each)]
-pub fn work_shift(turn: &mut MyTurn, pos: &Position, id: &IdentityTag, #[resource] mining: &MiningMap) {
+pub fn work_shift(
+    turn: &mut MyTurn,
+    pos: &Position,
+    id: &IdentityTag,
+    #[resource] mining: &MiningMap,
+) {
     if turn.active && turn.shift == ScheduleTime::Work && turn.job == JobType::None {
         turn.order = WorkOrder::None;
         // todo: include more attributes

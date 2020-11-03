@@ -28,7 +28,7 @@ pub enum JobType {
     Mining {
         step: MiningSteps,
         tool_id: Option<usize>,
-    }
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

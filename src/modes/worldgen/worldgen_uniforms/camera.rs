@@ -24,12 +24,13 @@ impl Camera {
     }
 
     pub fn build_view_projection_matrix(&self) -> Mat4 {
-        let view = Mat4::look_at(
-            self.eye,
-            self.target,
-            self.up,
+        let view = Mat4::look_at(self.eye, self.target, self.up);
+        let proj = bengine::uv::projection::perspective_wgpu_dx(
+            self.fovy,
+            self.aspect,
+            self.znear,
+            self.zfar,
         );
-        let proj = bengine::uv::projection::perspective_wgpu_dx(self.fovy, self.aspect, self.znear, self.zfar);
         proj * view
     }
 }

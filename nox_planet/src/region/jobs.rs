@@ -1,9 +1,9 @@
+use super::{MiningMap, MiningMode};
+use bengine::geometry::*;
 use nox_components::*;
 use nox_spatial::idxmap;
-use bengine::geometry::*;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
-use super::{MiningMap, MiningMode};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct JobsBoard {
@@ -11,7 +11,7 @@ pub struct JobsBoard {
     all_jobs: Vec<JobBoardListing>,
     tool_ownership: HashMap<usize, ToolClaim>,
     component_ownership: HashMap<usize, ComponentClaim>,
-    pub mining_designations: HashMap<usize, MiningMode>
+    pub mining_designations: HashMap<usize, MiningMode>,
 }
 
 impl JobsBoard {
@@ -21,11 +21,16 @@ impl JobsBoard {
             all_jobs: Vec::new(),
             tool_ownership: HashMap::new(),
             component_ownership: HashMap::new(),
-            mining_designations: HashMap::new()
+            mining_designations: HashMap::new(),
         }
     }
 
-    pub fn evaluate_jobs(&mut self, identity: usize, pos: &Position, mining_map: &MiningMap) -> Option<JobType> {
+    pub fn evaluate_jobs(
+        &mut self,
+        identity: usize,
+        pos: &Position,
+        mining_map: &MiningMap,
+    ) -> Option<JobType> {
         let mut available_jobs: Vec<(usize, f32)> = self
             .all_jobs
             .iter()
@@ -37,14 +42,12 @@ impl JobsBoard {
         let idx = pos.get_idx();
         if mining_map.dijkstra[idx] < f32::MAX {
             let available_tools = self
-                    .tool_ownership
-                    .iter()
-                    .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == ToolType::Digging)
-                    .count();
+                .tool_ownership
+                .iter()
+                .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == ToolType::Digging)
+                .count();
             if available_tools > 0 {
-                available_jobs.push(
-                    (usize::MAX, mining_map.dijkstra[idx])
-                );
+                available_jobs.push((usize::MAX, mining_map.dijkstra[idx]));
             }
         }
 
@@ -56,7 +59,10 @@ impl JobsBoard {
         let job_index = available_jobs[0].0;
         if job_index == usize::MAX {
             // Mining
-            Some(JobType::Mining{ step: MiningSteps::FindPick, tool_id: None })
+            Some(JobType::Mining {
+                step: MiningSteps::FindPick,
+                tool_id: None,
+            })
         } else {
             // Everything else
             self.all_jobs[job_index].claimed = Some(identity);
@@ -120,6 +126,14 @@ impl JobsBoard {
                 effective_location,
             },
         );
+    }
+
+    pub fn available_tool_count(&self, tool_type: ToolType) -> bool {
+        self.tool_ownership
+            .iter()
+            .filter(|(_, tool)| tool.claimed.is_none() && tool.usage == tool_type)
+            .count()
+            > 0
     }
 
     pub fn find_and_claim_tool(

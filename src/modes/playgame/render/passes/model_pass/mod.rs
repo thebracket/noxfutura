@@ -1,9 +1,9 @@
-use crate::modes::playgame::{CameraUniform, Models};
-use nox_utils::Frustrum;
-use nox_components::*;
 use crate::modes::playgame::GBuffer;
+use crate::modes::playgame::{CameraUniform, Models};
 use bengine::*;
 use legion::*;
+use nox_components::*;
+use nox_utils::Frustrum;
 use std::collections::HashMap;
 
 pub struct ModelsPass {
@@ -151,7 +151,13 @@ impl ModelsPass {
         }
     }
 
-    pub fn render(&mut self, _core: &Core, ecs: &mut World, frustrum: &Frustrum, gbuffer: &GBuffer) {
+    pub fn render(
+        &mut self,
+        _core: &Core,
+        ecs: &mut World,
+        frustrum: &Frustrum,
+        gbuffer: &GBuffer,
+    ) {
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
         let tlock = TEXTURES.read();

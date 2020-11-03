@@ -1,5 +1,5 @@
-use nox_components::*;
 use legion::*;
+use nox_components::*;
 use world::SubWorld;
 
 #[system]

@@ -1,5 +1,5 @@
-use wgpu::util::DeviceExt;
 use crate::RENDER_CONTEXT;
+use wgpu::util::DeviceExt;
 
 pub struct Palette {
     pub palette_buf: wgpu::Buffer,

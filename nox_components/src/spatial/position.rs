@@ -1,8 +1,8 @@
 use crate::prelude::*;
-use nox_spatial::*;
+use crate::IdentityTag;
 use bengine::geometry::Point3;
 use bengine::uv::vec::Vec3;
-use crate::IdentityTag;
+use nox_spatial::*;
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Position {

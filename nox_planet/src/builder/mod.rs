@@ -38,7 +38,7 @@ impl PlanetBuilder {
                 starting_settlers: 6,
                 strict_beamdown: true,
                 extra_noise: true,
-                bumpiness: 2.0
+                bumpiness: 2.0,
             },
             planet: Planet::new(),
             done: false,

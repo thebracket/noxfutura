@@ -1,5 +1,5 @@
-use nox_components::*;
 use legion::*;
+use nox_components::*;
 
 #[system(for_each)]
 pub fn leisure_shift(turn: &mut MyTurn) {

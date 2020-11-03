@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(PartialEq, Copy, Clone, Serialize, Deserialize, Debug)]
 pub enum MiningMode {
@@ -8,5 +8,5 @@ pub enum MiningMode {
     Up,
     Down,
     UpDown,
-    Clear
+    Clear,
 }

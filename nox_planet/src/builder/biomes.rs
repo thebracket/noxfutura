@@ -1,10 +1,10 @@
 use super::{set_worldgen_status, PLANET_BUILD};
 use crate::{planet_idx, Biome, Planet};
-use nox_spatial::{WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
 use bengine::geometry::*;
 use bengine::random::*;
-use std::collections::HashMap;
 use nox_raws::BlockType;
+use nox_spatial::{WORLD_HEIGHT, WORLD_TILES_COUNT, WORLD_WIDTH};
+use std::collections::HashMap;
 
 type BiomeCounts = HashMap<BlockType, i32>;
 

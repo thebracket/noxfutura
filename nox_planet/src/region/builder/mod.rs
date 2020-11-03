@@ -1,7 +1,7 @@
 use crate::{planet_idx, set_worldgen_status, Planet, Region};
-use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 use bengine::geometry::Point;
 use bengine::random::RandomNumberGenerator;
+use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 mod beaches;
 mod buildings;
 mod debris;
@@ -18,8 +18,8 @@ mod water_features;
 use legion::*;
 pub use primitive::Primitive;
 mod flags;
-use nox_raws::RAWS;
 pub use flags::set_flags as rebuild_flags;
+use nox_raws::RAWS;
 
 pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
     set_worldgen_status("Locating biome information");

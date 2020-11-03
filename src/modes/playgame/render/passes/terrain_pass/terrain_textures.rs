@@ -1,5 +1,5 @@
-use nox_raws::{TextureMap, RAWS};
 use bengine::*;
+use nox_raws::{TextureMap, RAWS};
 use std::collections::HashSet;
 use std::fs;
 use std::fs::File;

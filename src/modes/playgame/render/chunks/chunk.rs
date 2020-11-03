@@ -1,10 +1,10 @@
 use super::greedy::*;
 use super::{chunk_idx, ChunkType, CHUNK_SIZE};
+use bengine::uv::Vec3;
+use bengine::*;
 use nox_planet::{Region, TileType};
 use nox_spatial::mapidx;
 use nox_utils::add_ramp_geometry;
-use bengine::*;
-use bengine::uv::Vec3;
 
 pub struct Chunk {
     pub t: ChunkType,

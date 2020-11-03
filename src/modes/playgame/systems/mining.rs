@@ -1,11 +1,11 @@
 use super::super::messaging;
-use nox_components::*;
 use crate::modes::playgame::systems::REGION;
-use nox_planet::pathfinding::a_star_search;
+use bengine::geometry::Point3;
 use legion::*;
+use nox_components::*;
+use nox_planet::pathfinding::a_star_search;
 use nox_planet::MiningMap;
 use nox_spatial::idxmap;
-use bengine::geometry::Point3;
 
 #[system(for_each)]
 pub fn mining(turn: &MyTurn, pos: &Position, id: &IdentityTag, #[resource] mining: &MiningMap) {
@@ -16,11 +16,7 @@ pub fn mining(turn: &MyTurn, pos: &Position, id: &IdentityTag, #[resource] minin
             _ => false,
         }
     {
-        if let JobType::Mining {
-            step,
-            tool_id
-        } = &turn.job
-        {
+        if let JobType::Mining { step, tool_id } = &turn.job {
             println!("Loc at step: {:?}", pos);
             match step {
                 MiningSteps::FindPick => {

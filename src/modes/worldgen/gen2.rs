@@ -1,8 +1,8 @@
 use super::worldgen_uniforms::*;
-use nox_planet::WORLDGEN_RENDER;
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::gui::*;
 use bengine::*;
+use nox_planet::WORLDGEN_RENDER;
 
 pub struct WorldGen2 {
     pipeline: gpu::RenderPipeline,

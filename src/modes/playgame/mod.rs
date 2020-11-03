@@ -10,8 +10,7 @@ mod uniforms;
 pub use messaging::*;
 pub use play::PlayTheGame;
 pub use render::{
-    Chunks, CursorPass, GBuffer, GrassPass, LightingPass, Models, ModelsPass, TerrainPass,
-    VoxPass, 
+    Chunks, CursorPass, GBuffer, GrassPass, LightingPass, Models, ModelsPass, TerrainPass, VoxPass,
 };
 pub use run_state::*;
 pub use uniforms::{Camera, CameraUniform};
@@ -22,7 +21,7 @@ pub struct GameStateResource {
     pub vox_moved: bool,
     pub models_moved: bool,
     pub lights_changed: bool,
-    pub dirty_tiles : Vec<usize>
+    pub dirty_tiles: Vec<usize>,
 }
 
 impl GameStateResource {
@@ -33,7 +32,7 @@ impl GameStateResource {
             vox_moved: false,
             models_moved: false,
             lights_changed: false,
-            dirty_tiles: Vec::new()
+            dirty_tiles: Vec::new(),
         }
     }
 

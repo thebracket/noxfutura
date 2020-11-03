@@ -37,9 +37,7 @@ pub fn construction(turn: &MyTurn, pos: &Position, id: &IdentityTag) {
                             &*rlock,
                         );
                         if !path.success {
-                            println!(
-                                "No path to component available - abandoning building"
-                            );
+                            println!("No path to component available - abandoning building");
                             messaging::cancel_job(id.0);
                             for c in components.iter() {
                                 REGION

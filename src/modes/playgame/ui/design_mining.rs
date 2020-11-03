@@ -1,9 +1,9 @@
-use nox_planet::{MiningMap, MiningMode};
 use crate::modes::playgame::systems::REGION;
 use bengine::gui::*;
 use legion::*;
 use nox_components::*;
 use nox_planet::*;
+use nox_planet::{MiningMap, MiningMode};
 use nox_spatial::mapidx;
 
 pub fn mining_display(
@@ -11,7 +11,7 @@ pub fn mining_display(
     ecs: &mut World,
     mouse_world_pos: &(usize, usize, usize),
     mining_mode: &mut MiningMode,
-    mine_state: &mut MiningMap
+    mine_state: &mut MiningMap,
 ) {
     let dig_modes = [
         im_str!("Dig"),
@@ -30,7 +30,7 @@ pub fn mining_display(
         MiningMode::Up => 3,
         MiningMode::Down => 4,
         MiningMode::UpDown => 5,
-        _ => 6
+        _ => 6,
     };
 
     let title = format!("Mining Mode. ### ManicMiner",);
@@ -43,10 +43,12 @@ pub fn mining_display(
         .build(imgui, || {
             imgui.text(im_str!("Mining Mode: "));
             imgui.same_line(0.0);
-            ComboBox::new(im_str!("##minemode"))
-                .build_simple_string(&imgui, &mut dig_mode, &dig_modes);
-        }
-    );
+            ComboBox::new(im_str!("##minemode")).build_simple_string(
+                &imgui,
+                &mut dig_mode,
+                &dig_modes,
+            );
+        });
 
     *mining_mode = match dig_mode {
         0 => MiningMode::Dig,
@@ -58,7 +60,7 @@ pub fn mining_display(
         _ => MiningMode::Clear,
     };
 
-    if !imgui.io().want_capture_mouse() && imgui.io().mouse_down[0] {
+    if !imgui.io().want_capture_mouse && imgui.io().mouse_down[0] {
         let camera_pos = <&Position>::query()
             .filter(component::<CameraOptions>())
             .iter(ecs)
@@ -76,13 +78,11 @@ pub fn mining_display(
         {
             let rlock = REGION.read();
             match mining_mode {
-                MiningMode::Dig => {
-                    match rlock.tile_types[idx] {
-                        TileType::Empty => return,
-                        TileType::Floor => return,
-                        _ => {}
-                    }
-                }
+                MiningMode::Dig => match rlock.tile_types[idx] {
+                    TileType::Empty => return,
+                    TileType::Floor => return,
+                    _ => {}
+                },
                 MiningMode::Channel => {
                     if rlock.tile_types[idx] != TileType::Floor {
                         return;
@@ -96,7 +96,10 @@ pub fn mining_display(
         if *mining_mode == MiningMode::Clear {
             rlock.jobs_board.mining_designations.remove(&idx);
         } else {
-            rlock.jobs_board.mining_designations.insert(idx, *mining_mode);
+            rlock
+                .jobs_board
+                .mining_designations
+                .insert(idx, *mining_mode);
         }
         mine_state.is_dirty = true;
     }

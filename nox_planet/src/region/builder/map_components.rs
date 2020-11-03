@@ -1,7 +1,7 @@
-use nox_components::*;
 use crate::{Region, StairsType, TileType};
-use nox_raws::*;
 use legion::*;
+use nox_components::*;
+use nox_raws::*;
 
 pub fn transform_terrain_to_ecs(region: &mut Region, ecs: &mut World) {
     let stairs_up = RAWS.read().vox.get_model_idx("stairs_up");

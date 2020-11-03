@@ -32,6 +32,7 @@ fn registry() -> Registry<String> {
         Building,
         Item,
         Sentient,
+        Settler,
         Vegetation,
         Tree,
         Terrain,

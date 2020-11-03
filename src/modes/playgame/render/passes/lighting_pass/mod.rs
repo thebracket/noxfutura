@@ -253,11 +253,9 @@ impl LightingPass {
     pub fn render(&mut self, core: &Core, ecs: &mut World, gbuffer: &GBuffer) {
         let mouse_pos = core.imgui.io().mouse_pos;
         if self.lighting_changed {
-            self.light_uniforms.uniforms.update(
-                ecs,
-                &mut self.terrain_lights.flags,
-                &mouse_pos,
-            );
+            self.light_uniforms
+                .uniforms
+                .update(ecs, &mut self.terrain_lights.flags, &mouse_pos);
             self.light_uniforms.send_buffer_to_gpu();
             self.terrain_lights.update_buffer();
             self.lighting_changed = false;

@@ -1,9 +1,9 @@
-use nox_components::*;
 use crate::modes::playgame::systems::REGION;
-use nox_planet::{Region, TileType};
-use nox_spatial::*;
 use bengine::gui::*;
 use legion::*;
+use nox_components::*;
+use nox_planet::{Region, TileType};
+use nox_spatial::*;
 
 pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui: &Ui) {
     if imgui.io().want_capture_mouse {

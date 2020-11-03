@@ -1,8 +1,8 @@
 use super::Region;
 use crate::{Planet, TileType};
-use nox_spatial::*;
 use bengine::geometry::*;
 use bengine::random::RandomNumberGenerator;
+use nox_spatial::*;
 use std::collections::HashSet;
 
 pub fn just_add_water(

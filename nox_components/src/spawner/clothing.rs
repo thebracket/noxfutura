@@ -1,7 +1,7 @@
 use crate::*;
-use nox_raws::*;
 use bengine::random::*;
 use legion::*;
+use nox_raws::*;
 
 pub fn spawn_clothing_from_raws_worn(
     ecs: &mut World,

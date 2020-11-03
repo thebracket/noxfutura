@@ -1,9 +1,9 @@
-use nox_components::*;
 use crate::{ground_z, Region};
-use nox_spatial::REGION_WIDTH;
 use bengine::geometry::Point;
 pub use legion::systems::CommandBuffer;
 use legion::*;
+use nox_components::*;
+use nox_spatial::REGION_WIDTH;
 use std::collections::HashSet;
 
 pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {

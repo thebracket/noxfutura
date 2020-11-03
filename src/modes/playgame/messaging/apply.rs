@@ -1,10 +1,10 @@
 use super::super::GameStateResource;
 use super::{JobStep, MOVER_LIST};
+use crate::modes::playgame::systems::REGION;
+use legion::*;
 use nox_components::*;
 use nox_planet::{MiningMode, StairsType, TileType};
-use crate::modes::playgame::systems::REGION;
 use nox_spatial::*;
-use legion::*;
 
 pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
     let mut vox_moved = false;
@@ -19,7 +19,7 @@ pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
                 JobStep::VoxMoved => vox_moved = true,
                 JobStep::ModelsMoved => models_moved = true,
                 JobStep::LightsChanged => lights_changed = true,
-                JobStep::TileDirty{pos} => {
+                JobStep::TileDirty { pos } => {
                     tiles_dirty.push(pos);
                     vox_moved = true;
                     lights_changed = true;
@@ -277,13 +277,14 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             let (x, y, z) = idxmap(*pos);
             let my_pos = Point3::new(x, y, z);
             let mut rlock = REGION.write();
-            let mut nearby = rlock.jobs_board.mining_designations.iter()
+            let mut nearby = rlock
+                .jobs_board
+                .mining_designations
+                .iter()
                 .map(|(idx, task)| {
                     let (mx, my, mz) = idxmap(*idx);
-                    let distance = DistanceAlg::Pythagoras.distance3d(
-                        my_pos,
-                        Point3::new(mx, my, mz)
-                    );
+                    let distance =
+                        DistanceAlg::Pythagoras.distance3d(my_pos, Point3::new(mx, my, mz));
                     (idx, task, distance)
                 })
                 .filter(|(_idx, _task, distance)| *distance < 1.2)
@@ -293,9 +294,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             println!("Nearby jobs: {:?}", nearby);
 
             if !nearby.is_empty() {
-                nearby.sort_by(|a, b| {
-                    a.2.partial_cmp(&b.2).unwrap()
-                });
+                nearby.sort_by(|a, b| a.2.partial_cmp(&b.2).unwrap());
                 println!("Applying: {:?}", nearby[0]);
                 let (mine_id, task, _distance) = nearby[0];
                 match task {
@@ -307,31 +306,72 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     MiningMode::Channel => {
                         println!("Changed tile");
                         rlock.tile_types[mine_id] = TileType::Empty;
-                        rlock.tile_types[mine_id - (REGION_WIDTH * REGION_HEIGHT)] = TileType::Floor;
+                        rlock.tile_types[mine_id - (REGION_WIDTH * REGION_HEIGHT)] =
+                            TileType::Floor;
                         super::super::tile_dirty(mine_id);
                         super::super::tile_dirty(mine_id - (REGION_WIDTH * REGION_HEIGHT));
                     }
                     MiningMode::Up => {
                         println!("Changed tile");
-                        rlock.tile_types[mine_id] = TileType::Stairs { direction: StairsType::Up };
+                        rlock.tile_types[mine_id] = TileType::Stairs {
+                            direction: StairsType::Up,
+                        };
                         super::super::tile_dirty(mine_id);
                     }
                     MiningMode::Down => {
                         println!("Changed tile");
-                        rlock.tile_types[mine_id] = TileType::Stairs { direction: StairsType::Down };
+                        rlock.tile_types[mine_id] = TileType::Stairs {
+                            direction: StairsType::Down,
+                        };
                         super::super::tile_dirty(mine_id);
                     }
                     MiningMode::UpDown => {
                         println!("Changed tile");
-                        rlock.tile_types[mine_id] = TileType::Stairs { direction: StairsType::UpDown };
+                        rlock.tile_types[mine_id] = TileType::Stairs {
+                            direction: StairsType::UpDown,
+                        };
                         super::super::tile_dirty(mine_id);
                     }
                     _ => {}
                 }
                 println!("Undesignating");
                 rlock.jobs_board.mining_designations.remove(&mine_id);
-                <&mut FieldOfView>::query().iter_mut(ecs).for_each(|f| f.is_dirty = true);
+                <&mut FieldOfView>::query()
+                    .iter_mut(ecs)
+                    .for_each(|f| f.is_dirty = true);
             }
+        }
+        JobStep::BecomeMiner { id } => {
+            <(&mut Settler, &IdentityTag)>::query()
+                .iter_mut(ecs)
+                .filter(|(_s, sid)| sid.0 == *id)
+                .for_each(|(s, _)| s.miner = true);
+            REGION
+                .write()
+                .jobs_board
+                .find_and_claim_tool(ToolType::Digging, *id);
+        }
+        JobStep::BecomeLumberjack { id } => {
+            <(&mut Settler, &IdentityTag)>::query()
+                .iter_mut(ecs)
+                .filter(|(_s, sid)| sid.0 == *id)
+                .for_each(|(s, _)| s.lumberjack = true);
+            REGION
+                .write()
+                .jobs_board
+                .find_and_claim_tool(ToolType::Chopping, *id);
+        }
+        JobStep::FireMiner { id } => {
+            <(&mut Settler, &IdentityTag)>::query()
+                .iter_mut(ecs)
+                .filter(|(_s, sid)| sid.0 == *id)
+                .for_each(|(s, _)| s.miner = false);
+        }
+        JobStep::FireLumberjack { id } => {
+            <(&mut Settler, &IdentityTag)>::query()
+                .iter_mut(ecs)
+                .filter(|(_s, sid)| sid.0 == *id)
+                .for_each(|(s, _)| s.lumberjack = false);
         }
         _ => {}
     }

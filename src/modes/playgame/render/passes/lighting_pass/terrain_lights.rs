@@ -1,6 +1,6 @@
-use nox_spatial::REGION_TILES_COUNT;
 use bengine::*;
 use gpu::util::DeviceExt;
+use nox_spatial::REGION_TILES_COUNT;
 
 pub struct TerrainLights {
     pub flags: Vec<u32>,

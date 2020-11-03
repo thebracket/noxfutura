@@ -1,6 +1,6 @@
 use crate::*;
-use nox_raws::*;
 use legion::*;
+use nox_raws::*;
 
 fn spawn_item_common(ecs: &mut World, tag: &str, material: usize) -> Option<(Entity, usize)> {
     let raws = RAWS.read();

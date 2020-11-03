@@ -1,5 +1,5 @@
-use nox_components::JobType;
 use bengine::geometry::Point3;
+use nox_components::JobType;
 
 pub enum JobStep {
     EntityMoved { id: usize, end: Point3 },
@@ -18,5 +18,9 @@ pub enum JobStep {
     ModelsMoved,
     LightsChanged,
     DigAt { id: usize, pos: usize },
-    TileDirty { pos: usize }
+    TileDirty { pos: usize },
+    BecomeMiner { id: usize },
+    BecomeLumberjack { id: usize },
+    FireMiner { id: usize },
+    FireLumberjack { id: usize },
 }

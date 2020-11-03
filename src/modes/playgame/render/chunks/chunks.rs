@@ -1,9 +1,9 @@
 use super::{Chunk, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
-use nox_components::Position;
 use crate::modes::playgame::systems::REGION;
-use nox_utils::Frustrum;
 use bengine::geometry::*;
 use bengine::uv::Mat4;
+use nox_components::Position;
+use nox_utils::Frustrum;
 use rayon::prelude::*;
 
 pub struct Chunks {

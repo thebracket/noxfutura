@@ -2,9 +2,9 @@ use crate::modes::{
     playgame::CursorPass, playgame::GrassPass, playgame::LightingPass, playgame::ModelsPass,
     playgame::TerrainPass, playgame::VoxPass, GBuffer,
 };
+use bengine::Palette;
 use parking_lot::RwLock;
 use std::thread;
-use bengine::Palette;
 
 lazy_static! {
     pub static ref LOADER: RwLock<LoaderState> = RwLock::new(LoaderState::new());

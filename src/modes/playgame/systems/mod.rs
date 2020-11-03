@@ -1,22 +1,22 @@
-use nox_planet::Region;
 use bengine::random::RandomNumberGenerator;
 use legion::*;
+use nox_planet::Region;
 use parking_lot::{Mutex, RwLock};
 mod calendar;
 mod camera_control;
+mod construct_building;
 mod end_turn;
 mod initiative;
 mod leisure_shift;
 mod lumberjack;
+mod mining;
+mod mining_map;
 mod move_randomly;
 mod pause_control;
 mod settler_scheduler;
 mod sleep_shift;
 mod viewshed;
 mod work_shift;
-mod construct_building;
-mod mining;
-mod mining_map;
 
 use super::messaging;
 

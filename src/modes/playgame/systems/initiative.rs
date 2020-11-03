@@ -1,7 +1,7 @@
 use super::RNG;
+use legion::*;
 use nox_components::*;
 use nox_utils::attribute_modifier;
-use legion::*;
 
 #[system(for_each)]
 pub fn initiative(i: &mut Initiative, t: &mut MyTurn, attrib: &Attributes) {

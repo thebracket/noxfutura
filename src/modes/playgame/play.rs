@@ -1,12 +1,12 @@
 use super::{
     loadstate::*, systems::REGION, Chunks, CursorPass, DesignMode, GBuffer, GrassPass,
-    LightingPass, ModelsPass, RunState, TerrainPass, VoxPass
+    LightingPass, ModelsPass, RunState, TerrainPass, VoxPass,
 };
-use nox_planet::MiningMap;
-use nox_components::{CameraOptions, Position};
 use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
+use nox_components::{CameraOptions, Position};
+use nox_planet::MiningMap;
 
 pub struct PlayTheGame {
     ready: bool,
@@ -157,7 +157,11 @@ impl PlayTheGame {
 
                 self.chunks.rebuild_all();
                 shared_state.dirty_tiles.clear();
-                self.ecs_resources.get_mut::<MiningMap>().as_mut().unwrap().is_dirty = true;
+                self.ecs_resources
+                    .get_mut::<MiningMap>()
+                    .as_mut()
+                    .unwrap()
+                    .is_dirty = true;
             }
         }
     }
@@ -175,7 +179,10 @@ impl NoxMode for PlayTheGame {
     fn on_resize(&mut self) {
         if self.gbuffer.is_some() {
             self.gbuffer = Some(GBuffer::new());
-            self.lighting_pass.as_mut().unwrap().on_resize(self.gbuffer.as_ref().unwrap());
+            self.lighting_pass
+                .as_mut()
+                .unwrap()
+                .on_resize(self.gbuffer.as_ref().unwrap());
         }
     }
 
@@ -267,7 +274,7 @@ impl NoxMode for PlayTheGame {
                     &self.chunks.frustrum,
                     self.palette.as_ref().unwrap(),
                     self.gbuffer.as_ref().unwrap(),
-                    &run_state
+                    &run_state,
                 );
             }
 
@@ -296,7 +303,12 @@ impl NoxMode for PlayTheGame {
     }
 }
 
-fn design_ui(run_state: &mut RunState, core: &mut Core, ecs: &mut World, mine_state: &mut MiningMap) {
+fn design_ui(
+    run_state: &mut RunState,
+    core: &mut Core,
+    ecs: &mut World,
+    mine_state: &mut MiningMap,
+) {
     match run_state {
         RunState::Design {
             mode: DesignMode::Lumberjack,
@@ -304,15 +316,23 @@ fn design_ui(run_state: &mut RunState, core: &mut Core, ecs: &mut World, mine_st
             super::ui::lumberjack_display(core.imgui, ecs, &core.mouse_world_pos);
         }
         RunState::Design {
-            mode: DesignMode::Buildings{bidx, .. },
+            mode: DesignMode::Buildings { bidx, .. },
         } => {
-            let (bidx, vox) = super::ui::building_display(core.imgui, ecs, &core.mouse_world_pos, *bidx);
+            let (bidx, vox) =
+                super::ui::building_display(core.imgui, ecs, &core.mouse_world_pos, *bidx);
             *run_state = RunState::Design {
                 mode: DesignMode::Buildings { bidx, vox },
             };
         }
-        RunState::Design { mode: DesignMode::Mining{ mode } } => {
+        RunState::Design {
+            mode: DesignMode::Mining { mode },
+        } => {
             super::ui::mining_display(core.imgui, ecs, &core.mouse_world_pos, mode, mine_state);
+        }
+        RunState::Design {
+            mode: DesignMode::SettlerList,
+        } => {
+            super::ui::settler_list_display(core.imgui, ecs);
         }
         _ => {}
     }

@@ -1,8 +1,8 @@
-use nox_components::*;
-use nox_raws::*;
 use bengine::geometry::*;
 use bengine::random::*;
 use legion::*;
+use nox_components::*;
+use nox_raws::*;
 
 pub fn spawn_settlers(
     ecs: &mut World,
@@ -217,7 +217,14 @@ fn spawn_settler(
         }
     }
 
-    let entity = ecs.push((Sentient {}, id));
+    let entity = ecs.push((
+        Sentient {},
+        id,
+        Settler {
+            miner: false,
+            lumberjack: false,
+        },
+    ));
 
     if let Some(mut e) = ecs.entry(entity) {
         e.add_component(Position::with_tile(x, y, z, region_idx, (1, 1, 1)));

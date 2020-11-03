@@ -1,9 +1,9 @@
+use bengine::gpu::util::DeviceExt;
+use bengine::uv::Vec3;
+use bengine::*;
+use legion::*;
 use nox_components::*;
 use nox_planet::Region;
-use bengine::gpu::util::DeviceExt;
-use bengine::*;
-use bengine::uv::Vec3;
-use legion::*;
 use rayon::prelude::*;
 
 #[repr(C)]
