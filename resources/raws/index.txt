@@ -32,6 +32,7 @@ resources/raws/shipboard/fake_camp_fire.ron
 # Low tech workshops to build
 
 resources/raws/workshops/sawmill.ron
+resources/raws/workshops/stonecutter.ron
 
 # Tools
 
