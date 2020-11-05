@@ -1,9 +1,11 @@
 mod cubes;
-use crate::modes::playgame::{CameraUniform, DesignMode, RunState};
+use crate::modes::playgame::ui::MINING_PARAMS;
+use crate::modes::playgame::{ui::validate_mining, CameraUniform, DesignMode, RunState};
 use bengine::*;
 use cubes::add_cube_geometry;
 use legion::*;
 use nox_components::*;
+use nox_planet::MiningMode;
 use nox_spatial::*;
 
 pub struct CursorPass {
@@ -190,9 +192,10 @@ impl CursorPass {
         self.vb.update_buffer();
     }
 
-    fn mining(&mut self) {
+    fn mining(&mut self, ecs: &World, mode: &MiningMode, mouse_world_pos: &(usize, usize, usize)) {
         self.vb.clear();
 
+        // Add cursors for existing designations
         let rlock = crate::modes::playgame::systems::REGION.read();
         rlock
             .jobs_board
@@ -211,6 +214,62 @@ impl CursorPass {
                     1.0,
                 );
             });
+        std::mem::drop(rlock);
+
+        // Add cursors for current mouse
+        let camera_pos = <&Position>::query()
+            .filter(component::<CameraOptions>())
+            .iter(ecs)
+            .nth(0)
+            .unwrap()
+            .as_point3();
+
+        let mlock = MINING_PARAMS.read();
+        match mode {
+            MiningMode::Dig => {
+                if validate_mining(mouse_world_pos, mode, &camera_pos) {
+                    add_cube_geometry(
+                        &mut self.vb.data,
+                        mouse_world_pos.0 as f32,
+                        mouse_world_pos.1 as f32,
+                        mouse_world_pos.2 as f32,
+                        mlock.brush_width as f32,
+                        mlock.brush_height as f32,
+                        1.0,
+                        1.0,
+                    );
+                }
+            }
+            MiningMode::Down => {
+                if validate_mining(mouse_world_pos, mode, &camera_pos) {
+                    add_cube_geometry(
+                        &mut self.vb.data,
+                        mouse_world_pos.0 as f32,
+                        mouse_world_pos.1 as f32,
+                        mouse_world_pos.2 as f32,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                    );
+                }
+            }
+            _ => {
+                if validate_mining(mouse_world_pos, mode, &camera_pos) {
+                    add_cube_geometry(
+                        &mut self.vb.data,
+                        mouse_world_pos.0 as f32,
+                        mouse_world_pos.1 as f32,
+                        mouse_world_pos.2 as f32,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                    );
+                }
+            }
+        }
+        std::mem::drop(mlock);
 
         if self.vb.len() == 0 {
             return;
@@ -223,7 +282,7 @@ impl CursorPass {
         if let RunState::Design { mode } = run_state {
             match mode {
                 DesignMode::Lumberjack => self.lumberjack(ecs),
-                DesignMode::Mining { .. } => self.mining(),
+                DesignMode::Mining { mode } => self.mining(ecs, mode, &core.mouse_world_pos),
                 _ => {}
             }
         }
