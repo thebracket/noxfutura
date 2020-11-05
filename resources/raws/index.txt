@@ -41,6 +41,7 @@ resources/raws/tools/hoe.ron
 
 # Raw Material Items
 resources/raws/raw_materials/woodlogs.ron
+resources/raws/raw_materials/stone_boulder.ron
 
 # Tree Models
 resources/raws/trees.ron

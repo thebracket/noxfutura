@@ -4,6 +4,7 @@ use crate::modes::playgame::systems::REGION;
 use legion::*;
 use nox_components::*;
 use nox_planet::{MiningMode, StairsType, TileType};
+use nox_raws::MinesTo;
 use nox_spatial::*;
 
 pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
@@ -302,6 +303,29 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                         println!("Changed tile");
                         rlock.tile_types[mine_id] = TileType::Floor;
                         super::super::tile_dirty(mine_id);
+                        let material_idx = rlock.material_idx[mine_id];
+                        let mat_info = nox_raws::RAWS.read().materials.materials[material_idx].clone();
+                        for mt in mat_info.mines_to.iter() {
+                            let (x,y,z) = idxmap(mine_id);
+                            match mt {
+                                MinesTo::Item{name} => {
+                                    nox_planet::spawn_item_on_ground(ecs,
+                                        name,
+                                        x, y, z,
+                                        &mut rlock,
+                                        material_idx
+                                    );
+                                }
+                                MinesTo::Ore{name} => {
+                                    nox_planet::spawn_item_on_ground(ecs,
+                                        name,
+                                        x, y, z,
+                                        &mut rlock,
+                                        material_idx
+                                    );
+                                }
+                            }
+                        }
                     }
                     MiningMode::Channel => {
                         println!("Changed tile");
