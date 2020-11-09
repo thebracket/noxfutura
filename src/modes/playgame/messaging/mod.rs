@@ -130,3 +130,14 @@ pub fn fire_miner(id: usize) {
 pub fn fire_lumberjack(id: usize) {
     JOBS_QUEUE.lock().push_back(JobStep::FireLumberjack { id });
 }
+
+pub fn spawn_item(position: &usize, tag: &String, qty: &i32, material: usize) {
+    JOBS_QUEUE.lock().push_back(
+        JobStep::SpawnItem{
+            pos: *position,
+            tag: tag.clone(),
+            qty: *qty as i32,
+            material
+        }
+    );
+}

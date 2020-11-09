@@ -235,7 +235,9 @@ impl NoxMode for PlayTheGame {
                     }
                 }
                 RunState::FullSpeed => {
+                    //TODO: Parallel
                     super::systems::toolfinder::tool_finder(&self.ecs);
+                    super::systems::autojobs::autojobs(&self.ecs);
                     self.regular_schedule
                         .execute(&mut self.ecs, &mut self.ecs_resources);
                 }

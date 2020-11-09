@@ -12,6 +12,7 @@ pub struct JobsBoard {
     tool_ownership: HashMap<usize, ToolClaim>,
     component_ownership: HashMap<usize, ComponentClaim>,
     pub mining_designations: HashMap<usize, MiningMode>,
+    autojobs : HashMap<(usize, usize, usize), Vec<(usize, usize, usize)>> // Key (building/reaction/pos), value (component, pos, mat)
 }
 
 impl JobsBoard {
@@ -22,6 +23,7 @@ impl JobsBoard {
             tool_ownership: HashMap::new(),
             component_ownership: HashMap::new(),
             mining_designations: HashMap::new(),
+            autojobs: HashMap::new()
         }
     }
 
@@ -48,7 +50,34 @@ impl JobsBoard {
         }
 
         if available_jobs.is_empty() {
-            return None;
+            if self.autojobs.is_empty() {
+                return None;
+            } else {
+                // Add the first autojob for consideraton
+                // Removing it from the autojobs list
+                let autojob_key = self.autojobs.keys().nth(0).unwrap().clone();
+                let job = self.autojobs.get(&autojob_key).unwrap();
+
+                let cids = job
+                    .iter()
+                    .map(|(cid, pos, mat)| (*cid, *pos, false, *mat)).collect();
+
+                self.all_jobs.push(
+                    JobBoardListing{
+                        job: JobType::Reaction {
+                            workshop_id : autojob_key.0,
+                            reaction_id: autojob_key.1,
+                            workshop_pos: autojob_key.2,
+                            components: cids,
+                            step: ReactionSteps::ClaimEverything
+                        },
+                        claimed: None
+                    }
+                );
+                available_jobs.push((self.all_jobs.len()-1, 0.0));
+
+                self.autojobs.remove(&autojob_key);
+            }
         }
 
         available_jobs.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
@@ -247,6 +276,33 @@ impl JobsBoard {
                 components,
             },
         });
+    }
+
+    pub fn autojob_registered(&mut self, building_id: usize, reaction_id: usize, pos: usize) -> bool {
+        if let Some(j) = self.autojobs.get(&(building_id, reaction_id, pos)) {
+            let mut still_possible = true;
+            j.iter().for_each(|(id, _, _)| {
+                if self.is_component_claimed(*id) {
+                    still_possible = false;
+                }
+            });
+            if !still_possible {
+                self.autojobs.remove(&(building_id, reaction_id, pos));
+            }
+
+            still_possible
+        } else {
+            false
+        }
+    }
+
+    pub fn register_autojob(&mut self, building_id: usize, reaction_id: usize, pos: usize, components: &[(usize, usize, usize)]) {
+        let mut c = Vec::new();
+        c.extend_from_slice(components);
+        self.autojobs.insert(
+            (building_id, reaction_id, pos),
+            c
+        );
     }
 }
 

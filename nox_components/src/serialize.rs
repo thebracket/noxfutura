@@ -30,6 +30,7 @@ fn registry() -> Registry<String> {
         Position,
         Cordex,
         Building,
+        Workshop,
         Item,
         Sentient,
         Settler,

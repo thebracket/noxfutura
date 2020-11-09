@@ -397,6 +397,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 .filter(|(_s, sid)| sid.0 == *id)
                 .for_each(|(s, _)| s.lumberjack = false);
         }
+        JobStep::SpawnItem { pos, tag, qty, material } => {
+            let (x, y, z) = idxmap(*pos);
+            nox_planet::spawn_item_on_ground(ecs, tag, x, y, z, &mut REGION.write(), *material)
+        }
         _ => {}
     }
 }

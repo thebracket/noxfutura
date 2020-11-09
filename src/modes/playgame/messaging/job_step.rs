@@ -23,4 +23,5 @@ pub enum JobStep {
     BecomeLumberjack { id: usize },
     FireMiner { id: usize },
     FireLumberjack { id: usize },
+    SpawnItem{ pos: usize, tag: String, qty: i32, material: usize }
 }

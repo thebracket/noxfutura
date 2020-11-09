@@ -29,6 +29,13 @@ pub enum JobType {
         step: MiningSteps,
         tool_id: Option<usize>,
     },
+    Reaction {
+        workshop_id: usize,
+        workshop_pos: usize,
+        reaction_id: usize,
+        components: Vec<(usize, usize, bool, usize)>, // id, pos, claim, material
+        step: ReactionSteps
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -64,6 +71,27 @@ pub enum BuildingSteps {
         component_id: usize,
     },
     TravelToTBuilding {
+        path: Vec<usize>,
+        component_id: usize,
+    },
+    Construct,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum ReactionSteps {
+    ClaimEverything,
+    FindComponent,
+    TravelToComponent {
+        path: Vec<usize>,
+        component_id: usize,
+    },
+    CollectComponent {
+        component_id: usize,
+    },
+    FindWorkshop {
+        component_id: usize,
+    },
+    TravelToWorkshop {
         path: Vec<usize>,
         component_id: usize,
     },

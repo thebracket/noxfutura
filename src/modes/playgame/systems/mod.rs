@@ -18,6 +18,8 @@ mod sleep_shift;
 pub mod toolfinder;
 mod viewshed;
 mod work_shift;
+pub mod autojobs;
+mod reactions;
 
 use super::messaging;
 
@@ -47,6 +49,7 @@ pub fn build_scheduler() -> Schedule {
         .add_system(lumberjack::lumberjack_system())
         .add_system(construct_building::construction_system())
         .add_system(mining::mining_system())
+        .add_system(reactions::reactions_system())
         .add_system(move_randomly::move_randomly_system())
         .flush()
         .add_system(end_turn::end_turn_system())

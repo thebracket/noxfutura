@@ -59,6 +59,21 @@ pub fn spawn_building(
             }
         }
 
+        let mut is_workshop = false;
+        let mut has_autojobs = false;
+        for reaction in rlock.reactions.reactions.iter() {
+            if reaction.workshop == tag {
+                is_workshop = true;
+                if reaction.automatic {
+                    has_autojobs = true;
+                }
+            }
+        }
+        if is_workshop {
+            println!("It's a workshop - reactions are provided.");
+            ecs.entry(entity).unwrap().add_component(Workshop { has_automatic_jobs : has_autojobs });
+        }
+
         println!("Added building data: {}", tag);
     } else {
         println!("Failed to spawn building: {}", tag);
