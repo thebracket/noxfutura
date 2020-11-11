@@ -17,6 +17,7 @@ fn registry() -> Registry<String> {
     register_component_types!(
         registry,
         Attributes,
+        Skills,
         Initiative,
         Material,
         Storage,
@@ -47,7 +48,9 @@ fn registry() -> Registry<String> {
         FieldOfView,
         WorkSchedule,
         IdentityTag,
-        ObjModel
+        ObjModel,
+        Claimed,
+        Health
     );
 
     registry

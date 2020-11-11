@@ -1,12 +1,22 @@
 use super::tables::*;
-use crate::modes::playgame::systems::REGION;
 use bengine::gui::*;
 use legion::*;
 use nox_components::*;
-use nox_spatial::mapidx;
 
 pub fn settler_list_display(imgui: &Ui, ecs: &World) {
-    let headings = im_str!("Name\0Profession");
+    let mut available_picks = 0;
+    let mut available_axes = 0;
+    <&Tool>::query()
+        .filter(!component::<Claimed>())
+        .iter(ecs)
+        .for_each(|tool| {
+            match tool.usage {
+                ToolType::Chopping => available_axes += 1,
+                ToolType::Digging => available_picks += 1,
+                _ => {}
+            }
+        }
+    );
 
     let size = bengine::get_window_size();
     let title = format!("All Settlers. ### SettlerList",);
@@ -28,9 +38,9 @@ pub fn settler_list_display(imgui: &Ui, ecs: &World) {
             );
 
             // Make something here
-            <(Entity, &Name, &Tagline, &Settler, &IdentityTag)>::query()
+            <(&Name, &Tagline, &Settler, &IdentityTag)>::query()
                 .iter(ecs)
-                .for_each(|(e, n, t, settler, id)| {
+                .for_each(|(n, t, settler, id)| {
                     imgui.text(ImString::new(&n.name));
                     imgui.next_column();
 
@@ -43,10 +53,7 @@ pub fn settler_list_display(imgui: &Ui, ecs: &World) {
                             crate::modes::playgame::fire_miner(id.0);
                         }
                     } else {
-                        if REGION
-                            .read()
-                            .jobs_board
-                            .available_tool_count(ToolType::Digging)
+                        if available_picks > 0
                         {
                             let label = format!("\u{f1b3} Miner##{}", id.0);
                             if imgui.button(&ImString::new(label), [100.0, 20.0]) {
@@ -63,10 +70,7 @@ pub fn settler_list_display(imgui: &Ui, ecs: &World) {
                             crate::modes::playgame::fire_lumberjack(id.0);
                         }
                     } else {
-                        if REGION
-                            .read()
-                            .jobs_board
-                            .available_tool_count(ToolType::Chopping)
+                        if available_axes > 0
                         {
                             let label = format!("\u{f1bb} Lumberjack##{}", id.0);
                             if imgui.button(&ImString::new(label), [100.0, 20.0]) {

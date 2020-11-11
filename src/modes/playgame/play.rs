@@ -6,7 +6,7 @@ use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
 use nox_components::{CameraOptions, Position};
-use nox_planet::MiningMap;
+use nox_planet::{MiningMap, LumberMap};
 
 pub struct PlayTheGame {
     ready: bool,
@@ -106,6 +106,7 @@ impl PlayTheGame {
                     self.ecs_resources.insert(super::GameStateResource::new());
                     self.ecs_resources.insert(RunState::Paused);
                     self.ecs_resources.insert(MiningMap::new());
+                    self.ecs_resources.insert(LumberMap::new());
                     println!("Finished loading");
                     self.ready = true;
                 }
@@ -214,7 +215,6 @@ impl NoxMode for PlayTheGame {
                     self.frame_time_accumulator += core.frame_time;
                     if self.frame_time_accumulator > 0.3 {
                         self.frame_time_accumulator = 0.0;
-                        super::systems::toolfinder::tool_finder(&self.ecs);
                         self.regular_schedule
                             .execute(&mut self.ecs, &mut self.ecs_resources);
                     } else {
@@ -226,7 +226,6 @@ impl NoxMode for PlayTheGame {
                     self.frame_time_accumulator += core.frame_time;
                     if self.frame_time_accumulator > 0.1 {
                         self.frame_time_accumulator = 0.0;
-                        super::systems::toolfinder::tool_finder(&self.ecs);
                         self.regular_schedule
                             .execute(&mut self.ecs, &mut self.ecs_resources);
                     } else {
@@ -235,9 +234,6 @@ impl NoxMode for PlayTheGame {
                     }
                 }
                 RunState::FullSpeed => {
-                    //TODO: Parallel
-                    super::systems::toolfinder::tool_finder(&self.ecs);
-                    super::systems::autojobs::autojobs(&self.ecs);
                     self.regular_schedule
                         .execute(&mut self.ecs, &mut self.ecs_resources);
                 }
@@ -301,8 +297,10 @@ impl NoxMode for PlayTheGame {
             super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
             super::ui::draw_main_menu(&self.ecs, run_state, &core.imgui);
             let mut mine_state = self.ecs_resources.get_mut::<MiningMap>();
+            let mut lumber_state = self.ecs_resources.get_mut::<LumberMap>();
             let ms = mine_state.as_mut().unwrap();
-            design_ui(run_state, core, &mut self.ecs, ms);
+            let ls = lumber_state.as_mut().unwrap();
+            design_ui(run_state, core, &mut self.ecs, ms, ls);
         }
 
         result
@@ -314,12 +312,13 @@ fn design_ui(
     core: &mut Core,
     ecs: &mut World,
     mine_state: &mut MiningMap,
+    lumber_state: &mut LumberMap
 ) {
     match run_state {
         RunState::Design {
             mode: DesignMode::Lumberjack,
         } => {
-            super::ui::lumberjack_display(core.imgui, ecs, &core.mouse_world_pos);
+            super::ui::lumberjack_display(core.imgui, ecs, &core.mouse_world_pos, lumber_state);
         }
         RunState::Design {
             mode: DesignMode::Buildings { bidx, .. },

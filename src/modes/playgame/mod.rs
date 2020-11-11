@@ -14,6 +14,7 @@ pub use render::{
 };
 pub use run_state::*;
 pub use uniforms::{Camera, CameraUniform};
+pub use systems::RNG;
 
 pub struct GameStateResource {
     keycode: Option<bengine::VirtualKeyCode>,

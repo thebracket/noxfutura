@@ -167,13 +167,10 @@ impl CursorPass {
     fn lumberjack(&mut self, ecs: &World) {
         self.vb.clear();
 
-        let rlock = crate::modes::playgame::systems::REGION.read();
-
-        <(&Position, &IdentityTag)>::query()
-            .filter(component::<Tree>())
+        <(&Position, &IdentityTag, &Tree)>::query()
             .iter(ecs)
-            .filter(|(_, id)| rlock.jobs_board.get_trees().contains(&id.0))
-            .for_each(|(pos, _)| {
+            .filter(|(_, _, tree)| tree.chop)
+            .for_each(|(pos, _, _)| {
                 let pt = pos.as_point3();
                 add_cube_geometry(
                     &mut self.vb.data,

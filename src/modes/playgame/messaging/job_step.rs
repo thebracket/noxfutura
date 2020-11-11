@@ -10,7 +10,7 @@ pub enum JobStep {
     DropItem { id: usize, location: usize },
     RelinquishClaim { tool_id: usize, tool_pos: usize },
     EquipItem { id: usize, tool_id: usize },
-    TreeChop { id: usize, tree_id: usize },
+    TreeChop { id: usize, tree_pos: usize },
     DeleteItem { id: usize },
     FinishBuilding { building_id: usize },
     DeleteBuilding { building_id: usize },

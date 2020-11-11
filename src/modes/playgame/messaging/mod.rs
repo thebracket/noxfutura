@@ -52,10 +52,10 @@ pub fn drop_item(id: usize, location: usize) {
         .push_back(JobStep::DropItem { id, location });
 }
 
-pub fn chop_tree(id: usize, tree_id: usize) {
+pub fn chop_tree(id: usize, tree_pos: usize) {
     JOBS_QUEUE
         .lock()
-        .push_back(JobStep::TreeChop { id, tree_id });
+        .push_back(JobStep::TreeChop { id, tree_pos });
 }
 
 pub fn conclude_job(id: usize) {

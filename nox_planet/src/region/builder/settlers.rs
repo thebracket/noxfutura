@@ -235,6 +235,7 @@ fn spawn_settler(
             name: profession_def.name.clone(),
         });
         e.add_component(attr);
+        e.add_component(Skills::new());
         e.add_component(FieldOfView::new(8));
         e.add_component(Initiative::new());
         e.add_component(MyTurn {

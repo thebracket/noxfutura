@@ -1,32 +1,7 @@
 use crate::Region;
 use bengine::random::RandomNumberGenerator;
 use legion::*;
-use nox_components::*;
 use nox_spatial::mapidx;
-
-fn add_tool_info(ecs: &World, item_id: usize, region: &mut Region, claimed: Option<usize>) {
-    <(Read<Tool>, Read<IdentityTag>)>::query()
-        .iter(ecs)
-        .filter(|(_, id)| id.0 == item_id)
-        .for_each(|(tool, _)| {
-            let mut effective_location = 0;
-
-            if claimed.is_none() {
-                <(Read<Position>, Read<IdentityTag>)>::query()
-                    .iter(ecs)
-                    .filter(|(_, id)| id.0 == item_id)
-                    .for_each(|(pos, _)| effective_location = pos.effective_location(ecs));
-            }
-
-            println!(
-                "Adding tool to list. {:?}, at {}",
-                tool.usage, effective_location
-            );
-            region
-                .jobs_board
-                .add_tool(item_id, claimed, tool.usage, effective_location);
-        });
-}
 
 pub fn spawn_building(
     ecs: &mut World,
@@ -58,50 +33,34 @@ pub fn spawn_item_on_ground(
     region: &mut Region,
     material: usize,
 ) {
-    if let Some(id) =
-        nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx, material)
-    {
-        add_tool_info(ecs, id, region, None);
-    }
+    nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx, material);
 }
 
 pub fn spawn_item_in_container(
     ecs: &mut World,
     tag: &str,
     container: usize,
-    region: &mut Region,
     material: usize,
 ) {
-    println!("Container spawn");
-    if let Some(id) =
-        nox_components::spawner::spawn_item_in_container(ecs, tag, container, material)
-    {
-        add_tool_info(ecs, id, region, None);
-    }
+    nox_components::spawner::spawn_item_in_container(ecs, tag, container, material);
 }
 
 pub fn spawn_item_worn(
     ecs: &mut World,
     tag: &str,
     wearer: usize,
-    region: &mut Region,
     material: usize,
 ) {
-    if let Some(id) = nox_components::spawner::spawn_item_worn(ecs, tag, wearer, material) {
-        add_tool_info(ecs, id, region, Some(wearer));
-    }
+    nox_components::spawner::spawn_item_worn(ecs, tag, wearer, material);
 }
 
 pub fn spawn_item_carried(
     ecs: &mut World,
     tag: &str,
     wearer: usize,
-    region: &mut Region,
     material: usize,
 ) {
-    if let Some(id) = nox_components::spawner::spawn_item_carried(ecs, tag, wearer, material) {
-        add_tool_info(ecs, id, region, Some(wearer));
-    }
+    nox_components::spawner::spawn_item_carried(ecs, tag, wearer, material);
 }
 
 pub fn spawn_plant(

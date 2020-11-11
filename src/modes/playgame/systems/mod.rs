@@ -11,15 +11,17 @@ mod leisure_shift;
 mod lumberjack;
 mod mining;
 mod mining_map;
+mod lumber_map;
 mod move_randomly;
 mod pause_control;
 mod settler_scheduler;
 mod sleep_shift;
-pub mod toolfinder;
 mod viewshed;
 mod work_shift;
 pub mod autojobs;
 mod reactions;
+mod utils;
+mod tool_collection;
 
 use super::messaging;
 
@@ -34,6 +36,7 @@ lazy_static! {
 pub fn build_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(mining_map::mining_map_system())
+        .add_system(lumber_map::lumber_map_system())
         .add_system(calendar::calendar_system())
         .add_system(viewshed::viewshed_system())
         .add_system(camera_control::camera_control_system())
@@ -46,6 +49,7 @@ pub fn build_scheduler() -> Schedule {
         .add_system(sleep_shift::sleep_shift_system())
         .add_system(work_shift::work_shift_system())
         .flush()
+        .add_system(tool_collection::tool_collection_system())
         .add_system(lumberjack::lumberjack_system())
         .add_system(construct_building::construction_system())
         .add_system(mining::mining_system())

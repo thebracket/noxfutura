@@ -28,14 +28,6 @@ pub struct Settler {
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-pub struct Vegetation {
-    pub size: f32,
-}
-
-#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
-pub struct Tree {}
-
-#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Terrain {}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

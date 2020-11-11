@@ -6,6 +6,14 @@ use nox_components::*;
 use nox_planet::{MiningMode, StairsType, TileType};
 use nox_raws::MinesTo;
 use nox_spatial::*;
+mod job_designations;
+use job_designations::*;
+mod pathing;
+use pathing::*;
+mod lumber;
+use lumber::*;
+mod gamesystem;
+use gamesystem::*;
 
 pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
     let mut vox_moved = false;
@@ -99,67 +107,11 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
                 .for_each(|(mut turn, _)| {
-                    match &turn.job {
-                        JobType::FellTree {
-                            tree_id,
-                            tree_pos: _,
-                            step: _,
-                            tool_id: _,
-                        } => {
-                            // Un-designate the tree
-                            let mut rlock = REGION.write();
-                            rlock.jobs_board.remove_tree(&tree_id);
-                        }
-                        _ => {}
-                    }
                     turn.job = JobType::None;
                 });
         }
         JobStep::FollowJobPath { id } => {
-            <(&mut MyTurn, &IdentityTag)>::query()
-                .iter_mut(ecs)
-                .filter(|(_, idt)| idt.0 == *id)
-                .for_each(|(turn, _)| match &mut turn.job {
-                    JobType::FellTree { step, .. } => {
-                        let path = match step {
-                            LumberjackSteps::TravelToAxe { path, .. } => Some(path),
-                            LumberjackSteps::TravelToTree { path } => Some(path),
-                            _ => None,
-                        };
-                        if let Some(path) = path {
-                            let destination = path[0];
-                            path.remove(0);
-                            let (x, y, z) = idxmap(destination);
-                            MOVER_LIST.lock().insert(*id, (x, y, z));
-                        }
-                    }
-                    JobType::Mining { step, .. } => {
-                        let path = match step {
-                            MiningSteps::TravelToPick { path, .. } => Some(path),
-                            _ => None,
-                        };
-                        if let Some(path) = path {
-                            let destination = path[0];
-                            path.remove(0);
-                            let (x, y, z) = idxmap(destination);
-                            MOVER_LIST.lock().insert(*id, (x, y, z));
-                        }
-                    }
-                    JobType::ConstructBuilding { step, .. } => {
-                        let path = match step {
-                            BuildingSteps::TravelToComponent { path, .. } => Some(path),
-                            BuildingSteps::TravelToTBuilding { path, .. } => Some(path),
-                            _ => None,
-                        };
-                        if let Some(path) = path {
-                            let destination = path[0];
-                            path.remove(0);
-                            let (x, y, z) = idxmap(destination);
-                            MOVER_LIST.lock().insert(*id, (x, y, z));
-                        }
-                    }
-                    _ => {}
-                });
+            follow_path(ecs, *id);
         }
         JobStep::DropItem { id, location } => {
             println!("Dropping item #{}, at {}", id, location);
@@ -174,10 +126,10 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 });
         }
         JobStep::RelinquishClaim { tool_id, tool_pos } => {
-            REGION
+            /*REGION
                 .write()
                 .jobs_board
-                .relinquish_claim(*tool_id, *tool_pos);
+                .relinquish_claim(*tool_id, *tool_pos);*/
         }
         JobStep::EquipItem { id, tool_id } => {
             <(&mut Position, &IdentityTag)>::query()
@@ -199,42 +151,8 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             }
             super::vox_moved();
         }
-        JobStep::TreeChop { id: _, tree_id } => {
-            println!("Chop tree");
-            let mut rlock = REGION.write();
-
-            let mut to_remove = Vec::new();
-            let mut to_spawn = Vec::new();
-            <(Entity, &Position, &IdentityTag)>::query()
-                .filter(component::<Tree>())
-                .iter(ecs)
-                .filter(|(_, _, id)| id.0 == *tree_id)
-                .for_each(|(entity, pos, _)| {
-                    to_remove.push(*entity);
-                    to_spawn.push(pos.get_idx());
-                });
-            if !to_remove.is_empty() {
-                let mut cb = legion::systems::CommandBuffer::new(ecs);
-                to_remove.iter().for_each(|e| cb.remove(*e));
-                cb.flush(ecs);
-                super::models_moved();
-            }
-            if !to_spawn.is_empty() {
-                let wood = nox_raws::get_material_by_tag("Wood").unwrap();
-                for idx in to_spawn.iter() {
-                    let (tx, ty, tz) = idxmap(*idx);
-                    nox_planet::spawn_item_on_ground(
-                        ecs,
-                        "wood_log",
-                        tx,
-                        ty,
-                        tz,
-                        &mut *rlock,
-                        wood,
-                    );
-                }
-                super::vox_moved();
-            }
+        JobStep::TreeChop { id, tree_pos } => {
+            chop_tree(ecs, *id, *tree_pos);
         }
         JobStep::DeleteBuilding { building_id } => {
             let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
@@ -366,36 +284,16 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             }
         }
         JobStep::BecomeMiner { id } => {
-            <(&mut Settler, &IdentityTag)>::query()
-                .iter_mut(ecs)
-                .filter(|(_s, sid)| sid.0 == *id)
-                .for_each(|(s, _)| s.miner = true);
-            REGION
-                .write()
-                .jobs_board
-                .find_and_claim_tool(ToolType::Digging, *id);
+            become_miner(ecs, *id);
         }
         JobStep::BecomeLumberjack { id } => {
-            <(&mut Settler, &IdentityTag)>::query()
-                .iter_mut(ecs)
-                .filter(|(_s, sid)| sid.0 == *id)
-                .for_each(|(s, _)| s.lumberjack = true);
-            REGION
-                .write()
-                .jobs_board
-                .find_and_claim_tool(ToolType::Chopping, *id);
+            become_lumberjack(ecs, *id);
         }
         JobStep::FireMiner { id } => {
-            <(&mut Settler, &IdentityTag)>::query()
-                .iter_mut(ecs)
-                .filter(|(_s, sid)| sid.0 == *id)
-                .for_each(|(s, _)| s.miner = false);
+            fire_miner(ecs, *id);
         }
         JobStep::FireLumberjack { id } => {
-            <(&mut Settler, &IdentityTag)>::query()
-                .iter_mut(ecs)
-                .filter(|(_s, sid)| sid.0 == *id)
-                .for_each(|(s, _)| s.lumberjack = false);
+            fire_lumberjack(ecs, *id);
         }
         JobStep::SpawnItem { pos, tag, qty, material } => {
             let (x, y, z) = idxmap(*pos);

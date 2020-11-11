@@ -26,7 +26,7 @@ pub fn mining(
             println!("Loc at step: {:?}", pos);
             match step {
                 MiningSteps::FindPick => {
-                    println!("Step: FindPick");
+                    /*println!("Step: FindPick");
                     // Do I already have a pick?
 
                     let rlock = REGION.read();
@@ -60,7 +60,7 @@ pub fn mining(
                     } else {
                         println!("No tool available - abandoning mining");
                         messaging::cancel_job(id.0);
-                    }
+                    }*/
                 }
                 MiningSteps::TravelToPick { path } => {
                     println!("Step: TravelToPick");

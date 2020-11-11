@@ -20,6 +20,8 @@ mod field_of_view;
 pub use field_of_view::*;
 mod temporal;
 pub use temporal::*;
+mod plants;
+pub use plants::*;
 
 pub mod spawner;
 

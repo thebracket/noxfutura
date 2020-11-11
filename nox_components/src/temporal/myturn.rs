@@ -13,9 +13,11 @@ pub struct MyTurn {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum JobType {
     None,
+    CollectTool {
+        tool_id: usize,
+        step: CollectToolSteps
+    },
     FellTree {
-        tree_id: usize,
-        tree_pos: usize,
         tool_id: Option<usize>,
         step: LumberjackSteps,
     },
@@ -39,12 +41,15 @@ pub enum JobType {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum CollectToolSteps {
+    TravelToTool { path: Vec<usize> },
+    CollectTool,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum LumberjackSteps {
     FindAxe,
-    TravelToAxe { path: Vec<usize> },
-    CollectAxe,
     FindTree,
-    TravelToTree { path: Vec<usize> },
     ChopTree,
 }
 

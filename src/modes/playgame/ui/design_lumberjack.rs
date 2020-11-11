@@ -1,10 +1,10 @@
-use crate::modes::playgame::systems::REGION;
 use bengine::gui::*;
 use legion::*;
 use nox_components::*;
+use nox_planet::LumberMap;
 use nox_spatial::mapidx;
 
-pub fn lumberjack_display(imgui: &Ui, ecs: &World, mouse_world_pos: &(usize, usize, usize)) {
+pub fn lumberjack_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, usize, usize), lumber_map: &mut LumberMap) {
     let title = format!("Lumberjack Mode. Click trees to designate for chopping. ### LumberJack",);
     let title_tmp = ImString::new(title);
     let window = Window::new(&title_tmp);
@@ -18,21 +18,25 @@ pub fn lumberjack_display(imgui: &Ui, ecs: &World, mouse_world_pos: &(usize, usi
 
     if imgui.io().mouse_down[0] {
         let idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
-        <(&Tree, &Position, &IdentityTag)>::query()
-            .iter(ecs)
-            .filter(|(_, pos, _)| pos.get_idx() == idx)
-            .for_each(|(_, _, id)| {
-                REGION.write().jobs_board.set_tree(id.0, idx);
-            });
+        <(&mut Tree, &Position)>::query()
+            .iter_mut(ecs)
+            .filter(|(_, pos)| pos.get_idx() == idx)
+            .for_each(|(tree, _)| {
+                tree.chop = true;
+            }
+        );
+        lumber_map.is_dirty = true;
     }
 
     if imgui.io().mouse_down[1] {
         let idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
-        <(&Tree, &Position, &IdentityTag)>::query()
-            .iter(ecs)
-            .filter(|(_, pos, _)| pos.get_idx() == idx)
-            .for_each(|(_, _, id)| {
-                REGION.write().jobs_board.remove_tree(&id.0);
-            });
+        <(&mut Tree, &Position)>::query()
+            .iter_mut(ecs)
+            .filter(|(_, pos)| pos.get_idx() == idx)
+            .for_each(|(tree, _)| {
+                tree.chop = false;
+            }
+        );
+        lumber_map.is_dirty = true;
     }
 }

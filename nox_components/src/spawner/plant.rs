@@ -45,7 +45,7 @@ pub fn spawn_tree(
 ) {
     //let rlock = RAWS.read();
     ecs.push((
-        Tree {},
+        Tree { chop: false },
         IdentityTag::new(),
         Name {
             name: "Tree".to_string(),
@@ -60,5 +60,6 @@ pub fn spawn_tree(
         },
         Position::with_tile(x, y, z, region_idx, (3, 3, 3)),
         Tint { color: 0 },
+        Health::new(10)
     ));
 }

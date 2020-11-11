@@ -1,7 +1,7 @@
 use super::REGION;
 use legion::*;
 use nox_components::*;
-use nox_planet::MiningMap;
+use nox_planet::{MiningMap, LumberMap};
 
 #[system(for_each)]
 pub fn work_shift(
@@ -10,6 +10,7 @@ pub fn work_shift(
     settler: &Settler,
     id: &IdentityTag,
     #[resource] mining: &MiningMap,
+    #[resource] lumber: &LumberMap
 ) {
     if turn.active && turn.shift == ScheduleTime::Work && turn.job == JobType::None {
         turn.order = WorkOrder::None;
@@ -17,7 +18,7 @@ pub fn work_shift(
         if let Some(job) = REGION
             .write()
             .jobs_board
-            .evaluate_jobs(id.0, &*pos, settler, mining)
+            .evaluate_jobs(id.0, &*pos, settler, mining, lumber)
         {
             turn.job = job;
             println!("Assigned job: {:?}", turn.job);
