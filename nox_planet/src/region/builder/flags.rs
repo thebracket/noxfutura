@@ -89,7 +89,7 @@ pub fn set_flags(region: &mut Region) {
                     if valid_exit(region, x, y - 1, z) {
                         region.set_flag(idx, Region::CAN_GO_NORTH)
                     }
-                    if valid_exit(region, x - 1, y + 1, z) {
+                    if valid_exit(region, x, y + 1, z) {
                         region.set_flag(idx, Region::CAN_GO_SOUTH)
                     }
 

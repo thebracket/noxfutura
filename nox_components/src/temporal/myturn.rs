@@ -56,8 +56,6 @@ pub enum LumberjackSteps {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum MiningSteps {
     FindPick,
-    TravelToPick { path: Vec<usize> },
-    CollectPick,
     TravelToMine,
     Dig,
 }

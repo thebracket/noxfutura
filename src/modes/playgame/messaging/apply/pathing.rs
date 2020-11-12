@@ -15,12 +15,6 @@ pub(crate) fn follow_path(ecs: &mut World, id: usize) {
                         _ => None
                     }
                 }
-                JobType::Mining { step, .. } => {
-                    match step {
-                        MiningSteps::TravelToPick { path, .. } => Some(path),
-                        _ => None,
-                    }
-                }
                 JobType::ConstructBuilding { step, .. } => {
                     match step {
                         BuildingSteps::TravelToComponent { path, .. } => Some(path),

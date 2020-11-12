@@ -26,7 +26,8 @@ pub(crate) fn skill_check(ecs: &World, settler_id: usize, skill: Skill, difficul
 
 pub(crate) fn attribute_bonus(skill: Skill, attribute: &Attributes) -> i32 {
     match skill {
-        Skill::Lumberjack => raw_attribute_bonus(attribute.str)
+        Skill::Lumberjack => raw_attribute_bonus(attribute.str),
+        Skill::Mining => raw_attribute_bonus(attribute.str),
     }
 }
 
