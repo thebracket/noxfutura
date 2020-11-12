@@ -13,7 +13,7 @@ pub fn am_i_carrying_tool(ecs: &SubWorld, holder: usize, usage: ToolType) -> Too
     <(&Claimed, &Tool, &Position, &IdentityTag)>::query()
         .iter(ecs)
         .filter(|(claim, tool, _, _)| claim.by == holder && tool.usage == usage )
-        .map(|(claim, tool, pos, tool_id)| {
+        .map(|(_claim, _tool, pos, tool_id)| {
             match pos.loc {
                 Location::Carried{by} => {
                     if by == holder {

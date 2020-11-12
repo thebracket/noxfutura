@@ -50,7 +50,8 @@ fn registry() -> Registry<String> {
         IdentityTag,
         ObjModel,
         Claimed,
-        Health
+        Health,
+        MiningMode
     );
 
     registry

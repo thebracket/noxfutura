@@ -1,20 +1,23 @@
 use legion::*;
 use nox_components::*;
-use nox_planet::{MiningMode, StairsType, TileType};
+use nox_planet::{StairsType, TileType};
 use nox_raws::MinesTo;
 use super::REGION;
 use nox_spatial::*;
 use super::skill_check;
+use bengine::geometry::*;
 
 pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
-    use bengine::geometry::*;
+    let mining_designations : Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
+            .iter(ecs)
+            .map(|(mm, pos)| (pos.get_idx(), *mm))
+            .collect();
+
     println!("Looking for digging to perform at {}", pos);
     let (x, y, z) = idxmap(pos);
     let my_pos = Point3::new(x, y, z);
     let mut rlock = REGION.write();
-    let mut nearby = rlock
-        .jobs_board
-        .mining_designations
+    let mut nearby = mining_designations
         .iter()
         .map(|(idx, task)| {
             let (mx, my, mz) = idxmap(*idx);
@@ -94,7 +97,12 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
                 _ => {}
             }
             println!("Undesignating");
-            rlock.jobs_board.mining_designations.remove(&mine_id);
+            let to_remove : Vec<Entity> = <(Entity, &MiningMode, &Position)>::query()
+                .iter(ecs)
+                .filter(|(_, _, pos)| pos.get_idx() == mine_id)
+                .map(|(e, _, _)| *e)
+                .collect();
+            to_remove.iter().for_each(|e| { ecs.remove(*e); });
             <&mut FieldOfView>::query()
                 .iter_mut(ecs)
                 .for_each(|f| f.is_dirty = true);

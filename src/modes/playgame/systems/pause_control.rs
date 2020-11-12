@@ -3,7 +3,7 @@ use super::super::RunState;
 use crate::modes::playgame::DesignMode;
 use bengine::VirtualKeyCode;
 use legion::*;
-use nox_planet::MiningMode;
+use nox_components::MiningMode;
 
 #[system]
 pub fn pause_control(

@@ -5,7 +5,6 @@ use bengine::*;
 use cubes::add_cube_geometry;
 use legion::*;
 use nox_components::*;
-use nox_planet::MiningMode;
 use nox_spatial::*;
 
 pub struct CursorPass {
@@ -193,10 +192,12 @@ impl CursorPass {
         self.vb.clear();
 
         // Add cursors for existing designations
-        let rlock = crate::modes::playgame::systems::REGION.read();
-        rlock
-            .jobs_board
-            .mining_designations
+        let mining_designations : Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
+            .iter(ecs)
+            .map(|(mm, pos)| (pos.get_idx(), *mm))
+            .collect();
+
+        mining_designations
             .iter()
             .for_each(|(idx, _t)| {
                 let (x, y, z) = idxmap(*idx);
@@ -210,8 +211,8 @@ impl CursorPass {
                     1.0,
                     1.0,
                 );
-            });
-        std::mem::drop(rlock);
+            }
+        );
 
         // Add cursors for current mouse
         let camera_pos = <&Position>::query()

@@ -58,7 +58,7 @@ fn locate_target(ecs: &World, chop_pos: usize) -> Option<(Entity, usize)> {
     let chopper_pt = Point3::new(x, y, z);
     let mut trees : Vec<(Entity, f32, usize)> = <(Entity, &Tree, &Position)>::query()
         .iter(ecs)
-        .filter(|(entity, tree, pos)| tree.chop)
+        .filter(|(_entity, tree, _pos)| tree.chop)
         .map(|(entity, _tree, pos)| 
             (
                 *entity,

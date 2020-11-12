@@ -11,8 +11,6 @@ use jobs::JobsBoard;
 use smallvec::SmallVec;
 mod mining_map;
 pub use mining_map::*;
-mod mining_mode;
-pub use mining_mode::*;
 mod lumber_map;
 pub use lumber_map::*;
 

@@ -1,4 +1,4 @@
-use nox_planet::MiningMode;
+use nox_components::MiningMode;
 
 #[derive(PartialEq, Clone)]
 pub enum RunState {

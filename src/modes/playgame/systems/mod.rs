@@ -18,7 +18,6 @@ mod settler_scheduler;
 mod sleep_shift;
 mod viewshed;
 mod work_shift;
-pub mod autojobs;
 mod reactions;
 mod utils;
 mod tool_collection;

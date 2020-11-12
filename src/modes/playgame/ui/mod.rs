@@ -11,5 +11,4 @@ pub use design_lumberjack::*;
 pub use design_mining::*;
 pub use main_menu::*;
 pub use settlers_list::settler_list_display;
-use tables::*;
 pub use tooltips::*;

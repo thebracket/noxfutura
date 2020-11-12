@@ -3,8 +3,6 @@ use super::{JobStep, MOVER_LIST};
 use crate::modes::playgame::systems::REGION;
 use legion::*;
 use nox_components::*;
-use nox_planet::{MiningMode, StairsType, TileType};
-use nox_raws::MinesTo;
 use nox_spatial::*;
 mod job_designations;
 use job_designations::*;
@@ -127,7 +125,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     println!("{:?}", pos);
                 });
         }
-        JobStep::RelinquishClaim { tool_id, tool_pos } => {
+        JobStep::RelinquishClaim { .. } => {
             /*REGION
                 .write()
                 .jobs_board

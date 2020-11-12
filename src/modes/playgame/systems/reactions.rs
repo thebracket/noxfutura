@@ -5,7 +5,7 @@ use nox_components::*;
 use nox_planet::pathfinding::a_star_search;
 
 #[system(for_each)]
-pub fn reactions(turn: &MyTurn, pos: &Position, id: &IdentityTag, settler: &Settler) {
+pub fn reactions(turn: &MyTurn, pos: &Position, id: &IdentityTag, _settler: &Settler) {
     if turn.active
         && turn.shift == ScheduleTime::Work
         && match turn.job {

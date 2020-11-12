@@ -1,4 +1,4 @@
-use super::{MiningMap, MiningMode, LumberMap};
+use super::{MiningMap, LumberMap};
 use bengine::geometry::*;
 use nox_components::*;
 use nox_spatial::idxmap;
@@ -9,7 +9,6 @@ use std::collections::HashMap;
 pub struct JobsBoard {
     all_jobs: Vec<JobBoardListing>,
     component_ownership: HashMap<usize, ComponentClaim>,
-    pub mining_designations: HashMap<usize, MiningMode>,
     autojobs : HashMap<(usize, usize, usize), Vec<(usize, usize, usize)>> // Key (building/reaction/pos), value (component, pos, mat)
 }
 
@@ -18,7 +17,6 @@ impl JobsBoard {
         Self {
             all_jobs: Vec::new(),
             component_ownership: HashMap::new(),
-            mining_designations: HashMap::new(),
             autojobs: HashMap::new()
         }
     }
@@ -112,7 +110,7 @@ impl JobsBoard {
         }
     }
 
-    pub fn restore_job(&mut self, job: &JobType) {
+    pub fn restore_job(&mut self, _job: &JobType) {
     }
 
     pub fn is_component_claimed(&self, id: usize) -> bool {

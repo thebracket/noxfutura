@@ -1,28 +1,35 @@
 use super::REGION;
 use legion::*;
+use legion::world::SubWorld;
 use nox_planet::Region;
-use nox_planet::{MiningMap, MiningMode};
+use nox_planet::MiningMap;
 use nox_spatial::*;
 use std::collections::VecDeque;
+use nox_components::*;
 
 #[system]
-pub fn mining_map(#[resource] map: &mut MiningMap) {
+#[read_component(MiningMode)]
+#[read_component(Position)]
+pub fn mining_map(ecs: &SubWorld, #[resource] map: &mut MiningMap) {
     if !map.is_dirty {
         return;
     }
 
+    let mining_designations : Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
+        .iter(ecs)
+        .map(|(mm, pos)| (pos.get_idx(), *mm))
+        .collect();
+
     map.dijkstra.iter_mut().for_each(|n| *n = f32::MAX);
 
-    let rlock = REGION.read();
-    if rlock.jobs_board.mining_designations.is_empty() {
+    if mining_designations.is_empty() {
         map.is_dirty = false;
         return;
     }
     // Build starting points for Dijkstra
-    let mut starts = Vec::with_capacity(rlock.jobs_board.mining_designations.len() * 4);
-    rlock
-        .jobs_board
-        .mining_designations
+    let rlock = REGION.read();
+    let mut starts = Vec::with_capacity(mining_designations.len() * 4);
+    mining_designations
         .iter()
         .for_each(|(idx, t)| {
             // TODO: Adjust this

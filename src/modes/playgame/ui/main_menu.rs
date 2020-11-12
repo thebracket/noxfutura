@@ -3,7 +3,6 @@ use crate::modes::playgame::DesignMode;
 use bengine::gui::*;
 use legion::*;
 use nox_components::*;
-use nox_planet::MiningMode;
 
 pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
     if let Some(menu_bar) = imgui.begin_main_menu_bar() {
