@@ -21,6 +21,7 @@ mod work_shift;
 mod reactions;
 mod utils;
 mod tool_collection;
+mod component_hauling;
 
 use super::messaging;
 
@@ -49,6 +50,7 @@ pub fn build_scheduler() -> Schedule {
         .add_system(work_shift::work_shift_system())
         .flush()
         .add_system(tool_collection::tool_collection_system())
+        .add_system(component_hauling::hauling_system())
         .add_system(lumberjack::lumberjack_system())
         .add_system(construct_building::construction_system())
         .add_system(mining::mining_system())

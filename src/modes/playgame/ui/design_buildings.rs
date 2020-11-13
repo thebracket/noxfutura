@@ -5,6 +5,7 @@ use nox_components::*;
 use nox_planet::*;
 use nox_raws::*;
 use nox_spatial::mapidx;
+use bengine::geometry::*;
 
 struct AvailableBuilding {
     tag: String,
@@ -123,6 +124,12 @@ pub fn building_display(
 
         if can_build && !imgui.io().want_capture_mouse {
             if imgui.io().mouse_down[0] {
+                let chosen_components = select_components(ecs, &raws, rtag, mouse_world_pos);
+                let component_ids = chosen_components
+                    .iter()
+                    .map(|(_, id, _)| *id)
+                    .collect::<Vec<usize>>();
+
                 // Issue build order
                 let new_building_id = nox_planet::spawn_building(
                     ecs,
@@ -132,40 +139,17 @@ pub fn building_display(
                     mouse_world_pos.2,
                     world_idx,
                     false,
+                    &component_ids
                 );
 
                 // Claim the components
-                let binfo = raws.buildings.building_by_tag(rtag).unwrap();
-                let mut chosen_components = Vec::new();
-                for c in binfo.components.iter() {
-                    let t = Tag(c.item.to_string());
-                    let mut available_components: Vec<(usize, usize)> =
-                        <(Entity, Read<Position>, Read<Tag>, Read<IdentityTag>)>::query()
-                            .filter(component::<Item>())
-                            .iter(ecs)
-                            .filter(|(_, _, tag, _)| tag.0 == t.0)
-                            .map(|(_, pos, _, idt)| (pos.effective_location(ecs), idt.0))
-                            .collect();
-                    available_components.sort_by(|a, b| a.0.cmp(&b.0));
-                    available_components
-                        .iter()
-                        .take(c.qty as usize)
-                        .for_each(|cc| {
-                            chosen_components.push(cc.clone());
-                        });
-                }
-
-                let mut rwlock = REGION.write();
-                chosen_components.iter().for_each(|c| {
-                    rwlock
-                        .jobs_board
-                        .claim_component_for_building(new_building_id, c.1, c.0);
+                let building_idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
+                chosen_components.iter().for_each(|(_distance, _comp_id, comp_e)| {
+                    if let Some(mut ce) = ecs.entry(*comp_e) {
+                        ce.add_component(Claimed{ by: new_building_id });
+                        ce.add_component(RequestHaul{ destination: building_idx, in_progress: None });
+                    }
                 });
-                rwlock.jobs_board.add_building_job(
-                    new_building_id,
-                    mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2),
-                    &chosen_components,
-                );
             }
 
             (bid, Some(btag))
@@ -173,4 +157,44 @@ pub fn building_display(
             (bid, None)
         }
     }
+}
+
+fn select_components(
+    ecs: &World,
+    raws: &Raws,
+    rtag: &String,
+    mouse_world_pos: &(usize, usize, usize)
+) -> Vec<(f32, usize, Entity)>
+{
+    let mut result = Vec::new();
+    let building_pos = Point3::new(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
+    let binfo = raws.buildings.building_by_tag(rtag).unwrap();
+    binfo.components.iter().for_each(|req_comp| {
+        let mut available_components : Vec<(f32, usize, Entity)> = <(Entity, Read<Position>, Read<Tag>, Read<IdentityTag>)>::query()
+            .filter(component::<Item>() & !component::<Claimed>())
+            .iter(ecs)
+            .filter(|(_, _, tag, _)| tag.0 == req_comp.item)
+            .map(|(e, pos, _tag, id)| 
+                (
+                    DistanceAlg::Pythagoras.distance3d(
+                        building_pos,
+                        pos.as_point3()
+                    ),
+                    id.0,
+                    *e
+                )
+            )
+            .collect();
+
+        // Sort by closest
+        available_components.sort_by(|a,b| a.0.partial_cmp(&b.0).unwrap());
+
+        // Take the first n
+        available_components
+            .iter()
+            .take(req_comp.qty as usize)
+            .for_each(|cc| result.push(cc.clone()));
+    });
+
+    result
 }

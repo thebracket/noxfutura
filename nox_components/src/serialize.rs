@@ -51,7 +51,9 @@ fn registry() -> Registry<String> {
         ObjModel,
         Claimed,
         Health,
-        MiningMode
+        MiningMode,
+        RequestHaul,
+        Blueprint
     );
 
     registry

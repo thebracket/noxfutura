@@ -17,6 +17,9 @@ pub enum JobType {
         tool_id: usize,
         step: CollectToolSteps
     },
+    Haul {
+        item_id: usize
+    },
     FellTree {
         tool_id: Option<usize>,
         step: LumberjackSteps,

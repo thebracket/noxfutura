@@ -8,6 +8,7 @@ pub fn spawn_building(
     tile_idx: usize,
     region_idx: usize,
     complete: bool,
+    required_components: &[usize]
 ) -> usize {
     let mut result = 0;
     let rlock = RAWS.read();
@@ -40,6 +41,13 @@ pub fn spawn_building(
             Tint { color: 0 },
         ));
         println!("New building ID: {}", identity.0);
+
+        if !required_components.is_empty() {
+            let mut ri = Vec::new();
+            ri.extend_from_slice(required_components);
+            let bp = Blueprint { required_items : ri };
+            ecs.entry(entity).unwrap().add_component(bp);
+        }
 
         for provides in building_def.provides.iter() {
             if let BuildingProvides::Light { radius, color } = provides {

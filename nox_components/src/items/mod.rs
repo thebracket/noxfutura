@@ -6,3 +6,7 @@ mod material;
 pub use material::*;
 mod claimed;
 pub use claimed::*;
+mod hauling;
+pub use hauling::*;
+mod blueprint;
+pub use blueprint::*;

@@ -11,8 +11,9 @@ pub fn spawn_building(
     z: usize,
     region_idx: usize,
     complete: bool,
+    required_components: &[usize]
 ) -> usize {
-    nox_components::spawner::spawn_building(ecs, tag, mapidx(x, y, z), region_idx, complete)
+    nox_components::spawner::spawn_building(ecs, tag, mapidx(x, y, z), region_idx, complete, required_components)
 }
 
 pub fn spawn_clothing_from_raws_worn(
