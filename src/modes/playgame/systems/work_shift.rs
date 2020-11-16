@@ -73,7 +73,6 @@ pub fn work_shift(
                     turn.order = WorkOrder::MoveRandomly;
                 } else {
                     possible_jobs.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
-                    println!("{:?}", possible_jobs);
                     turn.job = possible_jobs[0].1.clone();
 
                     match turn.job {
@@ -141,7 +140,6 @@ fn building_list(ecs: &SubWorld) -> Vec<(usize, usize)> {
 }
 
 fn consider_building(buildables: &[(usize, usize)], settler_pos: Point3) -> Option<(f32, usize)> {
-    println!("{} possible buildings", buildables.len());
     if buildables.is_empty() {
         return None;
     }
@@ -155,11 +153,9 @@ fn consider_building(buildables: &[(usize, usize)], settler_pos: Point3) -> Opti
             )
         })
         .collect();
-    println!("Mapped {:?}", hsort);
     if hsort.is_empty() {
         None
     } else {
-        println!("Considering buildings {:?}", hsort);
         hsort.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
         Some(hsort[0])
     }
