@@ -10,7 +10,17 @@ const MAX_ASTAR_STEPS: usize = 65536;
 /// Request an A-Star search. The start and end are specified as index numbers (compatible with your
 /// BaseMap implementation), and it requires access to your map so as to call distance and exit determinations.
 pub fn a_star_search(start: usize, end: usize, map: &Region) -> NavigationPath {
-    AStar::new(start, end).search(map)
+    let mut astar = AStar::new(start, end);
+    if astar.distance_to_end(start, map) < 1.4 {
+        println!("We're already there");
+        NavigationPath {
+            destination: end,
+            success: true,
+            steps: Vec::new(),
+        }
+    } else {
+        astar.search(map)
+    }
 }
 
 /// Holds the result of an A-Star navigation query.

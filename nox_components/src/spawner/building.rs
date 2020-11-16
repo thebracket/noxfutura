@@ -8,7 +8,7 @@ pub fn spawn_building(
     tile_idx: usize,
     region_idx: usize,
     complete: bool,
-    required_components: &[usize]
+    required_components: &[usize],
 ) -> usize {
     let mut result = 0;
     let rlock = RAWS.read();
@@ -45,7 +45,10 @@ pub fn spawn_building(
         if !required_components.is_empty() {
             let mut ri = Vec::new();
             ri.extend_from_slice(required_components);
-            let bp = Blueprint { required_items : ri };
+            let bp = Blueprint {
+                required_items: ri,
+                ready_to_build: false,
+            };
             ecs.entry(entity).unwrap().add_component(bp);
         }
 
@@ -79,7 +82,9 @@ pub fn spawn_building(
         }
         if is_workshop {
             println!("It's a workshop - reactions are provided.");
-            ecs.entry(entity).unwrap().add_component(Workshop { has_automatic_jobs : has_autojobs });
+            ecs.entry(entity).unwrap().add_component(Workshop {
+                has_automatic_jobs: has_autojobs,
+            });
         }
 
         println!("Added building data: {}", tag);

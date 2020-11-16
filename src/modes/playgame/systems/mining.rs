@@ -1,12 +1,15 @@
-use super::{super::messaging, utils::{ToolCarrying, am_i_carrying_tool}};
+use super::{
+    super::messaging,
+    utils::{am_i_carrying_tool, ToolCarrying},
+};
 use crate::modes::playgame::systems::REGION;
 use bengine::geometry::Point3;
+use legion::world::SubWorld;
 use legion::*;
 use nox_components::*;
 use nox_planet::pathfinding::a_star_search;
 use nox_planet::MiningMap;
 use nox_spatial::idxmap;
-use legion::world::SubWorld;
 
 #[system()]
 #[read_component(MyTurn)]
@@ -15,10 +18,7 @@ use legion::world::SubWorld;
 #[read_component(Settler)]
 #[read_component(Claimed)]
 #[read_component(Tool)]
-pub fn mining(
-    ecs: &SubWorld,
-    #[resource] mining: &MiningMap,
-) {
+pub fn mining(ecs: &SubWorld, #[resource] mining: &MiningMap) {
     let mut mquery = <(&MyTurn, &Position, &IdentityTag, &Settler)>::query();
     mquery.iter(ecs).for_each(|(turn, pos, id, settler)| {
         if turn.active
@@ -85,7 +85,7 @@ fn find_pick(ecs: &SubWorld, settler_id: usize, settler_pos: usize) {
     let axe_status = am_i_carrying_tool(ecs, settler_id, ToolType::Digging);
     match axe_status {
         ToolCarrying::NoTool => messaging::cancel_job(settler_id),
-        ToolCarrying::AtLocation{idx, tool_id} => {
+        ToolCarrying::AtLocation { idx, tool_id } => {
             println!("Tool located - travel mode");
             let rlock = REGION.read();
             let path = a_star_search(settler_pos, idx, &rlock);
@@ -102,12 +102,12 @@ fn find_pick(ecs: &SubWorld, settler_id: usize, settler_pos: usize) {
                 messaging::cancel_job(settler_id);
             }
         }
-        ToolCarrying::Carried{tool_id} => {
+        ToolCarrying::Carried { tool_id } => {
             println!("I have a pick!");
             messaging::job_changed(
                 settler_id,
                 JobType::Mining {
-                    step: MiningSteps::TravelToMine{},
+                    step: MiningSteps::TravelToMine {},
                     tool_id: Some(tool_id),
                 },
             );

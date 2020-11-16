@@ -9,14 +9,11 @@ pub fn settler_list_display(imgui: &Ui, ecs: &World) {
     <&Tool>::query()
         .filter(!component::<Claimed>())
         .iter(ecs)
-        .for_each(|tool| {
-            match tool.usage {
-                ToolType::Chopping => available_axes += 1,
-                ToolType::Digging => available_picks += 1,
-                _ => {}
-            }
-        }
-    );
+        .for_each(|tool| match tool.usage {
+            ToolType::Chopping => available_axes += 1,
+            ToolType::Digging => available_picks += 1,
+            _ => {}
+        });
 
     let size = bengine::get_window_size();
     let title = format!("All Settlers. ### SettlerList",);
@@ -53,8 +50,7 @@ pub fn settler_list_display(imgui: &Ui, ecs: &World) {
                             crate::modes::playgame::fire_miner(id.0);
                         }
                     } else {
-                        if available_picks > 0
-                        {
+                        if available_picks > 0 {
                             let label = format!("\u{f1b3} Miner##{}", id.0);
                             if imgui.button(&ImString::new(label), [100.0, 20.0]) {
                                 crate::modes::playgame::become_miner(id.0);
@@ -70,8 +66,7 @@ pub fn settler_list_display(imgui: &Ui, ecs: &World) {
                             crate::modes::playgame::fire_lumberjack(id.0);
                         }
                     } else {
-                        if available_axes > 0
-                        {
+                        if available_axes > 0 {
                             let label = format!("\u{f1bb} Lumberjack##{}", id.0);
                             if imgui.button(&ImString::new(label), [100.0, 20.0]) {
                                 crate::modes::playgame::become_lumberjack(id.0);

@@ -1,10 +1,10 @@
-use legion::*;
-use legion::world::SubWorld;
-use nox_planet::{LumberMap, Region};
-use nox_components::*;
 use super::REGION;
-use std::collections::VecDeque;
+use legion::world::SubWorld;
+use legion::*;
+use nox_components::*;
+use nox_planet::{LumberMap, Region};
 use nox_spatial::*;
+use std::collections::VecDeque;
 
 #[system]
 #[read_component(Tree)]
@@ -24,8 +24,7 @@ pub fn lumber_map(ecs: &SubWorld, #[resource] map: &mut LumberMap) {
         .filter(|(tree, _)| tree.chop)
         .for_each(|(_, pos)| {
             add_horizontally_adjacent_exists(&pos.get_idx(), &mut starts, &rlock);
-        }
-    );
+        });
 
     // Build the Dijkstra Map
     let mut open_list: VecDeque<(usize, f32)> = VecDeque::with_capacity(REGION_TILES_COUNT);

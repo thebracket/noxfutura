@@ -6,7 +6,7 @@ use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
 use nox_components::{CameraOptions, Position};
-use nox_planet::{MiningMap, LumberMap};
+use nox_planet::{LumberMap, MiningMap};
 
 pub struct PlayTheGame {
     ready: bool,
@@ -312,7 +312,7 @@ fn design_ui(
     core: &mut Core,
     ecs: &mut World,
     mine_state: &mut MiningMap,
-    lumber_state: &mut LumberMap
+    lumber_state: &mut LumberMap,
 ) {
     match run_state {
         RunState::Design {

@@ -1,7 +1,8 @@
 use super::super::GameStateResource;
 use super::{JobStep, MOVER_LIST};
 use crate::modes::playgame::systems::REGION;
-use legion::*;
+use bengine::geometry::DistanceAlg;
+use legion::{systems::CommandBuffer, *};
 use nox_components::*;
 use nox_spatial::*;
 mod job_designations;
@@ -97,7 +98,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
                 .for_each(|(mut turn, _)| {
-                    REGION.write().jobs_board.restore_job(&turn.job);
+                    //REGION.write().jobs_board.restore_job(&turn.job);
                     turn.job = JobType::None;
                 });
         }
@@ -107,6 +108,12 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
                 .for_each(|(mut turn, _)| {
+                    match turn.job {
+                        JobType::Haul { item_id, .. } => {
+                            super::remove_haul_tag(item_id);
+                        }
+                        _ => {}
+                    }
                     turn.job = JobType::None;
                 });
         }
@@ -119,17 +126,19 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 .iter_mut(ecs)
                 .filter(|(_, idt)| idt.0 == *id)
                 .for_each(|(pos, _)| {
+                    println!("{:?}", pos);
                     println!("Item dropped");
                     println!("{:?}", pos);
                     pos.to_ground(*location);
                     println!("{:?}", pos);
                 });
+            super::vox_moved();
         }
         JobStep::RelinquishClaim { .. } => {
             /*REGION
-                .write()
-                .jobs_board
-                .relinquish_claim(*tool_id, *tool_pos);*/
+            .write()
+            .jobs_board
+            .relinquish_claim(*tool_id, *tool_pos);*/
         }
         JobStep::EquipItem { id, tool_id } => {
             <(&mut Position, &IdentityTag)>::query()
@@ -137,6 +146,17 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                 .filter(|(_, idt)| idt.0 == *tool_id)
                 .for_each(|(pos, _)| {
                     pos.to_carried(*id);
+                });
+            super::vox_moved();
+        }
+        JobStep::GetItem { id, item_id } => {
+            <(&mut Position, &IdentityTag)>::query()
+                .iter_mut(ecs)
+                .filter(|(_, idt)| idt.0 == *item_id)
+                .for_each(|(pos, _)| {
+                    println!("Getting item {:?}", pos);
+                    pos.to_carried(*id);
+                    println!("Got item {:?}", pos);
                 });
             super::vox_moved();
         }
@@ -169,6 +189,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
 
         JobStep::FinishBuilding { building_id } => {
             println!("Finish building called for id {}", building_id);
+            let mut cmds = CommandBuffer::new(ecs);
             let e = <(Entity, Read<Position>, Read<IdentityTag>, Read<Building>)>::query()
                 .iter(ecs)
                 .filter(|(_, _, idt, _)| idt.0 == *building_id)
@@ -187,8 +208,15 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                         l.enabled = true;
                         super::lights_changed();
                     }
+                    if let Ok(bp) = en.get_component::<Blueprint>() {
+                        for cid in bp.required_items.iter() {
+                            super::super::delete_item(*cid);
+                        }
+                        cmds.remove_component::<Blueprint>(e);
+                    }
                 }
             }
+            cmds.flush(ecs);
         }
         JobStep::DigAt { pos, id } => {
             dig_at(ecs, *id, *pos);
@@ -205,10 +233,74 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         JobStep::FireLumberjack { id } => {
             fire_lumberjack(ecs, *id);
         }
-        JobStep::SpawnItem { pos, tag, qty, material } => {
+        JobStep::SpawnItem {
+            pos,
+            tag,
+            qty,
+            material,
+        } => {
             let (x, y, z) = idxmap(*pos);
             for _ in 0..*qty {
                 nox_planet::spawn_item_on_ground(ecs, tag, x, y, z, &mut REGION.write(), *material);
+            }
+        }
+        JobStep::HaulInProgress { id, by } => {
+            <(&IdentityTag, &mut RequestHaul)>::query()
+                .iter_mut(ecs)
+                .filter(|(hid, _rh)| hid.0 == *id)
+                .for_each(|(_id, rh)| {
+                    rh.in_progress = Some(*by);
+                });
+        }
+        JobStep::RemoveHaulTag { id } => {
+            let mut cmds = CommandBuffer::new(ecs);
+            <(Entity, &IdentityTag)>::query()
+                .iter(ecs)
+                .filter(|(_, hid)| hid.0 == *id)
+                .for_each(|(e, _)| {
+                    cmds.remove_component::<RequestHaul>(*e);
+                });
+            cmds.flush(ecs);
+        }
+        JobStep::UpdateBlueprint { item_id } => {
+            let mut ready_blueprints = Vec::new();
+            <(&IdentityTag, &Claimed)>::query()
+                .iter(ecs)
+                .filter(|(id, _)| id.0 == *item_id)
+                .for_each(|(_id, claim)| {
+                    // claim.by = what claimed it
+                    <(Entity, &Blueprint, &IdentityTag, &Position)>::query()
+                        .iter(ecs)
+                        .filter(|(_, _, cid, _)| cid.0 == claim.by)
+                        .for_each(|(e, bp, _, bpos)| {
+                            let blueprint_point = bpos.as_point3();
+                            // Check all components
+                            let mut is_ready = true;
+                            for comp_id in bp.required_items.iter() {
+                                let comp_pos = <(&IdentityTag, &Position)>::query()
+                                    .iter(ecs)
+                                    .filter(|(comp_id_tag, _)| comp_id_tag.0 == *comp_id)
+                                    .map(|(_, comp_pos)| comp_pos.as_point3())
+                                    .nth(0)
+                                    .unwrap();
+                                let distance =
+                                    DistanceAlg::Pythagoras.distance3d(blueprint_point, comp_pos);
+                                if distance > 1.4 {
+                                    is_ready = false;
+                                }
+                            }
+                            if is_ready {
+                                ready_blueprints.push(*e);
+                            }
+                        });
+                });
+            for rb in ready_blueprints.iter() {
+                if let Some(mut er) = ecs.entry_mut(*rb) {
+                    if let Ok(bp) = er.get_component_mut::<Blueprint>() {
+                        println!("Building is ready");
+                        bp.ready_to_build = true;
+                    }
+                }
             }
         }
         _ => {}

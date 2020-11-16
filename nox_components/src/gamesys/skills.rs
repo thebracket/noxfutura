@@ -7,7 +7,7 @@ pub struct Skills(pub HashMap<Skill, i32>);
 #[derive(Serialize, Deserialize, Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Skill {
     Lumberjack,
-    Mining
+    Mining,
 }
 
 impl Skills {

@@ -1,18 +1,14 @@
+use super::super::super::RNG;
 use legion::*;
 use nox_components::*;
-use super::super::super::RNG;
 
 pub(crate) fn skill_check(ecs: &World, settler_id: usize, skill: Skill, difficulty: i32) -> i32 {
-    let (skill_value, attr_bonus) = if let Some((skill, attr)) = <(&IdentityTag, &Skills, &Attributes)>::query()
-        .iter(ecs)
-        .filter(|(id, _skills, _attrib)| id.0 == settler_id)
-        .map(|(_id, skills, attrib)| 
-            (
-                skills.get_skill(skill),
-                attribute_bonus(skill, attrib)
-            )
-        )
-        .nth(0)
+    let (skill_value, attr_bonus) = if let Some((skill, attr)) =
+        <(&IdentityTag, &Skills, &Attributes)>::query()
+            .iter(ecs)
+            .filter(|(id, _skills, _attrib)| id.0 == settler_id)
+            .map(|(_id, skills, attrib)| (skills.get_skill(skill), attribute_bonus(skill, attrib)))
+            .nth(0)
     {
         (skill, attr)
     } else {

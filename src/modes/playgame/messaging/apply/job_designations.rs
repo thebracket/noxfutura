@@ -1,6 +1,6 @@
+use bengine::geometry::*;
 use legion::*;
 use nox_components::*;
-use bengine::geometry::*;
 
 pub fn become_miner(ecs: &mut World, id: usize) {
     // Find the settler in question
@@ -55,10 +55,7 @@ pub fn fire_miner(ecs: &mut World, id: usize) {
     <(&mut Settler, &IdentityTag)>::query()
         .iter_mut(ecs)
         .filter(|(_s, sid)| sid.0 == id)
-        .for_each(|(s, _)| {
-            s.miner = false
-        }
-    );
+        .for_each(|(s, _)| s.miner = false);
 }
 
 pub fn fire_lumberjack(ecs: &mut World, id: usize) {
@@ -71,13 +68,17 @@ pub fn fire_lumberjack(ecs: &mut World, id: usize) {
 
 fn find_closest_tool(ecs: &mut World, usage: ToolType, claimant: usize, position: &Point3) -> bool {
     println!("Looking for tool");
-    let mut tools : Vec<(Entity, f32)> = <(Entity, &Tool, &Position)>::query()
+    let mut tools: Vec<(Entity, f32)> = <(Entity, &Tool, &Position)>::query()
         .filter(!component::<Claimed>())
         .iter(ecs)
         .filter(|(_, tool, _)| tool.usage == usage)
-        .map(|(e, _, pos)| (*e, DistanceAlg::Pythagoras.distance3d(*position, pos.as_point3()) ))
-        .collect()
-        ;
+        .map(|(e, _, pos)| {
+            (
+                *e,
+                DistanceAlg::Pythagoras.distance3d(*position, pos.as_point3()),
+            )
+        })
+        .collect();
 
     if tools.is_empty() {
         println!("No tools found");
@@ -85,19 +86,21 @@ fn find_closest_tool(ecs: &mut World, usage: ToolType, claimant: usize, position
     }
 
     println!("Marking the tool as claimed");
-    tools.sort_by(|a,b| a.1.partial_cmp(&b.1).unwrap());
-    ecs.entry(tools[0].0).unwrap().add_component(Claimed{ by : claimant});
+    tools.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+    ecs.entry(tools[0].0)
+        .unwrap()
+        .add_component(Claimed { by: claimant });
     return true;
 }
 
 fn drop_associated_tool(ecs: &World, usage: ToolType, id: usize) {
-    let item_req = Location::Carried{ by: id };
+    let item_req = Location::Carried { by: id };
 
-    let to_drop : Vec<(usize, usize)> = <(&Claimed, &Tool, &Position, &IdentityTag)>::query()
+    let to_drop: Vec<(usize, usize)> = <(&Claimed, &Tool, &Position, &IdentityTag)>::query()
         .iter(ecs)
-        .filter(|(claim, tool, pos, _tid)|
+        .filter(|(claim, tool, pos, _tid)| {
             claim.by == id && tool.usage == usage && pos.loc == item_req
-        )
+        })
         .map(|(_claim, _tool, pos, id)| (pos.effective_location(ecs), id.0))
         .collect();
 

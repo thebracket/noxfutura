@@ -1,9 +1,9 @@
+use super::super::{models_moved, vox_moved};
+use super::{skill_check, REGION};
+use bengine::geometry::*;
 use legion::*;
 use nox_components::*;
 use nox_spatial::idxmap;
-use super::super::{ models_moved, vox_moved };
-use bengine::geometry::*;
-use super::{ skill_check, REGION };
 
 pub(crate) fn chop_tree(ecs: &mut World, actor_id: usize, tree_pos: usize) {
     println!("Chop tree");
@@ -39,15 +39,7 @@ pub(crate) fn chop_tree(ecs: &mut World, actor_id: usize, tree_pos: usize) {
         for idx in to_spawn.iter() {
             let mut rlock = REGION.write();
             let (tx, ty, tz) = idxmap(*idx);
-            nox_planet::spawn_item_on_ground(
-                ecs,
-                "wood_log",
-                tx,
-                ty,
-                tz,
-                &mut *rlock,
-                wood,
-            );
+            nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock, wood);
         }
         vox_moved();
     }
@@ -56,22 +48,21 @@ pub(crate) fn chop_tree(ecs: &mut World, actor_id: usize, tree_pos: usize) {
 fn locate_target(ecs: &World, chop_pos: usize) -> Option<(Entity, usize)> {
     let (x, y, z) = idxmap(chop_pos);
     let chopper_pt = Point3::new(x, y, z);
-    let mut trees : Vec<(Entity, f32, usize)> = <(Entity, &Tree, &Position)>::query()
+    let mut trees: Vec<(Entity, f32, usize)> = <(Entity, &Tree, &Position)>::query()
         .iter(ecs)
         .filter(|(_entity, tree, _pos)| tree.chop)
-        .map(|(entity, _tree, pos)| 
+        .map(|(entity, _tree, pos)| {
             (
                 *entity,
                 DistanceAlg::Pythagoras.distance3d(chopper_pt, pos.as_point3()),
-                pos.get_idx()
+                pos.get_idx(),
             )
-        )
+        })
         .collect();
     if trees.is_empty() {
         None
     } else {
-        trees.sort_by(|a,b| a.1.partial_cmp(&b.1).unwrap());
+        trees.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
         Some((trees[0].0, trees[0].2))
     }
 }
-

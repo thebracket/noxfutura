@@ -46,6 +46,12 @@ pub fn equip_tool(id: usize, tool_id: usize) {
         .push_back(JobStep::EquipItem { id, tool_id });
 }
 
+pub fn get_item(id: usize, item_id: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::GetItem { id, item_id });
+}
+
 pub fn drop_item(id: usize, location: usize) {
     JOBS_QUEUE
         .lock()
@@ -132,12 +138,26 @@ pub fn fire_lumberjack(id: usize) {
 }
 
 pub fn spawn_item(position: &usize, tag: &String, qty: &i32, material: usize) {
-    JOBS_QUEUE.lock().push_back(
-        JobStep::SpawnItem{
-            pos: *position,
-            tag: tag.clone(),
-            qty: *qty as i32,
-            material
-        }
-    );
+    JOBS_QUEUE.lock().push_back(JobStep::SpawnItem {
+        pos: *position,
+        tag: tag.clone(),
+        qty: *qty as i32,
+        material,
+    });
+}
+
+pub fn haul_in_progress(id: usize, by: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::HaulInProgress { id, by })
+}
+
+pub fn remove_haul_tag(id: usize) {
+    JOBS_QUEUE.lock().push_back(JobStep::RemoveHaulTag { id })
+}
+
+pub fn update_blueprint(item_id: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::UpdateBlueprint { item_id })
 }

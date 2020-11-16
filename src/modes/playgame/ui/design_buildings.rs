@@ -1,11 +1,11 @@
 use crate::modes::playgame::systems::REGION;
+use bengine::geometry::*;
 use bengine::gui::*;
 use legion::*;
 use nox_components::*;
 use nox_planet::*;
 use nox_raws::*;
 use nox_spatial::mapidx;
-use bengine::geometry::*;
 
 struct AvailableBuilding {
     tag: String,
@@ -30,9 +30,9 @@ pub fn building_display(
         let mut has_all = true;
         b.components.iter().for_each(|c| {
             let n = <(Entity, Read<Position>, Read<Tag>, Read<IdentityTag>)>::query()
+                .filter(!component::<Claimed>())
                 .iter(ecs)
                 .filter(|(_, _, t, _)| t.0 == c.item.to_string())
-                .filter(|(_, _, _, idt)| region.jobs_board.is_component_claimed(idt.0) == false)
                 .count();
             if n < c.qty as usize {
                 has_all = false;
@@ -139,17 +139,24 @@ pub fn building_display(
                     mouse_world_pos.2,
                     world_idx,
                     false,
-                    &component_ids
+                    &component_ids,
                 );
 
                 // Claim the components
                 let building_idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
-                chosen_components.iter().for_each(|(_distance, _comp_id, comp_e)| {
-                    if let Some(mut ce) = ecs.entry(*comp_e) {
-                        ce.add_component(Claimed{ by: new_building_id });
-                        ce.add_component(RequestHaul{ destination: building_idx, in_progress: None });
-                    }
-                });
+                chosen_components
+                    .iter()
+                    .for_each(|(_distance, _comp_id, comp_e)| {
+                        if let Some(mut ce) = ecs.entry(*comp_e) {
+                            ce.add_component(Claimed {
+                                by: new_building_id,
+                            });
+                            ce.add_component(RequestHaul {
+                                destination: building_idx,
+                                in_progress: None,
+                            });
+                        }
+                    });
             }
 
             (bid, Some(btag))
@@ -163,31 +170,28 @@ fn select_components(
     ecs: &World,
     raws: &Raws,
     rtag: &String,
-    mouse_world_pos: &(usize, usize, usize)
-) -> Vec<(f32, usize, Entity)>
-{
+    mouse_world_pos: &(usize, usize, usize),
+) -> Vec<(f32, usize, Entity)> {
     let mut result = Vec::new();
     let building_pos = Point3::new(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
     let binfo = raws.buildings.building_by_tag(rtag).unwrap();
     binfo.components.iter().for_each(|req_comp| {
-        let mut available_components : Vec<(f32, usize, Entity)> = <(Entity, Read<Position>, Read<Tag>, Read<IdentityTag>)>::query()
-            .filter(component::<Item>() & !component::<Claimed>())
-            .iter(ecs)
-            .filter(|(_, _, tag, _)| tag.0 == req_comp.item)
-            .map(|(e, pos, _tag, id)| 
-                (
-                    DistanceAlg::Pythagoras.distance3d(
-                        building_pos,
-                        pos.as_point3()
-                    ),
-                    id.0,
-                    *e
-                )
-            )
-            .collect();
+        let mut available_components: Vec<(f32, usize, Entity)> =
+            <(Entity, Read<Position>, Read<Tag>, Read<IdentityTag>)>::query()
+                .filter(component::<Item>() & !component::<Claimed>())
+                .iter(ecs)
+                .filter(|(_, _, tag, _)| tag.0 == req_comp.item)
+                .map(|(e, pos, _tag, id)| {
+                    (
+                        DistanceAlg::Pythagoras.distance3d(building_pos, pos.as_point3()),
+                        id.0,
+                        *e,
+                    )
+                })
+                .collect();
 
         // Sort by closest
-        available_components.sort_by(|a,b| a.0.partial_cmp(&b.0).unwrap());
+        available_components.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
 
         // Take the first n
         available_components

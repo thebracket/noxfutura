@@ -15,10 +15,11 @@ pub enum JobType {
     None,
     CollectTool {
         tool_id: usize,
-        step: CollectToolSteps
+        step: CollectToolSteps,
     },
     Haul {
-        item_id: usize
+        item_id: usize,
+        step: HaulSteps,
     },
     FellTree {
         tool_id: Option<usize>,
@@ -26,9 +27,7 @@ pub enum JobType {
     },
     ConstructBuilding {
         building_id: usize,
-        building_pos: usize,
         step: BuildingSteps,
-        components: Vec<(usize, usize, bool)>,
     },
     Mining {
         step: MiningSteps,
@@ -39,14 +38,23 @@ pub enum JobType {
         workshop_pos: usize,
         reaction_id: usize,
         components: Vec<(usize, usize, bool, usize)>, // id, pos, claim, material
-        step: ReactionSteps
-    }
+        step: ReactionSteps,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum CollectToolSteps {
     TravelToTool { path: Vec<usize> },
     CollectTool,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum HaulSteps {
+    FindItem,
+    TravelToItem { path: Vec<usize> },
+    CollectItem,
+    TravelToDestination { path: Vec<usize> },
+    DropItem,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -65,21 +73,8 @@ pub enum MiningSteps {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum BuildingSteps {
-    FindComponent,
-    TravelToComponent {
-        path: Vec<usize>,
-        component_id: usize,
-    },
-    CollectComponent {
-        component_id: usize,
-    },
-    FindBuilding {
-        component_id: usize,
-    },
-    TravelToTBuilding {
-        path: Vec<usize>,
-        component_id: usize,
-    },
+    FindBuilding,
+    TravelToBuilding { path: Vec<usize> },
     Construct,
 }
 

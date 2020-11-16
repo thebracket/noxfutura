@@ -12,7 +12,7 @@ pub struct Building {
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
 pub struct Workshop {
-    pub has_automatic_jobs: bool
+    pub has_automatic_jobs: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]

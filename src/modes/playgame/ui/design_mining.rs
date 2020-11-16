@@ -2,8 +2,8 @@ use crate::modes::playgame::systems::REGION;
 use bengine::{geometry::Point3, gui::*};
 use legion::*;
 use nox_components::*;
-use nox_planet::*;
 use nox_planet::MiningMap;
+use nox_planet::*;
 use nox_spatial::mapidx;
 use parking_lot::RwLock;
 
@@ -130,12 +130,14 @@ pub fn mining_display(
         let idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, camera_pos.z as usize);
         match mining_mode {
             MiningMode::Clear => {
-                let to_delete : Vec<Entity> = <(Entity, &Position, &MiningMode)>::query()
+                let to_delete: Vec<Entity> = <(Entity, &Position, &MiningMode)>::query()
                     .iter(ecs)
                     .filter(|(_, pos, _)| pos.get_idx() == idx)
                     .map(|(e, _, _)| *e)
                     .collect();
-                to_delete.iter().for_each(|e| { ecs.remove(*e); });
+                to_delete.iter().for_each(|e| {
+                    ecs.remove(*e);
+                });
             }
             MiningMode::Dig => {
                 let mp = MINING_PARAMS.read();
@@ -150,13 +152,10 @@ pub fn mining_display(
                         mwp.0 += ix;
                         mwp.1 += iy;
                         if validate_mining(&mwp, mining_mode, &camera_pos) {
-                            ecs.push(
-                                (
-                                    mining_mode.clone(),
-                                    Position::with_tile_idx(idx, REGION.read().world_idx, (1,1,1))
-                                )
-
-                            );
+                            ecs.push((
+                                mining_mode.clone(),
+                                Position::with_tile_idx(idx, REGION.read().world_idx, (1, 1, 1)),
+                            ));
                         }
                     }
                 }
@@ -165,12 +164,10 @@ pub fn mining_display(
                 let mp = MINING_PARAMS.read();
                 // Add down stairs at the start
                 if validate_mining(mouse_world_pos, mining_mode, &camera_pos) {
-                    ecs.push(
-                        (
-                            mining_mode.clone(),
-                            Position::with_tile_idx(idx, REGION.read().world_idx, (1,1,1))
-                        )
-                    );
+                    ecs.push((
+                        mining_mode.clone(),
+                        Position::with_tile_idx(idx, REGION.read().world_idx, (1, 1, 1)),
+                    ));
                 }
 
                 // If there are more add up at the bottom
@@ -183,12 +180,10 @@ pub fn mining_display(
                     let mut mwp = *mouse_world_pos;
                     mwp.2 -= (mp.stairs_depth - 1) as usize;
                     if validate_mining(&mwp, mining_mode, &camera_pos) {
-                        ecs.push(
-                            (
-                                mining_mode.clone(),
-                                Position::with_tile_idx(idx, REGION.read().world_idx, (1,1,1))
-                            )
-                        );
+                        ecs.push((
+                            mining_mode.clone(),
+                            Position::with_tile_idx(idx, REGION.read().world_idx, (1, 1, 1)),
+                        ));
                     }
                 }
 
@@ -204,12 +199,10 @@ pub fn mining_display(
                         let mut mwp = *mouse_world_pos;
                         mwp.2 -= sy as usize;
                         if validate_mining(&mwp, mining_mode, &camera_pos) {
-                            ecs.push(
-                                (
-                                    mining_mode.clone(),
-                                    Position::with_tile_idx(idx, REGION.read().world_idx, (1,1,1))
-                                )
-                            );
+                            ecs.push((
+                                mining_mode.clone(),
+                                Position::with_tile_idx(idx, REGION.read().world_idx, (1, 1, 1)),
+                            ));
                         }
 
                         sy += 1;
@@ -218,12 +211,10 @@ pub fn mining_display(
             }
             _ => {
                 if validate_mining(mouse_world_pos, mining_mode, &camera_pos) {
-                    ecs.push(
-                        (
-                            mining_mode.clone(),
-                            Position::with_tile_idx(idx, REGION.read().world_idx, (1,1,1))
-                        )
-                    );
+                    ecs.push((
+                        mining_mode.clone(),
+                        Position::with_tile_idx(idx, REGION.read().world_idx, (1, 1, 1)),
+                    ));
                 }
             }
         }

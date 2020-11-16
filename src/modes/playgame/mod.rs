@@ -13,8 +13,8 @@ pub use render::{
     Chunks, CursorPass, GBuffer, GrassPass, LightingPass, Models, ModelsPass, TerrainPass, VoxPass,
 };
 pub use run_state::*;
-pub use uniforms::{Camera, CameraUniform};
 pub use systems::RNG;
+pub use uniforms::{Camera, CameraUniform};
 
 pub struct GameStateResource {
     keycode: Option<bengine::VirtualKeyCode>,

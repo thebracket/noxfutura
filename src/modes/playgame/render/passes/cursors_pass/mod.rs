@@ -192,27 +192,24 @@ impl CursorPass {
         self.vb.clear();
 
         // Add cursors for existing designations
-        let mining_designations : Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
+        let mining_designations: Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
             .iter(ecs)
             .map(|(mm, pos)| (pos.get_idx(), *mm))
             .collect();
 
-        mining_designations
-            .iter()
-            .for_each(|(idx, _t)| {
-                let (x, y, z) = idxmap(*idx);
-                add_cube_geometry(
-                    &mut self.vb.data,
-                    x as f32,
-                    y as f32,
-                    z as f32,
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0,
-                );
-            }
-        );
+        mining_designations.iter().for_each(|(idx, _t)| {
+            let (x, y, z) = idxmap(*idx);
+            add_cube_geometry(
+                &mut self.vb.data,
+                x as f32,
+                y as f32,
+                z as f32,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+            );
+        });
 
         // Add cursors for current mouse
         let camera_pos = <&Position>::query()

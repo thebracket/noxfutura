@@ -1,7 +1,7 @@
-use legion::*;
-use legion::world::SubWorld;
-use nox_components::*;
 use super::messaging;
+use legion::world::SubWorld;
+use legion::*;
+use nox_components::*;
 
 #[system]
 #[read_component(MyTurn)]
@@ -18,9 +18,9 @@ pub fn tool_collection(ecs: &SubWorld) {
                 _ => false,
             }
         {
-            if let JobType::CollectTool{tool_id, step} = &turn.job {
+            if let JobType::CollectTool { tool_id, step } = &turn.job {
                 match step {
-                    CollectToolSteps::TravelToTool{path} => {
+                    CollectToolSteps::TravelToTool { path } => {
                         println!("Travel to tool");
                         if path.len() > 1 {
                             messaging::follow_job_path(id.0);

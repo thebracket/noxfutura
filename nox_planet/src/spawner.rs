@@ -11,9 +11,16 @@ pub fn spawn_building(
     z: usize,
     region_idx: usize,
     complete: bool,
-    required_components: &[usize]
+    required_components: &[usize],
 ) -> usize {
-    nox_components::spawner::spawn_building(ecs, tag, mapidx(x, y, z), region_idx, complete, required_components)
+    nox_components::spawner::spawn_building(
+        ecs,
+        tag,
+        mapidx(x, y, z),
+        region_idx,
+        complete,
+        required_components,
+    )
 }
 
 pub fn spawn_clothing_from_raws_worn(
@@ -37,30 +44,15 @@ pub fn spawn_item_on_ground(
     nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx, material);
 }
 
-pub fn spawn_item_in_container(
-    ecs: &mut World,
-    tag: &str,
-    container: usize,
-    material: usize,
-) {
+pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize, material: usize) {
     nox_components::spawner::spawn_item_in_container(ecs, tag, container, material);
 }
 
-pub fn spawn_item_worn(
-    ecs: &mut World,
-    tag: &str,
-    wearer: usize,
-    material: usize,
-) {
+pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize, material: usize) {
     nox_components::spawner::spawn_item_worn(ecs, tag, wearer, material);
 }
 
-pub fn spawn_item_carried(
-    ecs: &mut World,
-    tag: &str,
-    wearer: usize,
-    material: usize,
-) {
+pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize, material: usize) {
     nox_components::spawner::spawn_item_carried(ecs, tag, wearer, material);
 }
 

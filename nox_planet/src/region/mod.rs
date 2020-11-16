@@ -4,10 +4,8 @@ use serde::{Deserialize, Serialize};
 mod tiletype;
 pub use tiletype::*;
 mod builder;
-pub use builder::*;
-mod jobs;
 use bengine::geometry::*;
-use jobs::JobsBoard;
+pub use builder::*;
 use smallvec::SmallVec;
 mod mining_map;
 pub use mining_map::*;
@@ -24,7 +22,6 @@ pub struct Region {
     pub revealed: Vec<bool>,
     pub water_level: Vec<u8>,
     flags: Vec<u16>,
-    pub jobs_board: JobsBoard,
 }
 
 impl Region {
@@ -38,7 +35,6 @@ impl Region {
             revealed: vec![false; REGION_TILES_COUNT],
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
-            jobs_board: JobsBoard::new(),
         }
     }
 
@@ -52,7 +48,6 @@ impl Region {
             revealed: vec![false; REGION_TILES_COUNT],
             water_level: vec![0; REGION_TILES_COUNT],
             flags: vec![0u16; REGION_TILES_COUNT],
-            jobs_board: JobsBoard::new(),
         }
     }
 

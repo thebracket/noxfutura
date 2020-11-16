@@ -60,6 +60,6 @@ pub fn spawn_tree(
         },
         Position::with_tile(x, y, z, region_idx, (3, 3, 3)),
         Tint { color: 0 },
-        Health::new(10)
+        Health::new(10),
     ));
 }

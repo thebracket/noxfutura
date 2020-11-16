@@ -1,13 +1,13 @@
 use super::super::messaging;
+use super::utils::{am_i_carrying_tool, ToolCarrying};
 use crate::modes::playgame::systems::REGION;
 use bengine::geometry::Point3;
-use legion::*;
 use legion::world::SubWorld;
+use legion::*;
 use nox_components::*;
 use nox_planet::pathfinding::a_star_search;
-use nox_spatial::idxmap;
-use super::utils::{ am_i_carrying_tool, ToolCarrying };
 use nox_planet::LumberMap;
+use nox_spatial::idxmap;
 
 #[system]
 #[read_component(MyTurn)]
@@ -26,11 +26,7 @@ pub fn lumberjack(ecs: &SubWorld, #[resource] lumber: &LumberMap) {
                 _ => false,
             }
         {
-            if let JobType::FellTree {
-                step,
-                tool_id,
-            } = &turn.job
-            {
+            if let JobType::FellTree { step, tool_id } = &turn.job {
                 println!("Loc at step: {:?}", pos);
                 match step {
                     LumberjackSteps::FindAxe => {
@@ -55,7 +51,6 @@ pub fn lumberjack(ecs: &SubWorld, #[resource] lumber: &LumberMap) {
             }
         }
     });
-
 }
 
 fn find_axe(ecs: &SubWorld, settler_id: usize, settler_pos: usize) {
@@ -63,7 +58,7 @@ fn find_axe(ecs: &SubWorld, settler_id: usize, settler_pos: usize) {
     let axe_status = am_i_carrying_tool(ecs, settler_id, ToolType::Chopping);
     match axe_status {
         ToolCarrying::NoTool => messaging::cancel_job(settler_id),
-        ToolCarrying::AtLocation{idx, tool_id} => {
+        ToolCarrying::AtLocation { idx, tool_id } => {
             println!("Tool located - travel mode");
             let rlock = REGION.read();
             let path = a_star_search(settler_pos, idx, &rlock);
@@ -80,7 +75,7 @@ fn find_axe(ecs: &SubWorld, settler_id: usize, settler_pos: usize) {
                 messaging::cancel_job(settler_id);
             }
         }
-        ToolCarrying::Carried{tool_id} => {
+        ToolCarrying::Carried { tool_id } => {
             println!("I have an axe!");
             messaging::job_changed(
                 settler_id,
@@ -103,7 +98,7 @@ fn travel_to_tree(settler_id: usize, pos: &Position, lumber: &LumberMap, tool_id
             messaging::job_changed(
                 settler_id,
                 JobType::FellTree {
-                    step: LumberjackSteps::ChopTree{},
+                    step: LumberjackSteps::ChopTree {},
                     tool_id: Some(tool_id),
                 },
             );

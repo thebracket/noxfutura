@@ -1,11 +1,11 @@
 use super::REGION;
-use legion::*;
 use legion::world::SubWorld;
-use nox_planet::Region;
+use legion::*;
+use nox_components::*;
 use nox_planet::MiningMap;
+use nox_planet::Region;
 use nox_spatial::*;
 use std::collections::VecDeque;
-use nox_components::*;
 
 #[system]
 #[read_component(MiningMode)]
@@ -15,7 +15,7 @@ pub fn mining_map(ecs: &SubWorld, #[resource] map: &mut MiningMap) {
         return;
     }
 
-    let mining_designations : Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
+    let mining_designations: Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
         .iter(ecs)
         .map(|(mm, pos)| (pos.get_idx(), *mm))
         .collect();
@@ -29,39 +29,37 @@ pub fn mining_map(ecs: &SubWorld, #[resource] map: &mut MiningMap) {
     // Build starting points for Dijkstra
     let rlock = REGION.read();
     let mut starts = Vec::with_capacity(mining_designations.len() * 4);
-    mining_designations
-        .iter()
-        .for_each(|(idx, t)| {
-            // TODO: Adjust this
-            match t {
-                MiningMode::Up => {
-                    add_horizontally_adjacent_exists(idx, &mut starts, &rlock);
-                    let above = idx + (REGION_WIDTH * REGION_HEIGHT);
-                    if rlock.flag(above, Region::CAN_STAND_HERE) {
-                        starts.push(above);
-                    }
+    mining_designations.iter().for_each(|(idx, t)| {
+        // TODO: Adjust this
+        match t {
+            MiningMode::Up => {
+                add_horizontally_adjacent_exists(idx, &mut starts, &rlock);
+                let above = idx + (REGION_WIDTH * REGION_HEIGHT);
+                if rlock.flag(above, Region::CAN_STAND_HERE) {
+                    starts.push(above);
                 }
-                MiningMode::Down => {
-                    add_horizontally_adjacent_exists(idx, &mut starts, &rlock);
-                    let below = idx - (REGION_WIDTH * REGION_HEIGHT);
-                    if rlock.flag(below, Region::CAN_STAND_HERE) {
-                        starts.push(below);
-                    }
-                }
-                MiningMode::UpDown => {
-                    add_horizontally_adjacent_exists(idx, &mut starts, &rlock);
-                    let above = idx + (REGION_WIDTH * REGION_HEIGHT);
-                    if rlock.flag(above, Region::CAN_STAND_HERE) {
-                        starts.push(above);
-                    }
-                    let below = idx - (REGION_WIDTH * REGION_HEIGHT);
-                    if rlock.flag(below, Region::CAN_STAND_HERE) {
-                        starts.push(below);
-                    }
-                }
-                _ => add_horizontally_adjacent_exists(idx, &mut starts, &rlock),
             }
-        });
+            MiningMode::Down => {
+                add_horizontally_adjacent_exists(idx, &mut starts, &rlock);
+                let below = idx - (REGION_WIDTH * REGION_HEIGHT);
+                if rlock.flag(below, Region::CAN_STAND_HERE) {
+                    starts.push(below);
+                }
+            }
+            MiningMode::UpDown => {
+                add_horizontally_adjacent_exists(idx, &mut starts, &rlock);
+                let above = idx + (REGION_WIDTH * REGION_HEIGHT);
+                if rlock.flag(above, Region::CAN_STAND_HERE) {
+                    starts.push(above);
+                }
+                let below = idx - (REGION_WIDTH * REGION_HEIGHT);
+                if rlock.flag(below, Region::CAN_STAND_HERE) {
+                    starts.push(below);
+                }
+            }
+            _ => add_horizontally_adjacent_exists(idx, &mut starts, &rlock),
+        }
+    });
 
     // Build the Dijkstra Map
     let mut open_list: VecDeque<(usize, f32)> = VecDeque::with_capacity(REGION_TILES_COUNT);

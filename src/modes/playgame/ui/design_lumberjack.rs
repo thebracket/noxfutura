@@ -4,7 +4,12 @@ use nox_components::*;
 use nox_planet::LumberMap;
 use nox_spatial::mapidx;
 
-pub fn lumberjack_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize, usize, usize), lumber_map: &mut LumberMap) {
+pub fn lumberjack_display(
+    imgui: &Ui,
+    ecs: &mut World,
+    mouse_world_pos: &(usize, usize, usize),
+    lumber_map: &mut LumberMap,
+) {
     let title = format!("Lumberjack Mode. Click trees to designate for chopping. ### LumberJack",);
     let title_tmp = ImString::new(title);
     let window = Window::new(&title_tmp);
@@ -23,8 +28,7 @@ pub fn lumberjack_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize,
             .filter(|(_, pos)| pos.get_idx() == idx)
             .for_each(|(tree, _)| {
                 tree.chop = true;
-            }
-        );
+            });
         lumber_map.is_dirty = true;
     }
 
@@ -35,8 +39,7 @@ pub fn lumberjack_display(imgui: &Ui, ecs: &mut World, mouse_world_pos: &(usize,
             .filter(|(_, pos)| pos.get_idx() == idx)
             .for_each(|(tree, _)| {
                 tree.chop = false;
-            }
-        );
+            });
         lumber_map.is_dirty = true;
     }
 }

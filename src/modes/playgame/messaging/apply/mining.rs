@@ -1,17 +1,17 @@
+use super::skill_check;
+use super::REGION;
+use bengine::geometry::*;
 use legion::*;
 use nox_components::*;
 use nox_planet::{StairsType, TileType};
 use nox_raws::MinesTo;
-use super::REGION;
 use nox_spatial::*;
-use super::skill_check;
-use bengine::geometry::*;
 
 pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
-    let mining_designations : Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
-            .iter(ecs)
-            .map(|(mm, pos)| (pos.get_idx(), *mm))
-            .collect();
+    let mining_designations: Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
+        .iter(ecs)
+        .map(|(mm, pos)| (pos.get_idx(), *mm))
+        .collect();
 
     println!("Looking for digging to perform at {}", pos);
     let (x, y, z) = idxmap(pos);
@@ -21,8 +21,7 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
         .iter()
         .map(|(idx, task)| {
             let (mx, my, mz) = idxmap(*idx);
-            let distance =
-                DistanceAlg::Pythagoras.distance3d(my_pos, Point3::new(mx, my, mz));
+            let distance = DistanceAlg::Pythagoras.distance3d(my_pos, Point3::new(mx, my, mz));
             (idx, task, distance)
         })
         .filter(|(_idx, _task, distance)| *distance < 1.2)
@@ -44,22 +43,28 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
                     let material_idx = rlock.material_idx[mine_id];
                     let mat_info = nox_raws::RAWS.read().materials.materials[material_idx].clone();
                     for mt in mat_info.mines_to.iter() {
-                        let (x,y,z) = idxmap(mine_id);
+                        let (x, y, z) = idxmap(mine_id);
                         match mt {
-                            MinesTo::Item{name} => {
-                                nox_planet::spawn_item_on_ground(ecs,
+                            MinesTo::Item { name } => {
+                                nox_planet::spawn_item_on_ground(
+                                    ecs,
                                     name,
-                                    x, y, z,
+                                    x,
+                                    y,
+                                    z,
                                     &mut rlock,
-                                    material_idx
+                                    material_idx,
                                 );
                             }
-                            MinesTo::Ore{name} => {
-                                nox_planet::spawn_item_on_ground(ecs,
+                            MinesTo::Ore { name } => {
+                                nox_planet::spawn_item_on_ground(
+                                    ecs,
                                     name,
-                                    x, y, z,
+                                    x,
+                                    y,
+                                    z,
                                     &mut rlock,
-                                    material_idx
+                                    material_idx,
                                 );
                             }
                         }
@@ -68,8 +73,7 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
                 MiningMode::Channel => {
                     println!("Changed tile");
                     rlock.tile_types[mine_id] = TileType::Empty;
-                    rlock.tile_types[mine_id - (REGION_WIDTH * REGION_HEIGHT)] =
-                        TileType::Floor;
+                    rlock.tile_types[mine_id - (REGION_WIDTH * REGION_HEIGHT)] = TileType::Floor;
                     super::super::tile_dirty(mine_id);
                     super::super::tile_dirty(mine_id - (REGION_WIDTH * REGION_HEIGHT));
                 }
@@ -97,12 +101,14 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
                 _ => {}
             }
             println!("Undesignating");
-            let to_remove : Vec<Entity> = <(Entity, &MiningMode, &Position)>::query()
+            let to_remove: Vec<Entity> = <(Entity, &MiningMode, &Position)>::query()
                 .iter(ecs)
                 .filter(|(_, _, pos)| pos.get_idx() == mine_id)
                 .map(|(e, _, _)| *e)
                 .collect();
-            to_remove.iter().for_each(|e| { ecs.remove(*e); });
+            to_remove.iter().for_each(|e| {
+                ecs.remove(*e);
+            });
             <&mut FieldOfView>::query()
                 .iter_mut(ecs)
                 .for_each(|f| f.is_dirty = true);
