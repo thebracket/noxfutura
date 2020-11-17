@@ -7,9 +7,18 @@
             vox: "wood_logs",
             description: "Uncut wood from a felled tree."
         ),
+
+        ItemDef(
+            tag: "wood_waste",
+            name: "Offcuts",
+            item_type: [ Component ],
+            vox: "woodwaste",
+            description: "Useless cuts of wood and sawdust. Good fuel."
+        )
     ]),
 
     vox: Some([
         VoxelModel( tag:"wood_logs", file:"woodlogs" ),
+        VoxelModel( tag:"woodwaste", file:"wastewood" )
     ])
 )

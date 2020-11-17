@@ -10,3 +10,5 @@ mod hauling;
 pub use hauling::*;
 mod blueprint;
 pub use blueprint::*;
+mod reaction_job;
+pub use reaction_job::*;

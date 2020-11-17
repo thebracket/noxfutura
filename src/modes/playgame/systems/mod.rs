@@ -2,6 +2,7 @@ use bengine::random::RandomNumberGenerator;
 use legion::*;
 use nox_planet::Region;
 use parking_lot::{Mutex, RwLock};
+mod automatic_reactions;
 mod calendar;
 mod camera_control;
 mod component_hauling;
@@ -37,6 +38,7 @@ pub fn build_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(mining_map::mining_map_system())
         .add_system(lumber_map::lumber_map_system())
+        .add_system(automatic_reactions::automatic_reactions_system())
         .add_system(calendar::calendar_system())
         .add_system(viewshed::viewshed_system())
         .add_system(camera_control::camera_control_system())

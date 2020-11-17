@@ -34,10 +34,8 @@ pub enum JobType {
         tool_id: Option<usize>,
     },
     Reaction {
-        workshop_id: usize,
-        workshop_pos: usize,
         reaction_id: usize,
-        components: Vec<(usize, usize, bool, usize)>, // id, pos, claim, material
+        reaction_location: usize,
         step: ReactionSteps,
     },
 }
@@ -80,21 +78,7 @@ pub enum BuildingSteps {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum ReactionSteps {
-    ClaimEverything,
-    FindComponent,
-    TravelToComponent {
-        path: Vec<usize>,
-        component_id: usize,
-    },
-    CollectComponent {
-        component_id: usize,
-    },
-    FindWorkshop {
-        component_id: usize,
-    },
-    TravelToWorkshop {
-        path: Vec<usize>,
-        component_id: usize,
-    },
-    Construct,
+    FindReaction,
+    TravelToReaction { path: Vec<usize> },
+    PerformReaction,
 }

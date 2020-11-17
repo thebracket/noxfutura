@@ -252,6 +252,14 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     rh.in_progress = Some(*by);
                 });
         }
+        JobStep::ReactionInProgress { id, by } => {
+            <(&IdentityTag, &mut ReactionJob)>::query()
+                .iter_mut(ecs)
+                .filter(|(hid, _rh)| hid.0 == *id)
+                .for_each(|(_id, rh)| {
+                    rh.in_progress = Some(*by);
+                });
+        }
         JobStep::RemoveHaulTag { id } => {
             let mut cmds = CommandBuffer::new(ecs);
             <(Entity, &IdentityTag)>::query()
@@ -297,11 +305,107 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             for rb in ready_blueprints.iter() {
                 if let Some(mut er) = ecs.entry_mut(*rb) {
                     if let Ok(bp) = er.get_component_mut::<Blueprint>() {
-                        println!("Building is ready");
+                        println!("Blueprint is ready");
                         bp.ready_to_build = true;
                     }
                 }
             }
+        }
+        JobStep::CreateReactionJob {
+            workshop_id,
+            reaction_tag,
+            components,
+        } => {
+            let mut cmds = CommandBuffer::new(ecs);
+            println!("Made a reaction job of type: {}", reaction_tag);
+
+            let building_pos = <(&Position, &IdentityTag)>::query()
+                .iter(ecs)
+                .filter(|(_, wid)| wid.0 == *workshop_id)
+                .map(|(bpos, _)| bpos.get_idx())
+                .nth(0)
+                .unwrap();
+
+            println!("Reaction located at {:?}", idxmap(building_pos));
+
+            let new_id = IdentityTag::new();
+            let job_id = new_id.0;
+
+            ecs.push((
+                new_id,
+                ReactionJob {
+                    workshop_id: *workshop_id,
+                    reaction_tag: reaction_tag.to_string(),
+                    in_progress: None,
+                },
+                Blueprint {
+                    ready_to_build: false,
+                    required_items: components.clone(),
+                },
+                Position::with_tile_idx(building_pos, REGION.read().world_idx, (1, 1, 1)),
+            ));
+
+            components.iter().for_each(|cid| {
+                <(Entity, &IdentityTag)>::query()
+                    .iter(ecs)
+                    .filter(|(_, id)| id.0 == *cid)
+                    .for_each(|(e, _)| {
+                        cmds.add_component(*e, Claimed { by: job_id });
+                        cmds.add_component(
+                            *e,
+                            RequestHaul {
+                                in_progress: None,
+                                destination: building_pos,
+                            },
+                        );
+                    });
+            });
+
+            cmds.flush(ecs);
+        }
+        JobStep::PerformReaction { reaction_id } => {
+            // Find the reaction
+            let (reaction_entity, reaction_job, blueprint, rpos) =
+                <(Entity, &ReactionJob, &IdentityTag, &Blueprint, &Position)>::query()
+                    .iter(ecs)
+                    .filter(|(_e, _rj, id, _bp, _pos)| id.0 == *reaction_id)
+                    .map(|(e, rj, _id, bp, pos)| (*e, rj, bp, pos.get_idx()))
+                    .nth(0)
+                    .unwrap();
+
+            // Find material for the first component
+            let material = <(&Material, &IdentityTag)>::query()
+                .iter(ecs)
+                .filter(|(_, mid)| mid.0 == blueprint.required_items[0])
+                .map(|(m, _)| m.0)
+                .nth(0)
+                .unwrap_or(0);
+
+            // Delete all components
+            for c in blueprint.required_items.iter() {
+                super::delete_item(*c);
+            }
+
+            // Spawn the result
+            use nox_raws::RAWS;
+            if let Some(raw) = RAWS
+                .read()
+                .reactions
+                .reaction_by_tag(&reaction_job.reaction_tag)
+            {
+                println!("Spawning {:?}", raw.outputs);
+                for o in raw.outputs.iter() {
+                    super::spawn_item(&rpos, &o.tag, &o.qty, material);
+                }
+            } else {
+                println!("Reaction {} not found", reaction_job.reaction_tag);
+            }
+
+            // Delete the reaction entity
+            ecs.remove(reaction_entity);
+
+            // Notify of changes
+            super::vox_moved();
         }
         _ => {}
     }

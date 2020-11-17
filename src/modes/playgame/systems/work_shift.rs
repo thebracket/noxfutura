@@ -15,6 +15,7 @@ use nox_spatial::*;
 #[read_component(RequestHaul)]
 #[read_component(Blueprint)]
 #[read_component(Building)]
+#[read_component(ReactionJob)]
 pub fn work_shift(
     ecs: &mut SubWorld,
     #[resource] mining: &MiningMap,
@@ -22,6 +23,7 @@ pub fn work_shift(
 ) {
     let mut haulables = haulage_list(ecs);
     let buildables = building_list(ecs);
+    let mut reactions = reactions_list(ecs);
     <(&mut MyTurn, &Settler, &Position, &IdentityTag)>::query()
         .iter_mut(ecs)
         .for_each(|(turn, settler, pos, id)| {
@@ -67,7 +69,20 @@ pub fn work_shift(
                         },
                     ));
                 }
-                // TODO: Reactions
+                if let Some(reaction_cost) = consider_reactions(&reactions, pos.as_point3()) {
+                    println!(
+                        "Picked reaction {} at {:?}",
+                        reaction_cost.1, reaction_cost.2
+                    );
+                    possible_jobs.push((
+                        reaction_cost.0,
+                        JobType::Reaction {
+                            reaction_id: reaction_cost.1,
+                            reaction_location: reaction_cost.2,
+                            step: ReactionSteps::FindReaction,
+                        },
+                    ));
+                }
 
                 if possible_jobs.is_empty() {
                     turn.order = WorkOrder::MoveRandomly;
@@ -80,6 +95,10 @@ pub fn work_shift(
                             // Remove from haulables list
                             haulables.retain(|(_, iid)| *iid != item_id);
                             messaging::haul_in_progress(item_id, id.0);
+                        }
+                        JobType::Reaction { reaction_id, .. } => {
+                            reactions.retain(|(_, rid)| *rid != reaction_id);
+                            messaging::reaction_in_progress(reaction_id, id.0);
                         }
                         _ => {}
                     }
@@ -150,6 +169,50 @@ fn consider_building(buildables: &[(usize, usize)], settler_pos: Point3) -> Opti
             (
                 DistanceAlg::Pythagoras.distance3d(Point3::new(x, y, z), settler_pos),
                 *id,
+            )
+        })
+        .collect();
+    if hsort.is_empty() {
+        None
+    } else {
+        hsort.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+        Some(hsort[0])
+    }
+}
+
+fn reactions_list(ecs: &SubWorld) -> Vec<(usize, usize)> {
+    <(&ReactionJob, &IdentityTag, &Blueprint)>::query()
+        .filter(!component::<Claimed>())
+        .iter(ecs)
+        .filter(|(rj, _id, bp)| bp.ready_to_build && rj.in_progress.is_none())
+        .map(|(_rj, id, _bp)| {
+            let bpos = <(&IdentityTag, &Position)>::query()
+                .iter(ecs)
+                .filter(|(wid, _)| wid.0 == id.0)
+                .map(|(_, pos)| pos.effective_location_sw(ecs))
+                .nth(0)
+                .unwrap();
+
+            (bpos, id.0)
+        })
+        .collect()
+}
+
+fn consider_reactions(
+    reactions: &[(usize, usize)],
+    settler_pos: Point3,
+) -> Option<(f32, usize, usize)> {
+    if reactions.is_empty() {
+        return None;
+    }
+    let mut hsort: Vec<(f32, usize, usize)> = reactions
+        .iter()
+        .map(|(pos, id)| {
+            let (x, y, z) = idxmap(*pos);
+            (
+                DistanceAlg::Pythagoras.distance3d(Point3::new(x, y, z), settler_pos),
+                *id,
+                *pos,
             )
         })
         .collect();

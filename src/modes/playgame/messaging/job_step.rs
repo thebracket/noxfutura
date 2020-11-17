@@ -80,10 +80,22 @@ pub enum JobStep {
         id: usize,
         by: usize,
     },
+    ReactionInProgress {
+        id: usize,
+        by: usize,
+    },
     RemoveHaulTag {
         id: usize,
     },
     UpdateBlueprint {
         item_id: usize,
+    },
+    CreateReactionJob {
+        workshop_id: usize,
+        components: Vec<usize>,
+        reaction_tag: String,
+    },
+    PerformReaction {
+        reaction_id: usize,
     },
 }

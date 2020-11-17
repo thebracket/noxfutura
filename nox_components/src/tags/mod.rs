@@ -10,9 +10,10 @@ pub struct Building {
     pub complete: bool,
 }
 
-#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct Workshop {
     pub has_automatic_jobs: bool,
+    pub queued_autojob: Option<ReactionJob>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]

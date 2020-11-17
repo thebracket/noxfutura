@@ -22,6 +22,10 @@ pub(crate) fn follow_path(ecs: &mut World, id: usize) {
                     HaulSteps::TravelToDestination { path } => Some(path),
                     _ => None,
                 },
+                JobType::Reaction { step, .. } => match step {
+                    ReactionSteps::TravelToReaction { path } => Some(path),
+                    _ => None,
+                },
                 _ => None,
             };
 

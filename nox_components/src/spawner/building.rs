@@ -84,6 +84,7 @@ pub fn spawn_building(
             println!("It's a workshop - reactions are provided.");
             ecs.entry(entity).unwrap().add_component(Workshop {
                 has_automatic_jobs: has_autojobs,
+                queued_autojob: None,
             });
         }
 

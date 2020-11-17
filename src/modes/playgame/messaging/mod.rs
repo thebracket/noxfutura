@@ -152,6 +152,12 @@ pub fn haul_in_progress(id: usize, by: usize) {
         .push_back(JobStep::HaulInProgress { id, by })
 }
 
+pub fn reaction_in_progress(id: usize, by: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::ReactionInProgress { id, by })
+}
+
 pub fn remove_haul_tag(id: usize) {
     JOBS_QUEUE.lock().push_back(JobStep::RemoveHaulTag { id })
 }
@@ -160,4 +166,18 @@ pub fn update_blueprint(item_id: usize) {
     JOBS_QUEUE
         .lock()
         .push_back(JobStep::UpdateBlueprint { item_id })
+}
+
+pub fn create_reaction_job(workshop_id: usize, reaction_tag: &str, components: &Vec<usize>) {
+    JOBS_QUEUE.lock().push_back(JobStep::CreateReactionJob {
+        workshop_id,
+        components: components.clone(),
+        reaction_tag: reaction_tag.to_string(),
+    });
+}
+
+pub fn perform_reaction(reaction_id: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::PerformReaction { reaction_id });
 }

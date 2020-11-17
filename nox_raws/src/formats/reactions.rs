@@ -11,6 +11,16 @@ impl Reactions {
             reactions: Vec::new(),
         }
     }
+
+    pub fn reaction_by_tag(&self, tag: &str) -> Option<ReactionDef> {
+        for b in self.reactions.iter() {
+            if b.name == tag {
+                return Some(b.clone());
+            }
+        }
+        println!("Unable to find reaction tag: {}", tag);
+        None
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
