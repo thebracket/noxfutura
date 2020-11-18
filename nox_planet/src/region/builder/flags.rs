@@ -80,16 +80,16 @@ pub fn set_flags(region: &mut Region) {
             for z in 0..REGION_DEPTH {
                 let idx = mapidx(x, y, z);
                 if region.flag(idx, Region::CAN_STAND_HERE) {
-                    if valid_exit(region, x - 1, y, z) {
+                    if x > 0 && valid_exit(region, x - 1, y, z) {
                         region.set_flag(idx, Region::CAN_GO_WEST)
                     }
-                    if valid_exit(region, x + 1, y, z) {
+                    if x < REGION_WIDTH-1 && valid_exit(region, x + 1, y, z) {
                         region.set_flag(idx, Region::CAN_GO_EAST)
                     }
-                    if valid_exit(region, x, y - 1, z) {
+                    if y > 0 && valid_exit(region, x, y - 1, z) {
                         region.set_flag(idx, Region::CAN_GO_NORTH)
                     }
-                    if valid_exit(region, x, y + 1, z) {
+                    if y < REGION_HEIGHT-1 && valid_exit(region, x, y + 1, z) {
                         region.set_flag(idx, Region::CAN_GO_SOUTH)
                     }
 
