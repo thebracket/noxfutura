@@ -22,7 +22,7 @@
             difficulty: 10,
             automatic: true,
             skill: "Masonry",
-            inputs: [ ReactionItem(tag: "stone_bolder", qty: 1) ],
+            inputs: [ ReactionItem(tag: "stone_boulder", qty: 1) ],
             outputs: [ ReactionItem(tag: "block", qty: 4 ) ]
         )
     ])
