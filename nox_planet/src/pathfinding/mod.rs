@@ -11,16 +11,7 @@ const MAX_ASTAR_STEPS: usize = 65536;
 /// BaseMap implementation), and it requires access to your map so as to call distance and exit determinations.
 pub fn a_star_search(start: usize, end: usize, map: &Region) -> NavigationPath {
     let mut astar = AStar::new(start, end);
-    if astar.distance_to_end(start, map) < 1.4 {
-        println!("We're already there");
-        NavigationPath {
-            destination: end,
-            success: true,
-            steps: Vec::new(),
-        }
-    } else {
-        astar.search(map)
-    }
+    astar.search(map)
 }
 
 /// Holds the result of an A-Star navigation query.
@@ -37,13 +28,12 @@ pub struct NavigationPath {
 #[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 /// Node is an internal step inside the A-Star path (not exposed/public). Idx is the current cell,
-/// f is the total cost, g the neighbor cost, and h the heuristic cost.
+/// f is the total cost, g the neighbor cost, and h the heuristic cost. (We're not using h)
 /// See: https://en.wikipedia.org/wiki/A*_search_algorithm
 struct Node {
     idx: usize,
     f: f32,
     g: f32,
-    h: f32,
 }
 
 impl PartialEq for Node {
@@ -83,7 +73,7 @@ struct AStar {
     end: usize,
     open_list: BinaryHeap<Node>,
     closed_list: HashMap<usize, f32>,
-    parents: HashMap<usize, usize>,
+    parents: HashMap<usize, (usize, f32)>, // (index, cost)
     step_counter: usize,
 }
 
@@ -95,7 +85,6 @@ impl AStar {
             idx: start,
             f: 0.0,
             g: 0.0,
-            h: 0.0,
         });
 
         AStar {
@@ -114,42 +103,30 @@ impl AStar {
     }
 
     /// Adds a successor; if we're at the end, marks success.
-    fn add_successor(&mut self, q: Node, idx: usize, cost: f32, map: &Region) -> bool {
+    fn add_successor(&mut self, q: Node, idx: usize, cost: f32, map: &Region) {
         let distance = self.distance_to_end(idx, map);
-        let (_dx, _dy, dz) = idxmap(idx);
-        let (_ex, _ey, ez) = idxmap(self.end);
-        // Did we reach our goal?
-        if distance < 1.4 && dz == ez {
-            self.parents.insert(idx, q.idx);
-            self.parents.insert(self.end, idx);
-            true
-        } else {
-            let s = Node {
-                idx,
-                f: distance + cost,
-                g: cost,
-                h: distance,
-            };
+        let s = Node {
+            idx,
+            f: distance + cost,
+            g: cost,
+        };
 
-            // If a node with the same position as successor is in the open list with a lower f, skip add
-            let mut should_add = true;
-            for e in &self.open_list {
-                if e.f < s.f && e.idx == idx {
-                    should_add = false;
-                }
-            }
-
-            // If a node with the same position as successor is in the closed list, with a lower f, skip add
-            if should_add && self.closed_list.contains_key(&idx) && self.closed_list[&idx] < s.f {
+        // If a node with the same position as successor is in the open list with a lower f, skip add
+        let mut should_add = true;
+        if let Some(e) = self.parents.get(&idx) {
+            if e.1 < s.f {
                 should_add = false;
             }
+        }
 
-            if should_add {
-                self.open_list.push(s);
-                self.parents.insert(idx, q.idx);
-            }
+        // If a node with the same position as successor is in the closed list, with a lower f, skip add
+        if should_add && self.closed_list.contains_key(&idx) && self.closed_list[&idx] < s.f {
+            should_add = false;
+        }
 
-            false
+        if should_add {
+            self.open_list.push(s);
+            self.parents.insert(idx, (q.idx, q.f));
         }
     }
 
@@ -163,11 +140,19 @@ impl AStar {
         let mut current = self.end;
         while current != self.start {
             let parent = self.parents[&current];
-            result.steps.insert(0, parent);
-            current = parent;
+            result.steps.insert(0, parent.0);
+            current = parent.0;
         }
 
         result
+    }
+
+    #[inline]
+    fn close_enough(&self, q: &Node, map: &Region) -> bool {
+        let d = self.distance_to_end(q.idx, map);
+        let (_, _, ez) = idxmap(q.idx);
+        let (_, _, sz) = idxmap(self.end);
+        d < 1.4 && ez == sz
     }
 
     /// Performs an A-Star search
@@ -178,16 +163,17 @@ impl AStar {
 
             // Pop Q off of the list
             let q = self.open_list.pop().unwrap();
+            if self.close_enough(&q, map) {
+                self.parents.insert(self.end, (q.idx, 0.0));
+                let success = self.found_it();
+                return success;
+            }
 
             // Generate successors
-            let successors = map.get_available_exits(q.idx);
-
-            for s in successors {
-                if q.idx != s.0 && self.add_successor(q, s.0, s.1 + q.f, map) {
-                    let success = self.found_it();
-                    return success;
-                }
-            }
+            map
+                .get_available_exits(q.idx)
+                .iter()
+                .for_each(|s| self.add_successor(q, s.0, s.1 + q.f, map));
 
             if self.closed_list.contains_key(&q.idx) {
                 self.closed_list.remove(&q.idx);
