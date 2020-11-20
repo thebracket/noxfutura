@@ -294,7 +294,15 @@ impl NoxMode for PlayTheGame {
                 .render(core, &mut self.ecs, &run_state);
 
             // Phase 3: Draw the UI
-            super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
+            let zoom_request = super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
+            match zoom_request {
+                super::ui::ZoomRequest::Building{ id } => {
+                    **run_state = RunState::Design {
+                        mode : DesignMode::BuildingInfo{ id }
+                    };
+                }
+                super::ui::ZoomRequest::None => {}
+            }
             super::ui::draw_main_menu(&self.ecs, run_state, &core.imgui);
             let mut mine_state = self.ecs_resources.get_mut::<MiningMap>();
             let mut lumber_state = self.ecs_resources.get_mut::<LumberMap>();
@@ -338,6 +346,11 @@ fn design_ui(
             mode: DesignMode::SettlerList,
         } => {
             super::ui::settler_list_display(core.imgui, ecs);
+        }
+        RunState::Design {
+            mode: DesignMode::BuildingInfo{id}
+        } => {
+            super::ui::show_building_info(core.imgui, ecs, id);
         }
         _ => {}
     }

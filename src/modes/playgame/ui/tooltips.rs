@@ -5,11 +5,17 @@ use nox_components::*;
 use nox_planet::{Region, TileType};
 use nox_spatial::*;
 
-pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui: &Ui) {
+pub enum ZoomRequest {
+    None,
+    Building { id: usize }
+}
+
+pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui: &Ui) -> ZoomRequest {
     if imgui.io().want_capture_mouse {
-        return;
+        return ZoomRequest::None;
     }
 
+    let mut zoom_mode = ZoomRequest::None;
     let mut lines: Vec<(bool, String)> = Vec::new();
 
     if mouse_world_pos.0 > 0
@@ -22,7 +28,7 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
         let idx = mapidx(mouse_world_pos.0, mouse_world_pos.1, mouse_world_pos.2);
         let r = REGION.read();
         if !r.revealed[idx] {
-            return;
+            return ZoomRequest::None;
         }
 
         // Type info
@@ -78,31 +84,16 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
     }
 
     // This is eating a ton of frame time!
+    let click = imgui.io().mouse_down[0];
+    let mut tt = Tooltips::new();
     <(Entity, Read<Name>, Read<Position>, Read<IdentityTag>)>::query()
         .iter(ecs)
         .filter(|(_, _, pos, _)| pos.contains_point(mouse_world_pos))
         .for_each(|(entity, name, _, identity)| {
-            lines.push((true, format!("{}", name.name)));
-            if let Ok(binfo) = ecs.entry_ref(*entity).unwrap().get_component::<Building>() {
-                if !binfo.complete {
-                    lines.push((true, "Building not yet completed".to_string()));
-                }
-            }
-
-            <(Entity, Read<Description>)>::query()
-                .iter(ecs)
-                .filter(|(e, _)| *e == entity)
-                .for_each(|(_, d)| {
-                    lines.push((false, format!("{}", d.desc)));
-                });
-
-            <(Read<Name>, Read<Position>)>::query()
-                .iter(ecs)
-                .filter(|(_, store)| store.is_in_container(identity.0))
-                .for_each(|(name, _)| {
-                    lines.push((false, format!(" - {}", name.name)));
-                });
-        });
+            tt.add_entry(ecs, entity, name, identity, click, &mut zoom_mode);
+        }
+    );
+    tt.append_lines(&mut lines);
 
     if !lines.is_empty() {
         let im_lines: Vec<(bool, ImString)> = lines
@@ -136,6 +127,95 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
                         imgui.text_wrapped(text);
                     }
                 });
-            });
+            }
+        );
+    }
+
+    zoom_mode
+}
+
+struct TooltipEntry {
+    name : String,
+    description: String,
+    qty: i32,
+    contents: Vec<String>
+}
+
+impl TooltipEntry {
+    fn new(name: String) -> Self {
+        Self {
+            name,
+            description: String::new(),
+            qty: 1,
+            contents : Vec::new()
+        }
+    }
+}
+
+struct Tooltips {
+    entries : Vec<TooltipEntry>
+}
+
+impl Tooltips {
+    fn new() -> Self {
+        Self { entries: Vec::new() }
+    }
+
+    fn add_entry(&mut self, ecs: &World, entity: &Entity, name: &Name, identity: &IdentityTag, click: bool, zoom_mode: &mut ZoomRequest) {
+        let mut tt = TooltipEntry::new(name.name.clone());
+
+        // Building Info
+        if let Ok(binfo) = ecs.entry_ref(*entity).unwrap().get_component::<Building>() {
+            if !binfo.complete {
+                tt.name = format!("{} - Incomplete", tt.name);
+            }
+            if click {
+                *zoom_mode = ZoomRequest::Building{ id: identity.0 };
+            }
+        }
+
+        // Description
+        <(Entity, Read<Description>)>::query()
+            .iter(ecs)
+            .filter(|(e, _)| *e == entity)
+            .for_each(|(_, d)| {
+                tt.description = d.desc.clone();
+            }
+        );
+
+        // Check container contents
+        <(Read<Name>, Read<Position>)>::query()
+            .iter(ecs)
+            .filter(|(_, store)| store.is_in_container(identity.0))
+            .for_each(|(name, _)| {
+                tt.contents.push(name.name.clone());
+            }
+        );
+
+        if let Some(ott) = self.entries.iter_mut().find(|e| e.name == tt.name) {
+            ott.qty += 1;
+        } else {
+            self.entries.push(tt);
+        }
+    }
+
+    fn append_lines(&self, lines: &mut Vec<(bool, String)>) {
+        self.entries.iter().for_each(|tt| {
+            if tt.qty > 1 {
+                lines.push((true, format!("{} x{}", tt.name, tt.qty)));
+            } else {
+                lines.push((true, tt.name.clone()));
+            }
+
+            if !tt.description.is_empty() {
+                lines.push((false, tt.description.clone()));
+            }
+
+            if !tt.contents.is_empty() {
+                tt.contents.iter().for_each(|content| {
+                    lines.push((false, format!(" - {}", content)));
+                });
+            }
+        });
     }
 }

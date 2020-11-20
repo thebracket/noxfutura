@@ -13,5 +13,55 @@
 
     vox: Some([
         VoxelModel( tag:"small_replicator", file:"replicator_small" ),
-    ])
+    ]),
+
+    reactions: Some([
+        ReactionDef(
+            name: "Replicate Cup of Tea",
+            workshop: "small_replicator",
+            difficulty: 5,
+            automatic: false,
+            skill: "Construction",
+            inputs: [ ReactionItem(tag: "", qty: 0, power: Some(20)) ],
+            outputs: [ ReactionItem(tag: "tea_replicated", qty: 1 ) ]
+        ),
+
+        ReactionDef(
+            name: "Replicate Sandwich",
+            workshop: "small_replicator",
+            difficulty: 5,
+            automatic: false,
+            skill: "Construction",
+            inputs: [ ReactionItem(tag: "", qty: 0, power: Some(20)) ],
+            outputs: [ ReactionItem(tag: "sandwich_replicated", qty: 1 ) ]
+        ),
+
+        ReactionDef(
+            name: "Replicate Small Energy Cell",
+            workshop: "small_replicator",
+            difficulty: 5,
+            automatic: false,
+            skill: "Construction",
+            inputs: [ ReactionItem(tag: "", qty: 0, power: Some(20)) ],
+            outputs: [ ReactionItem(tag: "small_energy_cell", qty: 1 ) ]
+        ),
+    ]),
+
+    items: Some([
+        ItemDef(
+            tag:"tea_replicated",
+            name: "Tea, Earl-Grey Lukewarm",
+            description: "A replicated substance that tastes somewhat like tea",
+            item_type: [ Drink ],
+            vox: "foodplate"
+        ),
+
+        ItemDef(
+            tag:"sandwich_replicated",
+            name: "Stale-tasting sandwich",
+            description: "A replicated sandwich that sort-of tastes like chicken",
+            item_type: [ Food ],
+            vox: "foodplate"
+        ),
+    ]),
 )
