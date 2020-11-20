@@ -13,9 +13,9 @@ use nox_spatial::idxmap;
 #[read_component(Settler)]
 #[read_component(ReactionJob)]
 pub fn reactions(ecs: &SubWorld) {
-    <(&MyTurn, &Position, &IdentityTag, &Settler)>::query()
+    <(&MyTurn, &Position, &IdentityTag)>::query()
         .iter(ecs)
-        .for_each(|(turn, pos, id, settler)| {
+        .for_each(|(turn, pos, id)| {
             if turn.active
                 && turn.shift == ScheduleTime::Work
                 && match turn.job {
