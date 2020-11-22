@@ -16,7 +16,7 @@ futures = { version = "0.3" }
 imgui = "0.5.0"
 imgui-winit-support = { version = "0.5", default-features = false, features = [ "winit-22" ] }
 bytemuck = "1.4.0"
-smallvec = "1.4.2"
+smallvec = "1.5.0"
 image = "0.23.8"
 failure = "0.1"
 glsl-to-spirv = "0.1.7"

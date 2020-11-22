@@ -11,7 +11,7 @@ bengine = { path = "../bengine/" }
 nox_spatial = { path = "../nox_spatial/" }
 nox_raws = { path = "../nox_raws/" }
 serde = { version = "1.0.115" }
-legion = { git =  "https://github.com/TomGillen/legion", features = [ "serialize" ] }
+legion = { version = "0.3.1", features = [ "serialize" ] }
 ron = "0.6.1"
 lazy_static = "1.4.0"
 parking_lot = "0.11.0"

@@ -303,7 +303,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                         });
                 });
             for rb in ready_blueprints.iter() {
-                if let Some(mut er) = ecs.entry_mut(*rb) {
+                if let Ok(mut er) = ecs.entry_mut(*rb) {
                     if let Ok(bp) = er.get_component_mut::<Blueprint>() {
                         println!("Blueprint is ready");
                         bp.ready_to_build = true;

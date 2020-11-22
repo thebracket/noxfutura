@@ -29,7 +29,7 @@ pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
             }
         })
         .for_each(|(e, pos)| {
-            if let Some(entry) = ecs.entry_ref(*e) {
+            if let Ok(entry) = ecs.entry_ref(*e) {
                 if let Ok(_tree) = entry.get_component::<Tree>() {
                     let pos = pos.as_point3();
                     wood_to_spawn.insert((pos.x, pos.y, pos.z));

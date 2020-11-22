@@ -15,7 +15,7 @@ pub(crate) fn chop_tree(ecs: &mut World, actor_id: usize, tree_pos: usize) {
         let skill_check_result = skill_check(ecs, actor_id, Skill::Lumberjack, 12);
         if skill_check_result > 0 {
             // Damage the tree
-            if let Some(mut te) = ecs.entry_mut(tree_entity) {
+            if let Ok(mut te) = ecs.entry_mut(tree_entity) {
                 if let Ok(health) = te.get_component_mut::<Health>() {
                     health.current -= skill_check_result;
                     // Destroy it if it went down
