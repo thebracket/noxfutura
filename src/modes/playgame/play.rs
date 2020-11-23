@@ -295,13 +295,16 @@ impl NoxMode for PlayTheGame {
 
             // Phase 3: Draw the UI
             let zoom_request = super::ui::draw_tooltips(&self.ecs, &core.mouse_world_pos, &core.imgui);
-            match zoom_request {
-                super::ui::ZoomRequest::Building{ id } => {
-                    **run_state = RunState::Design {
-                        mode : DesignMode::BuildingInfo{ id }
-                    };
+            match **run_state {
+                RunState::Design{..} => {},
+                _ => match zoom_request {
+                    super::ui::ZoomRequest::Building{ id } => {
+                        **run_state = RunState::Design {
+                            mode : DesignMode::BuildingInfo{ id }
+                        };
+                    }
+                    super::ui::ZoomRequest::None => {}
                 }
-                super::ui::ZoomRequest::None => {}
             }
             super::ui::draw_main_menu(&self.ecs, run_state, &core.imgui);
             let mut mine_state = self.ecs_resources.get_mut::<MiningMap>();
