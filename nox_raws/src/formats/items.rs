@@ -37,5 +37,5 @@ pub enum ItemDefType {
     ToolDigging,
     ToolFarming,
     Food,
-    Drink
+    Drink,
 }

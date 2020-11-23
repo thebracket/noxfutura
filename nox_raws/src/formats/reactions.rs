@@ -38,5 +38,5 @@ pub struct ReactionDef {
 pub struct ReactionItem {
     pub tag: String,
     pub qty: i32,
-    pub power: Option<i32>
+    pub power: Option<i32>,
 }

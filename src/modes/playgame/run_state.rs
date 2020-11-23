@@ -15,5 +15,5 @@ pub enum DesignMode {
     Buildings { bidx: i32, vox: Option<usize> },
     Mining { mode: MiningMode },
     SettlerList,
-    BuildingInfo { id: usize }
+    BuildingInfo { id: usize },
 }

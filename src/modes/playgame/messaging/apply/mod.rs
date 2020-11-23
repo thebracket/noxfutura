@@ -331,6 +331,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             let new_id = IdentityTag::new();
             let job_id = new_id.0;
 
+            let ready_to_build = components.is_empty();
             ecs.push((
                 new_id,
                 ReactionJob {
@@ -339,7 +340,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     in_progress: None,
                 },
                 Blueprint {
-                    ready_to_build: false,
+                    ready_to_build,
                     required_items: components.clone(),
                 },
                 Position::with_tile_idx(building_pos, REGION.read().world_idx, (1, 1, 1)),
@@ -374,12 +375,16 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
                     .unwrap();
 
             // Find material for the first component
-            let material = <(&Material, &IdentityTag)>::query()
-                .iter(ecs)
-                .filter(|(_, mid)| mid.0 == blueprint.required_items[0])
-                .map(|(m, _)| m.0)
-                .nth(0)
-                .unwrap_or(0);
+            let material = if blueprint.required_items.is_empty() {
+                0
+            } else {
+                <(&Material, &IdentityTag)>::query()
+                    .iter(ecs)
+                    .filter(|(_, mid)| mid.0 == blueprint.required_items[0])
+                    .map(|(m, _)| m.0)
+                    .nth(0)
+                    .unwrap_or(0)
+            };
 
             // Delete all components
             for c in blueprint.required_items.iter() {

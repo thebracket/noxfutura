@@ -7,10 +7,14 @@ use nox_spatial::*;
 
 pub enum ZoomRequest {
     None,
-    Building { id: usize }
+    Building { id: usize },
 }
 
-pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui: &Ui) -> ZoomRequest {
+pub fn draw_tooltips(
+    ecs: &World,
+    mouse_world_pos: &(usize, usize, usize),
+    imgui: &Ui,
+) -> ZoomRequest {
     if imgui.io().want_capture_mouse {
         return ZoomRequest::None;
     }
@@ -91,8 +95,7 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
         .filter(|(_, _, pos, _)| pos.contains_point(mouse_world_pos))
         .for_each(|(entity, name, _, identity)| {
             tt.add_entry(ecs, entity, name, identity, click, &mut zoom_mode);
-        }
-    );
+        });
     tt.append_lines(&mut lines);
 
     if !lines.is_empty() {
@@ -127,18 +130,17 @@ pub fn draw_tooltips(ecs: &World, mouse_world_pos: &(usize, usize, usize), imgui
                         imgui.text_wrapped(text);
                     }
                 });
-            }
-        );
+            });
     }
 
     zoom_mode
 }
 
 struct TooltipEntry {
-    name : String,
+    name: String,
     description: String,
     qty: i32,
-    contents: Vec<String>
+    contents: Vec<String>,
 }
 
 impl TooltipEntry {
@@ -147,21 +149,31 @@ impl TooltipEntry {
             name,
             description: String::new(),
             qty: 1,
-            contents : Vec::new()
+            contents: Vec::new(),
         }
     }
 }
 
 struct Tooltips {
-    entries : Vec<TooltipEntry>
+    entries: Vec<TooltipEntry>,
 }
 
 impl Tooltips {
     fn new() -> Self {
-        Self { entries: Vec::new() }
+        Self {
+            entries: Vec::new(),
+        }
     }
 
-    fn add_entry(&mut self, ecs: &World, entity: &Entity, name: &Name, identity: &IdentityTag, click: bool, zoom_mode: &mut ZoomRequest) {
+    fn add_entry(
+        &mut self,
+        ecs: &World,
+        entity: &Entity,
+        name: &Name,
+        identity: &IdentityTag,
+        click: bool,
+        zoom_mode: &mut ZoomRequest,
+    ) {
         let mut tt = TooltipEntry::new(name.name.clone());
 
         // Building Info
@@ -170,7 +182,7 @@ impl Tooltips {
                 tt.name = format!("{} - Incomplete", tt.name);
             }
             if click {
-                *zoom_mode = ZoomRequest::Building{ id: identity.0 };
+                *zoom_mode = ZoomRequest::Building { id: identity.0 };
             }
         }
 
@@ -180,8 +192,7 @@ impl Tooltips {
             .filter(|(e, _)| *e == entity)
             .for_each(|(_, d)| {
                 tt.description = d.desc.clone();
-            }
-        );
+            });
 
         // Check container contents
         <(Read<Name>, Read<Position>)>::query()
@@ -189,8 +200,7 @@ impl Tooltips {
             .filter(|(_, store)| store.is_in_container(identity.0))
             .for_each(|(name, _)| {
                 tt.contents.push(name.name.clone());
-            }
-        );
+            });
 
         if let Some(ott) = self.entries.iter_mut().find(|e| e.name == tt.name) {
             ott.qty += 1;
