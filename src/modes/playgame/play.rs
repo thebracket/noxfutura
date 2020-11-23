@@ -299,6 +299,7 @@ impl NoxMode for PlayTheGame {
                 RunState::Design{..} => {},
                 _ => match zoom_request {
                     super::ui::ZoomRequest::Building{ id } => {
+                        super::ui::setup_building_info(id, &self.ecs);
                         **run_state = RunState::Design {
                             mode : DesignMode::BuildingInfo{ id }
                         };
