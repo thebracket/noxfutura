@@ -33,6 +33,7 @@ resources/raws/shipboard/fake_camp_fire.ron
 
 resources/raws/workshops/sawmill.ron
 resources/raws/workshops/stonecutter.ron
+resources/raws/workshops/charcoal_hut.ron
 
 # Tools
 
@@ -44,6 +45,10 @@ resources/raws/tools/hoe.ron
 resources/raws/raw_materials/woodlogs.ron
 resources/raws/raw_materials/stone_boulder.ron
 resources/raws/raw_materials/block.ron
+resources/raws/raw_materials/ore.ron
+resources/raws/raw_materials/coal.ron
+resources/raws/raw_materials/charcoal.ron
+resources/raws/raw_materials/ash.ron
 
 # Tree Models
 resources/raws/trees.ron
