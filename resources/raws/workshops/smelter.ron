@@ -1,0 +1,29 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "smelter",
+            name : "Smelter",
+            components : [ BuildingComponent(item: "block", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 12) ],
+            vox : "smelter",
+            description : "Smelters heat rock until metal elements inside melt and flow out.",
+            provides : [ ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"smelter", file:"smelter" ),
+    ]),
+
+    reactions: Some([
+        ReactionDef(
+            name: "Smelt Ore",
+            workshop: "smelter",
+            difficulty: 10,
+            automatic: true,
+            skill: "Carpentry",
+            inputs: [ ReactionItem(tag: "ore", qty: 1), ReactionItem(tag: "charcoal", qty: 1) ],
+            outputs: [ ReactionItem(tag: "block", qty: 2 ) ]
+        )
+    ])
+)

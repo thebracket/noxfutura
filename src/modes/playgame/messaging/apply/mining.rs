@@ -40,7 +40,7 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
                     println!("Changed tile");
                     rlock.tile_types[mine_id] = TileType::Floor;
                     super::super::tile_dirty(mine_id);
-                    let material_idx = rlock.material_idx[mine_id];
+                    let mut material_idx = rlock.material_idx[mine_id];
                     let mat_info = nox_raws::RAWS.read().materials.materials[material_idx].clone();
                     for mt in mat_info.mines_to.iter() {
                         let (x, y, z) = idxmap(mine_id);
@@ -57,9 +57,10 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
                                 );
                             }
                             MinesTo::Ore { name } => {
+                                material_idx = nox_raws::get_material_by_tag(name).unwrap_or(0);
                                 nox_planet::spawn_item_on_ground(
                                     ecs,
-                                    name,
+                                    "ore",
                                     x,
                                     y,
                                     z,
