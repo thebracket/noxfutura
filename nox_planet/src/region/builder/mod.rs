@@ -1,6 +1,6 @@
 use crate::{planet_idx, set_worldgen_status, Planet, Region};
 use bengine::random::RandomNumberGenerator;
-use bengine::{geometry::Point, Palette};
+use bengine::geometry::Point;
 use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 mod beaches;
 mod buildings;
@@ -25,7 +25,6 @@ pub fn builder(
     region: &mut Region,
     planet: &Planet,
     crash_site: Point,
-    palette: Option<&Palette>,
 ) -> World {
     set_worldgen_status("Locating biome information");
     let biome_info = RAWS.read().biomes.areas[region.biome_raw_idx].clone();
