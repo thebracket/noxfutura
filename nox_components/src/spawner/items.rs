@@ -37,7 +37,7 @@ fn spawn_item_common(
                 Item {},
                 Tag(tag.to_string()),
                 id,
-                Name { name: name },
+                Name { name },
                 Description {
                     desc: item.description.clone(),
                 },
