@@ -82,7 +82,7 @@ fn threaded_builder() {
     set_worldgen_status("Erasing the crash site");
     let clone_planet = &PLANET_BUILD.lock().planet.clone();
     let mut region = Region::zeroed(crash_idx, &clone_planet);
-    let world = super::region::builder(&mut region, &clone_planet, crash);
+    let world = super::region::builder(&mut region, &clone_planet, crash, None);
 
     // Save
     save_world(region, world);

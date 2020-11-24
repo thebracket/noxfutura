@@ -48,6 +48,7 @@ pub fn debris_trail(region: &mut Region, ship_loc: Point, ecs: &mut World) {
             *z as usize,
             region,
             wood,
+            None,
         );
     });
 }

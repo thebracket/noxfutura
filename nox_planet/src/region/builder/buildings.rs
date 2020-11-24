@@ -135,23 +135,32 @@ fn add_construction(
                 "personal_survival_shelter_kit",
                 storage_id,
                 plasteel,
+                None,
             );
             crate::spawner::spawn_item_in_container(
                 ecs,
                 "personal_survival_shelter_kit",
                 storage_id,
                 plasteel,
+                None,
             );
-            crate::spawner::spawn_item_in_container(ecs, "camp_fire_kit", storage_id, plasteel);
+            crate::spawner::spawn_item_in_container(
+                ecs,
+                "camp_fire_kit",
+                storage_id,
+                plasteel,
+                None,
+            );
             crate::spawner::spawn_item_in_container(
                 ecs,
                 "personal_survival_shelter_kit",
                 storage_id,
                 plasteel,
+                None,
             );
-            crate::spawner::spawn_item_in_container(ecs, "fire_axe", storage_id, plasteel);
-            crate::spawner::spawn_item_in_container(ecs, "pickaxe", storage_id, plasteel);
-            crate::spawner::spawn_item_in_container(ecs, "hoe", storage_id, plasteel);
+            crate::spawner::spawn_item_in_container(ecs, "fire_axe", storage_id, plasteel, None);
+            crate::spawner::spawn_item_in_container(ecs, "pickaxe", storage_id, plasteel, None);
+            crate::spawner::spawn_item_in_container(ecs, "hoe", storage_id, plasteel, None);
         }
         "cordex" => {
             add_building(region, "cordex", x, y, z, ecs);

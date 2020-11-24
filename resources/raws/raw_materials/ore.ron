@@ -5,7 +5,8 @@
             name: "Ore",
             item_type: [ Component ],
             vox: "ore",
-            description: "A lump of unrefined metal."
+            description: "A lump of unrefined metal.",
+            build_rules: Some([InheritMaterialName, InheritMaterialTint]),
         ),
     ]),
 

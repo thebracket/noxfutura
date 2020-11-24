@@ -1,7 +1,7 @@
 use super::super::GameStateResource;
 use super::{JobStep, MOVER_LIST};
 use crate::modes::playgame::systems::REGION;
-use bengine::geometry::DistanceAlg;
+use bengine::{geometry::DistanceAlg, Palette};
 use legion::{systems::CommandBuffer, *};
 use nox_components::*;
 use nox_spatial::*;
@@ -16,7 +16,7 @@ use gamesystem::*;
 mod mining;
 use mining::*;
 
-pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
+pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources, palette: &Palette) {
     let mut vox_moved = false;
     let mut models_moved = false;
     let mut lights_changed = false;
@@ -34,7 +34,7 @@ pub fn apply_jobs_queue(ecs: &mut World, resources: &mut Resources) {
                     vox_moved = true;
                     lights_changed = true;
                 }
-                _ => apply(ecs, &mut js),
+                _ => apply(ecs, &mut js, palette),
             }
         } else {
             break;
@@ -78,7 +78,7 @@ fn movers(ecs: &mut World, resources: &mut Resources) {
     }
 }
 
-fn apply(ecs: &mut World, js: &mut JobStep) {
+fn apply(ecs: &mut World, js: &mut JobStep, palette: &Palette) {
     match js {
         JobStep::EntityMoved { id, end } => {
             MOVER_LIST
@@ -172,7 +172,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             super::vox_moved();
         }
         JobStep::TreeChop { id, tree_pos } => {
-            chop_tree(ecs, *id, *tree_pos);
+            chop_tree(ecs, *id, *tree_pos, palette);
         }
         JobStep::DeleteBuilding { building_id } => {
             let i = <(Entity, Read<Position>, Read<IdentityTag>)>::query()
@@ -219,7 +219,7 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
             cmds.flush(ecs);
         }
         JobStep::DigAt { pos, id } => {
-            dig_at(ecs, *id, *pos);
+            dig_at(ecs, *id, *pos, palette);
         }
         JobStep::BecomeMiner { id } => {
             become_miner(ecs, *id);
@@ -241,7 +241,16 @@ fn apply(ecs: &mut World, js: &mut JobStep) {
         } => {
             let (x, y, z) = idxmap(*pos);
             for _ in 0..*qty {
-                nox_planet::spawn_item_on_ground(ecs, tag, x, y, z, &mut REGION.write(), *material);
+                nox_planet::spawn_item_on_ground(
+                    ecs,
+                    tag,
+                    x,
+                    y,
+                    z,
+                    &mut REGION.write(),
+                    *material,
+                    Some(palette),
+                );
             }
         }
         JobStep::HaulInProgress { id, by } => {

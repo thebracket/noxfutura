@@ -1,5 +1,5 @@
 use crate::Region;
-use bengine::random::RandomNumberGenerator;
+use bengine::{random::RandomNumberGenerator, Palette};
 use legion::*;
 use nox_spatial::mapidx;
 
@@ -40,20 +40,48 @@ pub fn spawn_item_on_ground(
     z: usize,
     region: &mut Region,
     material: usize,
+    palette: Option<&Palette>,
 ) {
-    nox_components::spawner::spawn_item_on_ground(ecs, tag, x, y, z, region.world_idx, material);
+    nox_components::spawner::spawn_item_on_ground(
+        ecs,
+        tag,
+        x,
+        y,
+        z,
+        region.world_idx,
+        material,
+        palette,
+    );
 }
 
-pub fn spawn_item_in_container(ecs: &mut World, tag: &str, container: usize, material: usize) {
-    nox_components::spawner::spawn_item_in_container(ecs, tag, container, material);
+pub fn spawn_item_in_container(
+    ecs: &mut World,
+    tag: &str,
+    container: usize,
+    material: usize,
+    palette: Option<&Palette>,
+) {
+    nox_components::spawner::spawn_item_in_container(ecs, tag, container, material, palette);
 }
 
-pub fn spawn_item_worn(ecs: &mut World, tag: &str, wearer: usize, material: usize) {
-    nox_components::spawner::spawn_item_worn(ecs, tag, wearer, material);
+pub fn spawn_item_worn(
+    ecs: &mut World,
+    tag: &str,
+    wearer: usize,
+    material: usize,
+    palette: Option<&Palette>,
+) {
+    nox_components::spawner::spawn_item_worn(ecs, tag, wearer, material, palette);
 }
 
-pub fn spawn_item_carried(ecs: &mut World, tag: &str, wearer: usize, material: usize) {
-    nox_components::spawner::spawn_item_carried(ecs, tag, wearer, material);
+pub fn spawn_item_carried(
+    ecs: &mut World,
+    tag: &str,
+    wearer: usize,
+    material: usize,
+    palette: Option<&Palette>,
+) {
+    nox_components::spawner::spawn_item_carried(ecs, tag, wearer, material, palette);
 }
 
 pub fn spawn_plant(

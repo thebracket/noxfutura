@@ -241,7 +241,11 @@ impl NoxMode for PlayTheGame {
             std::mem::drop(run_state);
 
             // 1a -> Handle messages
-            super::messaging::process_queues(&mut self.ecs, &mut self.ecs_resources);
+            super::messaging::process_queues(
+                &mut self.ecs,
+                &mut self.ecs_resources,
+                &self.palette.as_ref().unwrap(),
+            );
 
             // Phase 2: Actually render stuff
             self.update_camera();

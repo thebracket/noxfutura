@@ -1,13 +1,13 @@
 use super::skill_check;
 use super::REGION;
-use bengine::geometry::*;
+use bengine::{geometry::*, Palette};
 use legion::*;
 use nox_components::*;
 use nox_planet::{StairsType, TileType};
 use nox_raws::MinesTo;
 use nox_spatial::*;
 
-pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
+pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize, palette: &Palette) {
     let mining_designations: Vec<(usize, MiningMode)> = <(&MiningMode, &Position)>::query()
         .iter(ecs)
         .map(|(mm, pos)| (pos.get_idx(), *mm))
@@ -54,6 +54,7 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
                                     z,
                                     &mut rlock,
                                     material_idx,
+                                    Some(palette),
                                 );
                             }
                             MinesTo::Ore { name } => {
@@ -66,6 +67,7 @@ pub(crate) fn dig_at(ecs: &mut World, actor_id: usize, pos: usize) {
                                     z,
                                     &mut rlock,
                                     material_idx,
+                                    Some(palette),
                                 );
                             }
                         }

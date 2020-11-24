@@ -1,11 +1,11 @@
 use super::super::{models_moved, vox_moved};
 use super::{skill_check, REGION};
-use bengine::geometry::*;
+use bengine::{geometry::*, Palette};
 use legion::*;
 use nox_components::*;
 use nox_spatial::idxmap;
 
-pub(crate) fn chop_tree(ecs: &mut World, actor_id: usize, tree_pos: usize) {
+pub(crate) fn chop_tree(ecs: &mut World, actor_id: usize, tree_pos: usize, palette: &Palette) {
     println!("Chop tree");
     let mut to_remove = Vec::new();
     let mut to_spawn = Vec::new();
@@ -39,7 +39,16 @@ pub(crate) fn chop_tree(ecs: &mut World, actor_id: usize, tree_pos: usize) {
         for idx in to_spawn.iter() {
             let mut rlock = REGION.write();
             let (tx, ty, tz) = idxmap(*idx);
-            nox_planet::spawn_item_on_ground(ecs, "wood_log", tx, ty, tz, &mut *rlock, wood);
+            nox_planet::spawn_item_on_ground(
+                ecs,
+                "wood_log",
+                tx,
+                ty,
+                tz,
+                &mut *rlock,
+                wood,
+                Some(palette),
+            );
         }
         vox_moved();
     }

@@ -2,15 +2,15 @@ mod apply;
 mod job_step;
 mod queue_backend;
 
-use bengine::geometry::Point3;
+use bengine::{geometry::Point3, Palette};
 use job_step::*;
 use legion::*;
 use queue_backend::*;
 
 use nox_components::JobType;
 
-pub fn process_queues(ecs: &mut World, resources: &mut Resources) {
-    apply::apply_jobs_queue(ecs, resources);
+pub fn process_queues(ecs: &mut World, resources: &mut Resources, palette: &Palette) {
+    apply::apply_jobs_queue(ecs, resources, palette);
 }
 
 pub fn entity_moved(id: usize, end: &Point3) {

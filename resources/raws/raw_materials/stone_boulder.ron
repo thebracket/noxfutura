@@ -5,7 +5,8 @@
             name: "Boulder",
             item_type: [ Component ],
             vox: "stone_boulder",
-            description: "A chunk of rock."
+            description: "A chunk of rock.",
+            build_rules: Some([InheritMaterialName, InheritMaterialTint]),
         ),
     ]),
 

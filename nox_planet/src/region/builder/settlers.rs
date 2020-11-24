@@ -1,5 +1,5 @@
-use bengine::geometry::*;
 use bengine::random::*;
+use bengine::{geometry::*, Palette};
 use legion::*;
 use nox_components::*;
 use nox_raws::*;
@@ -11,6 +11,7 @@ pub fn spawn_settlers(
     crash_z: usize,
     region_idx: usize,
     n_settlers: usize,
+    palette: Option<&Palette>,
 ) {
     let spawn_points = vec![
         (crash_site.x - 4, crash_site.y - 2, crash_z + 3),
@@ -34,6 +35,7 @@ pub fn spawn_settlers(
             spawn.1 as usize,
             spawn.2 as usize,
             region_idx,
+            palette,
         );
     }
 }
@@ -45,6 +47,7 @@ fn spawn_settler(
     y: usize,
     z: usize,
     region_idx: usize,
+    palette: Option<&Palette>,
 ) {
     let species_def = RAWS.read().species.species[0].clone();
 
@@ -252,6 +255,6 @@ fn spawn_settler(
     }
 
     let plasteel = get_material_by_tag("Plasteel").unwrap();
-    spawner::spawn_item_worn(ecs, "ray_pistol", settler_id, plasteel);
-    spawner::spawn_item_carried(ecs, "small_energy_cell", settler_id, plasteel);
+    spawner::spawn_item_worn(ecs, "ray_pistol", settler_id, plasteel, palette);
+    spawner::spawn_item_carried(ecs, "small_energy_cell", settler_id, plasteel, palette);
 }

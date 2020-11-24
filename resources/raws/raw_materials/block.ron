@@ -5,7 +5,8 @@
             name: "Block",
             item_type: [ Component ],
             vox: "block",
-            description: "A conveniently cut building block."
+            description: "A conveniently cut building block.",
+            build_rules: Some([InheritMaterialName, InheritMaterialTint]),
         ),
     ]),
 

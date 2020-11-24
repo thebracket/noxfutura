@@ -1,6 +1,6 @@
 use crate::{planet_idx, set_worldgen_status, Planet, Region};
-use bengine::geometry::Point;
 use bengine::random::RandomNumberGenerator;
+use bengine::{geometry::Point, Palette};
 use nox_spatial::{REGION_HEIGHT, REGION_WIDTH};
 mod beaches;
 mod buildings;
@@ -21,7 +21,12 @@ mod flags;
 pub use flags::set_flags as rebuild_flags;
 use nox_raws::RAWS;
 
-pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World {
+pub fn builder(
+    region: &mut Region,
+    planet: &Planet,
+    crash_site: Point,
+    palette: Option<&Palette>,
+) -> World {
     set_worldgen_status("Locating biome information");
     let biome_info = RAWS.read().biomes.areas[region.biome_raw_idx].clone();
     let biome = planet.biomes[region.biome_info_idx].clone();
@@ -96,6 +101,7 @@ pub fn builder(region: &mut Region, planet: &Planet, crash_site: Point) -> World
         crash_z,
         region.world_idx,
         planet.starting_settlers as usize,
+        None,
     );
 
     set_worldgen_status("Features");

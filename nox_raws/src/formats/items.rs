@@ -28,6 +28,7 @@ pub struct ItemDef {
     pub vox: String,
     pub item_type: Vec<ItemDefType>,
     pub description: String,
+    pub build_rules: Option<Vec<ItemDefBuild>>,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
@@ -38,4 +39,10 @@ pub enum ItemDefType {
     ToolFarming,
     Food,
     Drink,
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub enum ItemDefBuild {
+    InheritMaterialName,
+    InheritMaterialTint,
 }

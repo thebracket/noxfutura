@@ -1,21 +1,43 @@
 use crate::*;
+use bengine::Palette;
 use legion::*;
 use nox_raws::*;
 
-fn spawn_item_common(ecs: &mut World, tag: &str, material: usize) -> Option<(Entity, usize)> {
+fn spawn_item_common(
+    ecs: &mut World,
+    tag: &str,
+    material: usize,
+    palette: Option<&Palette>,
+) -> Option<(Entity, usize)> {
     let raws = RAWS.read();
     if let Some(item) = raws.items.item_by_tag(tag) {
         println!("Spawning item [{}]", tag);
         let id = IdentityTag::new();
         let new_identity = id.0;
+
+        let mut name = item.name.clone();
+        let mut tint = 0;
+        if let Some(br) = &item.build_rules {
+            br.iter().for_each(|r| match r {
+                ItemDefBuild::InheritMaterialName => {
+                    let mat = raws.materials.materials[material].name.clone();
+                    name = format!("{} {}", mat, name);
+                }
+                ItemDefBuild::InheritMaterialTint => {
+                    if let Some(palette) = palette {
+                        let t = raws.materials.materials[material].tint;
+                        tint = palette.find_palette(t.0, t.1, t.2);
+                    }
+                }
+            });
+        }
+
         let entity = ecs
             .push((
                 Item {},
                 Tag(tag.to_string()),
                 id,
-                Name {
-                    name: item.name.clone(),
-                },
+                Name { name: name },
                 Description {
                     desc: item.description.clone(),
                 },
@@ -23,7 +45,7 @@ fn spawn_item_common(ecs: &mut World, tag: &str, material: usize) -> Option<(Ent
                     index: raws.vox.get_model_idx(&item.vox),
                     rotation_radians: 0.0,
                 },
-                Tint { color: 0 },
+                Tint { color: tint },
                 Material(material),
             ))
             .clone();
@@ -58,8 +80,9 @@ pub fn spawn_item_on_ground(
     z: usize,
     region_idx: usize,
     material: usize,
+    palette: Option<&Palette>,
 ) -> Option<usize> {
-    if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
+    if let Some((entity, id)) = spawn_item_common(ecs, tag, material, palette) {
         ecs.entry(entity)
             .unwrap()
             .add_component(Position::with_tile(x, y, z, region_idx, (1, 1, 1)));
@@ -74,8 +97,9 @@ pub fn spawn_item_in_container(
     tag: &str,
     container: usize,
     material: usize,
+    palette: Option<&Palette>,
 ) -> Option<usize> {
-    if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
+    if let Some((entity, id)) = spawn_item_common(ecs, tag, material, palette) {
         ecs.entry(entity)
             .unwrap()
             .add_component(Position::stored(container));
@@ -90,8 +114,9 @@ pub fn spawn_item_worn(
     tag: &str,
     wearer: usize,
     material: usize,
+    palette: Option<&Palette>,
 ) -> Option<usize> {
-    if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
+    if let Some((entity, id)) = spawn_item_common(ecs, tag, material, palette) {
         ecs.entry(entity)
             .unwrap()
             .add_component(Position::worn(wearer));
@@ -106,8 +131,9 @@ pub fn spawn_item_carried(
     tag: &str,
     wearer: usize,
     material: usize,
+    palette: Option<&Palette>,
 ) -> Option<usize> {
-    if let Some((entity, id)) = spawn_item_common(ecs, tag, material) {
+    if let Some((entity, id)) = spawn_item_common(ecs, tag, material, palette) {
         ecs.entry(entity)
             .unwrap()
             .add_component(Position::carried(wearer));
