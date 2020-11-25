@@ -21,11 +21,9 @@ pub fn hauling(ecs: &SubWorld) {
                 _ => false,
             }
         {
-            println!("Hauling detected");
             if let JobType::Haul { item_id, step } = &turn.job {
                 match step {
                     HaulSteps::FindItem => {
-                        println!("Looking for item");
                         <(&RequestHaul, &Position, &IdentityTag)>::query()
                             .iter(ecs)
                             .filter(|(_, _, hid)| hid.0 == *item_id)
@@ -47,7 +45,6 @@ pub fn hauling(ecs: &SubWorld) {
                             });
                     }
                     HaulSteps::TravelToItem { path } => {
-                        println!("Travel to Item");
                         if path.len() > 1 {
                             messaging::follow_job_path(id.0);
                         } else {
@@ -61,7 +58,6 @@ pub fn hauling(ecs: &SubWorld) {
                         }
                     }
                     HaulSteps::CollectItem => {
-                        println!("Collect item");
                         messaging::get_item(id.0, *item_id);
                         <(&RequestHaul, &Position, &IdentityTag)>::query()
                             .iter(ecs)
@@ -86,7 +82,6 @@ pub fn hauling(ecs: &SubWorld) {
                             });
                     }
                     HaulSteps::TravelToDestination { path } => {
-                        println!("Travel to destination");
                         if path.len() > 1 {
                             messaging::follow_job_path(id.0);
                         } else {
@@ -100,7 +95,6 @@ pub fn hauling(ecs: &SubWorld) {
                         }
                     }
                     HaulSteps::DropItem => {
-                        println!("Drop Item");
                         let destination = <(&RequestHaul, &Position, &IdentityTag)>::query()
                             .iter(ecs)
                             .filter(|(_, _, hid)| hid.0 == *item_id)

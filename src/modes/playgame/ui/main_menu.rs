@@ -88,6 +88,14 @@ pub fn draw_main_menu(ecs: &World, run_state: &mut RunState, imgui: &Ui) {
                     mode: DesignMode::Buildings { bidx: 0, vox: None },
                 };
             }
+            if MenuItem::new(im_str!("\u{f009} Construction"))
+                .shortcut(im_str!("C"))
+                .build(imgui)
+            {
+                *run_state = RunState::Design {
+                    mode: DesignMode::Construction,
+                };
+            }
             menu.end(imgui);
         }
 

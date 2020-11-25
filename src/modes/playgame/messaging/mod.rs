@@ -96,6 +96,12 @@ pub fn finish_building(building_id: usize) {
         .push_back(JobStep::FinishBuilding { building_id });
 }
 
+pub fn finish_construction(building_id: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::FinishConstruction { building_id });
+}
+
 pub fn dig_at(id: usize, pos: usize) {
     JOBS_QUEUE.lock().push_back(JobStep::DigAt { id, pos });
 }
@@ -156,6 +162,15 @@ pub fn reaction_in_progress(id: usize, by: usize) {
     JOBS_QUEUE
         .lock()
         .push_back(JobStep::ReactionInProgress { id, by })
+}
+
+pub fn construction_in_progress(id: usize, by: usize) {
+    JOBS_QUEUE
+        .lock()
+        .push_back(JobStep::ConstructionInProgress {
+            building_id: id,
+            by,
+        })
 }
 
 pub fn remove_haul_tag(id: usize) {

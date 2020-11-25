@@ -17,6 +17,10 @@ pub(crate) fn follow_path(ecs: &mut World, id: usize) {
                     BuildingSteps::TravelToBuilding { path, .. } => Some(path),
                     _ => None,
                 },
+                JobType::Construct { step, .. } => match step {
+                    ConstructionSteps::TravelToBuilding { path, .. } => Some(path),
+                    _ => None,
+                },
                 JobType::Haul { step, .. } => match step {
                     HaulSteps::TravelToItem { path } => Some(path),
                     HaulSteps::TravelToDestination { path } => Some(path),

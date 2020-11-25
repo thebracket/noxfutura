@@ -77,6 +77,11 @@ pub fn pause_control(
                     mode: DesignMode::Buildings { bidx: 0, vox: None },
                 };
             }
+            VirtualKeyCode::C => {
+                *run_state = RunState::Design {
+                    mode: DesignMode::Construction,
+                };
+            }
             VirtualKeyCode::D => {
                 *run_state = RunState::Design {
                     mode: DesignMode::Mining {

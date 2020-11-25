@@ -16,6 +16,7 @@ use nox_spatial::*;
 #[read_component(Blueprint)]
 #[read_component(Building)]
 #[read_component(ReactionJob)]
+#[read_component(Construction)]
 pub fn work_shift(
     ecs: &mut SubWorld,
     #[resource] mining: &MiningMap,
@@ -24,6 +25,7 @@ pub fn work_shift(
     let mut haulables = haulage_list(ecs);
     let buildables = building_list(ecs);
     let mut reactions = reactions_list(ecs);
+    let mut construction = construction_list(ecs);
     <(&mut MyTurn, &Settler, &Position, &IdentityTag)>::query()
         .iter_mut(ecs)
         .for_each(|(turn, settler, pos, id)| {
@@ -83,6 +85,16 @@ pub fn work_shift(
                         },
                     ));
                 }
+                if let Some(build_cost) = consider_construction(&construction, pos.as_point3()) {
+                    println!("Considering a life in construction");
+                    possible_jobs.push((
+                        build_cost.0,
+                        JobType::Construct {
+                            building_id: build_cost.1,
+                            step: ConstructionSteps::FindBuilding,
+                        },
+                    ));
+                }
 
                 if possible_jobs.is_empty() {
                     turn.order = WorkOrder::MoveRandomly;
@@ -99,6 +111,10 @@ pub fn work_shift(
                         JobType::Reaction { reaction_id, .. } => {
                             reactions.retain(|(_, rid)| *rid != reaction_id);
                             messaging::reaction_in_progress(reaction_id, id.0);
+                        }
+                        JobType::Construct { building_id, .. } => {
+                            construction.retain(|(_, bid)| building_id != *bid);
+                            messaging::construction_in_progress(building_id, id.0);
                         }
                         _ => {}
                     }
@@ -220,6 +236,44 @@ fn consider_reactions(
         None
     } else {
         hsort.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+        Some(hsort[0])
+    }
+}
+
+fn construction_list(ecs: &SubWorld) -> Vec<(usize, usize)> {
+    let cons: Vec<(usize, usize)> = <(&Construction, &Blueprint, &Position, &IdentityTag)>::query()
+        .iter(ecs)
+        .filter(|(c, bp, _, _)| bp.ready_to_build && c.in_progress.is_none())
+        .map(|(_, _, pos, id)| (pos.get_idx(), id.0))
+        .collect();
+    if !cons.is_empty() {
+        println!("{:?}", cons);
+    }
+    cons
+}
+
+fn consider_construction(
+    construction: &Vec<(usize, usize)>,
+    settler_pos: Point3,
+) -> Option<(f32, usize)> {
+    if construction.is_empty() {
+        return None;
+    }
+    let mut hsort: Vec<(f32, usize)> = construction
+        .iter()
+        .map(|(pos, id)| {
+            let (x, y, z) = idxmap(*pos);
+            (
+                DistanceAlg::Pythagoras.distance3d(Point3::new(x, y, z), settler_pos),
+                *id,
+            )
+        })
+        .collect();
+    if hsort.is_empty() {
+        None
+    } else {
+        hsort.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+        println!("{:?}", hsort);
         Some(hsort[0])
     }
 }

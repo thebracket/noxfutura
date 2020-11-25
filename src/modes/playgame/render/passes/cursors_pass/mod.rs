@@ -272,12 +272,44 @@ impl CursorPass {
         self.vb.update_buffer();
     }
 
+    fn construction(&mut self, ecs: &World, mouse_world_pos: &(usize, usize, usize)) {
+        self.vb.clear();
+        <(&Construction, &Position)>::query()
+            .iter(ecs)
+            .for_each(|(_, pos)| {
+                let pt = pos.as_point3();
+                add_cube_geometry(
+                    &mut self.vb.data,
+                    pt.x as f32,
+                    pt.y as f32,
+                    pt.z as f32,
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                );
+            });
+
+        /*add_cube_geometry(
+            &mut self.vb.data,
+            mouse_world_pos.0 as f32,
+            mouse_world_pos.1 as f32,
+            mouse_world_pos.2 as f32,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+        );*/
+        self.vb.update_buffer();
+    }
+
     pub fn render(&mut self, core: &Core, ecs: &World, run_state: &RunState) {
         self.vb.clear();
         if let RunState::Design { mode } = run_state {
             match mode {
                 DesignMode::Lumberjack => self.lumberjack(ecs),
                 DesignMode::Mining { mode } => self.mining(ecs, mode, &core.mouse_world_pos),
+                DesignMode::Construction => self.construction(ecs, &core.mouse_world_pos),
                 _ => {}
             }
         }

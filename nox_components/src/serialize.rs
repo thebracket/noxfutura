@@ -54,7 +54,8 @@ fn registry() -> Registry<String> {
         MiningMode,
         RequestHaul,
         Blueprint,
-        ReactionJob
+        ReactionJob,
+        Construction
     );
 
     registry

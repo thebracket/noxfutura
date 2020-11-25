@@ -9,23 +9,25 @@ use nox_planet::pathfinding::a_star_search;
 #[read_component(MyTurn)]
 #[read_component(Position)]
 #[read_component(IdentityTag)]
-#[read_component(Building)]
+#[read_component(Construction)]
 #[read_component(Blueprint)]
-pub fn construction_building(ecs: &SubWorld) {
+pub fn construction(ecs: &SubWorld) {
     let mut bquery = <(&MyTurn, &Position, &IdentityTag)>::query();
     bquery.iter(ecs).for_each(|(turn, pos, id)| {
         if turn.active
             && turn.shift == ScheduleTime::Work
             && match turn.job {
-                JobType::ConstructBuilding { .. } => true,
+                JobType::Construct { .. } => true,
                 _ => false,
             }
         {
-            if let JobType::ConstructBuilding { building_id, step } = &turn.job {
+            println!("Construction mode");
+            if let JobType::Construct { building_id, step } = &turn.job {
                 match step {
-                    BuildingSteps::FindBuilding => {
+                    ConstructionSteps::FindBuilding => {
+                        println!("Finding building");
                         let bpos = <(&IdentityTag, &Position)>::query()
-                            .filter(component::<Building>())
+                            .filter(component::<Construction>())
                             .iter(ecs)
                             .filter(|(id, _pos)| id.0 == *building_id)
                             .map(|(_id, pos)| pos.get_idx())
@@ -34,14 +36,15 @@ pub fn construction_building(ecs: &SubWorld) {
 
                         let rlock = REGION.read();
                         let start = pos.get_idx();
+                        println!("Pathing from {} to {}", start, bpos);
                         let path = a_star_search(start, bpos, &rlock);
                         std::mem::drop(rlock);
                         if path.success {
                             messaging::job_changed(
                                 id.0,
-                                JobType::ConstructBuilding {
+                                JobType::Construct {
                                     building_id: *building_id,
-                                    step: BuildingSteps::TravelToBuilding { path: path.steps },
+                                    step: ConstructionSteps::TravelToBuilding { path: path.steps },
                                 },
                             );
                         } else {
@@ -49,22 +52,24 @@ pub fn construction_building(ecs: &SubWorld) {
                             println!("Unable to find building");
                         }
                     }
-                    BuildingSteps::TravelToBuilding { path } => {
+                    ConstructionSteps::TravelToBuilding { path } => {
+                        println!("Following path");
                         if path.len() > 1 {
                             messaging::follow_job_path(id.0);
                         } else {
                             // We've arrived.
                             messaging::job_changed(
                                 id.0,
-                                JobType::ConstructBuilding {
+                                JobType::Construct {
                                     building_id: *building_id,
-                                    step: BuildingSteps::Construct,
+                                    step: ConstructionSteps::Construct,
                                 },
                             );
                         }
                     }
-                    BuildingSteps::Construct => {
-                        messaging::finish_building(*building_id);
+                    ConstructionSteps::Construct => {
+                        println!("Construction done");
+                        messaging::finish_construction(*building_id);
                         messaging::conclude_job(id.0);
                     }
                 }

@@ -45,6 +45,9 @@ pub enum JobStep {
     FinishBuilding {
         building_id: usize,
     },
+    FinishConstruction {
+        building_id: usize,
+    },
     DeleteBuilding {
         building_id: usize,
     },
@@ -97,5 +100,9 @@ pub enum JobStep {
     },
     PerformReaction {
         reaction_id: usize,
+    },
+    ConstructionInProgress {
+        building_id: usize,
+        by: usize,
     },
 }

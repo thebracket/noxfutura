@@ -16,4 +16,5 @@ pub enum DesignMode {
     Mining { mode: MiningMode },
     SettlerList,
     BuildingInfo { id: usize },
+    Construction,
 }

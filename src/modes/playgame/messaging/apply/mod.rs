@@ -4,6 +4,7 @@ use crate::modes::playgame::systems::REGION;
 use bengine::{geometry::DistanceAlg, Palette};
 use legion::{systems::CommandBuffer, *};
 use nox_components::*;
+use nox_planet::{Region, TileType};
 use nox_spatial::*;
 mod job_designations;
 use job_designations::*;
@@ -269,6 +270,14 @@ fn apply(ecs: &mut World, js: &mut JobStep, palette: &Palette) {
                     rh.in_progress = Some(*by);
                 });
         }
+        JobStep::ConstructionInProgress { building_id, by } => {
+            <(&IdentityTag, &mut Construction)>::query()
+                .iter_mut(ecs)
+                .filter(|(hid, _rh)| hid.0 == *building_id)
+                .for_each(|(_id, rh)| {
+                    rh.in_progress = Some(*by);
+                });
+        }
         JobStep::RemoveHaulTag { id } => {
             let mut cmds = CommandBuffer::new(ecs);
             <(Entity, &IdentityTag)>::query()
@@ -420,6 +429,51 @@ fn apply(ecs: &mut World, js: &mut JobStep, palette: &Palette) {
 
             // Notify of changes
             super::vox_moved();
+        }
+        JobStep::FinishConstruction { building_id } => {
+            println!("Finish Construction");
+            // Locate the building
+            let (building_entity, bpos, bp) =
+                <(Entity, &Construction, &Position, &IdentityTag, &Blueprint)>::query()
+                    .iter(ecs)
+                    .filter(|(_, _, _, bid, _)| bid.0 == *building_id)
+                    .map(|(e, _, pos, _, bp)| (*e, pos.get_idx(), bp))
+                    .nth(0)
+                    .unwrap();
+
+            // Delete all components and find material
+            let mat_idx = <(&Material, &IdentityTag)>::query()
+                .iter(ecs)
+                .filter(|(_, i)| i.0 == bp.required_items[0])
+                .map(|(m, _)| m.0)
+                .nth(0)
+                .unwrap();
+            bp.required_items
+                .iter()
+                .for_each(|item| super::super::delete_item(*item));
+
+            // Convert the tile into the right type
+            let mut rlock = REGION.write();
+            println!("Pre-change:");
+            println!("{:?}", idxmap(bpos));
+            println!(
+                "idx {}, type: {:?}, mat: {}",
+                bpos, rlock.tile_types[bpos], mat_idx
+            );
+            rlock.tile_types[bpos] = TileType::Solid;
+            rlock.set_flag(bpos, Region::CONSTRUCTED);
+            rlock.set_flag(bpos, Region::SOLID);
+            rlock.clear_flag(bpos, Region::CAN_STAND_HERE);
+            rlock.material_idx[bpos] = mat_idx;
+            println!(
+                "idx {}, type: {:?}, mat: {}",
+                bpos, rlock.tile_types[bpos], mat_idx
+            );
+            super::super::tile_dirty(bpos);
+            std::mem::drop(rlock);
+
+            // Delete the build order
+            ecs.remove(building_entity);
         }
         _ => {}
     }

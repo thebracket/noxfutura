@@ -11,6 +11,8 @@ mod mining_map;
 pub use mining_map::*;
 mod lumber_map;
 pub use lumber_map::*;
+mod construction_map;
+pub use construction_map::*;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Region {

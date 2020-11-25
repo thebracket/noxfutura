@@ -38,6 +38,10 @@ pub enum JobType {
         reaction_location: usize,
         step: ReactionSteps,
     },
+    Construct {
+        building_id: usize,
+        step: ConstructionSteps,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -71,6 +75,13 @@ pub enum MiningSteps {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum BuildingSteps {
+    FindBuilding,
+    TravelToBuilding { path: Vec<usize> },
+    Construct,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+pub enum ConstructionSteps {
     FindBuilding,
     TravelToBuilding { path: Vec<usize> },
     Construct,

@@ -29,14 +29,10 @@ pub fn reactions(ecs: &SubWorld) {
                     step,
                 } = &turn.job
                 {
-                    println!("Found a reaction job");
                     match step {
                         ReactionSteps::FindReaction => {
                             let start = pos.get_idx();
-                            println!("Search for position of reaction {}", reaction_id);
                             let end = *reaction_location;
-                            println!("Reaction: {:?}", idxmap(end));
-                            println!("Settler: {:?}", idxmap(pos.get_idx()));
 
                             let rlock = REGION.read();
                             let path = a_star_search(start, end, &rlock);
@@ -55,7 +51,6 @@ pub fn reactions(ecs: &SubWorld) {
                             }
                         }
                         ReactionSteps::TravelToReaction { path } => {
-                            println!("Travel to destination");
                             if path.len() > 1 {
                                 messaging::follow_job_path(id.0);
                             } else {
@@ -70,7 +65,6 @@ pub fn reactions(ecs: &SubWorld) {
                             }
                         }
                         ReactionSteps::PerformReaction => {
-                            println!("Perform reaction");
                             messaging::perform_reaction(*reaction_id);
                             messaging::conclude_job(id.0);
                         }

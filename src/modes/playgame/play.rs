@@ -6,7 +6,7 @@ use crate::{GameMode, NoxMode, SharedResources};
 use bengine::*;
 use legion::*;
 use nox_components::{CameraOptions, Position};
-use nox_planet::{LumberMap, MiningMap};
+use nox_planet::{ConstructionMap, LumberMap, MiningMap};
 
 pub struct PlayTheGame {
     ready: bool,
@@ -107,6 +107,7 @@ impl PlayTheGame {
                     self.ecs_resources.insert(RunState::Paused);
                     self.ecs_resources.insert(MiningMap::new());
                     self.ecs_resources.insert(LumberMap::new());
+                    self.ecs_resources.insert(ConstructionMap::new());
                     println!("Finished loading");
                     self.ready = true;
                 }
@@ -160,6 +161,18 @@ impl PlayTheGame {
                 shared_state.dirty_tiles.clear();
                 self.ecs_resources
                     .get_mut::<MiningMap>()
+                    .as_mut()
+                    .unwrap()
+                    .is_dirty = true;
+
+                self.ecs_resources
+                    .get_mut::<LumberMap>()
+                    .as_mut()
+                    .unwrap()
+                    .is_dirty = true;
+
+                self.ecs_resources
+                    .get_mut::<ConstructionMap>()
                     .as_mut()
                     .unwrap()
                     .is_dirty = true;
@@ -315,9 +328,11 @@ impl NoxMode for PlayTheGame {
             super::ui::draw_main_menu(&self.ecs, run_state, &core.imgui);
             let mut mine_state = self.ecs_resources.get_mut::<MiningMap>();
             let mut lumber_state = self.ecs_resources.get_mut::<LumberMap>();
+            let mut construction_state = self.ecs_resources.get_mut::<ConstructionMap>();
             let ms = mine_state.as_mut().unwrap();
             let ls = lumber_state.as_mut().unwrap();
-            design_ui(run_state, core, &mut self.ecs, ms, ls);
+            let cs = construction_state.as_mut().unwrap();
+            design_ui(run_state, core, &mut self.ecs, ms, ls, cs);
         }
 
         result
@@ -330,6 +345,7 @@ fn design_ui(
     ecs: &mut World,
     mine_state: &mut MiningMap,
     lumber_state: &mut LumberMap,
+    construction_map: &mut ConstructionMap,
 ) {
     match run_state {
         RunState::Design {
@@ -360,6 +376,11 @@ fn design_ui(
             mode: DesignMode::BuildingInfo { id },
         } => {
             super::ui::show_building_info(core.imgui, ecs, id);
+        }
+        RunState::Design {
+            mode: DesignMode::Construction,
+        } => {
+            super::ui::show_construction(core.imgui, ecs, &core.mouse_world_pos, construction_map);
         }
         _ => {}
     }
