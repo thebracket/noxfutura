@@ -33,8 +33,11 @@ impl WorldGen {
             6,
         );
         gui.add_label(RGB::named(GRAY), RGB::named(BLACK), "Strict Beamdown", 3, 7);
+        gui.add_checkbox(22, 7, true, 6);
         gui.add_label(RGB::named(GRAY), RGB::named(BLACK), "Extra Noise", 3, 8);
+        gui.add_checkbox(22, 8, true, 7);
         gui.add_label(RGB::named(GRAY), RGB::named(BLACK), "Bumpiness", 3, 9);
+        gui.add_checkbox(22, 9, true, 8);
 
         gui.add_button("GENERATE WORLD", 3, 13, RGB::named(WHITE), RGB::named(BLUE));
         gui.add_button("RETURN TO MENU", 30, 13, RGB::named(WHITE), RGB::named(RED));
@@ -68,6 +71,7 @@ impl WorldGen {
                         return WorldGenResult::MakeWorld;
                     }
                 }
+                _ => {}
             }
         }
 

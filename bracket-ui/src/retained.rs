@@ -3,6 +3,7 @@ use bracket_terminal::prelude::*;
 
 pub enum RetainedGuiEvent {
     Click(String),
+    Checkbox(bool, usize),
 }
 
 pub struct RetainedGui {
@@ -24,9 +25,10 @@ impl RetainedGui {
 
     pub fn tick(&mut self, ctx: &mut BTerm) -> Option<RetainedGuiEvent> {
         let mut result = None;
+        let bounds = self.bounds.clone();
 
-        self.elements.iter().for_each(|e| {
-            if let Some(event) = e.render(ctx, &self.bounds) {
+        self.elements.iter_mut().for_each(|e| {
+            if let Some(event) = e.render(ctx, &bounds) {
                 result = Some(event)
             }
         });
@@ -66,10 +68,14 @@ impl RetainedGui {
             y,
         }));
     }
+
+    pub fn add_checkbox(&mut self, x: i32, y: i32, checked: bool, id: usize) {
+        self.elements.push(Box::new(Checkbox { x, y, checked, id }));
+    }
 }
 
 trait RetainedElement {
-    fn render(&self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent>;
+    fn render(&mut self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent>;
 }
 
 struct Label {
@@ -81,7 +87,7 @@ struct Label {
 }
 
 impl RetainedElement for Label {
-    fn render(&self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
+    fn render(&mut self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
         ctx.print_color(
             self.x + parent_bounds.x1,
             self.y + parent_bounds.y1,
@@ -101,7 +107,7 @@ struct LabelCentered {
 }
 
 impl RetainedElement for LabelCentered {
-    fn render(&self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
+    fn render(&mut self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
         ctx.print_color_centered_at(
             parent_bounds.center().x,
             self.y + parent_bounds.y1,
@@ -119,7 +125,7 @@ struct DoubleBox {
 }
 
 impl RetainedElement for DoubleBox {
-    fn render(&self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
+    fn render(&mut self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
         ctx.draw_box_double(
             parent_bounds.x1,
             parent_bounds.y1,
@@ -141,7 +147,7 @@ struct Button {
 }
 
 impl RetainedElement for Button {
-    fn render(&self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
+    fn render(&mut self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
         let mp = ctx.mouse_pos();
         let hovered = mp.0 >= parent_bounds.x1 - 1 + self.x
             && mp.0 <= parent_bounds.x1 - 1 + self.x + self.label.len() as i32 + 1
@@ -184,6 +190,47 @@ impl RetainedElement for Button {
 
         if ctx.left_click && hovered {
             return Some(RetainedGuiEvent::Click(self.label.clone()));
+        }
+
+        None
+    }
+}
+
+struct Checkbox {
+    x: i32,
+    y: i32,
+    checked: bool,
+    id: usize,
+}
+
+impl RetainedElement for Checkbox {
+    fn render(&mut self, ctx: &mut BTerm, parent_bounds: &Rect) -> Option<RetainedGuiEvent> {
+        if self.checked {
+            ctx.print_color(
+                parent_bounds.x1 + self.x,
+                parent_bounds.y1 + self.y,
+                GRAY,
+                BLACK,
+                "[ ]",
+            );
+        } else {
+            ctx.print_color(
+                parent_bounds.x1 + self.x,
+                parent_bounds.y1 + self.y,
+                WHITE,
+                BLACK,
+                "[X]",
+            );
+        }
+
+        let mp = ctx.mouse_pos();
+        if mp.1 == parent_bounds.y1 + self.y
+            && mp.0 >= parent_bounds.x1 + self.x
+            && mp.0 <= parent_bounds.x1 + self.x + 3
+            && ctx.left_click
+        {
+            self.checked = !self.checked;
+            return Some(RetainedGuiEvent::Checkbox(self.checked, self.id));
         }
 
         None
