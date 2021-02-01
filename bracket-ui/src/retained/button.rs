@@ -21,7 +21,8 @@ impl RetainedElement for Button {
         let hovered = (mp.0 >= parent_bounds.x1 - 1 + self.x
             && mp.0 <= parent_bounds.x1 - 1 + self.x + self.label.len() as i32 + 1
             && mp.1 >= parent_bounds.y1 - 1 + self.y
-            && mp.1 <= parent_bounds.y1 - 1 + self.y + 3) || has_focus;
+            && mp.1 <= parent_bounds.y1 - 1 + self.y + 3)
+            || has_focus;
 
         if !hovered {
             ctx.draw_box(

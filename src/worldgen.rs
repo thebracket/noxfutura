@@ -1,15 +1,15 @@
 use bracket_lib::prelude::*;
 use bracket_ui::{RetainedGui, RetainedGuiEvent};
 
-const RETURN_TO_MAIN_MENU : usize = 200;
-const PROCEED : usize = 201;
-const STRICT_BEAMDOWN : usize = 50;
-const EXTRA_NOISE : usize = 51;
-const SEED : usize = 52;
-const WATER_LEVEL : usize = 53;
-const PLAINS_LEVEL : usize = 54;
-const START_SETTLERS : usize = 55;
-const BUMPINESS : usize = 56;
+const RETURN_TO_MAIN_MENU: usize = 200;
+const PROCEED: usize = 201;
+const STRICT_BEAMDOWN: usize = 50;
+const EXTRA_NOISE: usize = 51;
+const SEED: usize = 52;
+const WATER_LEVEL: usize = 53;
+const PLAINS_LEVEL: usize = 54;
+const START_SETTLERS: usize = 55;
+const BUMPINESS: usize = 56;
 
 pub enum WorldGenResult {
     Continue,

@@ -17,7 +17,7 @@ impl RetainedGui {
             elements: Vec::new(),
             focus_list: Vec::new(),
             focused_id: None,
-            focused_index: 0
+            focused_index: 0,
         }
     }
 
@@ -112,14 +112,22 @@ impl RetainedGui {
         self.elements.push(Box::new(Checkbox { x, y, checked, id }));
     }
 
-    pub fn add_integer_selector(&mut self, x: i32, y: i32, val: i32, min: i32, max: i32, id: usize) {
+    pub fn add_integer_selector(
+        &mut self,
+        x: i32,
+        y: i32,
+        val: i32,
+        min: i32,
+        max: i32,
+        id: usize,
+    ) {
         self.elements.push(Box::new(IntegerInput {
             x,
             y,
             id,
             val,
             min,
-            max
+            max,
         }));
     }
 }
