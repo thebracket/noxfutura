@@ -12,6 +12,8 @@ mod button;
 pub(crate) use button::Button;
 mod checkbox;
 pub(crate) use checkbox::Checkbox;
+mod integer;
+pub(crate) use integer::*;
 
 use bracket_geometry::prelude::Rect;
 use bracket_terminal::prelude::*;

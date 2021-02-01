@@ -2,6 +2,14 @@ use bracket_lib::prelude::*;
 use bracket_ui::{RetainedGui, RetainedGuiEvent};
 
 const RETURN_TO_MAIN_MENU : usize = 200;
+const PROCEED : usize = 201;
+const STRICT_BEAMDOWN : usize = 50;
+const EXTRA_NOISE : usize = 51;
+const SEED : usize = 52;
+const WATER_LEVEL : usize = 53;
+const PLAINS_LEVEL : usize = 54;
+const START_SETTLERS : usize = 55;
+const BUMPINESS : usize = 56;
 
 pub enum WorldGenResult {
     Continue,
@@ -26,8 +34,11 @@ impl WorldGen {
             1,
         );
         gui.add_label(RGB::named(GRAY), RGB::named(BLACK), "Seed", 3, 3, 2);
+        gui.add_integer_selector(22, 3, 500, 0, 65536, SEED);
         gui.add_label(RGB::named(GRAY), RGB::named(BLACK), "Water Level", 3, 4, 3);
+        gui.add_integer_selector(22, 4, 3, 1, 5, WATER_LEVEL);
         gui.add_label(RGB::named(GRAY), RGB::named(BLACK), "Plains Level", 3, 5, 4);
+        gui.add_integer_selector(22, 5, 3, 1, 5, PLAINS_LEVEL);
         gui.add_label(
             RGB::named(GRAY),
             RGB::named(BLACK),
@@ -36,19 +47,20 @@ impl WorldGen {
             6,
             5,
         );
+        gui.add_integer_selector(22, 6, 7, 1, 10, START_SETTLERS);
         gui.add_label(
             RGB::named(GRAY),
             RGB::named(BLACK),
             "Strict Beamdown",
             3,
             7,
-            6,
+            STRICT_BEAMDOWN,
         );
         gui.add_checkbox(22, 7, true, 7);
         gui.add_label(RGB::named(GRAY), RGB::named(BLACK), "Extra Noise", 3, 8, 8);
-        gui.add_checkbox(22, 8, true, 9);
+        gui.add_checkbox(22, 8, true, EXTRA_NOISE);
         gui.add_label(RGB::named(GRAY), RGB::named(BLACK), "Bumpiness", 3, 9, 10);
-        gui.add_checkbox(22, 9, true, 11);
+        gui.add_integer_selector(22, 9, 2, 0, 10, BUMPINESS);
 
         gui.add_button(
             "GENERATE WORLD",
@@ -56,7 +68,7 @@ impl WorldGen {
             13,
             RGB::named(WHITE),
             RGB::named(BLUE),
-            12,
+            PROCEED,
         );
         gui.add_button(
             "RETURN TO MENU",
@@ -94,7 +106,7 @@ impl WorldGen {
                 RetainedGuiEvent::Click(btn) => {
                     if btn == RETURN_TO_MAIN_MENU {
                         return WorldGenResult::MainMenu;
-                    } else if btn == 13 {
+                    } else if btn == PROCEED {
                         return WorldGenResult::MakeWorld;
                     }
                 }

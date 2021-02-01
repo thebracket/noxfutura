@@ -111,4 +111,15 @@ impl RetainedGui {
     pub fn add_checkbox(&mut self, x: i32, y: i32, checked: bool, id: usize) {
         self.elements.push(Box::new(Checkbox { x, y, checked, id }));
     }
+
+    pub fn add_integer_selector(&mut self, x: i32, y: i32, val: i32, min: i32, max: i32, id: usize) {
+        self.elements.push(Box::new(IntegerInput {
+            x,
+            y,
+            id,
+            val,
+            min,
+            max
+        }));
+    }
 }
