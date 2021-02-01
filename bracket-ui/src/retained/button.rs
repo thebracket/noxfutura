@@ -15,13 +15,13 @@ impl RetainedElement for Button {
         &mut self,
         ctx: &mut BTerm,
         parent_bounds: &Rect,
-        _has_focus: bool,
+        has_focus: bool,
     ) -> Option<RetainedGuiEvent> {
         let mp = ctx.mouse_pos();
-        let hovered = mp.0 >= parent_bounds.x1 - 1 + self.x
+        let hovered = (mp.0 >= parent_bounds.x1 - 1 + self.x
             && mp.0 <= parent_bounds.x1 - 1 + self.x + self.label.len() as i32 + 1
             && mp.1 >= parent_bounds.y1 - 1 + self.y
-            && mp.1 <= parent_bounds.y1 - 1 + self.y + 3;
+            && mp.1 <= parent_bounds.y1 - 1 + self.y + 3) || has_focus;
 
         if !hovered {
             ctx.draw_box(
@@ -59,6 +59,12 @@ impl RetainedElement for Button {
 
         if ctx.left_click && hovered {
             return Some(RetainedGuiEvent::Click(self.id));
+        }
+
+        if has_focus {
+            if let Some(VirtualKeyCode::Space) = ctx.key {
+                return Some(RetainedGuiEvent::Click(self.id));
+            }
         }
 
         None

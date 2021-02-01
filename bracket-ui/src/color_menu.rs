@@ -77,13 +77,12 @@ impl ColorMenu {
                     self.selection = 0;
                 }
             }
-            Some(VirtualKeyCode::Return) => self.chosen = true,
+            Some(VirtualKeyCode::Space) => self.chosen = true,
             _ => {}
         }
     }
 
     pub fn handle_mouse(&mut self, ctx: &BTerm, left: u32, right: u32, top: u32) {
-        self.chosen = false;
         let mouse = ctx.mouse_pos();
         if mouse.0 >= left as i32
             && mouse.0 <= right as i32

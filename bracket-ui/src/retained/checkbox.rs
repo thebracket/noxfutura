@@ -63,6 +63,13 @@ impl RetainedElement for Checkbox {
             return Some(RetainedGuiEvent::Checkbox(self.id, self.checked));
         }
 
+        if has_focus {
+            if let Some(VirtualKeyCode::Space) = ctx.key {
+                self.checked = !self.checked;
+                return Some(RetainedGuiEvent::Checkbox(self.id, self.checked));
+            }
+        }
+
         None
     }
 

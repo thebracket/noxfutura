@@ -1,6 +1,8 @@
 use bracket_lib::prelude::*;
 use bracket_ui::{RetainedGui, RetainedGuiEvent};
 
+const RETURN_TO_MAIN_MENU : usize = 200;
+
 pub enum WorldGenResult {
     Continue,
     MainMenu,
@@ -62,7 +64,7 @@ impl WorldGen {
             13,
             RGB::named(WHITE),
             RGB::named(RED),
-            13,
+            RETURN_TO_MAIN_MENU,
         );
 
         gui.build();
@@ -90,7 +92,7 @@ impl WorldGen {
         if let Some(result) = self.gui.tick(ctx) {
             match result {
                 RetainedGuiEvent::Click(btn) => {
-                    if btn == 12 {
+                    if btn == RETURN_TO_MAIN_MENU {
                         return WorldGenResult::MainMenu;
                     } else if btn == 13 {
                         return WorldGenResult::MakeWorld;
