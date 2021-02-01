@@ -1,12 +1,6 @@
 use bracket_lib::prelude::*;
 use nox_api::new_menu_tagline;
-
-#[derive(PartialEq)]
-enum MenuItems {
-    NewWorld,
-    Continue,
-    Quit
-}
+use bracket_ui::{ColorMenu, ColorMenuItem};
 
 pub enum MenuResult {
     Continue,
@@ -21,8 +15,7 @@ pub struct MainMenu {
     last_size : (u32, u32),
     seed: u64,
     elapsed: f32,
-    selected_menu : MenuItems,
-    dirty: bool
+    main_menu : ColorMenu
 }
 
 impl MainMenu {
@@ -33,8 +26,13 @@ impl MainMenu {
             last_size : (0, 0),
             seed: 42,
             elapsed : 0.0,
-            selected_menu : MenuItems::NewWorld,
-            dirty: false
+            main_menu : ColorMenu::new(
+                vec![
+                    ColorMenuItem{ order: 0, label: "Create New World".to_string() },
+                    ColorMenuItem{ order: 1, label: "Continue Game".to_string() },
+                    ColorMenuItem{ order: 2, label: "Quit to Desktop".to_string() },
+                ]
+            )
         }
     }
 
@@ -46,68 +44,31 @@ impl MainMenu {
             self.last_size = console_size;
             self.map = WorldMap::new(console_size.0 as f32, console_size.1 as f32, self.seed);
             self.elapsed = 0.0;
-            self.dirty = true;
         }
 
-        match ctx.key {
-            Some(VirtualKeyCode::Up) => {
-                match self.selected_menu {
-                    MenuItems::NewWorld => self.selected_menu = MenuItems::Quit,
-                    MenuItems::Continue => self.selected_menu = MenuItems::NewWorld,
-                    MenuItems::Quit => self.selected_menu = MenuItems::Continue,
-                }
-                self.dirty = true;
-            }
-            Some(VirtualKeyCode::Down) => {
-                match self.selected_menu {
-                    MenuItems::NewWorld => self.selected_menu = MenuItems::Continue,
-                    MenuItems::Continue => self.selected_menu = MenuItems::Quit,
-                    MenuItems::Quit => self.selected_menu = MenuItems::NewWorld,
-                }
-                self.dirty = true;
-            }
-            Some(VirtualKeyCode::Return) => {
-                match self.selected_menu {
-                    MenuItems::NewWorld => return MenuResult::MakeWorld,
-                    MenuItems::Continue => return MenuResult::ResumeGame,
-                    MenuItems::Quit => return MenuResult::Quit,
-                }
-            }
+        ctx.cls();
+
+        self.map.render(ctx);
+
+        let left = console_size.0 /2 - 25;
+        let right = console_size.0/2 + 25;
+        let top = console_size.1 / 2 - 10;
+        let bottom = console_size.1 / 2 + 10;
+        ctx.draw_box_double(left, top, 50, 20, WHITE, BLACK);
+
+        ctx.print_color_centered(top+1, YELLOW, BLACK, "Nox Futura");
+        ctx.print_color_centered(top+2, RED, BLACK, &self.tagline);
+        ctx.print_color_centered(bottom - 2, GREEN, BLACK,  "Copyright (c) 2015-2021 Bracket Producutions.");
+
+        self.main_menu.render(ctx, left + 2, right - 2, top + 5);
+        self.main_menu.handle_key(&ctx.key);
+        self.main_menu.handle_mouse(ctx, left + 2, right - 2, top + 5);
+
+        match self.main_menu.get_selection() {
+            Some(0) => return MenuResult::MakeWorld,
+            Some(1) => return MenuResult::ResumeGame,
+            Some(2) => return MenuResult::Quit,
             _ => {}
-        }
-
-        if self.dirty {
-            ctx.cls();
-
-            self.map.render(ctx);
-
-            let left = console_size.0 /2 - 25;
-            let top = console_size.1 / 2 - 10;
-            let bottom = console_size.1 / 2 + 10;
-            ctx.draw_box_double(left, top, 50, 20, WHITE, BLACK);
-
-            ctx.print_color_centered(top+1, YELLOW, BLACK, "Nox Futura");
-            ctx.print_color_centered(top+2, RED, BLACK, &self.tagline);
-            ctx.print_color_centered(bottom - 2, GREEN, BLACK,  "Copyright (c) 2015-2021 Bracket Producutions.");
-
-            let mut y = top + 5;
-            if self.selected_menu == MenuItems::NewWorld {
-                ctx.print_color_centered(y, WHITE, BLUE, "Create New World");
-            } else {
-                ctx.print_color_centered(y, WHITE, BLACK, "Create New World");
-            }
-            y += 1;
-            if self.selected_menu == MenuItems::Continue {
-                ctx.print_color_centered(y, WHITE, BLUE, "Continue Game");
-            } else {
-                ctx.print_color_centered(y, WHITE, BLACK, "Continue Game");
-            }
-            y += 1;
-            if self.selected_menu == MenuItems::Quit {
-                ctx.print_color_centered(y, WHITE, BLUE, "Quit");
-            } else {
-                ctx.print_color_centered(y, WHITE, BLACK, "Quit");
-            }
         }
 
         MenuResult::Continue

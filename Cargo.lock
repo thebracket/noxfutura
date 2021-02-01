@@ -177,6 +177,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "bracket-ui"
+version = "0.1.0"
+dependencies = [
+ "bracket-terminal",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -913,6 +920,7 @@ name = "noxfutura"
 version = "0.2.0"
 dependencies = [
  "bracket-lib",
+ "bracket-ui",
  "nox-api",
 ]
 

@@ -2,6 +2,8 @@ use bracket_lib::prelude::*;
 use nox_api::DisplayMode;
 mod main_menu;
 use main_menu::{ MainMenu, MenuResult };
+mod worldgen;
+use worldgen::display_worldgen;
 
 struct State {
     display_mode : DisplayMode,
@@ -22,7 +24,7 @@ impl GameState for State {
     fn tick(&mut self, ctx: &mut BTerm) {
         match self.display_mode {
             DisplayMode::WorldGen => {
-
+                display_worldgen(ctx);
             }
             DisplayMode::MainMenu => {
                 let mr = self.main_menu_handler.tick(ctx);
@@ -33,7 +35,9 @@ impl GameState for State {
                 }
             }
         }
-        ctx.print(0, 0, format!("FPS: {}", ctx.fps));
+
+        let console_size = ctx.get_char_size();
+        ctx.print_color(0, console_size.1 - 1, GRAY, BLACK, format!("FPS: {}", ctx.fps));
     }
 }
 
