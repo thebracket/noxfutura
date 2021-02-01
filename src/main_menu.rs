@@ -1,38 +1,45 @@
 use bracket_lib::prelude::*;
-use nox_api::new_menu_tagline;
 use bracket_ui::{ColorMenu, ColorMenuItem};
+use nox_api::new_menu_tagline;
 
 pub enum MenuResult {
     Continue,
     MakeWorld,
     ResumeGame,
-    Quit
+    Quit,
 }
 
 pub struct MainMenu {
     tagline: String,
     map: WorldMap,
-    last_size : (u32, u32),
+    last_size: (u32, u32),
     seed: u64,
     elapsed: f32,
-    main_menu : ColorMenu
+    main_menu: ColorMenu,
 }
 
 impl MainMenu {
     pub fn new() -> Self {
         Self {
-            tagline : new_menu_tagline(),
+            tagline: new_menu_tagline(),
             map: WorldMap::new(200.0, 200.0, 42),
-            last_size : (0, 0),
+            last_size: (0, 0),
             seed: 42,
-            elapsed : 0.0,
-            main_menu : ColorMenu::new(
-                vec![
-                    ColorMenuItem{ order: 0, label: "Create New World".to_string() },
-                    ColorMenuItem{ order: 1, label: "Continue Game".to_string() },
-                    ColorMenuItem{ order: 2, label: "Quit to Desktop".to_string() },
-                ]
-            )
+            elapsed: 0.0,
+            main_menu: ColorMenu::new(vec![
+                ColorMenuItem {
+                    order: 0,
+                    label: "Create New World".to_string(),
+                },
+                ColorMenuItem {
+                    order: 1,
+                    label: "Continue Game".to_string(),
+                },
+                ColorMenuItem {
+                    order: 2,
+                    label: "Quit to Desktop".to_string(),
+                },
+            ]),
         }
     }
 
@@ -50,19 +57,25 @@ impl MainMenu {
 
         self.map.render(ctx);
 
-        let left = console_size.0 /2 - 25;
-        let right = console_size.0/2 + 25;
+        let left = console_size.0 / 2 - 25;
+        let right = console_size.0 / 2 + 25;
         let top = console_size.1 / 2 - 10;
         let bottom = console_size.1 / 2 + 10;
         ctx.draw_box_double(left, top, 50, 20, WHITE, BLACK);
 
-        ctx.print_color_centered(top+1, YELLOW, BLACK, "Nox Futura");
-        ctx.print_color_centered(top+2, RED, BLACK, &self.tagline);
-        ctx.print_color_centered(bottom - 2, GREEN, BLACK,  "Copyright (c) 2015-2021 Bracket Producutions.");
+        ctx.print_color_centered(top + 1, YELLOW, BLACK, "Nox Futura");
+        ctx.print_color_centered(top + 2, RED, BLACK, &self.tagline);
+        ctx.print_color_centered(
+            bottom - 2,
+            GREEN,
+            BLACK,
+            "Copyright (c) 2015-2021 Bracket Producutions.",
+        );
 
         self.main_menu.render(ctx, left + 2, right - 2, top + 5);
         self.main_menu.handle_key(&ctx.key);
-        self.main_menu.handle_mouse(ctx, left + 2, right - 2, top + 5);
+        self.main_menu
+            .handle_mouse(ctx, left + 2, right - 2, top + 5);
 
         match self.main_menu.get_selection() {
             Some(0) => return MenuResult::MakeWorld,
@@ -76,9 +89,9 @@ impl MainMenu {
 }
 
 struct WorldMap {
-    noise : FastNoise,
+    noise: FastNoise,
     width: f32,
-    height: f32
+    height: f32,
 }
 
 impl WorldMap {
@@ -91,10 +104,10 @@ impl WorldMap {
         noise.set_fractal_lacunarity(4.0);
         noise.set_frequency(0.01);
 
-        Self{
+        Self {
             noise,
             width,
-            height
+            height,
         }
     }
 
@@ -102,23 +115,26 @@ impl WorldMap {
         (
             altitude * f32::cos(lat) * f32::cos(lon),
             altitude * f32::cos(lat) * f32::sin(lon),
-            altitude * f32::sin(lat)
+            altitude * f32::sin(lat),
         )
     }
 
-    fn tile_display(&self, x: i32, y:i32) -> (FontCharType, RGB) {
+    fn tile_display(&self, x: i32, y: i32) -> (FontCharType, RGB) {
         let lat = (((y as f32 / self.height) * 180.0) - 90.0) * 0.017_453_3;
         let lon = (((x as f32 / self.width) * 360.0) - 180.0) * 0.017_453_3;
         let coords = self.sphere_vertex(100.0, lat, lon);
         let altitude = self.noise.get_noise3d(coords.0, coords.1, coords.2);
         if altitude < 0.0 {
-            ( to_cp437('▒'), RGB::from_f32(0.0, 0.0, 1.0 + altitude) )
+            (to_cp437('▒'), RGB::from_f32(0.0, 0.0, 1.0 + altitude))
         } else if altitude < 0.5 {
             let greenness = 0.5 + (altitude / 1.0);
-            ( to_cp437('█'), RGB::from_f32(0.0, greenness, 0.0) )
+            (to_cp437('█'), RGB::from_f32(0.0, greenness, 0.0))
         } else {
             let greenness = 0.2 + (altitude / 1.0);
-            ( to_cp437('▒'), RGB::from_f32(greenness, greenness, greenness) )
+            (
+                to_cp437('▒'),
+                RGB::from_f32(greenness, greenness, greenness),
+            )
         }
     }
 

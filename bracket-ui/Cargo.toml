@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 bracket-terminal = "0.8"
+bracket-geometry = "0.8"

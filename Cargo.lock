@@ -180,6 +180,7 @@ dependencies = [
 name = "bracket-ui"
 version = "0.1.0"
 dependencies = [
+ "bracket-geometry",
  "bracket-terminal",
 ]
 

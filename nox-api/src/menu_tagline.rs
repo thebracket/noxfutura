@@ -26,9 +26,7 @@ const DEDICATION: &'static str =
     "To Kylah of the West and Jakie Monster -\nThe Bravest Little Warriors of Them All.";
 
 fn get_descriptive_noun(rng: &mut RandomNumberGenerator) -> String {
-    rng.random_slice_entry(&NOUNS)
-        .unwrap()
-        .to_string()
+    rng.random_slice_entry(&NOUNS).unwrap().to_string()
 }
 
 pub fn new_menu_tagline() -> String {
