@@ -35,7 +35,8 @@ pub fn show_construction(
     let construct_modes = [
         im_str!("Wall (W)"),
         im_str!("Up Ladder (U)"),
-        im_str!("Down Ladder (J)"),
+        im_str!("Down Ladder (D)"),
+        im_str!("Up/Down Ladder (J)"),
         im_str!("Floor (F)"),
         im_str!("Clear (X)"),
     ];

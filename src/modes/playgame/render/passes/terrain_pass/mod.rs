@@ -1,4 +1,4 @@
-use crate::modes::playgame::{Camera, CameraUniform, Chunks, GBuffer};
+use crate::modes::playgame::{Camera, CameraUniform, Chunks, DesignMode, GBuffer, RunState};
 use bengine::*;
 mod terrain_textures;
 use terrain_textures::TerrainTextures;
@@ -144,7 +144,7 @@ impl TerrainPass {
         }
     }
 
-    pub fn render(&self, _core: &Core, chunks: &Chunks, camera_z: i32, gbuffer: &GBuffer) {
+    pub fn render(&self, _core: &Core, chunks: &Chunks, camera_z: i32, gbuffer: &GBuffer, mode: &RunState) {
         let dl = RENDER_CONTEXT.read();
         let ctx = dl.as_ref().unwrap();
         let tlock = TEXTURES.read();
@@ -199,18 +199,31 @@ impl TerrainPass {
             rpass.set_bind_group(1, &self.palette_bind_group, &[]);
             rpass.set_bind_group(2, &self.terrain_textures.bind_group, &[]);
 
-            for chunk in chunks.visible_chunks() {
-                let buffer = chunk.maybe_render_chunk_floors(camera_z);
-                if let Some(buffer) = buffer {
-                    rpass.set_vertex_buffer(0, buffer.0.slice());
-                    rpass.draw(0..buffer.1, 0..1);
+            match mode {
+                RunState::Design { .. }
+                => {
+                    for chunk in chunks.visible_chunks() {
+                        let buffer = chunk.maybe_render_chunk_design(camera_z);
+                        if let Some((buffer, start, end)) = buffer {
+                            rpass.set_vertex_buffer(0, buffer.slice());
+                            rpass.draw(start..end, 0..1);
+                        }
+                    }
                 }
-            }
-            for chunk in chunks.visible_chunks() {
-                let buffer = chunk.maybe_render_chunk(camera_z);
-                if let Some(buffer) = buffer {
-                    rpass.set_vertex_buffer(0, buffer.0.slice());
-                    rpass.draw(0..buffer.1, 0..1);
+                _ => {
+                    for chunk in chunks.visible_chunks() {
+                        let buffer = chunk.maybe_render_chunk_floors(camera_z);
+                        if let Some(buffer) = buffer {
+                            rpass.set_vertex_buffer(0, buffer.0.slice());
+                            rpass.draw(0..buffer.1, 0..1);
+                        }
+
+                        let buffer = chunk.maybe_render_chunk(camera_z);
+                        if let Some(buffer) = buffer {
+                            rpass.set_vertex_buffer(0, buffer.0.slice());
+                            rpass.draw(0..buffer.1, 0..1);
+                        }
+                    }
                 }
             }
         }

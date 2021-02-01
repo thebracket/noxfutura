@@ -41,8 +41,31 @@ pub fn set_flags(region: &mut Region) {
                 let mut can_stand = false;
                 if !region.flag(idx, Region::SOLID) {
                     match region.tile_types[idx] {
-                        TileType::Floor { .. } | TileType::Stairs { .. } => {
+                        TileType::Floor { .. } => {
                             can_stand = true;
+                        }
+                        TileType::Stairs { direction: StairsType::Up } => {
+                            can_stand = true;
+                            let up = mapidx(x, y, z + 1);
+                            if region.tile_types[up] == TileType::Empty { region.set_flag(up, Region::CAN_STAND_HERE); }
+                        }
+                        TileType::Stairs { direction: StairsType::Down } => {
+                            can_stand = true;
+                            let down = mapidx(x, y, z - 1);
+                            if region.tile_types[down] == TileType::Empty { region.set_flag(down, Region::CAN_STAND_HERE); }
+                        }
+                        TileType::Stairs { direction: StairsType::UpDown } => {
+                            can_stand = true;
+                            let down = mapidx(x, y, z - 1);
+                            if region.tile_types[down] == TileType::Empty { region.set_flag(down, Region::CAN_STAND_HERE); }
+                            let up = mapidx(x, y, z + 1);
+                            if region.tile_types[up] == TileType::Empty { region.set_flag(up, Region::CAN_STAND_HERE); }
+                        }
+                        TileType::Empty => {
+                            let down = mapidx(x, y, z - 1);
+                            if region.tile_types[down] == TileType::Solid {
+                                can_stand = true;
+                            }
                         }
                         TileType::Ramp { .. } => {
                             can_stand = true;

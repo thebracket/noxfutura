@@ -23,8 +23,36 @@ pub fn construction_map(ecs: &SubWorld, #[resource] map: &mut ConstructionMap) {
     <(&Construction, &Position)>::query()
         .filter(!component::<Blueprint>())
         .iter(ecs)
-        .for_each(|(_, pos)| {
-            add_horizontally_adjacent_exists(&pos.get_idx(), &mut starts, &rlock);
+        .for_each(|(c, pos)| {
+            let idx = pos.get_idx();
+            match c.mode {
+                1 => {
+                    add_horizontally_adjacent_exists(&idx, &mut starts, &rlock);
+                    let above = idx + (REGION_WIDTH * REGION_HEIGHT);
+                    if rlock.flag(above, Region::CAN_STAND_HERE) {
+                        starts.push(above);
+                    }
+                }
+                2 => {
+                    add_horizontally_adjacent_exists(&idx, &mut starts, &rlock);
+                    let below = idx - (REGION_WIDTH * REGION_HEIGHT);
+                    if rlock.flag(below, Region::CAN_STAND_HERE) {
+                        starts.push(below);
+                    }
+                }
+                3 => {
+                    add_horizontally_adjacent_exists(&idx, &mut starts, &rlock);
+                    let above = idx + (REGION_WIDTH * REGION_HEIGHT);
+                    if rlock.flag(above, Region::CAN_STAND_HERE) {
+                        starts.push(above);
+                    }
+                    let below = idx - (REGION_WIDTH * REGION_HEIGHT);
+                    if rlock.flag(below, Region::CAN_STAND_HERE) {
+                        starts.push(below);
+                    }
+                }
+                _ => add_horizontally_adjacent_exists(&idx, &mut starts, &rlock)
+            }
         });
 
     // Build the Dijkstra Map
