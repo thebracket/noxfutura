@@ -5,6 +5,8 @@ authors = ["Herbert Wolverson <herberticus@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+bracket-lib = { version = "0.8" }
+nox-api = { path = "nox-api/" }
 
 [profile.dev]
 opt-level = 1
@@ -14,4 +16,4 @@ opt-level = 1
 #debug = true # Disable when not profiling
 
 [workspace]
-members = []
+members = [ "nox-api" ]
