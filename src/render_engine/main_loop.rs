@@ -61,10 +61,11 @@ pub fn run() {
 
     // Pre-Initialize game modes
     load_minimal_2d();
-    let mut game_modes: [Box<dyn GameMode>; 3] = [
+    let mut game_modes: [Box<dyn GameMode>; 4] = [
         Box::new(crate::display::Loader::new()),
         Box::new(crate::display::MainMenu::new()),
         Box::new(crate::display::WorldGen::new()),
+        Box::new(crate::display::PlanetBuilder::new()),
     ];
 
     for gm in game_modes.iter_mut() {
@@ -157,6 +158,11 @@ pub fn run() {
                         game_modes[current_mode].deactivate();
                         game_modes[2].activate();
                         current_mode = 2;
+                    }
+                    TickResult::MakePlanet => {
+                        game_modes[current_mode].deactivate();
+                        game_modes[3].activate();
+                        current_mode = 3;
                     }
                     TickResult::Quit => {
                         *control_flow = ControlFlow::Exit;

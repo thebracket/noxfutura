@@ -18,6 +18,7 @@ shaderc = "0.7.2"
 bytemuck = "1.5"
 image = "0.23"
 bracket-random = "0.8"
+bracket-noise = "0.8"
 
 [profile.dev]
 opt-level = 1

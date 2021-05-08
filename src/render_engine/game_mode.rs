@@ -4,6 +4,7 @@ pub enum TickResult {
     Continue,
     MainMenu,
     WorldGen,
+    MakePlanet,
     Quit,
 }
 

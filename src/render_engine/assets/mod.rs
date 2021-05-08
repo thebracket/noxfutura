@@ -104,4 +104,5 @@ pub fn load_minimal_2d() {
         ],
     );
     asset_lock.add_texture_from_file("background_logo", "resources/img/background_image.png");
+    asset_lock.add_texture_from_file("nebula", "resources/img/nebula.png");
 }
