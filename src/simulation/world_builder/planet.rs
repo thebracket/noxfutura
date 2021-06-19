@@ -1,10 +1,10 @@
 use crate::types::{Degrees, Radians};
 
-const WORLD_WIDTH : usize = 256;
+const WORLD_WIDTH: usize = 256;
 const WORLD_HEIGHT: usize = 256;
 
 pub struct Planet {
-    bounds: PlanetBounds
+    bounds: PlanetBounds,
 }
 
 impl Planet {
@@ -35,7 +35,7 @@ pub struct PlanetBounds {
     pub west: Degrees,
     pub east: Degrees,
     pub north: Degrees,
-    pub south: Degrees
+    pub south: Degrees,
 }
 
 impl PlanetBounds {
@@ -49,24 +49,33 @@ impl PlanetBounds {
     }
 
     pub fn partial_world(north: Degrees, south: Degrees, east: Degrees, west: Degrees) -> Self {
-        Self { north, south, east, west }
+        Self {
+            north,
+            south,
+            east,
+            west,
+        }
     }
 }
 
 pub fn average_temperature_by_latitude(lat: Degrees) -> f32 {
     // Source: https://davidwaltham.com/global-warming-model/
-    const AVERAGE_EQUATORIAL_C : f32 = 30.0;
-    const A : f32 = 5.0; // Based on current data
-    let lat_rad : Radians = lat.into();
+    const AVERAGE_EQUATORIAL_C: f32 = 30.0;
+    const A: f32 = 5.0; // Based on current data
+    let lat_rad: Radians = lat.into();
     let lat_sin_squared = lat_rad.0.sin() * lat_rad.0.sin();
     AVERAGE_EQUATORIAL_C - (A * lat_sin_squared)
 }
 
 pub fn average_precipitation_mm_by_latitude(lat: Degrees) -> f32 {
     // Mangled from https://i.stack.imgur.com/YBgot.png
-    const PEAK : f32 = 2000.0;
-    let fudge = if (lat.0 > -50.0 && lat.0 < -5.0) || (lat.0 < 50.0 && lat.0 > 5.0) { 400.0 } else { 0.0 };
-    let lat_rad : Radians = lat.into();
+    const PEAK: f32 = 2000.0;
+    let fudge = if (lat.0 > -50.0 && lat.0 < -5.0) || (lat.0 < 50.0 && lat.0 > 5.0) {
+        400.0
+    } else {
+        0.0
+    };
+    let lat_rad: Radians = lat.into();
     let lat_sin_squared = lat_rad.0.sin() * lat_rad.0.sin();
     PEAK - (lat_sin_squared * PEAK) - fudge
 }

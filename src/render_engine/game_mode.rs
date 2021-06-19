@@ -1,4 +1,5 @@
 use egui::CtxRef;
+use winit::dpi::PhysicalSize;
 
 pub enum TickResult {
     Continue,
@@ -15,6 +16,13 @@ pub trait GameMode {
 
     fn init(&mut self) {}
     fn activate(&mut self) {}
-    fn tick(&mut self, _egui: &CtxRef, _swap_chain_texture: &wgpu::SwapChainTexture) -> TickResult { TickResult::Continue }
+    fn tick(
+        &mut self,
+        _size: PhysicalSize<u32>,
+        _egui: &CtxRef,
+        _swap_chain_texture: &wgpu::SwapChainTexture,
+    ) -> TickResult {
+        TickResult::Continue
+    }
     fn deactivate(&mut self) {}
 }

@@ -1,6 +1,6 @@
-use std::thread;
 use lazy_static::*;
 use parking_lot::RwLock;
+use std::thread;
 
 lazy_static! {
     pub static ref LOADER: RwLock<LoaderState> = RwLock::new(LoaderState::new());

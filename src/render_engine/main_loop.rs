@@ -1,4 +1,4 @@
-use super::{assets::load_minimal_2d, GameMode, OUTPUT_FORMAT, RENDER_CONTEXT, TickResult};
+use super::{assets::load_minimal_2d, GameMode, TickResult, OUTPUT_FORMAT, RENDER_CONTEXT};
 use egui::FontDefinitions;
 use egui_wgpu_backend::{RenderPass, ScreenDescriptor};
 use egui_winit_platform::{Platform, PlatformDescriptor};
@@ -104,7 +104,11 @@ pub fn run() {
                 platform.begin_frame();
 
                 // Game modes
-                let tick_result = game_modes[current_mode].tick(&platform.context(), &output_frame.output);
+                let tick_result = game_modes[current_mode].tick(
+                    window.inner_size(),
+                    &platform.context(),
+                    &output_frame.output,
+                );
 
                 // End the UI frame. We could now handle the output and draw the UI with the backend.
                 let (_output, paint_commands) = platform.end_frame();

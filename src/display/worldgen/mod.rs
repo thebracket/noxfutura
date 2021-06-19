@@ -1,5 +1,6 @@
+use crate::render_engine::{pipeline2d, render_nf_background, GameMode, TickResult};
 use egui::CtxRef;
-use crate::render_engine::{GameMode, TickResult, pipeline2d, render_nf_background};
+use winit::dpi::PhysicalSize;
 
 pub struct WorldGen {
     pipeline: Option<wgpu::RenderPipeline>,
@@ -16,7 +17,12 @@ impl GameMode for WorldGen {
         self.pipeline = Some(pipeline2d());
     }
 
-    fn tick(&mut self, egui: &CtxRef, swap_chain_texture: &wgpu::SwapChainTexture) -> TickResult {
+    fn tick(
+        &mut self,
+        _size: PhysicalSize<u32>,
+        egui: &CtxRef,
+        swap_chain_texture: &wgpu::SwapChainTexture,
+    ) -> TickResult {
         render_nf_background(&self.pipeline, swap_chain_texture);
 
         let mut result = TickResult::Continue;
@@ -28,8 +34,7 @@ impl GameMode for WorldGen {
                 if ui.button("Generate the World").clicked() {
                     result = TickResult::MakePlanet;
                 }
-            }
-        );
+            });
 
         result
     }

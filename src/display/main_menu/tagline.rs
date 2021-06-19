@@ -27,9 +27,7 @@ pub fn tagline() -> String {
 }
 
 fn get_descriptive_noun(rng: &mut RandomNumberGenerator) -> String {
-    rng.random_slice_entry(&NOUNS)
-        .unwrap()
-        .to_string()
+    rng.random_slice_entry(&NOUNS).unwrap().to_string()
 }
 
 const NOUNS: &'static [&'static str] = &[

@@ -1,7 +1,8 @@
-use crate::render_engine::{GameMode, TickResult, pipeline2d, render_nf_background};
+use crate::render_engine::{pipeline2d, render_nf_background, GameMode, TickResult};
 use egui::{Color32, CtxRef};
 mod tagline;
 use tagline::tagline;
+use winit::dpi::PhysicalSize;
 
 pub struct MainMenu {
     pipeline: Option<wgpu::RenderPipeline>,
@@ -10,7 +11,10 @@ pub struct MainMenu {
 
 impl MainMenu {
     pub fn new() -> Self {
-        Self { pipeline: None, tagline: tagline() }
+        Self {
+            pipeline: None,
+            tagline: tagline(),
+        }
     }
 }
 
@@ -19,7 +23,12 @@ impl GameMode for MainMenu {
         self.pipeline = Some(pipeline2d());
     }
 
-    fn tick(&mut self, egui: &CtxRef, swap_chain_texture: &wgpu::SwapChainTexture) -> TickResult {
+    fn tick(
+        &mut self,
+        _size: PhysicalSize<u32>,
+        egui: &CtxRef,
+        swap_chain_texture: &wgpu::SwapChainTexture,
+    ) -> TickResult {
         render_nf_background(&self.pipeline, swap_chain_texture);
 
         let mut result = TickResult::Continue;
@@ -29,8 +38,7 @@ impl GameMode for MainMenu {
             .auto_sized()
             .show(egui, |ui| {
                 ui.colored_label(Color32::from_rgb(255, 0, 0), self.tagline.clone());
-            }
-        );
+            });
 
         egui::Window::new("Nox Futura")
             .auto_sized()
@@ -42,8 +50,7 @@ impl GameMode for MainMenu {
                 if ui.button("Quit").clicked() {
                     result = TickResult::Quit;
                 }
-            }
-        );
+            });
 
         egui::Window::new("Dedication")
             .title_bar(false)
@@ -56,9 +63,12 @@ impl GameMode for MainMenu {
             .title_bar(false)
             .auto_sized()
             .show(egui, |ui| {
-                ui.colored_label(Color32::from_rgb(255, 255, 0), "(c) 2015-2020 Bracket Productions, All Rights Reserved.");
+                ui.colored_label(
+                    Color32::from_rgb(255, 255, 0),
+                    "(c) 2015-2020 Bracket Productions, All Rights Reserved.",
+                );
             });
 
-            result
+        result
     }
 }
