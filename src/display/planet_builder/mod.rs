@@ -28,7 +28,6 @@ impl GameMode for PlanetBuilder {
         let result = TickResult::Continue;
 
         egui::Window::new("World Generation Information")
-            .auto_sized()
             .show(egui, |ui| {
                 ui.label("Go here");
             });
