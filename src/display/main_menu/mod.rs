@@ -47,7 +47,7 @@ impl GameMode for MainMenu {
             .title_bar(false)
             .auto_sized()
             .resizable(false)
-            .fixed_pos(Pos2::new(center_x - (tag_width / 2.0), center_y - 210.0))
+            .fixed_pos(Pos2::new(center_x - (tag_width / 2.0), center_y + 150.0))
             .show(egui, |ui| {
                 ui.colored_label(Color32::from_rgb(255, 0, 0), self.tagline.clone());
             });
