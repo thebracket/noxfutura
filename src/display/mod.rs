@@ -5,5 +5,5 @@ pub mod worldgen;
 
 pub use loader::Loader;
 pub use main_menu::MainMenu;
-pub use planet_builder::PlanetBuilder;
+pub use planet_builder::*;
 pub use worldgen::WorldGen;

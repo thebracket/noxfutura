@@ -1,33 +1,36 @@
 use crate::types::{Degrees, Radians};
 
-const WORLD_WIDTH: usize = 256;
-const WORLD_HEIGHT: usize = 256;
+const WORLD_WIDTH: usize = 4096;
+const WORLD_HEIGHT: usize = 4096;
 
 pub struct Planet {
-    bounds: PlanetBounds,
+    pub bounds: PlanetBounds,
+    pub landblock_dimensions: (usize, usize),
+    pub noise_seed: u64,
 }
 
 impl Planet {
-    pub fn whole_world() -> Self {
+    pub fn whole_world(noise_seed: u64) -> Self {
         Self {
             bounds: PlanetBounds::whole_world(),
+            landblock_dimensions: (WORLD_WIDTH, WORLD_HEIGHT),
+            noise_seed,
         }
     }
 
-    pub fn partial_world(north: Degrees, south: Degrees, east: Degrees, west: Degrees) -> Self {
+    #[allow(dead_code)]
+    pub fn partial_world(
+        noise_seed: u64,
+        north: Degrees,
+        south: Degrees,
+        east: Degrees,
+        west: Degrees,
+    ) -> Self {
         Self {
             bounds: PlanetBounds::partial_world(north, south, east, west),
+            landblock_dimensions: (WORLD_WIDTH, WORLD_HEIGHT),
+            noise_seed,
         }
-    }
-
-    pub fn landblock_idx(&self, lat: Degrees, lon: Degrees) -> usize {
-        let lat_span = f32::abs(self.bounds.south.0 - self.bounds.north.0);
-        let lon_span = f32::abs(self.bounds.east.0 - self.bounds.west.0);
-        let y_extent = (lat.0 - f32::min(self.bounds.north.0, self.bounds.south.0)) / lat_span;
-        let x_extent = (lon.0 - f32::min(self.bounds.west.0, self.bounds.east.0)) / lon_span;
-        let y = y_extent as usize * WORLD_HEIGHT;
-        let x = x_extent as usize * WORLD_WIDTH;
-        (y * WORLD_WIDTH) + x
     }
 }
 
@@ -58,6 +61,7 @@ impl PlanetBounds {
     }
 }
 
+#[allow(dead_code)]
 pub fn average_temperature_by_latitude(lat: Degrees) -> f32 {
     // Source: https://davidwaltham.com/global-warming-model/
     const AVERAGE_EQUATORIAL_C: f32 = 30.0;
@@ -67,6 +71,7 @@ pub fn average_temperature_by_latitude(lat: Degrees) -> f32 {
     AVERAGE_EQUATORIAL_C - (A * lat_sin_squared)
 }
 
+#[allow(dead_code)]
 pub fn average_precipitation_mm_by_latitude(lat: Degrees) -> f32 {
     // Mangled from https://i.stack.imgur.com/YBgot.png
     const PEAK: f32 = 2000.0;
@@ -80,6 +85,7 @@ pub fn average_precipitation_mm_by_latitude(lat: Degrees) -> f32 {
     PEAK - (lat_sin_squared * PEAK) - fudge
 }
 
+#[allow(dead_code)]
 pub fn temperature_decrease_by_altitude(altitude_meters: f32) -> f32 {
     altitude_meters * 6.5
 }

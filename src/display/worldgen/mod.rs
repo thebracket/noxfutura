@@ -1,14 +1,20 @@
+use std::num::Wrapping;
 use crate::render_engine::{pipeline2d, render_nf_background, GameMode, TickResult};
 use egui::CtxRef;
 use winit::dpi::PhysicalSize;
 
+
 pub struct WorldGen {
     pipeline: Option<wgpu::RenderPipeline>,
+    seed: String,
 }
 
 impl WorldGen {
     pub fn new() -> Self {
-        Self { pipeline: None }
+        Self {
+            pipeline: None,
+            seed: "Initial Test Seed".to_string(),
+        }
     }
 }
 
@@ -30,9 +36,19 @@ impl GameMode for WorldGen {
         egui::Window::new("World Generation Parameters")
             .auto_sized()
             .show(egui, |ui| {
-                ui.label("Go here");
+                egui::Grid::new("wg_grid").show(ui, |ui| {
+                    ui.label("World Seed");
+                    ui.text_edit_singleline(&mut self.seed);
+                    ui.end_row();
+                });
+
                 if ui.button("Generate the World").clicked() {
-                    result = TickResult::MakePlanet;
+                    let mut seed = Wrapping::<u64>(0);
+                    self.seed.chars().for_each(|n| {
+                        seed += Wrapping(n as u64);
+                    });
+
+                    result = TickResult::MakePlanet { seed: seed.0 };
                 }
             });
 

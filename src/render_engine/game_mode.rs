@@ -5,7 +5,7 @@ pub enum TickResult {
     Continue,
     MainMenu,
     WorldGen,
-    MakePlanet,
+    MakePlanet { seed: u64 },
     Quit,
 }
 
@@ -25,4 +25,5 @@ pub trait GameMode {
         TickResult::Continue
     }
     fn deactivate(&mut self) {}
+    fn world_gen_params(&mut self, _seed: u64) {}
 }

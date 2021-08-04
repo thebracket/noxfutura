@@ -19,6 +19,7 @@ bytemuck = "1.5"
 image = "0.23"
 bracket-random = "0.8"
 bracket-noise = "0.8"
+rayon = "1.5"
 
 [profile.dev]
 opt-level = 1

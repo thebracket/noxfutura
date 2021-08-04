@@ -1239,6 +1239,7 @@ dependencies = [
  "image",
  "lazy_static",
  "parking_lot",
+ "rayon",
  "shaderc",
  "wgpu",
  "winit",

@@ -163,8 +163,9 @@ pub fn run() {
                         game_modes[2].activate();
                         current_mode = 2;
                     }
-                    TickResult::MakePlanet => {
+                    TickResult::MakePlanet { seed } => {
                         game_modes[current_mode].deactivate();
+                        game_modes[3].world_gen_params(seed);
                         game_modes[3].activate();
                         current_mode = 3;
                     }

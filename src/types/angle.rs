@@ -15,6 +15,7 @@ impl Degrees {
 }
 
 impl Radians {
+    #[allow(dead_code)]
     pub fn new(angle: f32) -> Self {
         Self(angle)
     }
