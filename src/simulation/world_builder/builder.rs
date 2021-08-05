@@ -1,8 +1,13 @@
 use super::water_particle::WaterParticle;
 use crate::display::{PlanetBuilder, WORLD_GEN_DISPLAY, WORLD_GEN_STATUS};
+use crate::simulation::world_builder::planet::{
+    average_precipitation_mm_by_latitude, average_temperature_by_latitude,
+    temperature_decrease_by_altitude, Planet,
+};
 use crate::simulation::{WORLD_HEIGHT, WORLD_WIDTH};
-use crate::simulation::world_builder::planet::Planet;
+use crate::types::Degrees;
 use bracket_noise::prelude::*;
+use parking_lot::Mutex;
 use rayon::iter::{IndexedParallelIterator, IntoParallelRefMutIterator};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
@@ -47,7 +52,7 @@ impl WorldBuilder {
         (
             altitude * f32::cos(lat) * f32::cos(lon),
             altitude * f32::cos(lat) * f32::sin(lon),
-            altitude * f32::sin(lat)
+            altitude * f32::sin(lat),
         )
     }
 
@@ -63,12 +68,12 @@ impl WorldBuilder {
 
                 let x_extent = x as f32 / WORLD_WIDTH as f32;
                 let y_extent = y as f32 / WORLD_HEIGHT as f32;
-                let lat = ((180.0 * x_extent) - 90.0)  * 0.017_453_3;
-                let lon = ((360.0 * y_extent) - 180.0)  * 0.017_453_3;
+                let lat = ((180.0 * x_extent) - 90.0) * 0.017_453_3;
+                let lon = ((360.0 * y_extent) - 180.0) * 0.017_453_3;
                 let coords = self.sphere_vertex(100.0, lat, lon);
 
                 let height = noise.get_noise3d(coords.0, coords.1, coords.2);
-                let height_i = (height * 20_000.0) as i16;
+                let height_i = (height * 9500.0) as i16;
                 *h = height_i;
             });
 
@@ -76,35 +81,53 @@ impl WorldBuilder {
     }
 
     fn erode(&self, base_map: &mut [i16], min_altitude: &mut [i16]) {
-        for i in 0..2 {
-            *WORLD_GEN_STATUS.lock() = format!("Just Add Water: {}%", (i+1)*50);
-            let max_altitude = base_map.iter().max().unwrap();
-            let mut water_particles: Vec<WaterParticle> = base_map
-                .par_iter()
-                .enumerate()
-                .filter_map(|(idx, height)| if *height > max_altitude/4 { Some(idx) } else { None })
-                .map(|idx| WaterParticle::new(idx))
-                .collect();
-
-            while !water_particles.is_empty() {
-                water_particles.par_iter_mut().for_each(|p| {
-                    p.flow(base_map);
-                });
-
-                // Do some erosion here
-                water_particles.iter().filter(|p| p.done).for_each(|p| {
-                    for pidx in 0..p.history.len()-1 {
-                        let idx = p.history[pidx];
-                        if min_altitude[idx] < base_map[idx] {
-                            base_map[idx] -= 1;
-                        }
+        *WORLD_GEN_STATUS.lock() = format!("Raining on Everyone's Parade");
+        let mut water_particles: Vec<WaterParticle> = base_map
+            .par_iter()
+            .enumerate()
+            .filter_map(|(idx, height)| {
+                if *height > 4000 {
+                    let y = idx / WORLD_WIDTH;
+                    let lat = Degrees::new(((y as f32 / WORLD_HEIGHT as f32) * 180.0) - 90.0);
+                    let precipitation = average_precipitation_mm_by_latitude(lat);
+                    let temperature = average_temperature_by_latitude(lat)
+                        - temperature_decrease_by_altitude(*height as f32);
+                    //println!("Lat: {}, Altitude: {}, Precipitation: {} mm, Temperature: {}c", lat.0, base_map[idx], precipitation, temperature);
+                    if precipitation > 1500.0 && temperature > 0.0 {
+                        Some(idx)
+                    } else {
+                        None
                     }
-                    // Deposition would go here
-                    self.send_base_map(base_map);
-                });
+                } else {
+                    None
+                }
+            })
+            .map(|idx| WaterParticle::new(idx))
+            .collect();
 
-                water_particles.retain(|p| !p.done);
-            }
+        while !water_particles.is_empty() {
+            water_particles.par_iter_mut().for_each(|p| {
+                p.flow(base_map);
+            });
+
+            // Do some erosion here
+            let changes = Mutex::new(Vec::<(usize, i16)>::new());
+            water_particles.par_iter().filter(|p| p.done).for_each(|p| {
+                for pidx in 0..p.history.len() - 1 {
+                    let idx = p.history[pidx];
+                    if min_altitude[idx] < base_map[idx] {
+                        changes.lock().push((idx, -1));
+                    }
+                }
+                // Deposition would go here
+            });
+            changes
+                .lock()
+                .iter()
+                .for_each(|(idx, change)| base_map[*idx] += *change);
+            self.send_base_map(base_map);
+
+            water_particles.retain(|p| !p.done);
         }
     }
 
@@ -124,7 +147,7 @@ impl WorldBuilder {
                 } else {
                     (h as f32 * (255.0 / max_altitude)) as u8
                 };
-                wg_lock.base_altitude[(y * 256)+x] = altitude;
+                wg_lock.base_altitude[(y * 256) + x] = altitude;
             }
         }
         wg_lock.dirty = true;

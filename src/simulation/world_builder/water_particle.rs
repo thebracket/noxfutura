@@ -30,7 +30,7 @@ impl WaterParticle {
         let x = self.idx % WORLD_WIDTH;
         let y = self.idx / WORLD_HEIGHT;
 
-        if x > 0 && x < WORLD_WIDTH-1 && y > 0 && y < WORLD_HEIGHT-1 {
+        if x > 0 && x < WORLD_WIDTH - 1 && y > 0 && y < WORLD_HEIGHT - 1 {
             // Cardinals
             self.candidate(base_map, &mut candidates, self.idx - 1);
             self.candidate(base_map, &mut candidates, self.idx + 1);

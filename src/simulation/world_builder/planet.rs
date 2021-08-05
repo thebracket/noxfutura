@@ -1,7 +1,7 @@
 use crate::types::{Degrees, Radians};
 
-pub const WORLD_WIDTH: usize = 2048;
-pub const WORLD_HEIGHT: usize = 2048;
+pub const WORLD_WIDTH: usize = 4096;
+pub const WORLD_HEIGHT: usize = 4096;
 
 pub struct Planet {
     pub bounds: PlanetBounds,
@@ -87,5 +87,5 @@ pub fn average_precipitation_mm_by_latitude(lat: Degrees) -> f32 {
 
 #[allow(dead_code)]
 pub fn temperature_decrease_by_altitude(altitude_meters: f32) -> f32 {
-    altitude_meters * 6.5
+    (altitude_meters / 1000.0) * 6.5
 }
