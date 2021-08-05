@@ -1,4 +1,4 @@
-use super::{WORLD_HEIGHT, WORLD_WIDTH};
+use super::super::{WORLD_HEIGHT, WORLD_WIDTH};
 
 pub struct WaterParticle {
     pub idx: usize,
