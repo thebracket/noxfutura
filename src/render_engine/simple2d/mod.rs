@@ -142,3 +142,46 @@ pub fn render_nebula_background(
     }
     gpu.queue.submit(Some(encoder.finish()));
 }
+
+pub fn render_fullscreen_texture(
+    pipeline: &Option<RenderPipeline>,
+    swap_chain_texture: &wgpu::SwapChainTexture,
+    tex_handle: &crate::render_engine::Texture,
+) {
+    let assets = ASSETS.read();
+    let buffer_handle = assets.buffer_handle("background_quad");
+
+    let mut gpu_lock = RENDER_CONTEXT.write();
+    let gpu = gpu_lock.as_mut().unwrap();
+
+    let mut encoder = gpu
+        .device
+        .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+            label: Some("encoder"),
+        });
+
+    {
+        let mut rp = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("LoaderRenderPass"),
+            color_attachments: &[wgpu::RenderPassColorAttachment {
+                view: &swap_chain_texture.view,
+                resolve_target: None,
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(wgpu::Color {
+                        r: 0.0,
+                        g: 0.0,
+                        b: 0.0,
+                        a: 1.0,
+                    }),
+                    store: true,
+                },
+            }],
+            depth_stencil_attachment: None,
+        });
+        rp.set_pipeline(pipeline.as_ref().unwrap());
+        rp.set_vertex_buffer(0, assets.vertex_buffers[buffer_handle].buffer.slice(..));
+        rp.set_bind_group(0, &tex_handle.bind_group, &[]);
+        rp.draw(0..6, 0..1);
+    }
+    gpu.queue.submit(Some(encoder.finish()));
+}

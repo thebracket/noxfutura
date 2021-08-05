@@ -1,7 +1,7 @@
 use crate::types::{Degrees, Radians};
 
-const WORLD_WIDTH: usize = 4096;
-const WORLD_HEIGHT: usize = 4096;
+pub const WORLD_WIDTH: usize = 2048;
+pub const WORLD_HEIGHT: usize = 2048;
 
 pub struct Planet {
     pub bounds: PlanetBounds,

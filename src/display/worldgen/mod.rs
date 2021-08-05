@@ -1,8 +1,7 @@
-use std::num::Wrapping;
 use crate::render_engine::{pipeline2d, render_nf_background, GameMode, TickResult};
 use egui::CtxRef;
+use std::num::Wrapping;
 use winit::dpi::PhysicalSize;
-
 
 pub struct WorldGen {
     pipeline: Option<wgpu::RenderPipeline>,

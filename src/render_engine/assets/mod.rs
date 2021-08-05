@@ -106,3 +106,7 @@ pub fn load_minimal_2d() {
     asset_lock.add_texture_from_file("background_logo", "resources/img/background_image.png");
     asset_lock.add_texture_from_file("nebula", "resources/img/nebula.png");
 }
+
+pub fn memory_texture(name: String, width: u32, height: u32, image_rgba: &[u8]) -> Texture {
+    Texture::from_rgba(name, width, height, image_rgba)
+}
