@@ -1,7 +1,10 @@
 use crate::display::{WORLD_GEN_DISPLAY, WORLD_GEN_STATUS};
 
+use crate::simulation::world_builder::planet::{average_temperature_by_latitude, temperature_decrease_by_altitude};
 use crate::simulation::{WORLD_HEIGHT, WORLD_WIDTH};
+use crate::types::Degrees;
 use bracket_noise::prelude::*;
+use bracket_random::prelude::RandomNumberGenerator;
 use rayon::iter::{IndexedParallelIterator, IntoParallelRefMutIterator};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
@@ -15,20 +18,51 @@ impl WorldBuilder {
     }
 
     pub fn go(&mut self) {
+        let mut rng = RandomNumberGenerator::seeded(self.seed+1);
         *WORLD_GEN_STATUS.lock() = format!("Dividing the Heavens and Earth");
         let noise = self.build_noise();
         //let planet = Planet::whole_world(self.seed);
-
         let mut altitude_map = self.build_base_altitude(&noise);
+        self.send_base_map(&altitude_map);
+
+
+        *WORLD_GEN_STATUS.lock() = format!("Annoying Vulkan");
+        let n_volcanoes = rng.range(20, usize::max(40, WORLD_WIDTH/10));
+        // TODO: Store volcano location
+        for _ in 0..n_volcanoes {
+            let x = rng.range(10, WORLD_WIDTH-10);
+            let y = rng.range(10, WORLD_WIDTH-10);
+
+            let vh = i16::max(0,altitude_map[(y*WORLD_WIDTH)+x]) + 1000;
+
+            for vy in (y-4) ..= 4+y {
+                for vx in (x-4) ..= 4+x {
+                    altitude_map[(vy * WORLD_WIDTH) + vx] = vh;
+                }
+            }
+            self.send_base_map(&altitude_map);
+        }
+
         *WORLD_GEN_STATUS.lock() = format!("Raining on Everyone's Parade");
         let mut min_altitude: Vec<i16> = altitude_map
             .par_iter()
             .map(|h| if *h > 0 { h / 2 } else { *h })
             .collect();
         super::erosion::erode(&mut altitude_map, &mut min_altitude);
-        std::mem::drop(min_altitude);
         self.send_base_map(&altitude_map);
-        *WORLD_GEN_STATUS.lock() = format!("It's Grim Up North");
+
+        *WORLD_GEN_STATUS.lock() = format!("Frost-Shattering");
+        altitude_map.iter_mut().enumerate().for_each(|(idx, height)| {
+            let y = idx / WORLD_WIDTH;
+            let lat = Degrees::new(((y as f32 / WORLD_HEIGHT as f32) * 180.0) - 90.0);
+            let temperature = average_temperature_by_latitude(lat)
+                - temperature_decrease_by_altitude(*height as f32);
+            if *height>5 && temperature > -10.0 && temperature < 10.0 && rng.range(0, 6)<4 {
+                *height -= 3;
+            }
+        });
+        self.send_base_map(&altitude_map);
+
         println!("Done");
     }
 
