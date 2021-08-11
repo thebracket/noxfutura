@@ -28,20 +28,17 @@ fn main() {
         .add_startup_system(setup_main_menu.system())
         .add_system(fps_update_system.system())
         // Main Menu State
+        .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(main_menu.system()))
         .add_system_set(
-            SystemSet::on_update(AppState::MainMenu).with_system(main_menu.system())
-        )
-        .add_system_set(
-            SystemSet::on_enter(AppState::MainMenu).with_system(resume_main_menu.system())
+            SystemSet::on_enter(AppState::MainMenu).with_system(resume_main_menu.system()),
         )
         // World-gen Menu
         .add_system_set(
-            SystemSet::on_update(AppState::WorldGenMenu).with_system(world_gen_menu.system())
+            SystemSet::on_update(AppState::WorldGenMenu).with_system(world_gen_menu.system()),
         )
         .add_system_set(
-            SystemSet::on_enter(AppState::WorldGenMenu).with_system(resume_world_gen_menu.system())
+            SystemSet::on_enter(AppState::WorldGenMenu).with_system(resume_world_gen_menu.system()),
         )
-
         // Start
         .run();
 }

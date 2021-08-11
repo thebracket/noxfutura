@@ -1,9 +1,12 @@
 use bevy::prelude::*;
-use bevy_egui::{EguiContext, egui::{self, Pos2}};
+use bevy_egui::{
+    egui::{self, Pos2},
+    EguiContext,
+};
 
 use crate::AppState;
 
-use super::{BackgroundImage, UiResources};
+use super::BackgroundImage;
 
 pub fn world_gen_menu(egui_context: ResMut<EguiContext>, mut state: ResMut<State<AppState>>) {
     egui::Window::new("Hello")
@@ -17,9 +20,7 @@ pub fn world_gen_menu(egui_context: ResMut<EguiContext>, mut state: ResMut<State
         });
 }
 
-pub fn resume_world_gen_menu(
-    mut query: Query<(&mut TextureAtlasSprite, &BackgroundImage)>,
-) {
+pub fn resume_world_gen_menu(mut query: Query<(&mut TextureAtlasSprite, &BackgroundImage)>) {
     println!("Resume WG");
     for (mut sprite, _) in query.iter_mut() {
         //sb.material = images.nox_image.clone();

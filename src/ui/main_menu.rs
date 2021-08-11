@@ -7,10 +7,10 @@ use bracket_random::prelude::RandomNumberGenerator;
 
 use crate::AppState;
 
-use super::{BackgroundImage, UiResources};
+use super::BackgroundImage;
 
-pub struct MainMenuState{
-    tagline: String
+pub struct MainMenuState {
+    tagline: String,
 }
 
 pub fn main_menu(
@@ -56,9 +56,7 @@ pub fn main_menu(
         });
 }
 
-pub fn resume_main_menu(
-    mut query: Query<(&mut TextureAtlasSprite, &BackgroundImage)>,
-) {
+pub fn resume_main_menu(mut query: Query<(&mut TextureAtlasSprite, &BackgroundImage)>) {
     println!("Resume main menu");
     println!("Resume WG");
     for (mut sprite, _) in query.iter_mut() {
@@ -67,12 +65,8 @@ pub fn resume_main_menu(
     }
 }
 
-pub fn setup_main_menu(
-    mut commands: Commands,
-) {
-    commands.insert_resource(MainMenuState{
-        tagline: tagline()
-    });
+pub fn setup_main_menu(mut commands: Commands) {
+    commands.insert_resource(MainMenuState { tagline: tagline() });
 }
 
 fn tagline() -> String {

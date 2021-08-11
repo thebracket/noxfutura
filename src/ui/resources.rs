@@ -15,11 +15,9 @@ pub fn setup_ui(
     let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(1280.0, 1024.0), 2, 1);
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
-    commands.insert_resource(
-        UiResources{
-            backgrounds: texture_atlas_handle.clone(),
-        }
-    );
+    commands.insert_resource(UiResources {
+        backgrounds: texture_atlas_handle.clone(),
+    });
 
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands
