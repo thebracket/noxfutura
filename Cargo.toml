@@ -6,5 +6,7 @@ edition = "2018"
 
 [dependencies]
 bevy = "0.5"
+# This never works for me!
+#bevy = { version = "0.5.0", features = ["dynamic"] }
 bevy_egui = "0.6"
 bracket-random = "0.8"

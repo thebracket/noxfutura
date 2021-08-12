@@ -21,7 +21,6 @@ pub fn world_gen_menu(egui_context: ResMut<EguiContext>, mut state: ResMut<State
 }
 
 pub fn resume_world_gen_menu(mut query: Query<(&mut TextureAtlasSprite, &BackgroundImage)>) {
-    println!("Resume WG");
     for (mut sprite, _) in query.iter_mut() {
         //sb.material = images.nox_image.clone();
         sprite.index = 1;
