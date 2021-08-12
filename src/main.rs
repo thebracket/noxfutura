@@ -1,12 +1,15 @@
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_egui::EguiPlugin;
+use bevy_tilemap::prelude::*;
 mod ui;
 use ui::*;
+mod simulation;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum AppState {
     MainMenu,
     WorldGenMenu,
+    BuildingPlanet,
 }
 
 fn main() {
@@ -23,6 +26,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(EguiPlugin)
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
+        .add_plugins(TilemapDefaultPlugins)
         .add_startup_system(setup_fps.system())
         .add_startup_system(setup_ui.system())
         .add_startup_system(setup_main_menu.system())
@@ -38,6 +42,17 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_enter(AppState::WorldGenMenu).with_system(resume_world_gen_menu.system()),
+        )
+        // Planet Builder Menu
+        .add_system_set(
+            SystemSet::on_update(AppState::BuildingPlanet).with_system(construct_planet_builder_menu.system()),
+        )
+        .add_system_set(
+            SystemSet::on_update(AppState::BuildingPlanet).with_system(planet_builder_menu.system()),
+        )
+        .add_system_set(
+            SystemSet::on_enter(AppState::BuildingPlanet).with_system(resume_planet_builder_menu.system())
+            .label("PlanetBuilderResume")
         )
         // Start
         .run();

@@ -6,3 +6,5 @@ mod main_menu;
 pub use main_menu::*;
 mod worldgen_menu;
 pub use worldgen_menu::*;
+mod planet_builder;
+pub use planet_builder::*;

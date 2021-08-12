@@ -57,9 +57,7 @@ pub fn main_menu(
 }
 
 pub fn resume_main_menu(mut query: Query<(&mut TextureAtlasSprite, &BackgroundImage)>) {
-    println!("Resume WG");
     for (mut sprite, _) in query.iter_mut() {
-        //sb.material = images.nox_image.clone();
         sprite.index = 0;
     }
 }
