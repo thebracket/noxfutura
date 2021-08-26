@@ -1,2 +1,2 @@
 mod angle;
-pub use angle::{ Degrees, Radians };
+pub use angle::{Degrees, Radians};

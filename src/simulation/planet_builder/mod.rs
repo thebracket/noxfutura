@@ -1,18 +1,19 @@
 mod planet_3d;
-use bracket_noise::prelude::*;
-pub use planet_3d::PlanetMesh;
-use parking_lot::RwLock;
-use lazy_static::*;
 use bevy::prelude::*;
+use bracket_noise::prelude::*;
+use lazy_static::*;
+use parking_lot::RwLock;
+pub use planet_3d::PlanetMesh;
 
 lazy_static! {
-    static ref PLANET_GEN : RwLock<PlanetGen> = RwLock::new(PlanetGen::new());
+    static ref PLANET_GEN: RwLock<PlanetGen> = RwLock::new(PlanetGen::new());
 }
 
 pub enum PlanetBuilderStatus {
     Initializing,
     Flattening,
     Altitudes,
+    Dividing,
 }
 
 pub struct PlanetBuilder {
@@ -22,7 +23,7 @@ pub struct PlanetBuilder {
 
 impl PlanetBuilder {
     pub fn new() -> Self {
-        Self{
+        Self {
             started: false,
             globe_mesh_handle: None,
         }
@@ -33,6 +34,7 @@ impl PlanetBuilder {
             PlanetBuilderStatus::Initializing => String::from("Building a giant ball of mud"),
             PlanetBuilderStatus::Flattening => String::from("Smoothing out the corners"),
             PlanetBuilderStatus::Altitudes => String::from("Squishing out some topology"),
+            PlanetBuilderStatus::Dividing => String::from("Dividing the heaven and hearth"),
         }
     }
 
@@ -55,14 +57,14 @@ impl PlanetBuilder {
 }
 
 struct PlanetGen {
-    status : PlanetBuilderStatus,
+    status: PlanetBuilderStatus,
     globe_info: Option<PlanetMesh>,
 }
 
 impl PlanetGen {
     fn new() -> Self {
-        Self{
-            status : PlanetBuilderStatus::Initializing,
+        Self {
+            status: PlanetBuilderStatus::Initializing,
             globe_info: None,
         }
     }
@@ -74,12 +76,14 @@ fn update_status(new_status: PlanetBuilderStatus) {
 
 fn make_planet() {
     update_status(PlanetBuilderStatus::Initializing);
-    let mut planet = Planet{
+    let mut planet = Planet {
         rng_seed: 1,
-        noise_seed: 1,
+        noise_seed: 5,
         landblocks: Vec::new(),
+        water_height: 0,
+        plains_height: 0,
+        hills_height: 0,
     };
-
 
     update_status(PlanetBuilderStatus::Flattening);
     println!("Zero Fill");
@@ -98,7 +102,16 @@ fn make_planet() {
         bumpy_planet.with_altitude(&planet);
         PLANET_GEN.write().globe_info = Some(bumpy_planet);
     }
+
+    update_status(PlanetBuilderStatus::Dividing);
     println!("Type Allocation");
+    {
+        planet_type_allocation(&mut planet);
+        let mut bumpy_planet = PlanetMesh::new();
+        bumpy_planet.with_category(&planet);
+        PLANET_GEN.write().globe_info = Some(bumpy_planet);
+    }
+
     println!("Coastlines");
     println!("Rainfall");
     println!("Biomes");
@@ -109,6 +122,9 @@ pub struct Planet {
     pub rng_seed: u64,
     pub noise_seed: u64,
     pub landblocks: Vec<Landblock>,
+    pub water_height: u8,
+    pub plains_height: u8,
+    pub hills_height: u8,
 }
 
 pub struct Landblock {
@@ -120,6 +136,7 @@ pub struct Landblock {
     pub biome_idx: usize,
 }
 
+#[derive(Clone, Copy)]
 pub enum BlockType {
     None,
     Water,
@@ -140,7 +157,7 @@ use super::bounds::*;
 fn zero_fill(planet: &mut Planet) {
     for y in 0..WORLD_HEIGHT {
         for x in 0..WORLD_WIDTH {
-            planet.landblocks.push(Landblock{
+            planet.landblocks.push(Landblock {
                 height: 0,
                 variance: 0,
                 btype: BlockType::None,
@@ -157,8 +174,9 @@ fn noise_to_planet_height(n: f32) -> u8 {
 }
 
 fn planetary_noise(planet: &mut Planet) {
-    const SUB_SAMPLES : i32 = 4;
-    const SAMPLE_STEP : f32 = 1.0 / SUB_SAMPLES as f32;
+    const SAMPLE_DIVISOR: usize = 32;
+    const X_SAMPLES: usize = REGION_WIDTH as usize / SAMPLE_DIVISOR;
+    const Y_SAMPLES: usize = REGION_HEIGHT as usize / SAMPLE_DIVISOR;
 
     let mut noise = FastNoise::seeded(planet.noise_seed);
     noise.set_noise_type(NoiseType::SimplexFractal);
@@ -169,20 +187,18 @@ fn planetary_noise(planet: &mut Planet) {
     noise.set_frequency(0.01);
 
     for y in 0..WORLD_HEIGHT {
-        let base_lon = ((y as f32 / WORLD_HEIGHT as f32) * 360.0) - 180.0;
         for x in 0..WORLD_WIDTH {
-            let base_lat = ((x as f32 / WORLD_WIDTH as f32) * 180.0) - 90.0;
-
             let mut total_height = 0u32;
             let mut tile_count = 0u32;
             let mut max = 0;
             let mut min = std::u8::MAX;
-            for lon_step in 0..SUB_SAMPLES {
-                let lon = base_lon + (lon_step as f32 * SAMPLE_STEP);
-                for lat_step in 0..SUB_SAMPLES {
-                    let lat = base_lat + (lat_step as f32 * SAMPLE_STEP);
+            for y1 in 0..Y_SAMPLES {
+                let lat = noise_lat(y, y1 * SAMPLE_DIVISOR);
+                for x1 in 0..X_SAMPLES {
+                    let lon = noise_lon(x, x1 * SAMPLE_DIVISOR);
                     let sphere_coords = sphere_vertex(100.0, Degrees::new(lat), Degrees::new(lon));
-                    let noise_height = noise.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
+                    let noise_height =
+                        noise.get_noise3d(sphere_coords.0, sphere_coords.1, sphere_coords.2);
                     let n = noise_to_planet_height(noise_height);
                     if n < min {
                         min = n
@@ -200,8 +216,83 @@ fn planetary_noise(planet: &mut Planet) {
             planet.landblocks[pidx].variance = max - min;
         }
 
-        let mut bumpy_planet = PlanetMesh::new();
-        bumpy_planet.with_altitude(&planet);
-        PLANET_GEN.write().globe_info = Some(bumpy_planet);
+        if y % 8 == 0 {
+            let mut bumpy_planet = PlanetMesh::new();
+            bumpy_planet.with_altitude(&planet);
+            PLANET_GEN.write().globe_info = Some(bumpy_planet);
+        }
     }
+}
+
+fn planet_type_allocation(planet: &mut Planet) {
+    const WATER_DIVISOR: usize = 3;
+    const PLAINS_DIVISOR: usize = 3;
+    const REMAINING_DIVISOR: usize = 10 - (WATER_DIVISOR + PLAINS_DIVISOR);
+    let n_cells = WORLD_TILES_COUNT;
+    let n_cells_water = n_cells / WATER_DIVISOR;
+    let n_cells_plains = (n_cells / PLAINS_DIVISOR) + n_cells_water;
+    let n_cells_hills = (n_cells / REMAINING_DIVISOR) + n_cells_plains;
+
+    let mut candidate = 0;
+    planet.water_height = planet_determine_proportion(planet, &mut candidate, n_cells_water as i32);
+    planet.plains_height =
+        planet_determine_proportion(planet, &mut candidate, n_cells_plains as i32);
+    planet.hills_height = planet_determine_proportion(planet, &mut candidate, n_cells_hills as i32);
+
+    for i in 0..planet.landblocks.len() {
+        let mut block = &mut planet.landblocks[i];
+        if block.height <= planet.water_height {
+            block.btype = BlockType::Water;
+            block.rainfall = 10;
+
+            if block.height as u16 + block.variance as u16 / 2 > planet.water_height as u16 {
+                block.btype = BlockType::SaltMarsh;
+            }
+        } else if block.height <= planet.plains_height {
+            block.btype = BlockType::Plains;
+            block.rainfall = 10;
+            // TODO: Fix me
+            /*if block.height - block.variance / 3 > planet.water_height {
+                block.btype = BlockType::Marsh;
+                block.rainfall = 20;
+            }*/
+        } else if block.height <= planet.hills_height {
+            block.btype = BlockType::Hills;
+            block.rainfall = 20;
+            if block.variance < 2 {
+                block.btype = BlockType::Highlands;
+                block.rainfall = 10;
+            }
+        } else {
+            block.btype = BlockType::Mountains;
+            block.rainfall = 30;
+            if block.variance < 3 {
+                block.btype = BlockType::Plateau;
+                block.rainfall = 10;
+            }
+        }
+
+        if i % 500 == 0 {
+            let mut bumpy_planet = PlanetMesh::new();
+            bumpy_planet.with_category(&planet);
+            PLANET_GEN.write().globe_info = Some(bumpy_planet);
+        }
+    }
+}
+
+pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
+    let mut count = 0usize;
+    while count < target as usize {
+        count = planet
+            .landblocks
+            .iter()
+            .filter(|b| b.height <= *candidate as u8)
+            .count();
+        if count >= target as usize {
+            return *candidate as u8;
+        } else {
+            *candidate += 1;
+        }
+    }
+    0
 }

@@ -1,10 +1,12 @@
-use bevy::math::Vec3;
+use super::BlockType;
+use crate::{
+    geometry::{Degrees, Radians},
+    simulation::*,
+};
 
-use crate::{geometry::{Degrees, Radians}, simulation::*};
-
-const LAT_STEP: f32 = 10.0;
-const LON_STEP: f32 = 10.0;
-
+const LAT_STEP: f32 = 1.0;
+const LON_STEP: f32 = 1.0;
+const TEX_WIDTH: f32 = 0.0625;
 
 pub fn sphere_vertex<A: Into<Radians>>(altitude: f32, lat: A, lon: A) -> (f32, f32, f32) {
     let rlat = lat.into();
@@ -28,11 +30,30 @@ pub struct PlanetMesh {
 
 impl PlanetMesh {
     pub fn new() -> Self {
-        const CAPACITY : usize = ((360.0 / LON_STEP) * (180.0 / LAT_STEP)) as usize;
-        PlanetMesh{
+        const CAPACITY: usize = ((360.0 / LON_STEP) * (180.0 / LAT_STEP)) as usize;
+        PlanetMesh {
             vertices: Vec::with_capacity(CAPACITY),
             normals: Vec::with_capacity(CAPACITY),
             uv: Vec::with_capacity(CAPACITY),
+        }
+    }
+
+    fn tex_idx(&self, n: f32) -> (f32, f32) {
+        (n * TEX_WIDTH, (n + 1.0) * TEX_WIDTH)
+    }
+
+    fn get_texture_coords(&self, block_type: BlockType) -> (f32, f32) {
+        match block_type {
+            BlockType::Coastal => self.tex_idx(8.0),
+            BlockType::Highlands => self.tex_idx(2.0),
+            BlockType::Hills => self.tex_idx(5.0),
+            BlockType::Marsh => self.tex_idx(8.0),
+            BlockType::Mountains => self.tex_idx(4.0),
+            BlockType::Plains => self.tex_idx(1.0),
+            BlockType::Plateau => self.tex_idx(7.0),
+            BlockType::SaltMarsh => self.tex_idx(6.0),
+            BlockType::Water => self.tex_idx(0.0),
+            BlockType::None => self.tex_idx(8.0),
         }
     }
 
@@ -46,28 +67,59 @@ impl PlanetMesh {
     }
 
     fn push_flat_quad(&mut self, lat: f32, lon: f32, altitude: f32) {
-        self.push_point(lat, lon, 0.0, 0.0, altitude);
-        self.push_point(lat, lon + LON_STEP, 0.0, 0.5, altitude);
-        self.push_point(lat + LAT_STEP, lon, 0.5, 0.0, altitude);
+        let (tx_min, tx_max) = self.get_texture_coords(BlockType::None);
 
-        self.push_point(lat, lon + LON_STEP, 0.0, 0.5, altitude);
-        self.push_point(lat + LAT_STEP, lon + LON_STEP, 0.5, 0.5, altitude);
-        self.push_point(lat + LAT_STEP, lon, 0.5, 0.0, altitude);
+        self.push_point(lat, lon, tx_min, 0.0, altitude);
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, altitude);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, altitude);
+
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, altitude);
+        self.push_point(lat + LAT_STEP, lon + LON_STEP, tx_max, 1.0, altitude);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, altitude);
     }
 
     fn get_altitude(&self, planet: &super::Planet, x: usize, y: usize) -> f32 {
         let pidx = planet_idx(x % WORLD_WIDTH, y % WORLD_HEIGHT);
-        ((planet.landblocks[pidx].height as f32 / 256.0) * 0.25) + 3.0
+        ((planet.landblocks[pidx].height as f32 / 255.0) * 0.5) + 3.0
     }
 
-    fn push_height_quad(&mut self, lat: f32, lon: f32, planet: &super::Planet, x: usize, y: usize) {
-        self.push_point(lat, lon, 0.0, 0.0, self.get_altitude(planet, x, y));
-        self.push_point(lat, lon + LON_STEP, 0.0, 0.5, self.get_altitude(planet, x+LON_STEP as usize, y));
-        self.push_point(lat + LAT_STEP, lon, 0.5, 0.0, self.get_altitude(planet, x, y+LAT_STEP as usize));
+    fn push_height_quad(&mut self, lat: f32, lon: f32, planet: &super::Planet) {
+        let (tx_min, tx_max) = if self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat)) > 3.3 {
+            self.get_texture_coords(BlockType::Plains)
+        } else {
+            self.get_texture_coords(BlockType::Water)
+        };
 
-        self.push_point(lat, lon + LON_STEP, 0.0, 0.5, self.get_altitude(planet, x+LON_STEP as usize, y));
-        self.push_point(lat + LAT_STEP, lon + LON_STEP, 0.5, 0.5, self.get_altitude(planet, x+LON_STEP as usize, y+LAT_STEP as usize));
-        self.push_point(lat + LAT_STEP, lon, 0.5, 0.0, self.get_altitude(planet, x, y+LAT_STEP as usize));
+        let tl = self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat));
+        let tr = self.get_altitude(planet, lon_to_x(lon + LON_STEP), lat_to_y(lat));
+        let bl = self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat + LAT_STEP));
+        let br = self.get_altitude(planet, lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP));
+
+        self.push_point(lat, lon, tx_min, 0.0, tl);
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, tr);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
+
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, tr);
+        self.push_point(lat + LAT_STEP, lon + LON_STEP, tx_max, 1.0, br);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
+    }
+
+    fn push_cat_quad(&mut self, lat: f32, lon: f32, planet: &super::Planet) {
+        let (tx_min, tx_max) = self
+            .get_texture_coords(planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].btype);
+
+        let tl = self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat));
+        let tr = self.get_altitude(planet, lon_to_x(lon + LON_STEP), lat_to_y(lat));
+        let bl = self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat + LAT_STEP));
+        let br = self.get_altitude(planet, lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP));
+
+        self.push_point(lat, lon, tx_min, 0.0, tl);
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, tr);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
+
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, tr);
+        self.push_point(lat + LAT_STEP, lon + LON_STEP, tx_max, 1.0, br);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
     }
 
     pub fn totally_round(&mut self, altitude: f32) {
@@ -93,20 +145,34 @@ impl PlanetMesh {
         self.normals.clear();
         self.uv.clear();
 
-        let mut y = 0;
         let mut lat = -90.0;
         let mut lon;
         while lat < 90.0 {
             lon = -180.0;
-            let mut x = 0;
             while lon < 180.0 {
-                self.push_height_quad(lat, lon, planet, x, y);
+                self.push_height_quad(lat, lon, planet);
 
                 lon += LON_STEP;
-                x += LON_STEP as usize;
             }
             lat += LAT_STEP;
-            y += LAT_STEP as usize;
+        }
+    }
+
+    pub fn with_category(&mut self, planet: &super::Planet) {
+        self.vertices.clear();
+        self.normals.clear();
+        self.uv.clear();
+
+        let mut lat = -90.0;
+        let mut lon;
+        while lat < 90.0 {
+            lon = -180.0;
+            while lon < 180.0 {
+                self.push_cat_quad(lat, lon, planet);
+
+                lon += LON_STEP;
+            }
+            lat += LAT_STEP;
         }
     }
 }

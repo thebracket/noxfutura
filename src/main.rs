@@ -2,8 +2,8 @@ use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_egui::EguiPlugin;
 mod ui;
 use ui::*;
-mod simulation;
 mod geometry;
+mod simulation;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum AppState {
@@ -44,11 +44,13 @@ fn main() {
         )
         // Planet Builder Menu
         .add_system_set(
-            SystemSet::on_update(AppState::BuildingPlanet).with_system(planet_builder_menu.system()),
+            SystemSet::on_update(AppState::BuildingPlanet)
+                .with_system(planet_builder_menu.system()),
         )
         .add_system_set(
-            SystemSet::on_enter(AppState::BuildingPlanet).with_system(resume_planet_builder_menu.system())
-            .label("PlanetBuilderResume")
+            SystemSet::on_enter(AppState::BuildingPlanet)
+                .with_system(resume_planet_builder_menu.system())
+                .label("PlanetBuilderResume"),
         )
         // Start
         .run();

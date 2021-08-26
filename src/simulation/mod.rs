@@ -1,4 +1,4 @@
-pub mod planet_builder;
 mod bounds;
+pub mod planet_builder;
 
 pub use bounds::*;

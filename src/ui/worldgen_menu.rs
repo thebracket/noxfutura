@@ -9,7 +9,7 @@ use crate::AppState;
 use super::{BackgroundImage, UiResources};
 
 pub fn world_gen_menu(
-    egui_context: ResMut<EguiContext>, 
+    egui_context: ResMut<EguiContext>,
     mut state: ResMut<State<AppState>>,
     mut res: ResMut<UiResources>,
 ) {

@@ -19,7 +19,6 @@ pub fn setup_ui(
 
     let worldgen_tex = asset_server.load("images/worldgen_tiles.png");
 
-
     commands.insert_resource(UiResources {
         backgrounds: texture_atlas_handle.clone(),
         worldgen_seed: "Test Seed".to_string(),
