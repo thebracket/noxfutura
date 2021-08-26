@@ -44,10 +44,10 @@ impl PlanetMesh {
 
     fn get_texture_coords(&self, block_type: BlockType) -> (f32, f32) {
         match block_type {
-            BlockType::Coastal => self.tex_idx(8.0),
+            BlockType::Coastal => self.tex_idx(3.0),
             BlockType::Highlands => self.tex_idx(2.0),
             BlockType::Hills => self.tex_idx(5.0),
-            BlockType::Marsh => self.tex_idx(8.0),
+            BlockType::Marsh => self.tex_idx(6.0),
             BlockType::Mountains => self.tex_idx(4.0),
             BlockType::Plains => self.tex_idx(1.0),
             BlockType::Plateau => self.tex_idx(7.0),

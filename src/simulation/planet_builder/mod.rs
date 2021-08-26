@@ -14,6 +14,7 @@ pub enum PlanetBuilderStatus {
     Flattening,
     Altitudes,
     Dividing,
+    Coast,
 }
 
 pub struct PlanetBuilder {
@@ -35,6 +36,7 @@ impl PlanetBuilder {
             PlanetBuilderStatus::Flattening => String::from("Smoothing out the corners"),
             PlanetBuilderStatus::Altitudes => String::from("Squishing out some topology"),
             PlanetBuilderStatus::Dividing => String::from("Dividing the heaven and hearth"),
+            PlanetBuilderStatus::Coast => String::from("Crinkling up the coastlines"),
         }
     }
 
@@ -112,7 +114,15 @@ fn make_planet() {
         PLANET_GEN.write().globe_info = Some(bumpy_planet);
     }
 
+    update_status(PlanetBuilderStatus::Coast);
     println!("Coastlines");
+    {
+        planet_coastlines(&mut planet);
+        let mut bumpy_planet = PlanetMesh::new();
+        bumpy_planet.with_category(&planet);
+        PLANET_GEN.write().globe_info = Some(bumpy_planet);
+    }
+
     println!("Rainfall");
     println!("Biomes");
     println!("Rivers");
@@ -136,7 +146,7 @@ pub struct Landblock {
     pub biome_idx: usize,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum BlockType {
     None,
     Water,
@@ -243,32 +253,24 @@ fn planet_type_allocation(planet: &mut Planet) {
         let mut block = &mut planet.landblocks[i];
         if block.height <= planet.water_height {
             block.btype = BlockType::Water;
-            block.rainfall = 10;
 
             if block.height as u16 + block.variance as u16 / 2 > planet.water_height as u16 {
                 block.btype = BlockType::SaltMarsh;
             }
         } else if block.height <= planet.plains_height {
             block.btype = BlockType::Plains;
-            block.rainfall = 10;
-            // TODO: Fix me
-            /*if block.height - block.variance / 3 > planet.water_height {
+            if block.height - block.variance < planet.water_height {
                 block.btype = BlockType::Marsh;
-                block.rainfall = 20;
-            }*/
+            }
         } else if block.height <= planet.hills_height {
             block.btype = BlockType::Hills;
-            block.rainfall = 20;
             if block.variance < 2 {
                 block.btype = BlockType::Highlands;
-                block.rainfall = 10;
             }
         } else {
             block.btype = BlockType::Mountains;
-            block.rainfall = 30;
             if block.variance < 3 {
                 block.btype = BlockType::Plateau;
-                block.rainfall = 10;
             }
         }
 
@@ -280,7 +282,7 @@ fn planet_type_allocation(planet: &mut Planet) {
     }
 }
 
-pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
+fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
     let mut count = 0usize;
     while count < target as usize {
         count = planet
@@ -295,4 +297,28 @@ pub(crate) fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, 
         }
     }
     0
+}
+
+fn planet_coastlines(planet: &mut Planet) {
+    let mut n = 0;
+    for y in 1..WORLD_HEIGHT - 1 {
+        for x in 1..WORLD_WIDTH - 1 {
+            let base_idx = planet_idx(x, y);
+            if planet.landblocks[base_idx].btype != BlockType::Water {
+                if planet.landblocks[base_idx - 1].btype == BlockType::Water
+                    || planet.landblocks[base_idx + 1].btype == BlockType::Water
+                    || planet.landblocks[base_idx - WORLD_WIDTH as usize].btype == BlockType::Water
+                    || planet.landblocks[base_idx + WORLD_WIDTH as usize].btype == BlockType::Water
+                {
+                    planet.landblocks[base_idx].btype = BlockType::Coastal;
+                    n += 1;
+                    if n % 1000 == 0 {
+                        let mut bumpy_planet = PlanetMesh::new();
+                        bumpy_planet.with_category(&planet);
+                        PLANET_GEN.write().globe_info = Some(bumpy_planet);
+                    }
+                }
+            }
+        }
+    }
 }
