@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 // World Size
 pub const WORLD_HEIGHT: usize = 180;
 pub const WORLD_WIDTH: usize = 360;
