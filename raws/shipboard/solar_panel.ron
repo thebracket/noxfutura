@@ -1,0 +1,17 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "solar_panel",
+            name : "Solar Panel",
+            components : [ BuildingComponent(item: "solar_panel_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 15) ],
+            vox : "solar_panel",
+            description : "An array of cells that convert solar energy into useful power, and wirelessly transmits it into Cordex's power banks.",
+            provides : [ Generator(energy: 10) ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"solar_panel", file:"solar_panel" ),
+    ])
+)

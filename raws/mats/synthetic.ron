@@ -1,0 +1,55 @@
+(
+    materials: Some([
+        MaterialDef(
+            name: "Plasteel",
+            layer: Synthetic,
+            hit_points: 200,
+            mines_to: [ ],
+            description: "A nano-hybrid combining plastic and steel at a molecular level.",
+            tint: (1.0, 1.0, 1.0),
+            texture: Some(
+                MaterialTextureSet(
+                    base: Some("titanium"),
+                    floor: Some("metalfloor"),
+                    constructed: Some("metalfloor"),
+                    floor_constructed: Some("plasteeltile")
+                )
+            ),
+        ),
+
+        MaterialDef(
+            name: "Synthread",
+            layer: Synthetic,
+            hit_points: 10,
+            mines_to: [ ],
+            description: "A nano-hybrid cloth.",
+            tint: (1.0, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Water",
+            layer: Synthetic,
+            hit_points: 10,
+            mines_to: [ ],
+            description: "Temporary Water.",
+            tint: (0.1, 0.1, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Hidden",
+            layer: Synthetic,
+            hit_points: 10,
+            mines_to: [ ],
+            description: "You haven't revealed this tile, yet.",
+            tint: (1.0, 1.0, 1.0),
+            texture: Some(
+                MaterialTextureSet(
+                    base: Some("hidden"),
+                    floor: Some("hidden"),
+                    constructed: Some("hidden"),
+                    floor_constructed: Some("hidden")
+                )
+            ),
+        ),
+    ])
+)

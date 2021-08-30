@@ -21,6 +21,7 @@ pub struct RawBundle {
 
 impl RawBundle {
     pub fn load(filename: &str) -> Self {
+        println!("{}", filename);
         let f = File::open(filename).expect("Failed opening file");
         let bundle: RawBundle = match from_reader(f) {
             Ok(x) => x,

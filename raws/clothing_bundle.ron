@@ -1,0 +1,249 @@
+(
+    clothing: Some([
+        // Headware
+        ClothingDef(
+            tag: "batman_hat",
+            name: "Batman Hat",
+            slot: Head,
+            description: "A black helmet with bat-ear protrusions and a face-mask. Be the hero Cordex needs!",
+            armor: 0.5,
+            model: "clothes_batman_hat",
+            item_model: "ground_helmet",
+            colors: [ "black", "blue" ]
+        ),
+
+        ClothingDef(
+            tag: "police_hat",
+            name: "Police Hat",
+            slot: Head,
+            description: "A black, flat hat. Typically part of a uniform.",
+            armor: 0.5,
+            model: "clothes_police_hat",
+            item_model: "ground_helmet",
+            colors: [ "black", "blue" ]
+        ),
+
+        ClothingDef(
+            tag: "cat_ears",
+            name: "Cat Ears",
+            slot: Head,
+            description: "Clip on, prosthetic cat ears (not made from a real cat).",
+            armor: 0.5,
+            model: "clothes_cat_ears",
+            item_model: "ground_helmet",
+            colors: [ "black" ]
+        ),
+
+        ClothingDef(
+            tag: "tiara",
+            name: "Tiara",
+            slot: Head,
+            description: "Plastic tiara, perfect for your wannabe princess.",
+            armor: 0.5,
+            model: "clothes_tiara",
+            item_model: "ground_helmet",
+            colors: [ "white", "gold" ]
+        ),
+
+        // Torso Wear
+        ClothingDef(
+            tag: "formal_shirt",
+            name: "Formal Shirt",
+            slot: Torso,
+            description: "A nice shirt with a collar and button-up cuffs. Ideal for the office.",
+            armor: 0.5,
+            model: "clothes_formal_shirt",
+            item_model: "ground_shirt",
+            colors: [ "white" ]
+        ),
+
+        ClothingDef(
+            tag: "formal_blouse",
+            name: "Formal Blouse",
+            slot: Torso,
+            description: "A nice blouse with a collar and button-up cuffs. Ideal for the office.",
+            armor: 0.5,
+            model: "clothes_formal_shirt",
+            item_model: "ground_shirt",
+            colors: [ "white" ]
+        ),
+
+        ClothingDef(
+            tag: "bathrobe",
+            name: "Bathrobe",
+            slot: Torso,
+            description: "A comfortable, silk bath-robe. Ideal for running a sleazy mansion, pretending to be a wizard, or taking a bath.",
+            armor: 0.5,
+            model: "clothes_formal_shirt",
+            item_model: "ground_shirt",
+            colors: [ "red", "blue", "yellow" ]
+        ),
+
+        ClothingDef(
+            tag: "spandex_shirt",
+            name: "Spandex Shirt",
+            slot: Torso,
+            description: "A tight, spandex shirt. Ideal for the gymnasium, or unleashing your inner super-hero.",
+            armor: 0.5,
+            model: "clothes_spandex_shirt",
+            item_model: "ground_shirt",
+            colors: [ "red", "blue", "yellow", "grey", "green" ]
+        ),
+
+        ClothingDef(
+            tag: "spandex_blouse",
+            name: "Spandex Blouse",
+            slot: Torso,
+            description: "A tight, spandex blouse. Ideal for the gymnasium, or unleashing your inner super-hero.",
+            armor: 0.5,
+            model: "clothes_spandex_shirt",
+            item_model: "ground_shirt",
+            colors: [ "red", "blue", "yellow", "grey", "green" ]
+        ),
+
+        ClothingDef(
+            tag: "sports_shirt",
+            name: "Sports Shirt",
+            slot: Torso,
+            description: "A sporting shirt, showing the colors of your favorite team.",
+            armor: 0.5,
+            model: "clothes_sports_shirt",
+            item_model: "ground_shirt",
+            colors: [ "red", "blue", "yellow", "grey", "green" ]
+        ),
+
+        ClothingDef(
+            tag: "t_shirt",
+            name: "T-Shirt",
+            slot: Torso,
+            description: "A sleeveless T-shirt, with a witty message on it.",
+            armor: 0.5,
+            model: "clothes_tshirt",
+            item_model: "ground_shirt",
+            colors: [ "red", "blue", "yellow", "grey", "green" ]
+        ),
+
+        // Legwear
+        ClothingDef(
+            tag: "cargo_pants",
+            name: "Cargo Pants",
+            slot: Legs,
+            description: "A pair of sturdy trousers, featuring many pockets. Practical and comfortable, and who knows what will be found in the pockets?",
+            armor: 0.5,
+            model: "clothes_cargopants",
+            item_model: "ground_pants",
+            colors: [ "red", "blue", "yellow", "grey", "green", "khaki", "black", "navy" ]
+        ),
+
+        ClothingDef(
+            tag: "long_skirt",
+            name: "Long Skirt",
+            slot: Legs,
+            description: "A formal skirt, covering from waist to knees.",
+            armor: 0.5,
+            model: "clothes_longskirt",
+            item_model: "ground_pants",
+            colors: [ "red", "blue", "yellow", "grey", "green", "khaki", "black", "navy" ]
+        ),
+
+        ClothingDef(
+            tag: "hawaiian_shorts",
+            name: "Hawaiian Shorts",
+            slot: Legs,
+            description: "A pair of silky shorts, colored to ensure visibility even from orbit. Never lose your waist again.",
+            armor: 0.5,
+            model: "clothes_hawaiian_shorts",
+            item_model: "ground_pants",
+            colors: [ "red", "blue", "yellow", "grey", "green", "khaki", "black", "navy" ]
+        ),
+
+        ClothingDef(
+            tag: "sports_shorts",
+            name: "Sports Shorts",
+            slot: Legs,
+            description: "A pair of sporting shorts, ideal for exercise, running away, or following your favorite team.",
+            armor: 0.5,
+            model: "clothes_hawaiian_shorts",
+            item_model: "ground_pants",
+            colors: [ "red", "blue", "yellow", "grey", "green", "khaki", "black", "navy" ]
+        ),
+
+        ClothingDef(
+            tag: "spandex_pants",
+            name: "Spandex Pants",
+            slot: Legs,
+            description: "Tight, spandex pants. Show off your legs, or horrify your neighbors.",
+            armor: 0.5,
+            model: "clothes_spandex_pants",
+            item_model: "ground_pants",
+            colors: [ "red", "blue", "yellow", "grey", "green", "khaki", "black", "navy" ]
+        ),
+
+        ClothingDef(
+            tag: "miniskirt",
+            name: "Miniskirt",
+            slot: Legs,
+            description: "A short skirt, leaving little to the imagination.",
+            armor: 0.5,
+            model: "clothes_miniskirt",
+            item_model: "ground_pants",
+            colors: [ "red", "blue", "yellow", "grey", "green", "khaki", "black", "navy" ]
+        ),
+
+        // Footwear
+        ClothingDef(
+            tag: "leather_shoes",
+            name: "Leather Shoes",
+            slot: Shoes,
+            description: "A pair of sturdy leather shoes. Very boring, and very practical.",
+            armor: 0.5,
+            model: "clothes_shoes",
+            item_model: "ground_shoes",
+            colors: [ "brown", "black" ]
+        ),
+
+        ClothingDef(
+            tag: "sandals",
+            name: "Sandals",
+            slot: Shoes,
+            description: "A pair of sandals, offering minimal protection to the feet and freeing the wearer from the tyranny of shoelaces.",
+            armor: 0.5,
+            model: "clothes_shoes",
+            item_model: "ground_shoes",
+            colors: [ "brown", "black" ]
+        ),
+
+        ClothingDef(
+            tag: "combat_boots",
+            name: "Combat Boots",
+            slot: Shoes,
+            description: "Practical leather boots, with reinforced ankles. Kick some butt. Available in a wide range of TactiCool(TM) designs.",
+            armor: 0.5,
+            model: "clothes_boots",
+            item_model: "ground_shoes",
+            colors: [ "brown", "black" ]
+        ),
+
+        ClothingDef(
+            tag: "high_boots",
+            name: "High Boots",
+            slot: Shoes,
+            description: "Leather boots that come up over the knee. Great for fishing, looking good, or kicking some butt.",
+            armor: 0.5,
+            model: "clothes_boots",
+            item_model: "ground_shoes",
+            colors: [ "brown", "black" ]
+        ),
+
+        ClothingDef(
+            tag: "sneakers",
+            name: "Sneakers",
+            slot: Shoes,
+            description: "Comfortable running shoes, complete with oxygenated layer to protect your feet and a patented No-Stink technology.",
+            armor: 0.5,
+            model: "clothes_boots",
+            item_model: "ground_shoes",
+            colors: [ "red", "blue", "yellow", "grey", "green", "khaki", "black", "navy" ]
+        ),
+    ])
+)

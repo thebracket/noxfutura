@@ -1,0 +1,29 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "personal_survival_shelter",
+            name : "Tent",
+            components : [ BuildingComponent(item: "personal_survival_shelter_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 5) ],
+            vox : "tent",
+            description : "A tent, conveniently packaged in a crate. It is self-assembling.",
+            provides : [ ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"tent", file:"tent" ),
+        VoxelModel( tag:"tent_kit", file:"crate-tent" ),
+    ]),
+
+    items: Some([
+
+        ItemDef(
+            tag: "personal_survival_shelter_kit",
+            name: "Personal Survival Shelter Kit",
+            description: "A folded-up personal shelter kit, known in non-corporate parlance as a camping set: a tent, bedroll and sleeping bag. Conveniently self-assembling.",
+            item_type: [ Component ],
+            vox: "tent_kit"
+        ),
+    ])
+)

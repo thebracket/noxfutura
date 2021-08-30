@@ -1,0 +1,15 @@
+(
+    items: Some([
+        ItemDef(
+            tag: "coal",
+            name: "Coal",
+            item_type: [ Component ],
+            vox: "coal",
+            description: "A lump of unrefined coal."
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"coal", file:"coal" ),
+    ])
+)

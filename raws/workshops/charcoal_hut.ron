@@ -1,0 +1,29 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "charcoal_hut",
+            name : "Charcoal Burner",
+            components : [ BuildingComponent(item: "block", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 12) ],
+            vox : "charcoal_hut",
+            description : "A hut designed to slowly burn waste wood, until it is blackened charcoal - a very high temperature heat source when burned (and useful for drawing on sidewalks).",
+            provides : [ ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"charcoal_hut", file:"charcoal_hut" ),
+    ]),
+
+    reactions: Some([
+        ReactionDef(
+            name: "Make Charcoal from Waste",
+            workshop: "charcoal_hut",
+            difficulty: 10,
+            automatic: true,
+            skill: "Furnace",
+            inputs: [ ReactionItem(tag: "wood_waste", qty: 1) ],
+            outputs: [ ReactionItem(tag: "charcoal", qty: 2 ), ReactionItem(tag: "ash", qty: 1) ]
+        )
+    ])
+)

@@ -1,0 +1,49 @@
+(
+    buildings: Some([
+        BuildingDef(
+            tag : "fake_camp_fire",
+            name : "Nuclear Camp Fire",
+            components : [ BuildingComponent(item: "camp_fire_kit", qty: 1) ],
+            skill : [ BuildingSkill(skill: "Construction", difficulty: 5) ],
+            vox : "campfire_fake",
+            description : "A portable camp fire, for the lazy camper. Combining a nuclear battery, fake fire effects and a marshmallow dispenser it is ideal for a camping trip.",
+            provides : [ Light(radius: 5, color: (1.0, 0.75, 0.1)) ]
+        ),
+    ]),
+
+    vox: Some([
+        VoxelModel( tag:"campfire_fake", file:"campfire-fake" ),
+        VoxelModel( tag:"campfire_kit", file:"crate-fakefire" ),
+        VoxelModel( tag:"foodplate", file:"foodplate")
+    ]),
+
+    items: Some([
+        ItemDef(
+            tag:"camp_fire_kit",
+            name: "Camping Fire Kit",
+            description: "A plastic campfire, powered by a tiny nuclear reactor. Ideal for your off-world vacation.",
+            item_type: [ Component ],
+            vox: "campfire_kit"
+        ),
+
+        ItemDef(
+            tag:"tiny_marshmallow",
+            name: "Tiny Marshmallow",
+            description: "A tiny lump of congealed sugar",
+            item_type: [ Food ],
+            vox: "foodplate"
+        ),
+    ]),
+
+    reactions: Some([
+        ReactionDef(
+            name: "Replicate Tiny Marshmallow",
+            workshop: "fake_camp_fire",
+            difficulty: 5,
+            automatic: false,
+            skill: "Construction",
+            inputs: [ ReactionItem(tag: "", qty: 0, power: Some(10)) ],
+            outputs: [ ReactionItem(tag: "tiny_marshmallow", qty: 1 ) ]
+        ),
+    ])
+)

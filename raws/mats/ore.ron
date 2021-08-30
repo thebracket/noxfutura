@@ -1,0 +1,147 @@
+(
+    materials: Some([
+        MaterialDef(
+            name: "Raw Aluminium",
+            layer: Igneous,
+            hit_points: 80,
+            mines_to: [ Ore(name: "aluminium") ],
+            description: "An aluminium ore, that can be refined into useful metal.",
+            tint: (1.0, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Bauxite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Ore(name: "aluminium") ],
+            description: "An aluminium ore, that can be refined into useful metal.",
+            tint: (0.9, 0.2, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Bisminthine",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Ore(name: "bismuth") ],
+            description: "A crystalline rock, similar to ammonia. Refines into Bismuth, used in bronzeworking.",
+            tint: (1.0, 0.8, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Cassiterite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Ore(name: "tin") ],
+            description: "A dark crystalline rock.",
+            tint: (0.1, 0.1, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Chromite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "chromium") ],
+            description: "A metamorphic rock containing chrome ore.",
+            tint: (1.0, 1.0, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Native Copper",
+            layer: Igneous,
+            hit_points: 75,
+            mines_to: [ Ore(name: "copper") ],
+            description: "Rock that contains streaks of copper.",
+            tint: (0.8, 0.5, 0.2)
+        ),
+
+        MaterialDef(
+            name: "Galena",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "lead"), Ore(name: "silver"), Item(name: "sulpher") ],
+            description: "A rock made up lead and sulphur. Sure to give you brain damage if consumed!",
+            tint: (0.3, 0.7, 0.7)
+        ),
+
+        MaterialDef(
+            name: "Garnierite",
+            layer: ClusterRock(parent: "Gabbro"),
+            hit_points: 100,
+            mines_to: [ Ore(name: "lead"), Ore(name: "nickel") ],
+            description: "A nickel bearing green rock.",
+            tint: (0.3, 0.7, 0.3)
+        ),
+
+        MaterialDef(
+            name: "Native Gold",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "gold") ],
+            description: "A dense rock, streaked with veins of gold. Dwarves love it.",
+            tint: (1.0, 0.7, 0.1)
+        ),
+
+        MaterialDef(
+            name: "Igneous Hematite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron-bearing rock, reddish in hue from the rust.",
+            tint: (1.0, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Sedimentary Hematite",
+            layer: Sedimentary,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron-bearing rock, reddish in hue from the rust.",
+            tint: (1.0, 0.5, 0.5)
+        ),
+
+        MaterialDef(
+            name: "Limonite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron bearing rock, containing lots of sulphur.",
+            tint: (0.1, 0.9, 0.9)
+        ),
+
+        MaterialDef(
+            name: "Magnetite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "iron") ],
+            description: "An iron-bearing rock, reddish in hue from the rust.",
+            tint: (0.9, 0.7, 0.7)
+        ),
+
+        MaterialDef(
+            name: "Native Platinum",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "platinum") ],
+            description: "A dense rock, streaked with veins of platinum. Dwarves love it.",
+            tint: (0.9, 0.9, 1.0)
+        ),
+
+        MaterialDef(
+            name: "Sphalerite",
+            layer: Sedimentary,
+            hit_points: 50,
+            mines_to: [ Ore(name: "zinc") ],
+            description: "A zinc-bearing rock.",
+            tint: (0.4, 0.4, 0.4)
+        ),
+
+        MaterialDef(
+            name: "Tetrahedrite",
+            layer: Igneous,
+            hit_points: 100,
+            mines_to: [ Ore(name: "copper"), Ore(name: "silver") ],
+            description: "A dense rock, streaked with veins of silver and copper. Rated 9/10 by most Dwarves.",
+            tint: (0.5, 0.5, 0.5)
+        ),
+    ])
+)

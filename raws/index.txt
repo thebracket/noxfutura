@@ -1,0 +1,55 @@
+raws/biome_bundle.ron
+raws/plants_bundle.ron
+raws/vox_bundle.ron
+raws/species_bundle.ron
+raws/professions_bundle.ron
+raws/clothing_bundle.ron
+
+# Materials
+
+raws/mats/igneous.ron
+raws/mats/ore.ron
+raws/mats/sediment.ron
+raws/mats/soil.ron
+raws/mats/sand.ron
+raws/mats/synthetic.ron
+raws/mats/wood.ron
+
+# Built-in workshops at world-gen
+
+raws/shipboard/cordex.ron
+raws/shipboard/ship_lamp.ron
+raws/shipboard/ship_defense_turret.ron
+raws/shipboard/cryo_bed.ron
+raws/shipboard/storage_locker.ron
+raws/shipboard/solar_panel.ron
+raws/shipboard/battery.ron
+raws/shipboard/rtg.ron
+raws/shipboard/small_replicator.ron
+raws/shipboard/personal_survival_shelter.ron
+raws/shipboard/fake_camp_fire.ron
+
+# Low tech workshops to build
+
+raws/workshops/sawmill.ron
+raws/workshops/stonecutter.ron
+raws/workshops/charcoal_hut.ron
+raws/workshops/smelter.ron
+
+# Tools
+
+raws/tools/fire_axe.ron
+raws/tools/pickaxe.ron
+raws/tools/hoe.ron
+
+# Raw Material Items
+raws/raw_materials/woodlogs.ron
+raws/raw_materials/stone_boulder.ron
+raws/raw_materials/block.ron
+raws/raw_materials/ore.ron
+raws/raw_materials/coal.ron
+raws/raw_materials/charcoal.ron
+raws/raw_materials/ash.ron
+
+# Tree Models
+raws/trees.ron

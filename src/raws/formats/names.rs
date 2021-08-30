@@ -49,8 +49,8 @@ fn line_by_line(filename: &str) -> Vec<String> {
 
 pub fn load_names() -> Names {
     let mut names = Names::new();
-    names.female_first = line_by_line("resources/raws/first_names_female.txt");
-    names.male_first = line_by_line("resources/raws/first_names_male.txt");
-    names.last_names = line_by_line("resources/raws/last_names.txt");
+    names.female_first = line_by_line("raws/first_names_female.txt");
+    names.male_first = line_by_line("raws/first_names_male.txt");
+    names.last_names = line_by_line("raws/last_names.txt");
     names
 }
