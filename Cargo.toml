@@ -19,5 +19,5 @@ parking_lot = "0.11"
 opt-level = 3
 
 # Maybe also enable only a small amount of optimization for our code:
-[profile.dev]
-opt-level = 1
+#[profile.dev]
+#opt-level = 1

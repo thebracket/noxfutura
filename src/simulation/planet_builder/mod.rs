@@ -4,6 +4,7 @@ use bracket_noise::prelude::*;
 use lazy_static::*;
 use parking_lot::RwLock;
 pub use planet_3d::PlanetMesh;
+use std::collections::HashSet;
 
 lazy_static! {
     static ref PLANET_GEN: RwLock<PlanetGen> = RwLock::new(PlanetGen::new());
@@ -15,6 +16,7 @@ pub enum PlanetBuilderStatus {
     Altitudes,
     Dividing,
     Coast,
+    Rainfall{amount: u8},
 }
 
 pub struct PlanetBuilder {
@@ -37,6 +39,7 @@ impl PlanetBuilder {
             PlanetBuilderStatus::Altitudes => String::from("Squishing out some topology"),
             PlanetBuilderStatus::Dividing => String::from("Dividing the heaven and hearth"),
             PlanetBuilderStatus::Coast => String::from("Crinkling up the coastlines"),
+            PlanetBuilderStatus::Rainfall{amount} => format!("Spinning the barometer {}%", amount),
         }
     }
 
@@ -123,9 +126,9 @@ fn make_planet() {
         PLANET_GEN.write().globe_info = Some(bumpy_planet);
     }
 
-    println!("Rainfall");
-    println!("Biomes");
-    println!("Rivers");
+    println!("Wind and rain");
+    update_status(PlanetBuilderStatus::Rainfall{amount: 0});
+    planet_rainfall(&mut planet);
 }
 
 pub struct Planet {
@@ -141,8 +144,9 @@ pub struct Landblock {
     pub height: u8,
     pub variance: u8,
     pub btype: BlockType,
-    pub temperature: i8,
-    pub rainfall: i8,
+    pub temperature_c: i8,
+    pub rainfall_mm: i32,
+    pub air_pressure_kpa: f32,
     pub biome_idx: usize,
 }
 
@@ -160,7 +164,7 @@ pub enum BlockType {
     SaltMarsh,
 }
 
-use crate::{geometry::Degrees, simulation::planet_builder::planet_3d::sphere_vertex};
+use crate::{geometry::{Degrees, Radians}, simulation::planet_builder::planet_3d::sphere_vertex};
 
 use super::bounds::*;
 
@@ -171,9 +175,10 @@ fn zero_fill(planet: &mut Planet) {
                 height: 0,
                 variance: 0,
                 btype: BlockType::None,
-                temperature: 0,
-                rainfall: 0,
+                temperature_c: 0,
+                rainfall_mm: 0,
                 biome_idx: planet_idx(x, y),
+                air_pressure_kpa: 0.0,
             });
         }
     }
@@ -184,7 +189,7 @@ fn noise_to_planet_height(n: f32) -> u8 {
 }
 
 fn planetary_noise(planet: &mut Planet) {
-    const SAMPLE_DIVISOR: usize = 32;
+    const SAMPLE_DIVISOR: usize = 24;
     const X_SAMPLES: usize = REGION_WIDTH as usize / SAMPLE_DIVISOR;
     const Y_SAMPLES: usize = REGION_HEIGHT as usize / SAMPLE_DIVISOR;
 
@@ -202,6 +207,7 @@ fn planetary_noise(planet: &mut Planet) {
             let mut tile_count = 0u32;
             let mut max = 0;
             let mut min = std::u8::MAX;
+            let mut max_noise = 0.0;
             for y1 in 0..Y_SAMPLES {
                 let lat = noise_lat(y, y1 * SAMPLE_DIVISOR);
                 for x1 in 0..X_SAMPLES {
@@ -216,6 +222,7 @@ fn planetary_noise(planet: &mut Planet) {
                     if n > max {
                         max = n
                     }
+                    max_noise = f32::max(max_noise, noise_height);
                     total_height += n as u32;
                     tile_count += 1;
                 }
@@ -224,6 +231,16 @@ fn planetary_noise(planet: &mut Planet) {
             let pidx = planet_idx(x, y);
             planet.landblocks[pidx].height = (total_height / tile_count) as u8;
             planet.landblocks[pidx].variance = max - min;
+
+            let lat = Degrees::new(noise_lat(y, 0));
+            //let lon = noise_lon(x, 0);
+            let altitude_meters = ((max_noise + 1.0) / 2.0) * 8_848.0; // Everest
+            let base_temperature_c = average_temperature_by_latitude(lat);
+            let temperature_decrease = temperature_decrease_by_altitude(altitude_meters);
+            let rainfall_mm = average_precipitation_mm_by_latitude(lat);
+            planet.landblocks[pidx].rainfall_mm = rainfall_mm as i32;
+            planet.landblocks[pidx].temperature_c = (base_temperature_c - temperature_decrease) as i8;
+            planet.landblocks[pidx].air_pressure_kpa = atmospheric_pressure_by_elevation(altitude_meters) + ((base_temperature_c - temperature_decrease)/10.0);
         }
 
         if y % 8 == 0 {
@@ -320,5 +337,148 @@ fn planet_coastlines(planet: &mut Planet) {
                 }
             }
         }
+    }
+}
+
+fn average_temperature_by_latitude(lat: Degrees) -> f32 {
+    // Source: https://davidwaltham.com/global-warming-model/
+    const AVERAGE_EQUATORIAL_C: f32 = 30.0;
+    const A: f32 = 5.0; // Based on current data
+    let lat_rad: Radians = lat.into();
+    let lat_sin_squared = lat_rad.0.sin() * lat_rad.0.sin();
+    AVERAGE_EQUATORIAL_C - (A * lat_sin_squared)
+}
+
+fn average_precipitation_mm_by_latitude(lat: Degrees) -> f32 {
+    // Mangled from https://i.stack.imgur.com/YBgot.png
+    const PEAK: f32 = 2000.0;
+    let fudge = if (lat.0 > -50.0 && lat.0 < -5.0) || (lat.0 < 50.0 && lat.0 > 5.0) {
+        400.0
+    } else {
+        0.0
+    };
+    let lat_rad: Radians = lat.into();
+    let lat_sin_squared = lat_rad.0.sin() * lat_rad.0.sin();
+    PEAK - (lat_sin_squared * PEAK) - fudge
+}
+
+fn temperature_decrease_by_altitude(altitude_meters: f32) -> f32 {
+    (altitude_meters / 1000.0) * 6.5
+}
+
+fn atmospheric_pressure_by_elevation(altitude_meters: f32) -> f32 {
+    (101_325.0 * ( 1.0 - 2.25577 *  0.00001 * altitude_meters).powf(5.25588)) / 1000.0
+}
+
+fn planet_neighbors_four_way(planet: &Planet, idx: usize) -> Vec<usize> {
+    let mut result = Vec::with_capacity(4);
+
+    let (px, py) = idx_planet(idx);
+
+    // West
+    if px > 0 {
+        result.push(planet_idx(px-1, py));
+    } else {
+        result.push(planet_idx(WORLD_WIDTH-1, py));
+    }
+
+    // East
+    if px < WORLD_WIDTH-1 {
+        result.push(planet_idx(px+1, py));
+    } else {
+        result.push(planet_idx(0, py));
+    }
+
+    // North
+    let distance_from_middle = (WORLD_WIDTH as isize / 2) - px as isize;
+    if py > 0 {
+        result.push(planet_idx(px, py));
+    } else {
+        result.push(planet_idx((px as isize + distance_from_middle) as usize, py));
+    }
+
+    // South
+    if py < WORLD_HEIGHT-1 {
+        result.push(planet_idx(px, py));
+    } else {
+        result.push(planet_idx((px as isize + distance_from_middle) as usize, py));
+    }
+
+    result
+}
+
+struct RainParticle {
+    position: usize,
+    load: i32,
+    history: HashSet<usize>,
+    cycles: u8,
+}
+
+impl RainParticle {
+    fn modify_load(&mut self, planet: &mut Planet, amount: i32) {
+        if self.load < amount && planet.landblocks[self.position].rainfall_mm > amount {
+            self.load = self.load + amount;
+            planet.landblocks[self.position].rainfall_mm -= amount;
+        }
+    }
+}
+
+fn planet_rainfall(planet: &mut Planet) {
+    let mut rain_particles = Vec::with_capacity(WORLD_TILES_COUNT);
+    for i in 0..planet.landblocks.len() {
+        rain_particles.push(RainParticle{
+            position: i,
+            history: HashSet::new(),
+            cycles: 0,
+            load: 0,
+        })
+    }
+
+    while !rain_particles.is_empty() {
+        rain_particles.iter_mut().for_each(|p| {
+            match planet.landblocks[p.position].btype {
+                BlockType::Coastal => p.modify_load(planet, 1),
+                BlockType::Highlands => p.modify_load(planet, -2),
+                BlockType::Hills => p.modify_load(planet, -1),
+                BlockType::Marsh => p.modify_load(planet, 1),
+                BlockType::Mountains => p.modify_load(planet, -3),
+                BlockType::SaltMarsh => p.modify_load(planet, 1),
+                BlockType::Water => p.load += 2,
+                _ => {}
+            }
+
+            if planet.landblocks[p.position].btype != BlockType::Water {
+                if p.load > 0 {
+                    p.load -= 1;
+                    planet.landblocks[p.position].rainfall_mm += 1;
+                } else {
+                    if planet.landblocks[p.position].rainfall_mm > 0 {
+                        planet.landblocks[p.position].rainfall_mm -= 10; // Dry air sucks it out
+                        if planet.landblocks[p.position].rainfall_mm < 0 {
+                            planet.landblocks[p.position].rainfall_mm = 0;
+                        }
+                    }
+                }
+            }
+
+            let mut neighbors : Vec<(usize, f32)> = planet_neighbors_four_way(planet, p.position)
+                .iter()
+                .filter(|pos| !p.history.contains(pos))
+                .filter(|pos| planet.landblocks[p.position].air_pressure_kpa <= planet.landblocks[**pos].air_pressure_kpa)
+                .map(|pos| (*pos, planet.landblocks[*pos].air_pressure_kpa))
+                .collect();
+
+            if !neighbors.is_empty() {
+                neighbors.sort_unstable_by(|a,b| a.1.partial_cmp(&b.1).unwrap());
+                p.history.insert(p.position);
+                p.position = neighbors[0].0;
+                p.cycles += 1;
+            } else {
+                p.cycles = 200;
+            }
+        });
+        rain_particles.retain(|p| p.cycles < 100);
+        let percent = ((1.0 - (rain_particles.len() as f32 / WORLD_TILES_COUNT as f32))*100.0) as u8;
+        update_status(PlanetBuilderStatus::Rainfall{amount: percent});
     }
 }

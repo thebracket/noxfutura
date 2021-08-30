@@ -17,6 +17,11 @@ pub fn planet_idx<N: Into<usize>>(x: N, y: N) -> usize {
     (WORLD_WIDTH * yc) + xc
 }
 
+// Indexes a planet-level block id back to x/y
+pub fn idx_planet(idx: usize) -> (usize, usize) {
+    (idx % WORLD_WIDTH, idx / WORLD_WIDTH)
+}
+
 /// Indexes a map tile within an active map
 pub fn mapidx<N: Into<usize>>(x: N, y: N, z: N) -> usize {
     let xc = x.into();
@@ -53,14 +58,14 @@ pub fn lon_to_x(lon: f32) -> usize {
     (((lon + 180.0) / 360.0) * WORLD_WIDTH as f32) as usize
 }
 
-pub(crate) fn noise_lon(world_x: usize, region_x: usize) -> f32 {
+pub fn noise_lon(world_x: usize, region_x: usize) -> f32 {
     let x_extent = world_x as f32 / WORLD_WIDTH as f32;
     let sub_x = region_x as f32 / REGION_WIDTH as f32;
     let longitude = (x_extent * 360.0) + (sub_x - 0.5) - 180.0;
     longitude
 }
 
-pub(crate) fn noise_lat(world_y: usize, region_y: usize) -> f32 {
+pub fn noise_lat(world_y: usize, region_y: usize) -> f32 {
     let y_extent = world_y as f32 / WORLD_HEIGHT as f32;
     let sub_y = region_y as f32 / REGION_HEIGHT as f32;
     let latitude = (y_extent * 180.0) + (sub_y - 0.5) - 90.0;
