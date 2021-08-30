@@ -48,9 +48,10 @@ impl PlanetBuilder {
         }
     }
 
-    pub fn start(&mut self) {
+    pub fn start(&mut self, seed: &str) {
         if !self.started {
-            std::thread::spawn(|| make_planet());
+            let seed = seed.to_string();
+            std::thread::spawn(|| make_planet(seed));
             self.started = true;
         }
     }
@@ -84,12 +85,14 @@ fn update_status(new_status: PlanetBuilderStatus) {
     PLANET_GEN.write().status = new_status;
 }
 
-fn make_planet() {
+fn make_planet(seed: String) {
+    let mut base_seed = 0;
+    seed.chars().for_each(|c| base_seed += c as u64);
     update_status(PlanetBuilderStatus::Initializing);
     let mut planet = Planet {
-        rng_seed: 1,
-        noise_seed: 5,
-        landblocks: Vec::new(),
+        rng_seed: base_seed + 1,
+        noise_seed: base_seed,
+        landblocks: Vec::with_capacity(WORLD_TILES_COUNT),
         water_height: 0,
         plains_height: 0,
         hills_height: 0,
@@ -137,7 +140,14 @@ fn make_planet() {
 
     println!("Biomes");
     update_status(PlanetBuilderStatus::Biomes);
-    planet_biomes(&mut planet);
+    {
+        planet_biomes(&mut planet);
+        let mut bumpy_planet = PlanetMesh::new();
+        bumpy_planet.with_biomes(&planet);
+        PLANET_GEN.write().globe_info = Some(bumpy_planet);
+    }
+
+    println!("Saving...");
 }
 
 pub struct Planet {
@@ -574,7 +584,7 @@ fn planet_biomes(planet: &mut Planet) {
         }
 
         // Render Result
-        if i % 100 == 0 {
+        if i % 200 == 0 {
             let mut bumpy_planet = PlanetMesh::new();
             bumpy_planet.with_biomes(&planet);
             PLANET_GEN.write().globe_info = Some(bumpy_planet);

@@ -14,8 +14,9 @@ pub fn planet_builder_menu(
     mut meshes: ResMut<Assets<Mesh>>,
     time: Res<Time>,
     mut planet_builder: ResMut<PlanetBuilder>,
+    res: Res<UiResources>,
 ) {
-    planet_builder.start();
+    planet_builder.start(&res.worldgen_seed);
 
     egui::Window::new("Planet Builder")
         .title_bar(true)

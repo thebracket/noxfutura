@@ -262,7 +262,7 @@
         BiomeType(
             name: "Rocky Hills",
             min_temp: -5,
-            max_temp: 5,
+            max_temp: 50,
             min_rain: 0,
             max_rain: 100000,
             min_mutation: 0,
@@ -323,7 +323,7 @@
         BiomeType(
             name: "Rocky Plateau",
             min_temp: -5,
-            max_temp: 5,
+            max_temp: 50,
             min_rain: 0,
             max_rain: 100000,
             min_mutation: 0,
@@ -399,7 +399,7 @@
         BiomeType(
             name: "Rocky Highlands",
             min_temp: -5,
-            max_temp: 5,
+            max_temp: 50,
             min_rain: 0,
             max_rain: 100000,
             min_mutation: 0,
@@ -475,7 +475,7 @@
         BiomeType(
             name: "Rocky Mountains",
             min_temp: -5,
-            max_temp: 5,
+            max_temp: 50,
             min_rain: 0,
             max_rain: 100000,
             min_mutation: 0,
