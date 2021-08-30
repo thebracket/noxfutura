@@ -216,7 +216,7 @@ fn planetary_noise(planet: &mut Planet) {
     for y in 0..WORLD_HEIGHT {
         let lat = Degrees::new(noise_lat(y, 0));
         let base_temperature_c = average_temperature_by_latitude(lat);
-        let rainfall_mm = average_precipitation_mm_by_latitude(lat);
+        let rainfall_mm = average_precipitation_mm_by_latitude(lat) / 3.0;
 
         for x in 0..WORLD_WIDTH {
             let mut total_height = 0u32;
@@ -465,13 +465,13 @@ fn planet_rainfall(planet: &mut Planet) {
             .neighbors
             .iter()
             .map(|n| (n.0, lb_copy[n.1].air_pressure_kpa))
-            .filter(|n| n.1 <= lb.air_pressure_kpa)
+            //.filter(|n| n.1 <= lb.air_pressure_kpa)
             .collect();
 
         if neighbors.is_empty() {
             lb.prevailing_wind = Direction::None;
         } else {
-            neighbors.sort_unstable_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+            neighbors.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
             lb.prevailing_wind = neighbors[0].0;
         }
     });
@@ -494,10 +494,14 @@ fn planet_rainfall(planet: &mut Planet) {
         rain_particles.iter_mut().for_each(|p| {
             p.cycles += 1;
 
-            if p.raining {
-                p.dump_water(planet, 5);
+            if planet.landblocks[p.position].btype == BlockType::Water {
+                p.take_water(planet, 20);
             } else {
-                p.take_water(planet, 5);
+                if p.raining {
+                    p.dump_water(planet, 5);
+                } else {
+                    p.take_water(planet, 200);
+                }
             }
 
             if p.load < 1 {
