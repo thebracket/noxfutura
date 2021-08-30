@@ -67,6 +67,15 @@ impl PlanetMesh {
         }
     }
 
+    fn get_biome_coords(&self, biome_idx: usize) -> (f32, f32) {
+        if biome_idx < usize::MAX {
+            let tile = crate::raws::RAWS.read().biomes.areas[biome_idx].worldgen_tile;
+            self.tex_idx(tile as f32)
+        } else {
+            self.tex_idx(8.0)
+        }
+    }
+
     fn push_point(&mut self, lat: f32, lon: f32, tx: f32, ty: f32, altitude: f32) {
         let (a, b, c) = sphere_vertex(altitude, Degrees::new(lat), Degrees::new(lon));
         self.vertices.push([a, b, c]);
@@ -151,6 +160,25 @@ impl PlanetMesh {
         self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
     }
 
+    fn push_biome_quad(&mut self, lat: f32, lon: f32, planet: &super::Planet) {
+        let (tx_min, tx_max) = self.get_biome_coords(
+            planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].biome_idx,
+        );
+
+        let tl = self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat));
+        let tr = self.get_altitude(planet, lon_to_x(lon + LON_STEP), lat_to_y(lat));
+        let bl = self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat + LAT_STEP));
+        let br = self.get_altitude(planet, lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP));
+
+        self.push_point(lat, lon, tx_min, 0.0, tl);
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, tr);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
+
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, tr);
+        self.push_point(lat + LAT_STEP, lon + LON_STEP, tx_max, 1.0, br);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
+    }
+
     pub fn totally_round(&mut self, altitude: f32) {
         self.vertices.clear();
         self.normals.clear();
@@ -216,6 +244,24 @@ impl PlanetMesh {
             lon = -180.0;
             while lon < 180.0 {
                 self.push_wind_quad(lat, lon, planet);
+
+                lon += LON_STEP;
+            }
+            lat += LAT_STEP;
+        }
+    }
+
+    pub fn with_biomes(&mut self, planet: &super::Planet) {
+        self.vertices.clear();
+        self.normals.clear();
+        self.uv.clear();
+
+        let mut lat = -90.0;
+        let mut lon;
+        while lat < 90.0 {
+            lon = -180.0;
+            while lon < 180.0 {
+                self.push_biome_quad(lat, lon, planet);
 
                 lon += LON_STEP;
             }

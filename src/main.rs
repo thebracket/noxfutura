@@ -3,8 +3,8 @@ use bevy_egui::EguiPlugin;
 mod ui;
 use ui::*;
 mod geometry;
-mod simulation;
 mod raws;
+mod simulation;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum AppState {

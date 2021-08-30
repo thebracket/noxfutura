@@ -43,7 +43,7 @@ pub fn planet_builder_menu(
 
     // Spin the globe
     for mut transform in spinner.iter_mut() {
-        transform.rotation *= Quat::from_rotation_y(0.5 * time.delta_seconds());
+        transform.rotation *= Quat::from_rotation_z(0.5 * time.delta_seconds());
     }
 }
 
@@ -99,7 +99,7 @@ pub fn resume_planet_builder_menu(
 
     // light
     commands.spawn_bundle(LightBundle {
-        transform: Transform::from_xyz(0.0, 0.0, 15.0),
+        transform: Transform::from_xyz(0.0, 15.0, 0.0),
         light: Light {
             color: Color::rgb(1.0, 1.0, 1.0),
             ..Default::default()
@@ -108,7 +108,7 @@ pub fn resume_planet_builder_menu(
     });
     // Camera
     commands.spawn_bundle(PerspectiveCameraBundle {
-        transform: Transform::from_xyz(0.0, 0.0, 10.0).looking_at(Vec3::ZERO, Vec3::Y),
+        transform: Transform::from_xyz(0.0, 10.0, 0.0).looking_at(Vec3::ZERO, Vec3::Z),
         ..Default::default()
     });
 

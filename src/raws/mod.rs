@@ -1,7 +1,7 @@
 mod formats;
 pub use formats::*;
-use parking_lot::RwLock;
 use lazy_static::*;
+use parking_lot::RwLock;
 mod block_type;
 pub use block_type::BlockType;
 

@@ -1,11 +1,11 @@
 mod planet_3d;
+use crate::raws::BlockType;
 use bevy::prelude::*;
 use bracket_noise::prelude::*;
 use lazy_static::*;
 use parking_lot::RwLock;
 pub use planet_3d::PlanetMesh;
 use std::collections::HashSet;
-use crate::raws::BlockType;
 
 lazy_static! {
     static ref PLANET_GEN: RwLock<PlanetGen> = RwLock::new(PlanetGen::new());
@@ -137,6 +137,7 @@ fn make_planet() {
 
     println!("Biomes");
     update_status(PlanetBuilderStatus::Biomes);
+    planet_biomes(&mut planet);
 }
 
 pub struct Planet {
@@ -148,7 +149,7 @@ pub struct Planet {
     pub hills_height: u8,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Landblock {
     pub height: u8,
     pub variance: u8,
@@ -186,7 +187,7 @@ fn zero_fill(planet: &mut Planet) {
                 btype: BlockType::None,
                 temperature_c: 0.0,
                 rainfall_mm: 0,
-                biome_idx: planet_idx(x, y),
+                biome_idx: usize::MAX,
                 air_pressure_kpa: 0.0,
                 prevailing_wind: Direction::None,
                 neighbors: planet_neighbors_four_way(planet_idx(x, y)),
@@ -213,6 +214,10 @@ fn planetary_noise(planet: &mut Planet) {
     noise.set_frequency(0.01);
 
     for y in 0..WORLD_HEIGHT {
+        let lat = Degrees::new(noise_lat(y, 0));
+        let base_temperature_c = average_temperature_by_latitude(lat);
+        let rainfall_mm = average_precipitation_mm_by_latitude(lat);
+
         for x in 0..WORLD_WIDTH {
             let mut total_height = 0u32;
             let mut tile_count = 0u32;
@@ -243,12 +248,10 @@ fn planetary_noise(planet: &mut Planet) {
             planet.landblocks[pidx].height = (total_height / tile_count) as u8;
             planet.landblocks[pidx].variance = max - min;
 
-            let lat = Degrees::new(noise_lat(y, 0));
             //let lon = noise_lon(x, 0);
-            let altitude_meters = ((max_noise + 1.0) / 2.0) * 8_848.0; // Everest
-            let base_temperature_c = average_temperature_by_latitude(lat);
-            let temperature_decrease = temperature_decrease_by_altitude(altitude_meters);
-            let rainfall_mm = average_precipitation_mm_by_latitude(lat);
+            let altitude_meters = max_noise * 8_848.0; // Everest
+            let temperature_decrease =
+                temperature_decrease_by_altitude(f32::max(altitude_meters, 0.0));
             planet.landblocks[pidx].rainfall_mm = rainfall_mm as i32;
             planet.landblocks[pidx].temperature_c = base_temperature_c - temperature_decrease;
             planet.landblocks[pidx].air_pressure_kpa =
@@ -356,7 +359,7 @@ fn planet_coastlines(planet: &mut Planet) {
 fn average_temperature_by_latitude(lat: Degrees) -> f32 {
     // Source: https://davidwaltham.com/global-warming-model/
     const AVERAGE_EQUATORIAL_C: f32 = 30.0;
-    const A: f32 = 5.0; // Based on current data
+    const A: f32 = 35.0; // Based on current data
     let lat_rad: Radians = lat.into();
     let lat_sin_squared = lat_rad.0.sin() * lat_rad.0.sin();
     AVERAGE_EQUATORIAL_C - (A * lat_sin_squared)
@@ -364,7 +367,7 @@ fn average_temperature_by_latitude(lat: Degrees) -> f32 {
 
 fn average_precipitation_mm_by_latitude(lat: Degrees) -> f32 {
     // Mangled from https://i.stack.imgur.com/YBgot.png
-    const PEAK: f32 = 2000.0;
+    const PEAK: f32 = 8000.0;
     let fudge = if (lat.0 > -50.0 && lat.0 < -5.0) || (lat.0 < 50.0 && lat.0 > 5.0) {
         400.0
     } else {
@@ -429,11 +432,13 @@ struct RainParticle {
     position: usize,
     load: i32,
     cycles: u32,
+    history: HashSet<usize>,
+    raining: bool,
 }
 
 impl RainParticle {
     fn take_water(&mut self, planet: &mut Planet, amount: i32) {
-        if amount >= planet.landblocks[self.position].rainfall_mm {
+        if amount <= planet.landblocks[self.position].rainfall_mm {
             planet.landblocks[self.position].rainfall_mm -= amount;
             self.load += amount;
         } else {
@@ -471,7 +476,7 @@ fn planet_rainfall(planet: &mut Planet) {
         }
     });
     let mut bumpy_planet = PlanetMesh::new();
-    bumpy_planet.with_wind(&planet); // TODO: Change to wind direction map
+    bumpy_planet.with_wind(&planet);
     PLANET_GEN.write().globe_info = Some(bumpy_planet);
 
     let mut rain_particles = Vec::with_capacity(WORLD_TILES_COUNT);
@@ -480,6 +485,8 @@ fn planet_rainfall(planet: &mut Planet) {
             position: i,
             cycles: 0,
             load: 0,
+            history: HashSet::new(),
+            raining: false,
         })
     }
 
@@ -487,17 +494,20 @@ fn planet_rainfall(planet: &mut Planet) {
         rain_particles.iter_mut().for_each(|p| {
             p.cycles += 1;
 
-            match planet.landblocks[p.position].btype {
-                BlockType::Coastal => p.take_water(planet, 5),
-                BlockType::Marsh => p.take_water(planet, 5),
-                BlockType::SaltMarsh => p.take_water(planet, 5),
-                BlockType::Water => p.take_water(planet, 10),
-                BlockType::Hills => p.dump_water(planet, 5),
-                BlockType::Highlands => p.dump_water(planet, 10),
-                BlockType::Mountains => p.dump_water(planet, 15),
-                BlockType::Plateau => p.dump_water(planet, 5),
-                BlockType::Plains => p.take_water(planet, 1),
-                _ => {}
+            if p.raining {
+                p.dump_water(planet, 5);
+            } else {
+                p.take_water(planet, 5);
+            }
+
+            if p.load < 1 {
+                p.raining = false;
+            }
+            if p.load > 0
+                && (planet.landblocks[p.position].btype == BlockType::Mountains
+                    || planet.landblocks[p.position].btype == BlockType::Highlands)
+            {
+                p.raining = true;
             }
 
             let wind = planet.landblocks[p.position].prevailing_wind;
@@ -509,7 +519,13 @@ fn planet_rainfall(planet: &mut Planet) {
                     Direction::West => planet.landblocks[p.position].neighbors[3].1,
                     Direction::None => 0,
                 };
-                p.position = destination;
+
+                if !p.history.contains(&destination) {
+                    p.history.insert(p.position);
+                    p.position = destination;
+                } else {
+                    p.cycles += 500;
+                }
             } else {
                 p.cycles += 500;
             }
@@ -519,6 +535,45 @@ fn planet_rainfall(planet: &mut Planet) {
         let percent =
             ((1.0 - (rain_particles.len() as f32 / WORLD_TILES_COUNT as f32)) * 100.0) as u8;
         update_status(PlanetBuilderStatus::Rainfall { amount: percent });
-        println!("Particles remaining: {}", rain_particles.len());
+        //println!("Particles remaining: {}", rain_particles.len());
+    }
+}
+
+fn planet_biomes(planet: &mut Planet) {
+    use crate::raws::{BiomeType, RAWS};
+    use bracket_random::prelude::RandomNumberGenerator;
+    let biome_reader = RAWS.read();
+    let mut rng = RandomNumberGenerator::seeded(planet.rng_seed);
+    for i in 0..planet.landblocks.len() {
+        let lb = &planet.landblocks[i];
+        let possible_biomes: Vec<(usize, &BiomeType)> = biome_reader
+            .biomes
+            .areas
+            .iter()
+            .enumerate()
+            .filter(|b| b.1.occurs.contains(&lb.btype))
+            .filter(|b| {
+                lb.temperature_c >= b.1.min_temp as f32 && lb.temperature_c < b.1.max_temp as f32
+            })
+            .filter(|b| {
+                lb.rainfall_mm >= b.1.min_rain as i32 && lb.rainfall_mm < b.1.max_rain as i32
+            })
+            .collect();
+
+        if possible_biomes.is_empty() {
+            panic!("No biomes for {:#?}", lb);
+        } else {
+            if let Some(choice) = rng.random_slice_entry(&possible_biomes) {
+                planet.landblocks[i].biome_idx = choice.0;
+                //println!("Selected: {:?} : {}", planet.landblocks[i].btype, choice.1.name);
+            }
+        }
+
+        // Render Result
+        if i % 100 == 0 {
+            let mut bumpy_planet = PlanetMesh::new();
+            bumpy_planet.with_biomes(&planet);
+            PLANET_GEN.write().globe_info = Some(bumpy_planet);
+        }
     }
 }
