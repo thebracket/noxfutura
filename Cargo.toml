@@ -13,6 +13,9 @@ bracket-random = "0.8"
 bracket-noise = "0.8"
 lazy_static = "1.4"
 parking_lot = "0.11"
+serde = "1.0"
+ron = "0.6"
+Inflector = "0.11"
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]

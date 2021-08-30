@@ -1,4 +1,4 @@
-use super::BlockType;
+use super::{BlockType, Direction};
 use crate::{
     geometry::{Degrees, Radians},
     simulation::*,
@@ -54,6 +54,16 @@ impl PlanetMesh {
             BlockType::SaltMarsh => self.tex_idx(6.0),
             BlockType::Water => self.tex_idx(0.0),
             BlockType::None => self.tex_idx(8.0),
+        }
+    }
+
+    fn get_texture_wind_coords(&self, d: Direction) -> (f32, f32) {
+        match d {
+            Direction::North => self.tex_idx(9.0),
+            Direction::South => self.tex_idx(10.0),
+            Direction::East => self.tex_idx(11.0),
+            Direction::West => self.tex_idx(12.0),
+            Direction::None => self.tex_idx(8.0),
         }
     }
 
@@ -122,6 +132,25 @@ impl PlanetMesh {
         self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
     }
 
+    fn push_wind_quad(&mut self, lat: f32, lon: f32, planet: &super::Planet) {
+        let (tx_min, tx_max) = self.get_texture_wind_coords(
+            planet.landblocks[planet_idx(lon_to_x(lon), lat_to_y(lat))].prevailing_wind,
+        );
+
+        let tl = self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat));
+        let tr = self.get_altitude(planet, lon_to_x(lon + LON_STEP), lat_to_y(lat));
+        let bl = self.get_altitude(planet, lon_to_x(lon), lat_to_y(lat + LAT_STEP));
+        let br = self.get_altitude(planet, lon_to_x(lon + LON_STEP), lat_to_y(lat + LAT_STEP));
+
+        self.push_point(lat, lon, tx_min, 0.0, tl);
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, tr);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
+
+        self.push_point(lat, lon + LON_STEP, tx_min, 1.0, tr);
+        self.push_point(lat + LAT_STEP, lon + LON_STEP, tx_max, 1.0, br);
+        self.push_point(lat + LAT_STEP, lon, tx_max, 0.0, bl);
+    }
+
     pub fn totally_round(&mut self, altitude: f32) {
         self.vertices.clear();
         self.normals.clear();
@@ -169,6 +198,24 @@ impl PlanetMesh {
             lon = -180.0;
             while lon < 180.0 {
                 self.push_cat_quad(lat, lon, planet);
+
+                lon += LON_STEP;
+            }
+            lat += LAT_STEP;
+        }
+    }
+
+    pub fn with_wind(&mut self, planet: &super::Planet) {
+        self.vertices.clear();
+        self.normals.clear();
+        self.uv.clear();
+
+        let mut lat = -90.0;
+        let mut lon;
+        while lat < 90.0 {
+            lon = -180.0;
+            while lon < 180.0 {
+                self.push_wind_quad(lat, lon, planet);
 
                 lon += LON_STEP;
             }

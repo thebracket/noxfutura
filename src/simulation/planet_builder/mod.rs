@@ -5,6 +5,7 @@ use lazy_static::*;
 use parking_lot::RwLock;
 pub use planet_3d::PlanetMesh;
 use std::collections::HashSet;
+use crate::raws::BlockType;
 
 lazy_static! {
     static ref PLANET_GEN: RwLock<PlanetGen> = RwLock::new(PlanetGen::new());
@@ -16,7 +17,8 @@ pub enum PlanetBuilderStatus {
     Altitudes,
     Dividing,
     Coast,
-    Rainfall{amount: u8},
+    Rainfall { amount: u8 },
+    Biomes,
 }
 
 pub struct PlanetBuilder {
@@ -39,7 +41,10 @@ impl PlanetBuilder {
             PlanetBuilderStatus::Altitudes => String::from("Squishing out some topology"),
             PlanetBuilderStatus::Dividing => String::from("Dividing the heaven and hearth"),
             PlanetBuilderStatus::Coast => String::from("Crinkling up the coastlines"),
-            PlanetBuilderStatus::Rainfall{amount} => format!("Spinning the barometer {}%", amount),
+            PlanetBuilderStatus::Rainfall { amount } => {
+                format!("Spinning the barometer {}%", amount)
+            }
+            PlanetBuilderStatus::Biomes => String::from("Zooming on on details"),
         }
     }
 
@@ -127,8 +132,11 @@ fn make_planet() {
     }
 
     println!("Wind and rain");
-    update_status(PlanetBuilderStatus::Rainfall{amount: 0});
+    update_status(PlanetBuilderStatus::Rainfall { amount: 0 });
     planet_rainfall(&mut planet);
+
+    println!("Biomes");
+    update_status(PlanetBuilderStatus::Biomes);
 }
 
 pub struct Planet {
@@ -140,31 +148,32 @@ pub struct Planet {
     pub hills_height: u8,
 }
 
+#[derive(Clone)]
 pub struct Landblock {
     pub height: u8,
     pub variance: u8,
     pub btype: BlockType,
-    pub temperature_c: i8,
+    pub temperature_c: f32,
     pub rainfall_mm: i32,
     pub air_pressure_kpa: f32,
+    pub prevailing_wind: Direction,
     pub biome_idx: usize,
+    pub neighbors: [(Direction, usize); 4],
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum BlockType {
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
+pub enum Direction {
+    North,
+    South,
+    East,
+    West,
     None,
-    Water,
-    Plains,
-    Hills,
-    Mountains,
-    Marsh,
-    Plateau,
-    Highlands,
-    Coastal,
-    SaltMarsh,
 }
 
-use crate::{geometry::{Degrees, Radians}, simulation::planet_builder::planet_3d::sphere_vertex};
+use crate::{
+    geometry::{Degrees, Radians},
+    simulation::planet_builder::planet_3d::sphere_vertex,
+};
 
 use super::bounds::*;
 
@@ -175,10 +184,12 @@ fn zero_fill(planet: &mut Planet) {
                 height: 0,
                 variance: 0,
                 btype: BlockType::None,
-                temperature_c: 0,
+                temperature_c: 0.0,
                 rainfall_mm: 0,
                 biome_idx: planet_idx(x, y),
                 air_pressure_kpa: 0.0,
+                prevailing_wind: Direction::None,
+                neighbors: planet_neighbors_four_way(planet_idx(x, y)),
             });
         }
     }
@@ -239,8 +250,10 @@ fn planetary_noise(planet: &mut Planet) {
             let temperature_decrease = temperature_decrease_by_altitude(altitude_meters);
             let rainfall_mm = average_precipitation_mm_by_latitude(lat);
             planet.landblocks[pidx].rainfall_mm = rainfall_mm as i32;
-            planet.landblocks[pidx].temperature_c = (base_temperature_c - temperature_decrease) as i8;
-            planet.landblocks[pidx].air_pressure_kpa = atmospheric_pressure_by_elevation(altitude_meters) + ((base_temperature_c - temperature_decrease)/10.0);
+            planet.landblocks[pidx].temperature_c = base_temperature_c - temperature_decrease;
+            planet.landblocks[pidx].air_pressure_kpa =
+                atmospheric_pressure_by_elevation(altitude_meters)
+                    + ((base_temperature_c - temperature_decrease) / 10.0);
         }
 
         if y % 8 == 0 {
@@ -367,41 +380,46 @@ fn temperature_decrease_by_altitude(altitude_meters: f32) -> f32 {
 }
 
 fn atmospheric_pressure_by_elevation(altitude_meters: f32) -> f32 {
-    (101_325.0 * ( 1.0 - 2.25577 *  0.00001 * altitude_meters).powf(5.25588)) / 1000.0
+    (101_325.0 * (1.0 - 2.25577 * 0.00001 * altitude_meters).powf(5.25588)) / 1000.0
 }
 
-fn planet_neighbors_four_way(planet: &Planet, idx: usize) -> Vec<usize> {
-    let mut result = Vec::with_capacity(4);
+fn planet_neighbors_four_way(idx: usize) -> [(Direction, usize); 4] {
+    let mut result = [
+        (Direction::North, 0),
+        (Direction::South, 0),
+        (Direction::East, 0),
+        (Direction::West, 0),
+    ];
 
     let (px, py) = idx_planet(idx);
 
     // West
     if px > 0 {
-        result.push(planet_idx(px-1, py));
+        result[3].1 = planet_idx(px - 1, py);
     } else {
-        result.push(planet_idx(WORLD_WIDTH-1, py));
+        result[3].1 = planet_idx(WORLD_WIDTH - 1, py);
     }
 
     // East
-    if px < WORLD_WIDTH-1 {
-        result.push(planet_idx(px+1, py));
+    if px < WORLD_WIDTH - 1 {
+        result[2].1 = planet_idx(px + 1, py);
     } else {
-        result.push(planet_idx(0, py));
+        result[2].1 = planet_idx(0, py);
     }
 
     // North
     let distance_from_middle = (WORLD_WIDTH as isize / 2) - px as isize;
     if py > 0 {
-        result.push(planet_idx(px, py));
+        result[0].1 = planet_idx(px, py);
     } else {
-        result.push(planet_idx((px as isize + distance_from_middle) as usize, py));
+        result[0].1 = planet_idx((px as isize + distance_from_middle) as usize, py);
     }
 
     // South
-    if py < WORLD_HEIGHT-1 {
-        result.push(planet_idx(px, py));
+    if py < WORLD_HEIGHT - 1 {
+        result[1].1 = planet_idx(px, py);
     } else {
-        result.push(planet_idx((px as isize + distance_from_middle) as usize, py));
+        result[1].1 = planet_idx((px as isize + distance_from_middle) as usize, py);
     }
 
     result
@@ -410,25 +428,56 @@ fn planet_neighbors_four_way(planet: &Planet, idx: usize) -> Vec<usize> {
 struct RainParticle {
     position: usize,
     load: i32,
-    history: HashSet<usize>,
-    cycles: u8,
+    cycles: u32,
 }
 
 impl RainParticle {
-    fn modify_load(&mut self, planet: &mut Planet, amount: i32) {
-        if self.load < amount && planet.landblocks[self.position].rainfall_mm > amount {
-            self.load = self.load + amount;
+    fn take_water(&mut self, planet: &mut Planet, amount: i32) {
+        if amount >= planet.landblocks[self.position].rainfall_mm {
             planet.landblocks[self.position].rainfall_mm -= amount;
+            self.load += amount;
+        } else {
+            self.load += planet.landblocks[self.position].rainfall_mm;
+            planet.landblocks[self.position].rainfall_mm = 0;
+        }
+    }
+
+    fn dump_water(&mut self, planet: &mut Planet, amount: i32) {
+        if self.load >= amount {
+            self.load -= amount;
+            planet.landblocks[self.position].rainfall_mm += amount;
+        } else {
+            planet.landblocks[self.position].rainfall_mm += self.load;
+            self.load = 0;
         }
     }
 }
 
 fn planet_rainfall(planet: &mut Planet) {
+    let lb_copy = planet.landblocks.clone();
+    planet.landblocks.iter_mut().for_each(|lb| {
+        let mut neighbors: Vec<(Direction, f32)> = lb
+            .neighbors
+            .iter()
+            .map(|n| (n.0, lb_copy[n.1].air_pressure_kpa))
+            .filter(|n| n.1 <= lb.air_pressure_kpa)
+            .collect();
+
+        if neighbors.is_empty() {
+            lb.prevailing_wind = Direction::None;
+        } else {
+            neighbors.sort_unstable_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+            lb.prevailing_wind = neighbors[0].0;
+        }
+    });
+    let mut bumpy_planet = PlanetMesh::new();
+    bumpy_planet.with_wind(&planet); // TODO: Change to wind direction map
+    PLANET_GEN.write().globe_info = Some(bumpy_planet);
+
     let mut rain_particles = Vec::with_capacity(WORLD_TILES_COUNT);
     for i in 0..planet.landblocks.len() {
-        rain_particles.push(RainParticle{
+        rain_particles.push(RainParticle {
             position: i,
-            history: HashSet::new(),
             cycles: 0,
             load: 0,
         })
@@ -436,49 +485,40 @@ fn planet_rainfall(planet: &mut Planet) {
 
     while !rain_particles.is_empty() {
         rain_particles.iter_mut().for_each(|p| {
+            p.cycles += 1;
+
             match planet.landblocks[p.position].btype {
-                BlockType::Coastal => p.modify_load(planet, 1),
-                BlockType::Highlands => p.modify_load(planet, -2),
-                BlockType::Hills => p.modify_load(planet, -1),
-                BlockType::Marsh => p.modify_load(planet, 1),
-                BlockType::Mountains => p.modify_load(planet, -3),
-                BlockType::SaltMarsh => p.modify_load(planet, 1),
-                BlockType::Water => p.load += 2,
+                BlockType::Coastal => p.take_water(planet, 5),
+                BlockType::Marsh => p.take_water(planet, 5),
+                BlockType::SaltMarsh => p.take_water(planet, 5),
+                BlockType::Water => p.take_water(planet, 10),
+                BlockType::Hills => p.dump_water(planet, 5),
+                BlockType::Highlands => p.dump_water(planet, 10),
+                BlockType::Mountains => p.dump_water(planet, 15),
+                BlockType::Plateau => p.dump_water(planet, 5),
+                BlockType::Plains => p.take_water(planet, 1),
                 _ => {}
             }
 
-            if planet.landblocks[p.position].btype != BlockType::Water {
-                if p.load > 0 {
-                    p.load -= 1;
-                    planet.landblocks[p.position].rainfall_mm += 1;
-                } else {
-                    if planet.landblocks[p.position].rainfall_mm > 0 {
-                        planet.landblocks[p.position].rainfall_mm -= 10; // Dry air sucks it out
-                        if planet.landblocks[p.position].rainfall_mm < 0 {
-                            planet.landblocks[p.position].rainfall_mm = 0;
-                        }
-                    }
-                }
-            }
-
-            let mut neighbors : Vec<(usize, f32)> = planet_neighbors_four_way(planet, p.position)
-                .iter()
-                .filter(|pos| !p.history.contains(pos))
-                .filter(|pos| planet.landblocks[p.position].air_pressure_kpa <= planet.landblocks[**pos].air_pressure_kpa)
-                .map(|pos| (*pos, planet.landblocks[*pos].air_pressure_kpa))
-                .collect();
-
-            if !neighbors.is_empty() {
-                neighbors.sort_unstable_by(|a,b| a.1.partial_cmp(&b.1).unwrap());
-                p.history.insert(p.position);
-                p.position = neighbors[0].0;
-                p.cycles += 1;
+            let wind = planet.landblocks[p.position].prevailing_wind;
+            if wind != Direction::None {
+                let destination = match wind {
+                    Direction::North => planet.landblocks[p.position].neighbors[0].1,
+                    Direction::South => planet.landblocks[p.position].neighbors[1].1,
+                    Direction::East => planet.landblocks[p.position].neighbors[2].1,
+                    Direction::West => planet.landblocks[p.position].neighbors[3].1,
+                    Direction::None => 0,
+                };
+                p.position = destination;
             } else {
-                p.cycles = 200;
+                p.cycles += 500;
             }
         });
-        rain_particles.retain(|p| p.cycles < 100);
-        let percent = ((1.0 - (rain_particles.len() as f32 / WORLD_TILES_COUNT as f32))*100.0) as u8;
-        update_status(PlanetBuilderStatus::Rainfall{amount: percent});
+
+        rain_particles.retain(|p| p.cycles < WORLD_WIDTH as u32 * 2);
+        let percent =
+            ((1.0 - (rain_particles.len() as f32 / WORLD_TILES_COUNT as f32)) * 100.0) as u8;
+        update_status(PlanetBuilderStatus::Rainfall { amount: percent });
+        println!("Particles remaining: {}", rain_particles.len());
     }
 }

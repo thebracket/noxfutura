@@ -4,6 +4,7 @@ mod ui;
 use ui::*;
 mod geometry;
 mod simulation;
+mod raws;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum AppState {
