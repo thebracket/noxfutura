@@ -7,7 +7,7 @@ use bracket_random::prelude::RandomNumberGenerator;
 
 use crate::AppState;
 
-use super::BackgroundImage;
+use super::{BackgroundImage, UiCamera, UiResources};
 
 pub struct MainMenuState {
     tagline: String,
@@ -29,6 +29,10 @@ pub fn main_menu(
 
             if ui.button("Create World").clicked() {
                 state.set(AppState::WorldGenMenu).unwrap();
+            }
+
+            if std::path::Path::new("savegame/world.dat").exists() {
+                if ui.button("Embark").clicked() {}
             }
 
             // Quit game option
@@ -56,14 +60,32 @@ pub fn main_menu(
         });
 }
 
-pub fn resume_main_menu(mut query: Query<(&mut TextureAtlasSprite, &BackgroundImage)>) {
-    for (mut sprite, _) in query.iter_mut() {
-        sprite.index = 0;
-    }
+pub fn resume_main_menu(mut commands: Commands, ui: Res<UiResources>) {
+    commands
+        .spawn_bundle(OrthographicCameraBundle::new_2d())
+        .insert(UiCamera {});
+    commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: ui.backgrounds.clone(),
+            sprite: TextureAtlasSprite::new(0),
+            ..Default::default()
+        })
+        .insert(BackgroundImage {});
 }
 
 pub fn setup_main_menu(mut commands: Commands) {
     commands.insert_resource(MainMenuState { tagline: tagline() });
+}
+
+pub fn exit_main_menu(
+    mut commands: Commands,
+    q: Query<(Entity, &UiCamera)>,
+    q2: Query<(Entity, &BackgroundImage)>,
+) {
+    q.iter()
+        .for_each(|(entity, _)| commands.entity(entity).despawn());
+    q2.iter()
+        .for_each(|(entity, _)| commands.entity(entity).despawn());
 }
 
 fn tagline() -> String {

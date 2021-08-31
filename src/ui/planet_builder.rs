@@ -1,5 +1,5 @@
 use super::{BackgroundImage, UiResources};
-use crate::simulation::planet_builder::PlanetBuilder;
+use crate::{simulation::planet_builder::PlanetBuilder, AppState};
 use bevy::{prelude::*, render::mesh::VertexAttributeValues};
 use bevy_egui::{
     egui::{self, Pos2},
@@ -7,6 +7,7 @@ use bevy_egui::{
 };
 
 pub struct WorldGenPlanet;
+pub struct WorldGenUi;
 
 pub fn planet_builder_menu(
     egui_context: ResMut<EguiContext>,
@@ -15,8 +16,13 @@ pub fn planet_builder_menu(
     time: Res<Time>,
     mut planet_builder: ResMut<PlanetBuilder>,
     res: Res<UiResources>,
+    mut state: ResMut<State<AppState>>,
 ) {
     planet_builder.start(&res.worldgen_seed);
+    if planet_builder.is_done() {
+        // Bail out
+        state.set(AppState::MainMenu).unwrap();
+    }
 
     egui::Window::new("Planet Builder")
         .title_bar(true)
@@ -50,16 +56,10 @@ pub fn planet_builder_menu(
 
 pub fn resume_planet_builder_menu(
     mut commands: Commands,
-    mut query: Query<(Entity, &TextureAtlasSprite, &BackgroundImage)>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     ui_resources: Res<UiResources>,
 ) {
-    // Background image
-    for (e, _, _) in query.iter_mut() {
-        commands.entity(e).despawn();
-    }
-
     println!("Building globe");
 
     use crate::simulation::planet_builder::PlanetMesh;
@@ -96,25 +96,34 @@ pub fn resume_planet_builder_menu(
             material: material_handle,
             ..Default::default()
         })
-        .insert(WorldGenPlanet {});
+        .insert(WorldGenPlanet {})
+        .insert(WorldGenUi {});
 
     // light
-    commands.spawn_bundle(LightBundle {
-        transform: Transform::from_xyz(0.0, 15.0, 0.0),
-        light: Light {
-            color: Color::rgb(1.0, 1.0, 1.0),
+    commands
+        .spawn_bundle(LightBundle {
+            transform: Transform::from_xyz(0.0, 15.0, 0.0),
+            light: Light {
+                color: Color::rgb(1.0, 1.0, 1.0),
+                ..Default::default()
+            },
             ..Default::default()
-        },
-        ..Default::default()
-    });
+        })
+        .insert(WorldGenUi {});
     // Camera
-    commands.spawn_bundle(PerspectiveCameraBundle {
-        transform: Transform::from_xyz(0.0, 10.0, 0.0).looking_at(Vec3::ZERO, Vec3::Z),
-        ..Default::default()
-    });
+    commands
+        .spawn_bundle(PerspectiveCameraBundle {
+            transform: Transform::from_xyz(0.0, 10.0, 0.0).looking_at(Vec3::ZERO, Vec3::Z),
+            ..Default::default()
+        })
+        .insert(WorldGenUi {});
 
     // Get the builder inserted
     let mut pb = PlanetBuilder::new();
     pb.globe_mesh_handle = Some(globe_mesh_handle);
     commands.insert_resource(pb);
+}
+
+pub fn planet_builder_exit(mut commands: Commands, q: Query<(Entity, &WorldGenUi)>) {
+    q.iter().for_each(|(e, _)| commands.entity(e).despawn());
 }

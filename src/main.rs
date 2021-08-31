@@ -36,12 +36,16 @@ fn main() {
         .add_system_set(
             SystemSet::on_enter(AppState::MainMenu).with_system(resume_main_menu.system()),
         )
+        .add_system_set(SystemSet::on_exit(AppState::MainMenu).with_system(exit_main_menu.system()))
         // World-gen Menu
         .add_system_set(
             SystemSet::on_update(AppState::WorldGenMenu).with_system(world_gen_menu.system()),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::WorldGenMenu).with_system(resume_world_gen_menu.system()),
+        )
+        .add_system_set(
+            SystemSet::on_exit(AppState::WorldGenMenu).with_system(world_gen_exit.system()),
         )
         // Planet Builder Menu
         .add_system_set(
@@ -52,6 +56,9 @@ fn main() {
             SystemSet::on_enter(AppState::BuildingPlanet)
                 .with_system(resume_planet_builder_menu.system())
                 .label("PlanetBuilderResume"),
+        )
+        .add_system_set(
+            SystemSet::on_exit(AppState::BuildingPlanet).with_system(planet_builder_exit.system()),
         )
         // Start
         .run();

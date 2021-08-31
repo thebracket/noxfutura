@@ -6,7 +6,7 @@ use bevy_egui::{
 
 use crate::AppState;
 
-use super::{BackgroundImage, UiResources};
+use super::{BackgroundImage, UiCamera, UiResources};
 
 pub fn world_gen_menu(
     egui_context: ResMut<EguiContext>,
@@ -30,8 +30,26 @@ pub fn world_gen_menu(
         });
 }
 
-pub fn resume_world_gen_menu(mut query: Query<(&mut TextureAtlasSprite, &BackgroundImage)>) {
-    for (mut sprite, _) in query.iter_mut() {
-        sprite.index = 1;
-    }
+pub fn resume_world_gen_menu(mut commands: Commands, ui: Res<UiResources>) {
+    commands
+        .spawn_bundle(OrthographicCameraBundle::new_2d())
+        .insert(UiCamera {});
+    commands
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: ui.backgrounds.clone(),
+            sprite: TextureAtlasSprite::new(1),
+            ..Default::default()
+        })
+        .insert(BackgroundImage {});
+}
+
+pub fn world_gen_exit(
+    mut commands: Commands,
+    q: Query<(Entity, &UiCamera)>,
+    q2: Query<(Entity, &BackgroundImage)>,
+) {
+    q.iter()
+        .for_each(|(entity, _)| commands.entity(entity).despawn());
+    q2.iter()
+        .for_each(|(entity, _)| commands.entity(entity).despawn());
 }

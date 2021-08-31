@@ -22,6 +22,7 @@ lazy_static! {
     static ref PLANET_GEN: RwLock<PlanetGen> = RwLock::new(PlanetGen::new());
 }
 
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub enum PlanetBuilderStatus {
     Initializing,
     Flattening,
@@ -30,6 +31,8 @@ pub enum PlanetBuilderStatus {
     Coast,
     Rainfall { amount: u8 },
     Biomes,
+    Saving,
+    Done,
 }
 
 pub struct PlanetBuilder {
@@ -56,6 +59,8 @@ impl PlanetBuilder {
                 format!("Spinning the barometer {}%", amount)
             }
             PlanetBuilderStatus::Biomes => String::from("Zooming on on details"),
+            PlanetBuilderStatus::Saving => String::from("Saving the World"),
+            PlanetBuilderStatus::Done => String::from("Redirecting..."),
         }
     }
 
@@ -74,6 +79,14 @@ impl PlanetBuilder {
             write_lock.globe_info.take()
         } else {
             None
+        }
+    }
+
+    pub fn is_done(&self) -> bool {
+        if PLANET_GEN.read().status == PlanetBuilderStatus::Done {
+            true
+        } else {
+            false
         }
     }
 }
@@ -159,4 +172,9 @@ fn make_planet(seed: String) {
     }
 
     println!("Saving...");
+    update_status(PlanetBuilderStatus::Saving);
+    crate::simulation::save_planet(planet);
+
+    println!("Done...");
+    update_status(PlanetBuilderStatus::Done);
 }

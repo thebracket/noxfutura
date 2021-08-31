@@ -7,6 +7,7 @@ pub struct UiResources {
 }
 
 pub struct BackgroundImage;
+pub struct UiCamera;
 
 pub fn setup_ui(
     mut commands: Commands,
@@ -26,13 +27,4 @@ pub fn setup_ui(
         worldgen_seed: "Test Seed".to_string(),
         worldgen_tex,
     });
-
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-    commands
-        .spawn_bundle(SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
-            sprite: TextureAtlasSprite::new(0),
-            ..Default::default()
-        })
-        .insert(BackgroundImage {});
 }
