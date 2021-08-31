@@ -1,4 +1,4 @@
-use super::{BackgroundImage, UiResources};
+use super::UiResources;
 use crate::{simulation::planet_builder::PlanetBuilder, AppState};
 use bevy::{prelude::*, render::mesh::VertexAttributeValues};
 use bevy_egui::{
