@@ -1,12 +1,15 @@
+use super::{BackgroundImage, UiCamera, UiResources};
+use crate::{
+    simulation::{planet_idx, Planet, WORLD_HEIGHT, WORLD_WIDTH},
+    AppState,
+};
+use bevy::math::ivec3;
 use bevy::prelude::*;
 use bevy_egui::{
     egui::{self, Pos2},
     EguiContext,
 };
 use bevy_simple_tilemap::prelude::*;
-use crate::{AppState, simulation::{Planet, WORLD_HEIGHT, WORLD_WIDTH, planet_idx}};
-use super::{BackgroundImage, UiCamera, UiResources};
-use bevy::math::ivec3;
 
 pub struct EmbarkResources {
     pub planet: Planet,
@@ -42,12 +45,12 @@ pub fn embark_menu(
         // apply the camera transform
         let pos_wld = camera_transform.compute_matrix() * p.extend(0.0).extend(1.0);
         //eprintln!("World coords: {}/{}", pos_wld.x, pos_wld.y);
-        let width = WORLD_WIDTH as f32 *8.0;
+        let width = WORLD_WIDTH as f32 * 8.0;
         let height = WORLD_HEIGHT as f32 * 8.0;
-        if pos_wld.y > -(height/2.0) && pos_wld.y < height/2.0 {
-            if pos_wld.x > -(width/2.0) && pos_wld.x < width/2.0 {
-                tile_x = ((pos_wld.x + (width/2.0)) / 8.0) as i32;
-                tile_y = ((pos_wld.y + (height/2.0)) / 8.0) as i32;
+        if pos_wld.y > -(height / 2.0) && pos_wld.y < height / 2.0 {
+            if pos_wld.x > -(width / 2.0) && pos_wld.x < width / 2.0 {
+                tile_x = ((pos_wld.x + (width / 2.0)) / 8.0) as i32;
+                tile_y = ((pos_wld.y + (height / 2.0)) / 8.0) as i32;
 
                 let pidx = planet_idx(tile_x as usize, tile_y as usize);
                 let lb = &embark.planet.landblocks[pidx];
@@ -64,20 +67,20 @@ pub fn embark_menu(
     }
 
     egui::Window::new("Prepare to Evacuate the Colony Ship")
-    .title_bar(true)
-    .fixed_pos(Pos2::new(10.0, 10.0))
-    .show(egui_context.ctx(), |ui| {
-        ui.label("Select escape pod target");
-        ui.label(format!("Tile: {}, {}", tile_x, tile_y));
-        ui.label(description);
-    });
+        .title_bar(true)
+        .fixed_pos(Pos2::new(10.0, 10.0))
+        .show(egui_context.ctx(), |ui| {
+            ui.label("Select escape pod target");
+            ui.label(format!("Tile: {}, {}", tile_x, tile_y));
+            ui.label(description);
+        });
 }
 
 pub fn resume_embark_menu(mut commands: Commands, ui: Res<UiResources>) {
     commands
         .spawn_bundle(OrthographicCameraBundle::new_2d())
         .insert(UiCamera {});
-    
+
     commands
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: ui.backgrounds.clone(),
@@ -87,26 +90,23 @@ pub fn resume_embark_menu(mut commands: Commands, ui: Res<UiResources>) {
         .insert(BackgroundImage {});
 
     let planet = crate::simulation::load_planet();
-    let mut tiles : Vec<(IVec3, Option<Tile>)> = Vec::new();
+    let mut tiles: Vec<(IVec3, Option<Tile>)> = Vec::new();
     for y in 0..WORLD_HEIGHT as i32 {
         for x in 0..WORLD_WIDTH as i32 {
             let pidx = planet_idx(x as usize, y as usize);
             let biome_idx = planet.landblocks[pidx].biome_idx;
             let tile_index = crate::raws::RAWS.read().biomes.areas[biome_idx].embark_tile;
-            let tx = x - WORLD_WIDTH as i32/2;
-            let ty = y - WORLD_HEIGHT as i32/2;
-            tiles.push(
-                (
-                    ivec3(tx, ty, 0),
-                    Some(Tile {
-                        sprite_index: tile_index as u32,
-                        ..Default::default()
-                    })
-                )
-            );
+            let tx = x - WORLD_WIDTH as i32 / 2;
+            let ty = y - WORLD_HEIGHT as i32 / 2;
+            tiles.push((
+                ivec3(tx, ty, 0),
+                Some(Tile {
+                    sprite_index: tile_index as u32,
+                    ..Default::default()
+                }),
+            ));
         }
     }
-
 
     let mut tilemap = TileMap::default();
     tilemap.set_tiles(tiles);
@@ -124,7 +124,7 @@ pub fn resume_embark_menu(mut commands: Commands, ui: Res<UiResources>) {
     };
 
     commands.spawn_bundle(tilemap_bundle);
-    commands.insert_resource(EmbarkResources{ planet });
+    commands.insert_resource(EmbarkResources { planet });
 }
 
 pub fn embark_exit(

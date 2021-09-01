@@ -64,15 +64,11 @@ fn main() {
             SystemSet::on_exit(AppState::BuildingPlanet).with_system(planet_builder_exit.system()),
         )
         // Embark Menu
-        .add_system_set(
-            SystemSet::on_update(AppState::Embark).with_system(embark_menu.system()),
-        )
+        .add_system_set(SystemSet::on_update(AppState::Embark).with_system(embark_menu.system()))
         .add_system_set(
             SystemSet::on_enter(AppState::Embark).with_system(resume_embark_menu.system()),
         )
-        .add_system_set(
-            SystemSet::on_exit(AppState::Embark).with_system(embark_exit.system()),
-        )
+        .add_system_set(SystemSet::on_exit(AppState::Embark).with_system(embark_exit.system()))
         // Start
         .run();
 }
