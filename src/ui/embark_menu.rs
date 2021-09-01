@@ -1,7 +1,6 @@
 use super::{BackgroundImage, UiCamera, UiResources};
 use crate::{
     simulation::{planet_idx, Planet, WORLD_HEIGHT, WORLD_WIDTH},
-    AppState,
 };
 use bevy::math::ivec3;
 use bevy::prelude::*;
@@ -17,8 +16,6 @@ pub struct EmbarkResources {
 
 pub fn embark_menu(
     egui_context: ResMut<EguiContext>,
-    mut state: ResMut<State<AppState>>,
-    mut res: ResMut<UiResources>,
     wnds: Res<Windows>,
     q_camera: Query<&Transform, With<UiCamera>>,
     embark: Res<EmbarkResources>,
