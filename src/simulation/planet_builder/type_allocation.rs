@@ -49,16 +49,16 @@ pub fn planet_type_allocation(planet: &mut Planet) {
     }
 }
 
-fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u8 {
+fn planet_determine_proportion(planet: &Planet, candidate: &mut i32, target: i32) -> u32 {
     let mut count = 0usize;
     while count < target as usize {
         count = planet
             .landblocks
             .iter()
-            .filter(|b| b.height <= *candidate as u8)
+            .filter(|b| b.height <= *candidate as u32)
             .count();
         if count >= target as usize {
-            return *candidate as u8;
+            return *candidate as u32;
         } else {
             *candidate += 1;
         }

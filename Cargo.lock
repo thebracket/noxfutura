@@ -588,6 +588,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_simple_tilemap"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6b24f0416fab6b9b66027beb258bf82a73e5a19d3eb1dced8ccfe0cc8ef3ff3e"
+dependencies = [
+ "bevy",
+ "bitflags",
+]
+
+[[package]]
 name = "bevy_sprite"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2398,6 +2408,7 @@ dependencies = [
  "Inflector",
  "bevy",
  "bevy_egui",
+ "bevy_simple_tilemap",
  "bincode",
  "bracket-noise",
  "bracket-random",

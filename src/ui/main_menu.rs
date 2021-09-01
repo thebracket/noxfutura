@@ -32,7 +32,9 @@ pub fn main_menu(
             }
 
             if std::path::Path::new("savegame/world.dat").exists() {
-                if ui.button("Embark").clicked() {}
+                if ui.button("Embark").clicked() {
+                    state.set(AppState::Embark).unwrap();
+                }
             }
 
             // Quit game option

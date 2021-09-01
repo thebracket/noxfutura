@@ -26,6 +26,7 @@ pub struct BiomeType {
     pub trees: Vec<TreeType>,
     pub nouns: Vec<String>,
     pub worldgen_tile: usize,
+    pub embark_tile: usize,
 }
 
 #[derive(Clone, Serialize, Deserialize, Debug)]

@@ -4,6 +4,7 @@ pub struct UiResources {
     pub backgrounds: Handle<TextureAtlas>,
     pub worldgen_tex: Handle<Texture>,
     pub worldgen_seed: String,
+    pub embark_tiles: Handle<TextureAtlas>,
 }
 
 pub struct BackgroundImage;
@@ -22,9 +23,14 @@ pub fn setup_ui(
 
     let worldgen_tex = asset_server.load("images/worldgen_tiles.png");
 
+    let embark_handle = asset_server.load("images/embark_tiles.png");
+    let embark_atlas = TextureAtlas::from_grid(embark_handle, Vec2::new(8.0, 8.0), 8, 8);
+    let embark_atlas_handle = texture_atlases.add(embark_atlas);
+
     commands.insert_resource(UiResources {
         backgrounds: texture_atlas_handle.clone(),
         worldgen_seed: "Test Seed".to_string(),
         worldgen_tex,
+        embark_tiles: embark_atlas_handle.clone(),
     });
 }

@@ -9,8 +9,8 @@ use crate::simulation::{
 };
 use bracket_noise::prelude::*;
 
-fn noise_to_planet_height(n: f32) -> u8 {
-    ((n + 1.0) * 150.0) as u8
+fn noise_to_planet_height(n: f32) -> u32 {
+    ((n + 1.0) * 150.0) as u32
 }
 
 pub fn planetary_noise(planet: &mut Planet) {
@@ -35,7 +35,7 @@ pub fn planetary_noise(planet: &mut Planet) {
             let mut total_height = 0u32;
             let mut tile_count = 0u32;
             let mut max = 0;
-            let mut min = std::u8::MAX;
+            let mut min = std::u32::MAX;
             let mut max_noise = 0.0;
             for y1 in 0..Y_SAMPLES {
                 let lat = noise_lat(y, y1 * SAMPLE_DIVISOR);
@@ -58,7 +58,7 @@ pub fn planetary_noise(planet: &mut Planet) {
             }
 
             let pidx = planet_idx(x, y);
-            planet.landblocks[pidx].height = (total_height / tile_count) as u8;
+            planet.landblocks[pidx].height = (total_height / tile_count) as u32;
             planet.landblocks[pidx].variance = max - min;
 
             //let lon = noise_lon(x, 0);

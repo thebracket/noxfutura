@@ -7,15 +7,15 @@ pub struct Planet {
     pub rng_seed: u64,
     pub noise_seed: u64,
     pub landblocks: Vec<Landblock>,
-    pub water_height: u8,
-    pub plains_height: u8,
-    pub hills_height: u8,
+    pub water_height: u32,
+    pub plains_height: u32,
+    pub hills_height: u32,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Landblock {
-    pub height: u8,
-    pub variance: u8,
+    pub height: u32,
+    pub variance: u32,
     pub btype: BlockType,
     pub temperature_c: f32,
     pub rainfall_mm: i32,
@@ -42,4 +42,26 @@ pub fn save_planet(state: Planet) {
     world_file
         .write_all(&compressed_bytes)
         .expect("Unable to write file data");
+}
+
+pub fn load_planet() -> Planet {
+    use std::io::Read;
+    use std::path::Path;
+    let savepath = Path::new("savegame/world.dat");
+    if !savepath.exists() {
+        panic!("Saved game doesn't exist");
+    }
+
+    let mut f = File::open(&savepath).expect("Unable to open file");
+    let mut buffer = Vec::<u8>::new();
+    println!("Reading file");
+    f.read_to_end(&mut buffer).expect("Unable to read file");
+    let raw_bytes =
+        miniz_oxide::inflate::decompress_to_vec(&buffer).expect("Unable to decompress file");
+    println!("Decompressing file");
+
+    println!("Deserializing");
+    let saved: Planet = bincode::deserialize(&raw_bytes).expect("Unable to deserialize");
+    println!("Done");
+    saved
 }

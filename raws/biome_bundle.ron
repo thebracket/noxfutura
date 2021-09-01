@@ -14,6 +14,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Arctic", "Polar", "Frozen Sea" ],
             worldgen_tile: 13,
+            embark_tile: 0,
         ),
 
         BiomeType(
@@ -29,6 +30,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Arctic", "Ice Sea", "Sea of Razors", "Iceberg" ],
             worldgen_tile: 14,
+            embark_tile: 1,
         ),
 
         BiomeType(
@@ -43,7 +45,8 @@
             soils: SoilTypes( soil: 50, sand: 50 ),
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Sea", "Ocean", "Drink", "High Sea" ],
-            worldgen_tile: 0,
+            worldgen_tile: 2,
+            embark_tile: 2,
         ),
 
         BiomeType(
@@ -59,6 +62,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Tropical Sea", "Equatorial Sea", "Warm Ocean" ],
             worldgen_tile: 0,
+            embark_tile: 2,
         ),
 
         // Coastal Zones
@@ -75,6 +79,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns : ["Ice Cliffs", "Ice Shelf", "Glacier", "Needles" ],
             worldgen_tile: 13,
+            embark_tile: 3,
         ),
 
         BiomeType(
@@ -90,6 +95,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Coast", "Seashore", "Littoral" ],
             worldgen_tile: 2,
+            embark_tile: 4,
         ),
 
         BiomeType(
@@ -105,6 +111,7 @@
             trees: [ (tree: "D", freq: 5), (tree: "E", freq: 2) ],
             nouns: ["Coast", "Cliffs", "Seashore", "Littoral", "Seaside"],
             worldgen_tile: 4,
+            embark_tile: 5,
         ),
 
         BiomeType(
@@ -120,6 +127,7 @@
             trees: [ (tree: "D", freq: 10), (tree: "E", freq: 0) ],
             nouns: [ "Coast", "Cliffs", "Seashore", "Seaside", "Resort", "Littoral", "Bay" ],
             worldgen_tile: 3,
+            embark_tile: 6,
         ),
 
         // Salt Marsh Zones
@@ -136,6 +144,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
             nouns: [ "Arctic", "Tundra", "Devil's Icebox" ],
             worldgen_tile: 13,
+            embark_tile: 7,
         ),
 
         BiomeType(
@@ -150,6 +159,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 10) ],
             nouns: [ "Tundra", "Cold Desert" ],
             worldgen_tile: 13,
+            embark_tile: 8,
         ),
 
         BiomeType(
@@ -165,6 +175,7 @@
             trees: [ (tree: "D", freq: 15), (tree: "E", freq: 1) ],
             nouns: [ "Salty Badlands", "Waste", "Flats", "Scar" ],
             worldgen_tile: 13,
+            embark_tile: 9,
         ),
 
         BiomeType(
@@ -180,6 +191,7 @@
             soils: SoilTypes( soil: 50, sand: 50 ),
             nouns: [ "Badlands", "Waste", "Flats", "Alkali Flat" ],
             worldgen_tile: 13,
+            embark_tile: 10,
         ),
 
         // Flatlands
@@ -196,6 +208,7 @@
             soils: SoilTypes( soil: 50, sand: 50 ),
             nouns: [ "Permafrost", "Tundra", "Frozen Plain" ],
             worldgen_tile: 13,
+            embark_tile: 11,
         ),
 
         BiomeType(
@@ -211,6 +224,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Plain", "Scarp", "Scree", "Boulderland" ],
             worldgen_tile: 4,
+            embark_tile: 12,
         ),
 
         BiomeType(
@@ -226,6 +240,7 @@
             trees: [ (tree: "D", freq: 20), (tree: "E", freq: 3) ],
             nouns: [ "Grasslands", "Plain", "Prairie", "Heath", "Level" ],
             worldgen_tile: 1,
+            embark_tile: 13,
         ),
 
         BiomeType(
@@ -241,6 +256,7 @@
             trees: [ (tree: "D", freq: 20), (tree: "E", freq: 3) ],
             nouns: [ "Savannah", "Grassland", "Heath", "Scrub", "Level" ],
             worldgen_tile: 7,
+            embark_tile: 14,
         ),
 
         // Hills
@@ -257,6 +273,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Ice Hill", "Hill", "Mound", "Roughs" ],
             worldgen_tile: 13,
+            embark_tile: 15,
         ),
 
         BiomeType(
@@ -272,6 +289,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Rocky Hills", "Hill", "Mound", "Bump", "Scree", "Scar" ],
             worldgen_tile: 2,
+            embark_tile: 16,
         ),
 
         BiomeType(
@@ -287,6 +305,7 @@
             trees: [ (tree: "D", freq: 5), (tree: "E", freq: 3) ],
             nouns: [ "Rolling Hill", "Hill", "Rolling Heath", "Moor" ],
             worldgen_tile: 1,
+            embark_tile: 17,
         ),
 
         BiomeType(
@@ -302,6 +321,7 @@
             trees: [ (tree: "D", freq: 10), (tree: "E", freq: 0) ],
             nouns: [ "Savannah Hills", "Hill", "Rolling Savannah", "Savannah Moor" ],
             worldgen_tile: 7,
+            embark_tile: 18,
         ),
 
         // Plateau
@@ -318,6 +338,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Glacier", "Plateau", "Ice Plain", "Steppe" ],
             worldgen_tile: 13,
+            embark_tile: 19,
         ),
 
         BiomeType(
@@ -333,6 +354,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 3) ],
             nouns: [ "Tableland", "Tablerock", "Plateau", "Rocky Plateau" ],
             worldgen_tile: 4,
+            embark_tile: 20,
         ),
 
         BiomeType(
@@ -348,6 +370,7 @@
             trees: [ (tree: "D", freq: 20), (tree: "E", freq: 5) ],
             nouns: [ "Hog's Back", "Plateau", "Table", "Fell", "Downs" ],
             worldgen_tile: 1,
+            embark_tile: 21,
         ),
 
         BiomeType(
@@ -363,6 +386,7 @@
             trees: [ (tree: "D", freq: 25), (tree: "E", freq: 0) ],
             nouns: [ "Upland", "Table", "Plateau" ],
             worldgen_tile: 7,
+            embark_tile: 22,
         ),
 
         BiomeType(
@@ -378,6 +402,7 @@
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Devil's Table", "Badland Plateau" ],
             worldgen_tile: 3,
+            embark_tile: 23,
         ),
 
         // Highlands
@@ -394,6 +419,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "High Waste", "High Tundra", "Hillock", "Promontary" ],
             worldgen_tile: 13,
+            embark_tile: 24,
         ),
 
         BiomeType(
@@ -409,6 +435,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
             nouns: [ "Waste", "Scree", "Fell", "Promontary", "Dales", "Pike" ],
             worldgen_tile: 2,
+            embark_tile: 25,
         ),
 
         BiomeType(
@@ -424,6 +451,7 @@
             trees: [ (tree: "D", freq: 10), (tree: "E", freq: 3) ],
             nouns: [ "Moor", "Heath", "Uplands", "Dales", "Scar" ],
             worldgen_tile: 1,
+            embark_tile: 26,
         ),
 
         BiomeType(
@@ -439,6 +467,7 @@
             trees: [ (tree: "D", freq: 20), (tree: "E", freq: 1) ],
             nouns: [ "Savannah Hills", "Highlands", "Uplands", "Peaks", "Mounds" ],
             worldgen_tile: 7,
+            embark_tile: 27,
         ),
 
         BiomeType(
@@ -454,6 +483,7 @@
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Scree", "Heights" ],
             worldgen_tile: 3,
+            embark_tile: 28,
         ),
 
         // Mountains
@@ -470,6 +500,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
             worldgen_tile: 13,
+            embark_tile: 29,
         ),
 
         BiomeType(
@@ -485,6 +516,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
             worldgen_tile: 2,
+            embark_tile: 30,
         ),
 
         BiomeType(
@@ -500,6 +532,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 5) ],
             nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
             worldgen_tile: 1,
+            embark_tile: 31,
         ),
 
         BiomeType(
@@ -515,6 +548,7 @@
             trees: [ (tree: "D", freq: 3), (tree: "E", freq: 0) ],
             nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
             worldgen_tile: 7,
+            embark_tile: 32,
         ),
 
         BiomeType(
@@ -530,6 +564,7 @@
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Mountains", "Peaks", "Pikes", "Alps" ],
             worldgen_tile: 3,
+            embark_tile: 33,
         ),
 
         // Desert Regions
@@ -546,6 +581,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Tundra", "Waste", "Ice Waste" ],
             worldgen_tile: 13,
+            embark_tile: 34,
         ),
 
         BiomeType(
@@ -561,6 +597,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 1) ],
             nouns: [ "Semi-Tundra", "Expanse", "Steppe" ],
             worldgen_tile: 13,
+            embark_tile: 35,
         ),
 
         BiomeType(
@@ -576,6 +613,7 @@
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Desert", "Waste", "Wild", "Dunes", "Barren" ],
             worldgen_tile: 3,
+            embark_tile: 36,
         ),
 
         BiomeType(
@@ -591,6 +629,7 @@
             trees: [ (tree: "D", freq: 1), (tree: "E", freq: 0) ],
             nouns: [ "Barrens", "Platter" ],
             worldgen_tile: 3,
+            embark_tile: 37,
         ),
 
         // High Precipitation Areas
@@ -607,6 +646,7 @@
             trees: [ (tree: "D", freq: 100), (tree: "E", freq: 0) ],
             nouns: [ "Forest", "Backwoods", "Old Forest", "Grove", "Timberland", "Chase" ],
             worldgen_tile: 15,
+            embark_tile: 38,
         ),
 
         BiomeType(
@@ -622,6 +662,7 @@
             trees: [ (tree: "D", freq: 95), (tree: "E", freq: 5) ],
             nouns: [ "Forest", "Woods", "Old WOods", "Grove", "Chase", "Weald" ],
             worldgen_tile: 15,
+            embark_tile: 38,
         ),
 
         BiomeType(
@@ -637,6 +678,7 @@
             trees: [ (tree: "D", freq: 0), (tree: "E", freq: 100) ],
             nouns: [ "Forest", "Coppice", "Chase", "Weald", "Pines" ],
             worldgen_tile: 15,
+            embark_tile: 39,
         ),
 
         BiomeType(
@@ -652,6 +694,7 @@
             trees: [ (tree: "D", freq: 200), (tree: "E", freq: 0) ],
             nouns: [ "Jungle", "Morass", "Tangle" ],
             worldgen_tile: 15,
+            embark_tile: 40,
         )
     ])
 )

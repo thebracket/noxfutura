@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
 // World Size
-pub const WORLD_HEIGHT: usize = 180;
-pub const WORLD_WIDTH: usize = 360;
+pub const WORLD_HEIGHT: usize = 90;
+pub const WORLD_WIDTH: usize = 180;
 pub const WORLD_TILES_COUNT: usize = WORLD_HEIGHT * WORLD_WIDTH;
 
 // Region Size
