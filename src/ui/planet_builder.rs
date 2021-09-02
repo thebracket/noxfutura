@@ -126,4 +126,5 @@ pub fn resume_planet_builder_menu(
 
 pub fn planet_builder_exit(mut commands: Commands, q: Query<(Entity, &WorldGenUi)>) {
     q.iter().for_each(|(e, _)| commands.entity(e).despawn());
+    commands.remove_resource::<PlanetBuilder>();
 }

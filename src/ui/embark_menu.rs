@@ -1,9 +1,10 @@
 use super::{BackgroundImage, UiCamera, UiResources};
 use crate::{
     simulation::{planet_idx, Planet, WORLD_HEIGHT, WORLD_WIDTH},
+    AppState,
 };
-use bevy::math::ivec3;
 use bevy::prelude::*;
+use bevy::{input::mouse::MouseButtonInput, math::ivec3};
 use bevy_egui::{
     egui::{self, Pos2},
     EguiContext,
@@ -14,11 +15,15 @@ pub struct EmbarkResources {
     pub planet: Planet,
 }
 
+pub struct EmbarkGrid;
+
 pub fn embark_menu(
     egui_context: ResMut<EguiContext>,
     wnds: Res<Windows>,
     q_camera: Query<&Transform, With<UiCamera>>,
     embark: Res<EmbarkResources>,
+    mut mouse_button_event_reader: EventReader<MouseButtonInput>,
+    mut state: ResMut<State<AppState>>,
 ) {
     // Mouse Picking
     let mut tile_x = 0;
@@ -63,13 +68,23 @@ pub fn embark_menu(
         }
     }
 
+    if tile_x != 0 && tile_y != 0 {
+        for event in mouse_button_event_reader.iter() {
+            if event.state.is_pressed() && event.button == MouseButton::Left {
+                state.set(AppState::MainMenu).unwrap();
+            }
+        }
+    }
+
     egui::Window::new("Prepare to Evacuate the Colony Ship")
         .title_bar(true)
         .fixed_pos(Pos2::new(10.0, 10.0))
         .show(egui_context.ctx(), |ui| {
-            ui.label("Select escape pod target");
-            ui.label(format!("Tile: {}, {}", tile_x, tile_y));
-            ui.label(description);
+            if tile_x != 0 && tile_y != 0 {
+                ui.label("Select escape pod target");
+                ui.label(format!("Tile: {}, {}", tile_x, tile_y));
+                ui.label(description);
+            }
         });
 }
 
@@ -120,17 +135,17 @@ pub fn resume_embark_menu(mut commands: Commands, ui: Res<UiResources>) {
         ..Default::default()
     };
 
-    commands.spawn_bundle(tilemap_bundle);
+    commands.spawn_bundle(tilemap_bundle).insert(EmbarkGrid {});
     commands.insert_resource(EmbarkResources { planet });
 }
 
 pub fn embark_exit(
     mut commands: Commands,
-    q: Query<(Entity, &UiCamera)>,
-    q2: Query<(Entity, &BackgroundImage)>,
+    q4: Query<Entity>,
 ) {
-    q.iter()
-        .for_each(|(entity, _)| commands.entity(entity).despawn());
-    q2.iter()
-        .for_each(|(entity, _)| commands.entity(entity).despawn());
+    commands.remove_resource::<EmbarkResources>();
+    // This really shouldn't be necessary, couldn't find any other way to
+    // get the tile grid to go away!
+    q4.iter()
+        .for_each(|entity| commands.entity(entity).despawn());
 }
