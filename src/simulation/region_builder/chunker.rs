@@ -1,7 +1,8 @@
 use crate::{
     geometry::Degrees,
+    raws::RAWS,
     simulation::{
-        chunk_idx, noise_lat, noise_lon, noise_to_planet_height, sphere_vertex, Planet,
+        chunk_idx, noise_lat, noise_lon, noise_to_planet_height, planet_idx, sphere_vertex, Planet,
         CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH,
     },
 };
@@ -47,6 +48,9 @@ impl Chunk {
         region_z: usize,
     ) -> Self {
         let mut chunk = Chunk::empty(region_x, region_y, region_z);
+        let lb_idx = planet_idx(tile_x, tile_y);
+        let biome_idx = planet.landblocks[lb_idx].biome_idx;
+        let biome = &RAWS.read().biomes.areas[biome_idx];
 
         // Determine the altitudes for this chunk
         let mut altitudes = vec![0; CHUNK_SIZE * CHUNK_SIZE];
@@ -121,9 +125,15 @@ impl Chunk {
                                     noise_lat(tile_x, rx * 2),
                                     rz as f32,
                                 );
-                                tiles[idx] = TileType::Solid {
-                                    material: pick_material(&strata.soils, n),
-                                };
+                                if rng.roll_dice(1, 100) < biome.soils.soil {
+                                    tiles[idx] = TileType::Solid {
+                                        material: pick_material(&strata.soils, n),
+                                    };
+                                } else {
+                                    tiles[idx] = TileType::Solid {
+                                        material: pick_material(&strata.sand, n),
+                                    };
+                                }
                             }
                         }
                     }
