@@ -1,10 +1,11 @@
 use super::Planet;
 use crate::simulation::{
-    region_builder::{chunker::Chunk, strata::StrataMaterials},
+    region_builder::{chunk_mesh::chunk_to_mesh, chunker::Chunk, strata::StrataMaterials},
     CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH,
 };
 use lazy_static::*;
 use parking_lot::RwLock;
+mod chunk_mesh;
 mod chunker;
 mod strata;
 
@@ -78,6 +79,7 @@ fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
     println!("Chunking");
     update_status(RegionBuilderStatus::Chunking);
     let mut chunks = Vec::with_capacity(CHUNKS_PER_REGION);
+    let mut meshes = Vec::new();
     for z in 0..CHUNK_DEPTH {
         let rz = z * CHUNK_SIZE;
         for y in 0..CHUNK_HEIGHT {
@@ -87,9 +89,13 @@ fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
                 chunks.push(Chunk::generate(
                     &planet, &strata, tile_x, tile_y, rx, ry, rz,
                 ));
+                if let Some(mesh) = chunk_to_mesh(&chunks[chunks.len() - 1]) {
+                    meshes.push(mesh);
+                }
             }
         }
     }
+    println!("Made {} chunks, and {} meshes.", chunks.len(), meshes.len());
 
     println!("Done");
 }

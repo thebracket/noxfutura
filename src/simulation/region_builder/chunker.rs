@@ -18,20 +18,30 @@ pub enum TileType {
     Solid { material: usize },
 }
 
+#[derive(Clone, Copy, Debug)]
 pub enum ChunkType {
     Empty,
     Populated,
 }
 
+#[derive(Clone, Debug)]
 pub struct Chunk {
+    pub world: (usize, usize),
     pub base: (usize, usize, usize),
     pub chunk_type: ChunkType,
     pub tiles: Option<Vec<TileType>>,
 }
 
 impl Chunk {
-    pub fn empty(region_x: usize, region_y: usize, region_z: usize) -> Self {
+    pub fn empty(
+        tile_x: usize,
+        tile_y: usize,
+        region_x: usize,
+        region_y: usize,
+        region_z: usize,
+    ) -> Self {
         Self {
+            world: (tile_x, tile_y),
             base: (region_x, region_y, region_z),
             chunk_type: ChunkType::Empty,
             tiles: None,
@@ -47,7 +57,7 @@ impl Chunk {
         region_y: usize,
         region_z: usize,
     ) -> Self {
-        let mut chunk = Chunk::empty(region_x, region_y, region_z);
+        let mut chunk = Chunk::empty(tile_x, tile_y, region_x, region_y, region_z);
         let lb_idx = planet_idx(tile_x, tile_y);
         let biome_idx = planet.landblocks[lb_idx].biome_idx;
         let biome = &RAWS.read().biomes.areas[biome_idx];
@@ -139,6 +149,7 @@ impl Chunk {
                     }
                 }
             }
+            chunk.tiles = Some(tiles);
         }
 
         chunk
