@@ -2417,6 +2417,7 @@ dependencies = [
  "parking_lot",
  "ron",
  "serde",
+ "smallvec",
 ]
 
 [[package]]

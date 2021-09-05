@@ -8,8 +8,15 @@ pub const WORLD_TILES_COUNT: usize = WORLD_HEIGHT * WORLD_WIDTH;
 // Region Size
 pub const REGION_WIDTH: usize = 256;
 pub const REGION_HEIGHT: usize = 256;
-pub const REGION_DEPTH: usize = 256;
+pub const REGION_DEPTH: usize = 512;
 pub const REGION_TILES_COUNT: usize = (REGION_WIDTH * REGION_HEIGHT * REGION_DEPTH) as usize;
+
+// Terrain Chunks
+pub const CHUNK_SIZE: usize = 32;
+pub const CHUNK_WIDTH: usize = REGION_WIDTH as usize / CHUNK_SIZE;
+pub const CHUNK_HEIGHT: usize = REGION_HEIGHT as usize / CHUNK_SIZE;
+pub const CHUNK_DEPTH: usize = REGION_DEPTH as usize / CHUNK_SIZE;
+pub const CHUNKS_PER_REGION: usize = CHUNK_WIDTH * CHUNK_HEIGHT & CHUNK_DEPTH;
 
 /// Indexes a planet-level block
 pub fn planet_idx<N: Into<usize>>(x: N, y: N) -> usize {
@@ -63,13 +70,21 @@ pub fn lon_to_x(lon: f32) -> usize {
 pub fn noise_lon(world_x: usize, region_x: usize) -> f32 {
     let x_extent = world_x as f32 / WORLD_WIDTH as f32;
     let sub_x = region_x as f32 / REGION_WIDTH as f32;
-    let longitude = (x_extent * 360.0) + (sub_x - 0.5) - 180.0;
+    let longitude = (x_extent * 360.0) + sub_x - 180.0;
     longitude
 }
 
 pub fn noise_lat(world_y: usize, region_y: usize) -> f32 {
     let y_extent = world_y as f32 / WORLD_HEIGHT as f32;
     let sub_y = region_y as f32 / REGION_HEIGHT as f32;
-    let latitude = (y_extent * 180.0) + (sub_y - 0.5) - 90.0;
+    let latitude = (y_extent * 180.0) + sub_y - 90.0;
     latitude
+}
+
+pub fn chunk_idx(x: usize, y: usize, z: usize) -> usize {
+    (z * CHUNK_HEIGHT * CHUNK_WIDTH) + (y * CHUNK_WIDTH) + x
+}
+
+pub fn idx_chunk(x: usize, y: usize, z: usize) -> usize {
+    chunk_idx(x / CHUNK_SIZE, y / CHUNK_SIZE, z / CHUNK_SIZE)
 }

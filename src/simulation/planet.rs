@@ -1,4 +1,5 @@
 use crate::raws::BlockType;
+use bracket_noise::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 
@@ -32,6 +33,28 @@ pub enum Direction {
     East,
     West,
     None,
+}
+
+impl Planet {
+    pub fn get_height_noise(&self) -> FastNoise {
+        let mut noise = FastNoise::seeded(self.noise_seed);
+        noise.set_noise_type(NoiseType::SimplexFractal);
+        noise.set_fractal_type(FractalType::FBM);
+        noise.set_fractal_octaves(5);
+        noise.set_fractal_gain(0.5);
+        noise.set_fractal_lacunarity(3.2);
+        noise.set_frequency(0.01);
+        noise
+    }
+
+    pub fn get_material_noise(&self) -> FastNoise {
+        let mut cell_noise = FastNoise::seeded(self.noise_seed + 1);
+        cell_noise.set_cellular_return_type(CellularReturnType::CellValue);
+        cell_noise.set_noise_type(NoiseType::Cellular);
+        cell_noise.set_frequency(0.08);
+        cell_noise.set_cellular_distance_function(CellularDistanceFunction::Manhattan);
+        cell_noise
+    }
 }
 
 pub fn save_planet(state: Planet) {

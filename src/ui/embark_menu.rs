@@ -13,6 +13,8 @@ use bevy_simple_tilemap::prelude::*;
 
 pub struct EmbarkResources {
     pub planet: Planet,
+    pub tile_x: usize,
+    pub tile_y: usize,
 }
 
 pub struct EmbarkGrid;
@@ -21,7 +23,7 @@ pub fn embark_menu(
     egui_context: ResMut<EguiContext>,
     wnds: Res<Windows>,
     q_camera: Query<&Transform, With<UiCamera>>,
-    embark: Res<EmbarkResources>,
+    mut embark: ResMut<EmbarkResources>,
     mut mouse_button_event_reader: EventReader<MouseButtonInput>,
     mut state: ResMut<State<AppState>>,
 ) {
@@ -71,7 +73,9 @@ pub fn embark_menu(
     if tile_x != 0 && tile_y != 0 {
         for event in mouse_button_event_reader.iter() {
             if event.state.is_pressed() && event.button == MouseButton::Left {
-                state.set(AppState::MainMenu).unwrap();
+                embark.tile_x = tile_x as usize;
+                embark.tile_y = tile_y as usize;
+                state.set(AppState::EmbarkBuildRegion).unwrap();
             }
         }
     }
@@ -91,7 +95,8 @@ pub fn embark_menu(
 pub fn resume_embark_menu(mut commands: Commands, ui: Res<UiResources>) {
     commands
         .spawn_bundle(OrthographicCameraBundle::new_2d())
-        .insert(UiCamera {});
+        .insert(UiCamera {})
+        .insert(EmbarkGrid {});
 
     commands
         .spawn_bundle(SpriteSheetBundle {
@@ -99,7 +104,8 @@ pub fn resume_embark_menu(mut commands: Commands, ui: Res<UiResources>) {
             sprite: TextureAtlasSprite::new(1),
             ..Default::default()
         })
-        .insert(BackgroundImage {});
+        .insert(BackgroundImage {})
+        .insert(EmbarkGrid {});
 
     let planet = crate::simulation::load_planet();
     let mut tiles: Vec<(IVec3, Option<Tile>)> = Vec::new();
@@ -136,16 +142,15 @@ pub fn resume_embark_menu(mut commands: Commands, ui: Res<UiResources>) {
     };
 
     commands.spawn_bundle(tilemap_bundle).insert(EmbarkGrid {});
-    commands.insert_resource(EmbarkResources { planet });
+    commands.insert_resource(EmbarkResources {
+        planet,
+        tile_x: 0,
+        tile_y: 0,
+    });
 }
 
-pub fn embark_exit(
-    mut commands: Commands,
-    q4: Query<Entity>,
-) {
-    commands.remove_resource::<EmbarkResources>();
-    // This really shouldn't be necessary, couldn't find any other way to
-    // get the tile grid to go away!
-    q4.iter()
+pub fn embark_exit(mut commands: Commands, q3: Query<Entity>) {
+    // The bundle doesn't correctly tag the tilemap, which is a pain.
+    q3.iter()
         .for_each(|entity| commands.entity(entity).despawn());
 }

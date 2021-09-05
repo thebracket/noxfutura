@@ -13,6 +13,7 @@ pub enum AppState {
     WorldGenMenu,
     BuildingPlanet,
     Embark,
+    EmbarkBuildRegion,
 }
 
 fn main() {
@@ -69,6 +70,19 @@ fn main() {
             SystemSet::on_enter(AppState::Embark).with_system(resume_embark_menu.system()),
         )
         .add_system_set(SystemSet::on_exit(AppState::Embark).with_system(embark_exit.system()))
+        // Embark Region Menu
+        .add_system_set(
+            SystemSet::on_update(AppState::EmbarkBuildRegion)
+                .with_system(embark_region_menu.system()),
+        )
+        .add_system_set(
+            SystemSet::on_enter(AppState::EmbarkBuildRegion)
+                .with_system(resume_embark_region.system()),
+        )
+        .add_system_set(
+            SystemSet::on_exit(AppState::EmbarkBuildRegion)
+                .with_system(embark_region_exit.system()),
+        )
         // Start
         .run();
 }

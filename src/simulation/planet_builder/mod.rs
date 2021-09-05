@@ -1,8 +1,8 @@
 mod biomes;
 mod calc;
 mod coast;
-mod noise;
-mod planet_3d;
+pub mod noise;
+pub mod planet_3d;
 mod type_allocation;
 mod wind_and_rain;
 mod zero;

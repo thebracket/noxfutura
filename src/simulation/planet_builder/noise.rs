@@ -7,24 +7,17 @@ use crate::geometry::Degrees;
 use crate::simulation::{
     noise_lat, noise_lon, planet_idx, REGION_HEIGHT, REGION_WIDTH, WORLD_HEIGHT, WORLD_WIDTH,
 };
-use bracket_noise::prelude::*;
 
-fn noise_to_planet_height(n: f32) -> u32 {
+pub fn noise_to_planet_height(n: f32) -> u32 {
     ((n + 1.0) * 150.0) as u32
 }
 
 pub fn planetary_noise(planet: &mut Planet) {
-    const SAMPLE_DIVISOR: usize = 24;
+    const SAMPLE_DIVISOR: usize = 48;
     const X_SAMPLES: usize = REGION_WIDTH as usize / SAMPLE_DIVISOR;
     const Y_SAMPLES: usize = REGION_HEIGHT as usize / SAMPLE_DIVISOR;
 
-    let mut noise = FastNoise::seeded(planet.noise_seed);
-    noise.set_noise_type(NoiseType::SimplexFractal);
-    noise.set_fractal_type(FractalType::FBM);
-    noise.set_fractal_octaves(5);
-    noise.set_fractal_gain(0.5);
-    noise.set_fractal_lacunarity(2.0);
-    noise.set_frequency(0.01);
+    let noise = planet.get_height_noise();
 
     for y in 0..WORLD_HEIGHT {
         let lat = Degrees::new(noise_lat(y, 0));
