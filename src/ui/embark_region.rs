@@ -26,6 +26,8 @@ pub fn embark_region_menu(egui_context: ResMut<EguiContext>
             ui.label(builder.status());
         });
 
+    let camera_pos = Vec3::new(0.0, 2.0, 158.0);
+
     if let Some(mut chunks) = builder.chunks() {
         let material_handle = materials.add(StandardMaterial {
             base_color: Color::rgb(0.0, 1.0, 0.0),
@@ -35,28 +37,34 @@ pub fn embark_region_menu(egui_context: ResMut<EguiContext>
         });
         while !chunks.is_empty() {
             let c = chunks.pop().unwrap();
+            let d = camera_pos.distance(Vec3::new(c.center.0, c.center.1, c.center.2));
 
-            // Insert the mesh as an asset
-            let mesh_handle = meshes.add(c);
+            if d < 128.0 {
+                use crate::simulation::region_builder::chunk_to_mesh;
+                if let Some(mesh) = chunk_to_mesh(&c) {
+                    // Insert the mesh as an asset
+                    let mesh_handle = meshes.add(mesh);
 
-            commands
-            .spawn_bundle(PbrBundle {
-                mesh: mesh_handle.clone(),
-                material: material_handle.clone(),
-                transform: Transform::from_xyz(0.0, 0.0, 0.0),
-                ..Default::default()
-            });
+                    commands
+                    .spawn_bundle(PbrBundle {
+                        mesh: mesh_handle.clone(),
+                        material: material_handle.clone(),
+                        transform: Transform::from_xyz(0.0, 0.0, 0.0),
+                        ..Default::default()
+                    });
+                }
+            }
         }
 
         // light
         commands.spawn_bundle(LightBundle {
-            transform: Transform::from_xyz(0.0, 2.0, 158.0),
+            transform: Transform::from_xyz(camera_pos.x, camera_pos.y, camera_pos.z),
             light: Light{ color: Color::rgb(1.0, 1.0, 1.0), fov: 90.0, depth: -256.0..256.0, range: 256.0, intensity: 5000.0 },
             ..Default::default()
         });
         // camera
         commands.spawn_bundle(PerspectiveCameraBundle {
-            transform: Transform::from_xyz(0.0, 2.0, 158.0).looking_at(Vec3::new(256.0, 256.0, 120.0), Vec3::Z),
+            transform: Transform::from_xyz(camera_pos.x, camera_pos.y, camera_pos.z).looking_at(Vec3::new(256.0, 256.0, 120.0), Vec3::Z),
             ..Default::default()
         });
     }

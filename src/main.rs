@@ -22,7 +22,7 @@ fn main() {
             title: "Nox Futura".to_string(),
             width: 1280.0,
             height: 1024.0,
-            vsync: true,
+            vsync: false,
             resizable: false,
             ..Default::default()
         })

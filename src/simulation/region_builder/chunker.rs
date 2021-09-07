@@ -28,6 +28,7 @@ pub enum ChunkType {
 pub struct Chunk {
     pub world: (usize, usize),
     pub base: (usize, usize, usize),
+    pub center: (f32, f32, f32),
     pub chunk_type: ChunkType,
     pub tiles: Option<Vec<TileType>>,
 }
@@ -43,6 +44,11 @@ impl Chunk {
         Self {
             world: (tile_x, tile_y),
             base: (region_x, region_y, region_z),
+            center: (
+                region_x as f32 + CHUNK_WIDTH as f32,
+                region_y as f32 + CHUNK_HEIGHT as f32,
+                region_z as f32 + CHUNK_DEPTH as f32,
+            ),
             chunk_type: ChunkType::Empty,
             tiles: None,
         }
