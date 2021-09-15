@@ -1,6 +1,7 @@
 mod bounds;
 mod planet;
 pub mod planet_builder;
+pub mod terrain;
 pub use bounds::*;
 pub use planet::*;
 pub mod region_builder;

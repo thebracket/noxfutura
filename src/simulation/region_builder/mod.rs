@@ -1,16 +1,16 @@
 use super::Planet;
 use crate::simulation::{
-    region_builder::{chunker::Chunk, strata::StrataMaterials},
-    CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH,
+    region_builder::strata::StrataMaterials, CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT,
+    CHUNK_SIZE, CHUNK_WIDTH,
 };
 use bevy::prelude::Mesh;
 use lazy_static::*;
 use parking_lot::RwLock;
-mod chunk_mesh;
-mod chunker;
+//mod chunk_mesh;
+//mod chunker;
 mod strata;
-mod greedy;
-pub use chunk_mesh::chunk_to_mesh;
+//mod greedy;
+//pub use chunk_mesh::chunk_to_mesh;
 
 pub struct RegionBuilder {
     planet: Planet,
@@ -46,16 +46,6 @@ impl RegionBuilder {
             RegionBuilderStatus::Chunking => String::from("Dividing & Conquering"),
         }
     }
-
-    pub fn chunks(&self) -> Option<Vec<Chunk>> {
-        let is_some = REGION_GEN.read().chunks.is_some();
-        if is_some {
-            let mut writer = REGION_GEN.write();
-            writer.chunks.take()
-        } else {
-            None
-        }
-    }
 }
 
 pub enum RegionBuilderStatus {
@@ -66,14 +56,12 @@ pub enum RegionBuilderStatus {
 
 pub struct RegionGen {
     pub status: RegionBuilderStatus,
-    pub chunks: Option<Vec<Chunk>>,
 }
 
 impl RegionGen {
     pub fn new() -> Self {
         Self {
             status: RegionBuilderStatus::Initializing,
-            chunks: None,
         }
     }
 }
@@ -87,6 +75,10 @@ fn update_status(new_status: RegionBuilderStatus) {
 }
 
 fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
+    let mut cl = crate::simulation::terrain::CHUNK_STORE.write();
+    cl.set_planet(planet);
+    cl.with_playable_region(tile_x, tile_y);
+    /*
     println!("Reading material lists");
     update_status(RegionBuilderStatus::MaterialMap);
     let strata = StrataMaterials::read();
@@ -111,5 +103,5 @@ fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
         w.chunks = Some(chunks);
     }
 
-    println!("Done");
+    println!("Done"); */
 }

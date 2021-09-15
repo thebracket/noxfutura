@@ -1,7 +1,10 @@
-use crate::simulation::{chunk_idx, mapidx, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_WIDTH};
+use crate::simulation::{CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, chunk_idx, mapidx};
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 
-use super::{chunker::{Chunk, ChunkType, TileType}, greedy::{CubeMap, greedy_cubes}};
+use super::{
+    chunker::{Chunk, ChunkType, TileType},
+    greedy::{greedy_cubes, CubeMap},
+};
 
 pub fn chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
     match chunk.chunk_type {
@@ -16,13 +19,15 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
         let mut normals = Vec::new();
         let mut uv = Vec::new();
 
-        // TODO: Be greedy
-
-        for z in 0..CHUNK_DEPTH {
+        for z in 0..CHUNK_SIZE {
             let mut layer_cubes = CubeMap::new();
-            for y in 0..CHUNK_HEIGHT {
-                for x in 0..CHUNK_WIDTH {
+            for y in 0..CHUNK_SIZE {
+                for x in 0..CHUNK_SIZE {
                     match tiles[chunk_idx(x, y, z)] {
+                        TileType::SemiMoltenRock => {
+                            let idx = mapidx(x + chunk.base.0, y + chunk.base.1, z + chunk.base.2);
+                            layer_cubes.insert(idx, (0, false));
+                        }
                         TileType::Solid { .. } => {
                             let idx = mapidx(x + chunk.base.0, y + chunk.base.1, z + chunk.base.2);
                             layer_cubes.insert(idx, (0, false));
@@ -33,6 +38,14 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
             }
             greedy_cubes(&mut layer_cubes, &mut vertices, &mut normals, &mut uv);
         }
+
+        //println!("Vertices: {}", vertices.len());
+
+        if vertices.len() == 0 {
+            return None;
+        }
+
+        //println!("{:#?}", vertices);
 
         let mut mesh = Mesh::new(bevy::render::pipeline::PrimitiveTopology::TriangleList);
         mesh.set_attribute(
@@ -51,7 +64,7 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
     }
 }
 
-const GEOMETRY_SIZE : f32 = 1.0;
+const GEOMETRY_SIZE: f32 = 1.0;
 
 pub fn add_cube_geometry(
     vertices: &mut Vec<[f32; 3]>,
@@ -70,6 +83,8 @@ pub fn add_cube_geometry(
     let y1 = (y0 + h) * GEOMETRY_SIZE;
     let z0 = z * GEOMETRY_SIZE;
     let z1 = (z0 + d) * GEOMETRY_SIZE;
+
+    //println!("Cube at: {},{},{}", x0, y0, z0);
 
     #[rustfmt::skip]
     let cube_geometry = [
@@ -124,35 +139,30 @@ pub fn add_cube_geometry(
         [0.0, 0.0, -1.0],
         [0.0, 0.0, -1.0],
         [0.0, 0.0, -1.0],
-
         [0.0, 0.0, 1.0],
         [0.0, 0.0, 1.0],
         [0.0, 0.0, 1.0],
         [0.0, 0.0, 1.0],
         [0.0, 0.0, 1.0],
         [0.0, 0.0, 1.0],
-
         [-1.0, 0.0, 0.0],
         [-1.0, 0.0, 0.0],
         [-1.0, 0.0, 0.0],
         [-1.0, 0.0, 0.0],
         [-1.0, 0.0, 0.0],
         [-1.0, 0.0, 0.0],
-
         [1.0, 0.0, 0.0],
         [1.0, 0.0, 0.0],
         [1.0, 0.0, 0.0],
         [1.0, 0.0, 0.0],
         [1.0, 0.0, 0.0],
         [1.0, 0.0, 0.0],
-
         [0.0, -1.0, 0.0],
         [0.0, -1.0, 0.0],
         [0.0, -1.0, 0.0],
         [0.0, -1.0, 0.0],
         [0.0, -1.0, 0.0],
         [0.0, -1.0, 0.0],
-
         [0.0, 1.0, 0.0],
         [0.0, 1.0, 0.0],
         [0.0, 1.0, 0.0],

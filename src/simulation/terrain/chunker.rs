@@ -28,7 +28,6 @@ pub enum ChunkType {
 pub struct Chunk {
     pub world: (usize, usize),
     pub base: (usize, usize, usize),
-    pub center: (f32, f32, f32),
     pub chunk_type: ChunkType,
     pub tiles: Option<Vec<TileType>>,
 }
@@ -44,11 +43,6 @@ impl Chunk {
         Self {
             world: (tile_x, tile_y),
             base: (region_x, region_y, region_z),
-            center: (
-                region_x as f32 + CHUNK_WIDTH as f32,
-                region_y as f32 + CHUNK_HEIGHT as f32,
-                region_z as f32 + CHUNK_DEPTH as f32,
-            ),
             chunk_type: ChunkType::Empty,
             tiles: None,
         }
@@ -71,10 +65,10 @@ impl Chunk {
         // Determine the altitudes for this chunk
         let mut altitudes = vec![0; CHUNK_SIZE * CHUNK_SIZE];
         let noise = planet.get_height_noise();
-        for y in region_y..region_y + CHUNK_HEIGHT {
-            for x in region_x..region_x + CHUNK_WIDTH {
+        for y in region_y..region_y + CHUNK_SIZE {
+            for x in region_x..region_x + CHUNK_SIZE {
                 let altitude = cell_altitude(&noise, tile_x, tile_y, x, y);
-                let altitude_idx = ((y - region_y) * CHUNK_WIDTH) + (x - region_x);
+                let altitude_idx = ((y - region_y) * CHUNK_SIZE) + (x - region_x);
                 altitudes[altitude_idx] = altitude;
             }
         }
@@ -86,16 +80,16 @@ impl Chunk {
         } else {
             chunk.chunk_type = ChunkType::Populated;
             let mut tiles: Vec<TileType> =
-                vec![TileType::Empty; CHUNK_HEIGHT * CHUNK_WIDTH * CHUNK_DEPTH];
+                vec![TileType::Empty; CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
             let cell_noise = planet.get_material_noise();
             let mut rng = RandomNumberGenerator::seeded(
                 planet.rng_seed + (tile_x + tile_y + region_x + region_y + region_z) as u64,
             );
-            for ry in region_y..region_y + CHUNK_HEIGHT {
+            for ry in region_y..region_y + CHUNK_SIZE {
                 let cy = ry - region_y;
-                for rx in region_x..region_x + CHUNK_WIDTH {
+                for rx in region_x..region_x + CHUNK_SIZE {
                     let cx = rx - region_x;
-                    let altitude_idx = ((ry - region_y) * CHUNK_WIDTH) + (rx - region_x);
+                    let altitude_idx = ((ry - region_y) * CHUNK_SIZE) + (rx - region_x);
                     for cz in 0..CHUNK_DEPTH {
                         let rz = cz + region_z;
                         let altitude = altitudes[altitude_idx] as usize;

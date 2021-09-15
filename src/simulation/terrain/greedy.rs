@@ -5,7 +5,12 @@ use super::chunk_mesh::add_cube_geometry;
 
 pub type CubeMap = HashMap<usize, (usize, bool)>;
 
-pub fn greedy_cubes(cube_index: &mut CubeMap, vertices: &mut Vec<[f32; 3]>, normals: &mut Vec<[f32; 3]>, uv: &mut Vec<[f32; 2]>) {
+pub fn greedy_cubes(
+    cube_index: &mut CubeMap,
+    vertices: &mut Vec<[f32; 3]>,
+    normals: &mut Vec<[f32; 3]>,
+    uv: &mut Vec<[f32; 2]>,
+) {
     loop {
         let min_iter = cube_index.keys().min();
         if min_iter.is_none() {

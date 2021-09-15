@@ -2,6 +2,7 @@ use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_egui::EguiPlugin;
 use bevy_simple_tilemap::prelude::*;
 mod ui;
+use simulation::terrain::game_camera_system;
 use ui::*;
 mod geometry;
 mod raws;
@@ -73,7 +74,8 @@ fn main() {
         // Embark Region Menu
         .add_system_set(
             SystemSet::on_update(AppState::EmbarkBuildRegion)
-                .with_system(embark_region_menu.system()),
+                .with_system(embark_region_menu.system())
+                .with_system(game_camera_system.system()),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::EmbarkBuildRegion)

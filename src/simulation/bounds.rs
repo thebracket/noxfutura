@@ -16,7 +16,7 @@ pub const CHUNK_SIZE: usize = 32;
 pub const CHUNK_WIDTH: usize = REGION_WIDTH as usize / CHUNK_SIZE;
 pub const CHUNK_HEIGHT: usize = REGION_HEIGHT as usize / CHUNK_SIZE;
 pub const CHUNK_DEPTH: usize = REGION_DEPTH as usize / CHUNK_SIZE;
-pub const CHUNKS_PER_REGION: usize = CHUNK_WIDTH * CHUNK_HEIGHT & CHUNK_DEPTH;
+pub const CHUNKS_PER_REGION: usize = CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_DEPTH;
 
 /// Indexes a planet-level block
 pub fn planet_idx<N: Into<usize>>(x: N, y: N) -> usize {
