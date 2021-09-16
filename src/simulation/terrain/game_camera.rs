@@ -1,4 +1,7 @@
-use crate::{simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH}, ui::UiResources};
+use crate::{
+    simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH},
+    ui::UiResources,
+};
 use bevy::{prelude::*, render::camera::Camera};
 
 pub fn spawn_game_camera(
@@ -33,11 +36,19 @@ pub fn spawn_game_camera(
         })
         .insert(game_camera.clone());
 
-    commands.spawn_bundle(LightBundle {
-        transform: Transform::from_xyz(camera_x, camera_y, camera_z),
-        light: Light{ color: Color::rgb(1.0, 1.0, 1.0), fov: 90.0, depth: -256.0..256.0, range: 256.0, intensity: 5000.0 },
-        ..Default::default()
-    }).insert(game_camera);
+    commands
+        .spawn_bundle(LightBundle {
+            transform: Transform::from_xyz(camera_x, camera_y, camera_z),
+            light: Light {
+                color: Color::rgb(1.0, 1.0, 1.0),
+                fov: 90.0,
+                depth: -256.0..256.0,
+                range: 256.0,
+                intensity: 5000.0,
+            },
+            ..Default::default()
+        })
+        .insert(game_camera);
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -71,8 +82,9 @@ impl GameCamera {
 
     fn look_at(&self) -> Vec3 {
         match self.mode {
-            CameraMode::TopDown => {
-                self.pos_world() + Vec3::new(0.0, 20.0, -self.pos_world().z)
+            CameraMode::TopDown => self.pos_world() + Vec3::new(0.0, 20.0, -self.pos_world().z),
+            CameraMode::DiagonalNW => {
+                self.pos_world() + Vec3::new(self.zoom as f32, self.zoom as f32, -self.zoom as f32)
             }
             _ => Vec3::new(0.0, 0.0, 0.0),
         }
@@ -130,6 +142,14 @@ pub fn game_camera_system(
                 moved = true;
             }
         }
+        if keyboard_input.pressed(KeyCode::Tab) {
+            if game_camera.mode == CameraMode::TopDown {
+                game_camera.mode = CameraMode::DiagonalNW;
+            } else if game_camera.mode == CameraMode::DiagonalNW {
+                game_camera.mode = CameraMode::TopDown;
+            }
+            moved = true;
+        }
 
         if moved {
             //println!("Game camera movement detected.");
@@ -142,8 +162,8 @@ pub fn game_camera_system(
             crate::simulation::terrain::CHUNK_STORE
                 .write()
                 .manage_for_camera(
-                    &game_camera, 
-                    &mut mesh_assets, 
+                    &game_camera,
+                    &mut mesh_assets,
                     ui_resources.world_material_handle.clone(),
                     &mut commands,
                 );

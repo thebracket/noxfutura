@@ -3,7 +3,7 @@ use crate::{
     raws::RAWS,
     simulation::{
         chunk_idx, noise_lat, noise_lon, noise_to_planet_height, planet_idx, sphere_vertex, Planet,
-        CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH,
+        CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, TILES_PER_CHUNK,
     },
 };
 use bracket_noise::prelude::*;
@@ -30,6 +30,7 @@ pub struct Chunk {
     pub base: (usize, usize, usize),
     pub chunk_type: ChunkType,
     pub tiles: Option<Vec<TileType>>,
+    pub revealed: Option<Vec<bool>>,
 }
 
 impl Chunk {
@@ -45,6 +46,7 @@ impl Chunk {
             base: (region_x, region_y, region_z),
             chunk_type: ChunkType::Empty,
             tiles: None,
+            revealed: None,
         }
     }
 
@@ -70,6 +72,7 @@ impl Chunk {
                 let altitude = cell_altitude(&noise, tile_x, tile_y, x, y);
                 let altitude_idx = ((y - region_y) * CHUNK_SIZE) + (x - region_x);
                 altitudes[altitude_idx] = altitude;
+                //altitudes[altitude_idx] = 128;
             }
         }
 
@@ -79,8 +82,8 @@ impl Chunk {
             chunk.chunk_type = ChunkType::Empty;
         } else {
             chunk.chunk_type = ChunkType::Populated;
-            let mut tiles: Vec<TileType> =
-                vec![TileType::Empty; CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
+            let mut tiles: Vec<TileType> = vec![TileType::Empty; TILES_PER_CHUNK];
+            let mut revealed: Vec<bool> = vec![false; TILES_PER_CHUNK];
             let cell_noise = planet.get_material_noise();
             let mut rng = RandomNumberGenerator::seeded(
                 planet.rng_seed + (tile_x + tile_y + region_x + region_y + region_z) as u64,
@@ -90,10 +93,13 @@ impl Chunk {
                 for rx in region_x..region_x + CHUNK_SIZE {
                     let cx = rx - region_x;
                     let altitude_idx = ((ry - region_y) * CHUNK_SIZE) + (rx - region_x);
-                    for cz in 0..CHUNK_DEPTH {
+                    for cz in 0..CHUNK_SIZE {
                         let rz = cz + region_z;
                         let altitude = altitudes[altitude_idx] as usize;
                         let idx = chunk_idx(cx, cy, cz);
+                        if rz > altitude - 2 {
+                            revealed[idx] = true;
+                        }
                         if rz < altitude {
                             if rz < 1 {
                                 // Semi molten rock
@@ -113,7 +119,7 @@ impl Chunk {
                                     material: pick_material(&strata.igneous, n),
                                 };
                             } else if rz < altitude - 4 {
-                                // Igneouus or sedimentary
+                                // Igneous or sedimentary
                                 let n = cell_noise.get_noise3d(
                                     noise_lon(tile_y, ry * 2),
                                     noise_lat(tile_x, rx * 2),
@@ -150,6 +156,7 @@ impl Chunk {
                 }
             }
             chunk.tiles = Some(tiles);
+            chunk.revealed = Some(revealed);
         }
 
         chunk

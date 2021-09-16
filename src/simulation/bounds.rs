@@ -17,6 +17,7 @@ pub const CHUNK_WIDTH: usize = REGION_WIDTH as usize / CHUNK_SIZE;
 pub const CHUNK_HEIGHT: usize = REGION_HEIGHT as usize / CHUNK_SIZE;
 pub const CHUNK_DEPTH: usize = REGION_DEPTH as usize / CHUNK_SIZE;
 pub const CHUNKS_PER_REGION: usize = CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_DEPTH;
+pub const TILES_PER_CHUNK: usize = CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE;
 
 /// Indexes a planet-level block
 pub fn planet_idx<N: Into<usize>>(x: N, y: N) -> usize {
@@ -82,7 +83,7 @@ pub fn noise_lat(world_y: usize, region_y: usize) -> f32 {
 }
 
 pub fn chunk_idx(x: usize, y: usize, z: usize) -> usize {
-    (z * CHUNK_HEIGHT * CHUNK_WIDTH) + (y * CHUNK_WIDTH) + x
+    (z * CHUNK_SIZE * CHUNK_SIZE) + (y * CHUNK_SIZE) + x
 }
 
 pub fn idx_chunk(x: usize, y: usize, z: usize) -> usize {

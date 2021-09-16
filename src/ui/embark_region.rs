@@ -133,7 +133,6 @@ pub fn resume_embark_region(
             ..Default::default()
         })
         .insert(crate::ui::fps::FpsText);
-        
 
     // Region build link
     spawn_game_camera(&mut commands, embark.tile_x, embark.tile_y, 128, 128, 200);

@@ -1,4 +1,4 @@
-use crate::simulation::{CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, chunk_idx, mapidx};
+use crate::simulation::{chunk_idx, mapidx, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 
 use super::{
@@ -15,53 +15,65 @@ pub fn chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
 
 fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
     if let Some(tiles) = &chunk.tiles {
-        let mut vertices = Vec::new();
-        let mut normals = Vec::new();
-        let mut uv = Vec::new();
+        if let Some(revealed) = &chunk.revealed {
+            let mut vertices = Vec::new();
+            let mut normals = Vec::new();
+            let mut uv = Vec::new();
 
-        for z in 0..CHUNK_SIZE {
-            let mut layer_cubes = CubeMap::new();
-            for y in 0..CHUNK_SIZE {
-                for x in 0..CHUNK_SIZE {
-                    match tiles[chunk_idx(x, y, z)] {
-                        TileType::SemiMoltenRock => {
-                            let idx = mapidx(x + chunk.base.0, y + chunk.base.1, z + chunk.base.2);
-                            layer_cubes.insert(idx, (0, false));
+            for z in 0..CHUNK_SIZE {
+                let mut layer_cubes = CubeMap::new();
+                for y in 0..CHUNK_SIZE {
+                    for x in 0..CHUNK_SIZE {
+                        let cidx = chunk_idx(x, y, z);
+                        if revealed[cidx] {
+                            match tiles[cidx] {
+                                TileType::SemiMoltenRock => {
+                                    let idx = mapidx(
+                                        x + chunk.base.0,
+                                        y + chunk.base.1,
+                                        z + chunk.base.2,
+                                    );
+                                    layer_cubes.insert(idx, (0, false));
+                                }
+                                TileType::Solid { .. } => {
+                                    let idx = mapidx(
+                                        x + chunk.base.0,
+                                        y + chunk.base.1,
+                                        z + chunk.base.2,
+                                    );
+                                    layer_cubes.insert(idx, (0, false));
+                                }
+                                _ => {}
+                            }
                         }
-                        TileType::Solid { .. } => {
-                            let idx = mapidx(x + chunk.base.0, y + chunk.base.1, z + chunk.base.2);
-                            layer_cubes.insert(idx, (0, false));
-                        }
-                        _ => {}
                     }
                 }
+                greedy_cubes(&mut layer_cubes, &mut vertices, &mut normals, &mut uv);
             }
-            greedy_cubes(&mut layer_cubes, &mut vertices, &mut normals, &mut uv);
+
+            //println!("Vertices: {}", vertices.len());
+
+            if vertices.len() == 0 {
+                return None;
+            }
+
+            //println!("{:#?}", vertices);
+
+            let mut mesh = Mesh::new(bevy::render::pipeline::PrimitiveTopology::TriangleList);
+            mesh.set_attribute(
+                Mesh::ATTRIBUTE_POSITION,
+                VertexAttributeValues::Float3(vertices),
+            );
+            mesh.set_attribute(
+                Mesh::ATTRIBUTE_NORMAL,
+                VertexAttributeValues::Float3(normals),
+            );
+            mesh.set_attribute(Mesh::ATTRIBUTE_UV_0, VertexAttributeValues::Float2(uv));
+
+            return Some(mesh);
         }
-
-        //println!("Vertices: {}", vertices.len());
-
-        if vertices.len() == 0 {
-            return None;
-        }
-
-        //println!("{:#?}", vertices);
-
-        let mut mesh = Mesh::new(bevy::render::pipeline::PrimitiveTopology::TriangleList);
-        mesh.set_attribute(
-            Mesh::ATTRIBUTE_POSITION,
-            VertexAttributeValues::Float3(vertices),
-        );
-        mesh.set_attribute(
-            Mesh::ATTRIBUTE_NORMAL,
-            VertexAttributeValues::Float3(normals),
-        );
-        mesh.set_attribute(Mesh::ATTRIBUTE_UV_0, VertexAttributeValues::Float2(uv));
-
-        Some(mesh)
-    } else {
-        None
     }
+    None
 }
 
 const GEOMETRY_SIZE: f32 = 1.0;

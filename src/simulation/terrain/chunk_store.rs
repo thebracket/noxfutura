@@ -1,4 +1,7 @@
-use crate::simulation::{CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, Planet, REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH, planet_idx};
+use crate::simulation::{
+    planet_idx, Planet, CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH,
+    REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH,
+};
 use bevy::prelude::*;
 use lazy_static::*;
 use parking_lot::RwLock;
@@ -62,12 +65,13 @@ impl ChunkStore {
         commands: &mut Commands,
     ) {
         use std::collections::HashSet;
-        let west = ((camera.tile_x * REGION_WIDTH) + camera.x - 128) / REGION_WIDTH;
-        let east = ((camera.tile_x * REGION_WIDTH) + camera.x + 128) / REGION_WIDTH;
-        let north = ((camera.tile_y * REGION_HEIGHT) + camera.y - 128) / REGION_HEIGHT;
-        let south = ((camera.tile_y * REGION_HEIGHT) + camera.y + 128) / REGION_HEIGHT;
+        let west = ((camera.tile_x * REGION_WIDTH) + camera.x - 64) / REGION_WIDTH;
+        let east = ((camera.tile_x * REGION_WIDTH) + camera.x + 64) / REGION_WIDTH;
+        let north = ((camera.tile_y * REGION_HEIGHT) + camera.y - 64) / REGION_HEIGHT;
+        let south = ((camera.tile_y * REGION_HEIGHT) + camera.y + 64) / REGION_HEIGHT;
 
         let mut active_regions = HashSet::new();
+        active_regions.insert(planet_idx(camera.tile_x, camera.tile_y));
         active_regions.insert(planet_idx(west, camera.tile_y));
         active_regions.insert(planet_idx(east, camera.tile_y));
         active_regions.insert(planet_idx(camera.tile_x, north));
@@ -162,10 +166,10 @@ impl RegionChunk {
         let tx = self.tile_x;
         let ty = self.tile_y;
         self.chunks.iter_mut().for_each(|c| {
-            let distance = Vec3::new(c.world_center.0, c.world_center.1, c.world_center.2).distance(cam_pos);
+            let distance =
+                Vec3::new(c.world_center.0, c.world_center.1, c.world_center.2).distance(cam_pos);
             //println!("{}", distance);
-            if distance < 256.0
-            {
+            if distance < 256.0 {
                 // Ensure it's active
                 //println!("Active chunk");
                 c.activate(
@@ -212,7 +216,13 @@ pub struct ChunkState {
 }
 
 impl ChunkState {
-    pub fn new(tile_x: usize, tile_y: usize, chunk_x: usize, chunk_y: usize, chunk_z: usize) -> Self {
+    pub fn new(
+        tile_x: usize,
+        tile_y: usize,
+        chunk_x: usize,
+        chunk_y: usize,
+        chunk_z: usize,
+    ) -> Self {
         let cx = (tile_x as f32 * REGION_WIDTH as f32)
             + (chunk_x as f32 * CHUNK_SIZE as f32)
             + (CHUNK_WIDTH as f32 / 2.0);
@@ -227,7 +237,11 @@ impl ChunkState {
             world_center: (cx, cy, cz),
             chunk: None,
             mesh: None,
-            base: (chunk_x * CHUNK_SIZE, chunk_y * CHUNK_SIZE, chunk_z * CHUNK_SIZE),
+            base: (
+                chunk_x * CHUNK_SIZE,
+                chunk_y * CHUNK_SIZE,
+                chunk_z * CHUNK_SIZE,
+            ),
         }
     }
 
@@ -270,19 +284,16 @@ impl ChunkState {
             let mesh = chunk_to_mesh(self.chunk.as_ref().unwrap());
             if mesh.is_some() {
                 let asset_handle = mesh_assets.add(mesh.unwrap());
-                self.mesh = Some(
-                    ChunkMesh(asset_handle.clone())
-                );
+                self.mesh = Some(ChunkMesh(asset_handle.clone()));
                 let mx = (tile_x * REGION_WIDTH) as f32;
                 let my = (tile_y * REGION_HEIGHT) as f32;
                 let mz = 0.0;
-                let mesh_entity = commands
-                    .spawn_bundle(PbrBundle {
-                        mesh: asset_handle.clone(),
-                        material: world_material_handle.clone(),
-                        transform: Transform::from_xyz(mx, my, mz),
-                        ..Default::default()
-                    });
+                let mesh_entity = commands.spawn_bundle(PbrBundle {
+                    mesh: asset_handle.clone(),
+                    material: world_material_handle.clone(),
+                    transform: Transform::from_xyz(mx, my, mz),
+                    ..Default::default()
+                });
             }
             self.status = ChunkStatus::Loaded;
         }
