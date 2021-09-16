@@ -72,10 +72,10 @@ impl ChunkStore {
 
         let mut active_regions = HashSet::new();
         active_regions.insert(planet_idx(camera.tile_x, camera.tile_y));
-        active_regions.insert(planet_idx(west, camera.tile_y));
+        /*active_regions.insert(planet_idx(west, camera.tile_y));
         active_regions.insert(planet_idx(east, camera.tile_y));
         active_regions.insert(planet_idx(camera.tile_x, north));
-        active_regions.insert(planet_idx(camera.tile_x, south));
+        active_regions.insert(planet_idx(camera.tile_x, south));*/
 
         for pidx in active_regions.iter() {
             if let Some(r) = self.regions.get_mut(pidx) {

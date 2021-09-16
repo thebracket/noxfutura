@@ -105,8 +105,8 @@ pub fn game_camera_system(
                 game_camera.x -= 1;
                 moved = true;
             } else {
-                game_camera.x = REGION_WIDTH - 1;
-                game_camera.tile_x -= 1;
+                //game_camera.x = REGION_WIDTH - 1;
+                //game_camera.tile_x -= 1;
             }
         }
         if keyboard_input.pressed(KeyCode::Right) {
@@ -114,8 +114,8 @@ pub fn game_camera_system(
                 game_camera.x += 1;
                 moved = true;
             } else {
-                game_camera.x = 0;
-                game_camera.tile_x += 1;
+                //game_camera.x = 0;
+                //game_camera.tile_x += 1;
             }
         }
         if keyboard_input.pressed(KeyCode::Down) {
