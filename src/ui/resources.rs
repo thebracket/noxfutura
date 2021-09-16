@@ -37,7 +37,9 @@ pub fn setup_ui(
         unlit: false,
         ..Default::default()
     });
-    crate::simulation::terrain::PLANET_STORE.write().world_material_handle = Some(world_material_handle);
+    crate::simulation::terrain::PLANET_STORE
+        .write()
+        .world_material_handle = Some(world_material_handle);
 
     commands.insert_resource(UiResources {
         backgrounds: texture_atlas_handle.clone(),

@@ -160,11 +160,7 @@ pub fn game_camera_system(
             trans.look_at(target, Vec3::Z);
             crate::simulation::terrain::CHUNK_STORE
                 .write()
-                .manage_for_camera(
-                    &game_camera,
-                    &mut mesh_assets,
-                    &mut commands,
-                );
+                .manage_for_camera(&game_camera, &mut mesh_assets, &mut commands);
         }
     }
 }
