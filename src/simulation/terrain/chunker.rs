@@ -51,14 +51,19 @@ impl Chunk {
     }
 
     pub fn generate(
-        planet: &Planet,
-        strata: &StrataMaterials,
         tile_x: usize,
         tile_y: usize,
         region_x: usize,
         region_y: usize,
         region_z: usize,
     ) -> Self {
+        use crate::simulation::terrain::PLANET_STORE;
+        let plock = PLANET_STORE.read();
+        let planet = plock.planet.as_ref().unwrap();
+        let strata = plock.strata.as_ref().unwrap();
+        let noise = plock.height_noise.as_ref().unwrap();
+        let cell_noise = plock.material_noise.as_ref().unwrap();
+
         let mut chunk = Chunk::empty(tile_x, tile_y, region_x, region_y, region_z);
         let lb_idx = planet_idx(tile_x, tile_y);
         let biome_idx = planet.landblocks[lb_idx].biome_idx;
@@ -66,7 +71,6 @@ impl Chunk {
 
         // Determine the altitudes for this chunk
         let mut altitudes = vec![0; CHUNK_SIZE * CHUNK_SIZE];
-        let noise = planet.get_height_noise();
         for y in region_y..region_y + CHUNK_SIZE {
             for x in region_x..region_x + CHUNK_SIZE {
                 let altitude = cell_altitude(&noise, tile_x, tile_y, x, y);
@@ -84,7 +88,6 @@ impl Chunk {
             chunk.chunk_type = ChunkType::Populated;
             let mut tiles: Vec<TileType> = vec![TileType::Empty; TILES_PER_CHUNK];
             let mut revealed: Vec<bool> = vec![false; TILES_PER_CHUNK];
-            let cell_noise = planet.get_material_noise();
             let mut rng = RandomNumberGenerator::seeded(
                 planet.rng_seed + (tile_x + tile_y + region_x + region_y + region_z) as u64,
             );

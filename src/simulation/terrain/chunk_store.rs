@@ -3,6 +3,7 @@ use crate::simulation::{
     REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH,
 };
 use bevy::prelude::*;
+use bracket_noise::prelude::FastNoise;
 use lazy_static::*;
 use parking_lot::RwLock;
 use std::collections::HashMap;
@@ -13,28 +14,50 @@ lazy_static! {
     pub static ref CHUNK_STORE: RwLock<ChunkStore> = RwLock::new(ChunkStore::new());
 }
 
+lazy_static! {
+    pub static ref PLANET_STORE: RwLock<PlanetData> = RwLock::new(PlanetData::new());
+}
+
+pub struct PlanetData {
+    pub planet: Option<Planet>,
+    pub strata: Option<StrataMaterials>,
+    pub height_noise: Option<FastNoise>,
+    pub material_noise: Option<FastNoise>,
+}
+
+impl PlanetData {
+    pub fn new() -> Self {
+        Self {
+            planet: None,
+            strata: None,
+            height_noise: None,
+            material_noise: None,
+        }
+    }
+}
+
 pub struct ChunkStore {
     regions: HashMap<usize, RegionChunk>,
-    strata: Option<StrataMaterials>,
-    planet: Option<Planet>,
 }
 
 impl ChunkStore {
     pub fn new() -> Self {
         Self {
             regions: HashMap::new(),
-            strata: None,
-            planet: None,
         }
     }
 
     /// Call this once after raws have loaded
     pub fn verify_strata(&mut self) {
-        self.strata = Some(StrataMaterials::read());
+        PLANET_STORE.write().strata = Some(StrataMaterials::read());
     }
 
     pub fn set_planet(&mut self, planet: Planet) {
-        self.planet = Some(planet);
+        let height_noise = planet.get_height_noise();
+        let mat_noise = planet.get_material_noise();
+        PLANET_STORE.write().planet = Some(planet);
+        PLANET_STORE.write().height_noise = Some(height_noise);
+        PLANET_STORE.write().material_noise = Some(mat_noise);
     }
 
     pub fn with_playable_region(&mut self, tile_x: usize, tile_y: usize) {
@@ -82,8 +105,6 @@ impl ChunkStore {
                 //println!("Found active region: {}", pidx);
                 r.distance_activate(
                     camera,
-                    self.planet.as_ref().unwrap(),
-                    self.strata.as_ref().unwrap(),
                     mesh_assets,
                     world_material_handle.clone(),
                     commands,
@@ -93,8 +114,6 @@ impl ChunkStore {
                 let mut activate = RegionChunk::new(pidx % WORLD_WIDTH, pidx / WORLD_WIDTH);
                 activate.distance_activate(
                     camera,
-                    self.planet.as_ref().unwrap(),
-                    self.strata.as_ref().unwrap(),
                     mesh_assets,
                     world_material_handle.clone(),
                     commands,
@@ -156,8 +175,6 @@ impl RegionChunk {
     pub fn distance_activate(
         &mut self,
         camera: &GameCamera,
-        planet: &Planet,
-        strata: &StrataMaterials,
         mesh_assets: &mut ResMut<Assets<Mesh>>,
         world_material_handle: Handle<StandardMaterial>,
         commands: &mut Commands,
@@ -173,8 +190,6 @@ impl RegionChunk {
                 // Ensure it's active
                 //println!("Active chunk");
                 c.activate(
-                    planet,
-                    strata,
                     mesh_assets,
                     world_material_handle.clone(),
                     commands,
@@ -261,8 +276,6 @@ impl ChunkState {
 
     pub fn activate(
         &mut self,
-        planet: &Planet,
-        strata: &StrataMaterials,
         mesh_assets: &mut ResMut<Assets<Mesh>>,
         world_material_handle: Handle<StandardMaterial>,
         commands: &mut Commands,
@@ -275,7 +288,7 @@ impl ChunkState {
             let region_y = self.base.1;
             let region_z = self.base.2;
             self.chunk = Some(Chunk::generate(
-                planet, strata, tile_x, tile_y, region_x, region_y, region_z,
+                tile_x, tile_y, region_x, region_y, region_z,
             ));
             // Mesh it
             if let Some(mesh_handle) = &self.mesh {
