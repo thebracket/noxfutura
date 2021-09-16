@@ -95,7 +95,6 @@ pub fn game_camera_system(
     keyboard_input: Res<Input<KeyCode>>,
     mut camera_query: Query<(&mut Transform, &mut GameCamera)>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
-    ui_resources: Res<UiResources>,
     mut commands: Commands,
 ) {
     let mut moved = false;
@@ -164,7 +163,6 @@ pub fn game_camera_system(
                 .manage_for_camera(
                     &game_camera,
                     &mut mesh_assets,
-                    ui_resources.world_material_handle.clone(),
                     &mut commands,
                 );
         }

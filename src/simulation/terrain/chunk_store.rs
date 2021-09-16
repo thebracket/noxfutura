@@ -1,6 +1,6 @@
 use crate::simulation::{
     planet_idx, Planet, CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH,
-    REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH,
+    REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH, chunk_id,
 };
 use bevy::prelude::*;
 use bracket_noise::prelude::FastNoise;
@@ -23,6 +23,7 @@ pub struct PlanetData {
     pub strata: Option<StrataMaterials>,
     pub height_noise: Option<FastNoise>,
     pub material_noise: Option<FastNoise>,
+    pub world_material_handle: Option<Handle<StandardMaterial>>,
 }
 
 impl PlanetData {
@@ -32,6 +33,7 @@ impl PlanetData {
             strata: None,
             height_noise: None,
             material_noise: None,
+            world_material_handle: None,
         }
     }
 }
@@ -52,6 +54,7 @@ impl ChunkStore {
         PLANET_STORE.write().strata = Some(StrataMaterials::read());
     }
 
+    /// Call this once a planet is loaded for the renderer to use.
     pub fn set_planet(&mut self, planet: Planet) {
         let height_noise = planet.get_height_noise();
         let mat_noise = planet.get_material_noise();
@@ -60,6 +63,11 @@ impl ChunkStore {
         PLANET_STORE.write().material_noise = Some(mat_noise);
     }
 
+    /// Starts creating a playable region. The region will be marked to
+    /// remain in memory - only swapping meshes in/out. Designed to run
+    /// asynchronously, inside a write lock. It aims to bail-out fast,
+    /// leaving the loading process running in the background. That integrates
+    /// with the game camera, activating region chunks as they are ready.
     pub fn with_playable_region(&mut self, tile_x: usize, tile_y: usize) {
         let region_idx = planet_idx(tile_x, tile_y);
         if let Some(region) = self.regions.get_mut(&region_idx) {
@@ -84,21 +92,21 @@ impl ChunkStore {
         &mut self,
         camera: &GameCamera,
         mesh_assets: &mut ResMut<Assets<Mesh>>,
-        world_material_handle: Handle<StandardMaterial>,
         commands: &mut Commands,
     ) {
         use std::collections::HashSet;
-        let west = ((camera.tile_x * REGION_WIDTH) + camera.x - 64) / REGION_WIDTH;
-        let east = ((camera.tile_x * REGION_WIDTH) + camera.x + 64) / REGION_WIDTH;
-        let north = ((camera.tile_y * REGION_HEIGHT) + camera.y - 64) / REGION_HEIGHT;
-        let south = ((camera.tile_y * REGION_HEIGHT) + camera.y + 64) / REGION_HEIGHT;
 
         let mut active_regions = HashSet::new();
         active_regions.insert(planet_idx(camera.tile_x, camera.tile_y));
-        /*active_regions.insert(planet_idx(west, camera.tile_y));
-        active_regions.insert(planet_idx(east, camera.tile_y));
-        active_regions.insert(planet_idx(camera.tile_x, north));
-        active_regions.insert(planet_idx(camera.tile_x, south));*/
+        // Make this optional - load neighboring regions for context
+        active_regions.insert(planet_idx(camera.tile_x - 1, camera.tile_y));
+        active_regions.insert(planet_idx(camera.tile_x + 1, camera.tile_y));
+        active_regions.insert(planet_idx(camera.tile_x, camera.tile_y + 1));
+        active_regions.insert(planet_idx(camera.tile_x, camera.tile_y - 1));
+        active_regions.insert(planet_idx(camera.tile_x -1, camera.tile_y - 1));
+        active_regions.insert(planet_idx(camera.tile_x +1, camera.tile_y - 1));
+        active_regions.insert(planet_idx(camera.tile_x-1, camera.tile_y + 1));
+        active_regions.insert(planet_idx(camera.tile_x+1, camera.tile_y + 1));
 
         for pidx in active_regions.iter() {
             if let Some(r) = self.regions.get_mut(pidx) {
@@ -106,7 +114,6 @@ impl ChunkStore {
                 r.distance_activate(
                     camera,
                     mesh_assets,
-                    world_material_handle.clone(),
                     commands,
                 );
             } else {
@@ -115,7 +122,6 @@ impl ChunkStore {
                 activate.distance_activate(
                     camera,
                     mesh_assets,
-                    world_material_handle.clone(),
                     commands,
                 );
                 self.regions.insert(*pidx, activate);
@@ -176,7 +182,6 @@ impl RegionChunk {
         &mut self,
         camera: &GameCamera,
         mesh_assets: &mut ResMut<Assets<Mesh>>,
-        world_material_handle: Handle<StandardMaterial>,
         commands: &mut Commands,
     ) {
         let cam_pos = camera.pos_world();
@@ -191,7 +196,6 @@ impl RegionChunk {
                 //println!("Active chunk");
                 c.activate(
                     mesh_assets,
-                    world_material_handle.clone(),
                     commands,
                     tx,
                     ty,
@@ -277,7 +281,6 @@ impl ChunkState {
     pub fn activate(
         &mut self,
         mesh_assets: &mut ResMut<Assets<Mesh>>,
-        world_material_handle: Handle<StandardMaterial>,
         commands: &mut Commands,
         tile_x: usize,
         tile_y: usize,
@@ -301,16 +304,17 @@ impl ChunkState {
                 let mx = (tile_x * REGION_WIDTH) as f32;
                 let my = (tile_y * REGION_HEIGHT) as f32;
                 let mz = 0.0;
-                let mesh_entity = commands.spawn_bundle(PbrBundle {
+                commands.spawn_bundle(PbrBundle {
                     mesh: asset_handle.clone(),
-                    material: world_material_handle.clone(),
+                    material: PLANET_STORE.read().world_material_handle.as_ref().unwrap().clone(),
                     transform: Transform::from_xyz(mx, my, mz),
                     ..Default::default()
-                });
+                })
+                .insert(RenderChunk(chunk_id(tile_x, tile_y, self.base.0, self.base.1, self.base.2)));
             }
             self.status = ChunkStatus::Loaded;
         }
     }
 }
 
-// Next: chunk management service for loading/unloading
+pub struct RenderChunk(pub usize);

@@ -69,17 +69,27 @@ pub fn lon_to_x(lon: f32) -> usize {
 }
 
 pub fn noise_lon(world_x: usize, region_x: usize) -> f32 {
-    let x_extent = world_x as f32 / WORLD_WIDTH as f32;
+    let x = ((world_x * REGION_WIDTH) + region_x) as f32;
+    const MAX_X : f32 = (REGION_WIDTH * WORLD_WIDTH) as f32;
+    let extent = x / MAX_X;
+    let longitude = (extent * 360.0) - 180.0;
+    longitude
+    /*let x_extent = world_x as f32 / WORLD_WIDTH as f32;
     let sub_x = region_x as f32 / REGION_WIDTH as f32;
     let longitude = (x_extent * 360.0) + sub_x - 180.0;
-    longitude
+    longitude*/
 }
 
 pub fn noise_lat(world_y: usize, region_y: usize) -> f32 {
-    let y_extent = world_y as f32 / WORLD_HEIGHT as f32;
+    let y = ((world_y * REGION_HEIGHT) + region_y) as f32;
+    const MAX_Y : f32 = (REGION_HEIGHT * WORLD_HEIGHT) as f32;
+    let extent = y / MAX_Y;
+    let latitude = (extent * 180.0) - 90.0;
+    latitude
+    /*let y_extent = world_y as f32 / WORLD_HEIGHT as f32;
     let sub_y = region_y as f32 / REGION_HEIGHT as f32;
     let latitude = (y_extent * 180.0) + sub_y - 90.0;
-    latitude
+    latitude*/
 }
 
 pub fn chunk_idx(x: usize, y: usize, z: usize) -> usize {
@@ -88,4 +98,14 @@ pub fn chunk_idx(x: usize, y: usize, z: usize) -> usize {
 
 pub fn idx_chunk(x: usize, y: usize, z: usize) -> usize {
     chunk_idx(x / CHUNK_SIZE, y / CHUNK_SIZE, z / CHUNK_SIZE)
+}
+
+pub fn chunk_id(tile_x: usize, tile_y: usize, chunk_x: usize, chunk_y: usize, chunk_z: usize) -> usize {
+    const PLANET_CHUNK_WIDTH : usize = WORLD_WIDTH * CHUNK_WIDTH;
+    const PLANET_CHUNK_HEIGHT : usize = WORLD_HEIGHT * CHUNK_HEIGHT;
+    const PLANET_CHUNK_DEPTH : usize = CHUNK_DEPTH;
+
+    (chunk_z * PLANET_CHUNK_WIDTH * PLANET_CHUNK_HEIGHT) + // Set the Z part
+    (((tile_y * PLANET_CHUNK_WIDTH)+chunk_y) * PLANET_CHUNK_WIDTH) + // Set the Y part
+    ((tile_x * PLANET_CHUNK_WIDTH) + chunk_x) // Set the X part
 }

@@ -5,7 +5,6 @@ pub struct UiResources {
     pub worldgen_tex: Handle<Texture>,
     pub worldgen_seed: String,
     pub embark_tiles: Handle<TextureAtlas>,
-    pub world_material_handle: Handle<StandardMaterial>,
 }
 
 pub struct BackgroundImage;
@@ -38,12 +37,12 @@ pub fn setup_ui(
         unlit: false,
         ..Default::default()
     });
+    crate::simulation::terrain::PLANET_STORE.write().world_material_handle = Some(world_material_handle);
 
     commands.insert_resource(UiResources {
         backgrounds: texture_atlas_handle.clone(),
         worldgen_seed: "Test Seed".to_string(),
         worldgen_tex,
         embark_tiles: embark_atlas_handle.clone(),
-        world_material_handle,
     });
 }
