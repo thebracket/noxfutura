@@ -20,10 +20,6 @@ pub fn spawn_game_camera(
     y: usize,
     z: usize,
 ) {
-    let camera_x = tile_x as f32 * REGION_WIDTH as f32 + x as f32;
-    let camera_y = tile_y as f32 * REGION_HEIGHT as f32 + y as f32;
-    let camera_z = z as f32;
-
     let game_camera = GameCamera {
         tile_x,
         tile_y,
@@ -34,11 +30,12 @@ pub fn spawn_game_camera(
         zoom: 20,
     };
 
+    let camera_pos = game_camera.pos_world();
     let look_at = game_camera.look_at();
 
     commands
         .spawn_bundle(PerspectiveCameraBundle {
-            transform: Transform::from_xyz(camera_x, camera_y, camera_z)
+            transform: Transform::from_xyz(camera_pos.x, camera_pos.y, camera_pos.z)
                 .looking_at(look_at, Vec3::Z),
             ..Default::default()
         })
@@ -46,7 +43,7 @@ pub fn spawn_game_camera(
 
     commands
         .spawn_bundle(LightBundle {
-            transform: Transform::from_xyz(camera_x, camera_y, camera_z),
+            transform: Transform::from_xyz(camera_pos.x, camera_pos.y, camera_pos.z),
             light: Light {
                 color: Color::rgb(1.0, 1.0, 1.0),
                 fov: 90.0,
