@@ -73,6 +73,15 @@ impl ChunkStore {
         }
     }
 
+    pub fn is_region_fully_loaded(&self, tile_x: usize, tile_y: usize) -> bool {
+        let idx = planet_idx(tile_x, tile_y);
+        if let Some(region) = self.regions.get(&idx) {
+            return region.chunks.iter().filter(|c| c.status != ChunkStatus::Loaded).count() == 0;
+        } else {
+            return false;
+        }
+    }
+
     pub fn manage_for_camera(
         &mut self,
         camera: &GameCamera,
@@ -85,14 +94,14 @@ impl ChunkStore {
         let mut active_regions = HashSet::new();
         active_regions.insert(planet_idx(camera.tile_x, camera.tile_y));
         // Make this optional - load neighboring regions for context
-        active_regions.insert(planet_idx(camera.tile_x - 1, camera.tile_y));
+        /*active_regions.insert(planet_idx(camera.tile_x - 1, camera.tile_y));
         active_regions.insert(planet_idx(camera.tile_x + 1, camera.tile_y));
         active_regions.insert(planet_idx(camera.tile_x, camera.tile_y + 1));
         active_regions.insert(planet_idx(camera.tile_x, camera.tile_y - 1));
         active_regions.insert(planet_idx(camera.tile_x - 1, camera.tile_y - 1));
         active_regions.insert(planet_idx(camera.tile_x + 1, camera.tile_y - 1));
         active_regions.insert(planet_idx(camera.tile_x - 1, camera.tile_y + 1));
-        active_regions.insert(planet_idx(camera.tile_x + 1, camera.tile_y + 1));
+        active_regions.insert(planet_idx(camera.tile_x + 1, camera.tile_y + 1));*/
 
         for pidx in active_regions.iter() {
             if let Some(r) = self.regions.get_mut(pidx) {

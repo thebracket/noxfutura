@@ -1,7 +1,10 @@
+use std::time::Duration;
+
 use super::Planet;
 use bevy::{prelude::Commands, tasks::AsyncComputeTaskPool};
 use lazy_static::*;
 use parking_lot::RwLock;
+use crate::simulation::terrain::CHUNK_STORE;
 
 pub struct RegionBuilder {
     planet: Planet,
@@ -38,6 +41,7 @@ impl RegionBuilder {
         match REGION_GEN.read().status {
             RegionBuilderStatus::Initializing => String::from("Initializing"),
             RegionBuilderStatus::Chunking => String::from("Dividing & Conquering"),
+            RegionBuilderStatus::Loaded => String::from("Region activated, making it pretty"),
         }
     }
 }
@@ -45,6 +49,7 @@ impl RegionBuilder {
 pub enum RegionBuilderStatus {
     Initializing,
     Chunking,
+    Loaded,
 }
 
 pub struct RegionGen {
@@ -68,34 +73,17 @@ fn update_status(new_status: RegionBuilderStatus) {
 }
 
 fn build_region(planet: Planet, tile_x: usize, tile_y: usize, task_master: AsyncComputeTaskPool) {
-    let mut cl = crate::simulation::terrain::CHUNK_STORE.write();
-    cl.set_planet(planet);
-    cl.with_playable_region(task_master.clone(), tile_x, tile_y);
-    update_status(RegionBuilderStatus::Chunking);
-    /*
-    println!("Reading material lists");
-    update_status(RegionBuilderStatus::MaterialMap);
-    let strata = StrataMaterials::read();
-
-    println!("Chunking");
-    update_status(RegionBuilderStatus::Chunking);
-    let mut chunks = Vec::with_capacity(CHUNKS_PER_REGION);
-    for z in 0..CHUNK_DEPTH {
-        let rz = z * CHUNK_DEPTH;
-        for y in 0..CHUNK_HEIGHT {
-            let ry = y * CHUNK_HEIGHT;
-            for x in 0..CHUNK_WIDTH {
-                let rx = x * CHUNK_WIDTH;
-                chunks.push(Chunk::generate(
-                    &planet, &strata, tile_x, tile_y, rx, ry, rz,
-                ));
-            }
-        }
-    }
+    // First block: starts the building process
     {
-        let mut w = REGION_GEN.write();
-        w.chunks = Some(chunks);
+        let mut cl = CHUNK_STORE.write();
+        cl.set_planet(planet);
+        cl.with_playable_region(task_master.clone(), tile_x, tile_y);
+        update_status(RegionBuilderStatus::Chunking);
     }
 
-    println!("Done"); */
+    // We need to wait until the region is in memory
+    while !CHUNK_STORE.read().is_region_fully_loaded(tile_x, tile_y) {
+        std::thread::sleep(Duration::from_micros(10));
+    }
+    update_status(RegionBuilderStatus::Loaded);
 }
