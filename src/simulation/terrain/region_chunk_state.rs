@@ -28,7 +28,7 @@ pub struct ChunkState {
     pub world_center: (f32, f32, f32),
     pub base: (usize, usize, usize),
     pub chunk: Option<Chunk>,
-    pub mesh: Option<ChunkMesh>,
+    pub mesh: Option<Vec<ChunkMesh>>,
     pub id: usize,
 }
 
@@ -64,12 +64,14 @@ impl ChunkState {
     }
 
     pub fn deactivate(&mut self, mesh_assets: &mut ResMut<Assets<Mesh>>, chunk_meshes_to_delete: &mut Vec<usize>) {
-        if let Some(mesh_handle) = &self.mesh {
-            mesh_assets.remove(mesh_handle.0.clone());
+        if let Some(mesh_handles) = &self.mesh {
+            mesh_handles.iter().for_each(|h| { mesh_assets.remove(h.0.clone()); });
+            //mesh_assets.remove(mesh_handle.0.clone());
         }
         if self.mesh.is_some() {
-            if let Some(mesh_handle) = &self.mesh {
-                mesh_assets.remove(mesh_handle.0.clone());
+            if let Some(mesh_handles) = &self.mesh {
+                mesh_handles.iter().for_each(|h| { mesh_assets.remove(h.0.clone()); });
+                //mesh_assets.remove(mesh_handle.0.clone());
             }
         }
         self.mesh = None;
@@ -80,8 +82,9 @@ impl ChunkState {
 
     pub fn disable_render(&mut self, mesh_assets: &mut ResMut<Assets<Mesh>>, chunk_meshes_to_delete: &mut Vec<usize>) {
         if self.mesh.is_some() {
-            if let Some(mesh_handle) = &self.mesh {
-                mesh_assets.remove(mesh_handle.0.clone());
+            if let Some(mesh_handles) = &self.mesh {
+                mesh_handles.iter().for_each(|h| { mesh_assets.remove(h.0.clone()); });
+                //mesh_assets.remove(mesh_handle.0.clone());
             }
             self.mesh = None;
             self.status = ChunkStatus::LoadedNoMesh;

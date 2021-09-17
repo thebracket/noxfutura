@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::simulation::{chunk_idx, mapidx, CHUNK_SIZE};
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 
@@ -6,14 +8,33 @@ use super::{
     greedy::{greedy_cubes, CubeMap},
 };
 
-pub fn chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
+pub fn chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
     match chunk.chunk_type {
         ChunkType::Populated => populated_chunk_to_mesh(chunk),
         _ => None,
     }
 }
 
-fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
+pub type MaterialCubeMap = HashMap<usize, CubeMap>;
+
+fn add_material(map: &mut MaterialCubeMap, material: usize, idx: usize) {
+    if let Some(cmap) = map.get_mut(&material) {
+        cmap.insert(idx, (material, false));
+    } else {
+        let mut layer_cubes = CubeMap::new();
+        layer_cubes.insert(idx, (material, false));
+        map.insert(material, layer_cubes);
+    }
+}
+
+pub struct MaterialLayer {
+    pub material: usize,
+    pub vertices: Vec<[f32; 3]>,
+    pub normals: Vec<[f32; 3]>,
+    pub uv: Vec<[f32; 2]>,
+}
+
+fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
     if let Some(tiles) = &chunk.tiles {
         if let Some(revealed) = &chunk.revealed {
             if revealed.iter().filter(|r| **r==true).count() == 0 {
@@ -21,12 +42,15 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
                 return None;
             }
 
-            let mut vertices = Vec::new();
+            /*let mut vertices = Vec::new();
             let mut normals = Vec::new();
-            let mut uv = Vec::new();
+            let mut uv = Vec::new();*/
+
+            let mut mat_map = Vec::<MaterialLayer>::new();
 
             for z in 0..CHUNK_SIZE {
-                let mut layer_cubes = CubeMap::new();
+                //let mut layer_cubes = CubeMap::new();
+                let mut material_layer_cubes = MaterialCubeMap::new();
                 for y in 0..CHUNK_SIZE {
                     for x in 0..CHUNK_SIZE {
                         let cidx = chunk_idx(x, y, z);
@@ -38,44 +62,61 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
                                         y + chunk.base.1,
                                         z + chunk.base.2,
                                     );
-                                    layer_cubes.insert(idx, (0, false));
+                                    //layer_cubes.insert(idx, (1, false));
+                                    add_material(&mut material_layer_cubes, 1, idx);
                                 }
-                                TileType::Solid { .. } => {
+                                TileType::Solid { material } => {
                                     let idx = mapidx(
                                         x + chunk.base.0,
                                         y + chunk.base.1,
                                         z + chunk.base.2,
                                     );
-                                    layer_cubes.insert(idx, (0, false));
+                                    //layer_cubes.insert(idx, (material, false));
+                                    add_material(&mut material_layer_cubes, material, idx);
                                 }
                                 _ => {}
                             }
                         }
                     }
                 }
-                greedy_cubes(&mut layer_cubes, &mut vertices, &mut normals, &mut uv);
+                if !material_layer_cubes.is_empty() {
+                    for (material, cubes) in material_layer_cubes.iter_mut() {
+                        let mut vertices = Vec::new();
+                        let mut normals = Vec::new();
+                        let mut uv = Vec::new();
+                        greedy_cubes(cubes, &mut vertices, &mut normals, &mut uv);
+                        mat_map.push(MaterialLayer{
+                            material: *material, vertices, normals, uv
+                        });
+                    }
+                }
+                //greedy_cubes(&mut layer_cubes, &mut vertices, &mut normals, &mut uv);
             }
 
             //println!("Vertices: {}", vertices.len());
 
-            if vertices.len() == 0 {
-                return None;
-            }
+            //if vertices.len() == 0 {
+            //    return None;
+            //}
 
             //println!("{:#?}", vertices);
 
-            let mut mesh = Mesh::new(bevy::render::pipeline::PrimitiveTopology::TriangleList);
-            mesh.set_attribute(
-                Mesh::ATTRIBUTE_POSITION,
-                VertexAttributeValues::Float3(vertices),
-            );
-            mesh.set_attribute(
-                Mesh::ATTRIBUTE_NORMAL,
-                VertexAttributeValues::Float3(normals),
-            );
-            mesh.set_attribute(Mesh::ATTRIBUTE_UV_0, VertexAttributeValues::Float2(uv));
+            let mut meshes = Vec::new();
+            for mat in mat_map.drain(..) {
+                let mut mesh = Mesh::new(bevy::render::pipeline::PrimitiveTopology::TriangleList);
+                mesh.set_attribute(
+                    Mesh::ATTRIBUTE_POSITION,
+                    VertexAttributeValues::Float3(mat.vertices),
+                );
+                mesh.set_attribute(
+                    Mesh::ATTRIBUTE_NORMAL,
+                    VertexAttributeValues::Float3(mat.normals),
+                );
+                mesh.set_attribute(Mesh::ATTRIBUTE_UV_0, VertexAttributeValues::Float2(mat.uv));
+                meshes.push((mat.material, mesh));
+            }
 
-            return Some(mesh);
+            return Some(meshes);
         }
     }
     None

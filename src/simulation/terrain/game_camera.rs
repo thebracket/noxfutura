@@ -142,13 +142,13 @@ pub fn game_camera_system(
                 moved = true;
             }
         }
-        if keyboard_input.pressed(KeyCode::Comma) {
+        if keyboard_input.just_pressed(KeyCode::Comma) {
             if game_camera.z < REGION_DEPTH - 2 {
                 game_camera.z += 1;
                 moved = true;
             }
         }
-        if keyboard_input.pressed(KeyCode::Period) {
+        if keyboard_input.just_pressed(KeyCode::Period) {
             if game_camera.z > 0 {
                 game_camera.z -= 1;
                 moved = true;
@@ -246,25 +246,32 @@ pub fn manage_terrain_tasks(
                     let tile_x = task.planet_idx % WORLD_WIDTH;
                     let tile_y = task.planet_idx / WORLD_WIDTH;
 
-                    let asset_handle = mesh_assets.add(task.mesh.unwrap());
-                    region.chunks[task.chunk_id].mesh = Some(ChunkMesh(asset_handle.clone()));
-                    let chunk_id = region.chunks[task.chunk_id].id;
-                    let mx = (tile_x * REGION_WIDTH) as f32;
-                    let my = (tile_y * REGION_HEIGHT) as f32;
-                    let mz = 0.0;
-                    commands
-                        .spawn_bundle(PbrBundle {
-                            mesh: asset_handle.clone(),
-                            material: PLANET_STORE
-                                .read()
-                                .world_material_handle
-                                .as_ref()
-                                .unwrap()
-                                .clone(),
-                            transform: Transform::from_xyz(mx, my, mz),
-                            ..Default::default()
-                        })
-                        .insert(RenderChunk(chunk_id));
+                    for (mat, mesh) in task.mesh.unwrap().drain(..) {
+                        let asset_handle = mesh_assets.add(mesh);
+                        if let Some(mesh_list) = &mut region.chunks[task.chunk_id].mesh {
+                            mesh_list.push(ChunkMesh(asset_handle.clone()));
+                        } else {
+                            region.chunks[task.chunk_id].mesh = Some(vec![ChunkMesh(asset_handle.clone())]);
+                        }
+                        let chunk_id = region.chunks[task.chunk_id].id;
+                        let mx = (tile_x * REGION_WIDTH) as f32;
+                        let my = (tile_y * REGION_HEIGHT) as f32;
+                        let mz = 0.0;
+                        commands
+                            .spawn_bundle(PbrBundle {
+                                mesh: asset_handle.clone(),
+                                material: PLANET_STORE
+                                    .read()
+                                    .world_material_handle
+                                    .as_ref()
+                                    .unwrap()
+                                    [mat]
+                                    .clone(),
+                                transform: Transform::from_xyz(mx, my, mz),
+                                ..Default::default()
+                            })
+                            .insert(RenderChunk(chunk_id));
+                    }
                 }
                 region.chunks[task.chunk_id].status = ChunkStatus::Loaded;
             }
@@ -274,7 +281,7 @@ pub fn manage_terrain_tasks(
 }
 
 pub struct MeshBuilderTask {
-    pub mesh: Option<Mesh>,
+    pub mesh: Option<Vec<(usize, Mesh)>>,
     pub planet_idx: usize,
     pub chunk_id: usize,
 }

@@ -31,15 +31,32 @@ pub fn setup_ui(
     let embark_atlas = TextureAtlas::from_grid(embark_handle, Vec2::new(8.0, 8.0), 8, 8);
     let embark_atlas_handle = texture_atlases.add(embark_atlas);
 
-    let world_material_handle = materials.add(StandardMaterial {
+    // World materials
+    let mut matmap = Vec::new();
+    let mut rng = bracket_random::prelude::RandomNumberGenerator::new();
+    crate::raws::RAWS.read().materials.materials.iter().enumerate().for_each(|(i,m)| {
+        let world_material_handle = materials.add(StandardMaterial {
+            base_color: Color::rgb(
+                rng.next_u64() as f32 / u64::MAX as f32, 
+                rng.next_u64() as f32 / u64::MAX as f32, 
+                rng.next_u64() as f32 / u64::MAX as f32, 
+            ),
+            roughness: 0.5,
+            unlit: false,
+            ..Default::default()
+        });
+        matmap.push(world_material_handle);
+    });
+
+    /*let world_material_handle = materials.add(StandardMaterial {
         base_color: Color::rgb(0.0, 1.0, 0.0),
         roughness: 0.5,
         unlit: false,
         ..Default::default()
-    });
+    });*/
     crate::simulation::terrain::PLANET_STORE
         .write()
-        .world_material_handle = Some(world_material_handle);
+        .world_material_handle = Some(matmap);
 
     commands.insert_resource(UiResources {
         backgrounds: texture_atlas_handle.clone(),

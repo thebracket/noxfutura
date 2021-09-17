@@ -174,6 +174,6 @@ fn cell_altitude(noise: &FastNoise, tile_x: usize, tile_y: usize, x: usize, y: u
 
 fn pick_material(materials: &[usize], noise: f32) -> usize {
     let noise_normalized = (noise + 1.0) / 2.0;
-    let n = 1.0 / materials.len() as f32;
+    let n = materials.len() as f32 / 1.0;
     (noise_normalized * n) as usize
 }

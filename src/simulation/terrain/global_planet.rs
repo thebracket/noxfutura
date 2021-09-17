@@ -14,7 +14,7 @@ pub struct PlanetData {
     pub strata: Option<StrataMaterials>,
     pub height_noise: Option<FastNoise>,
     pub material_noise: Option<FastNoise>,
-    pub world_material_handle: Option<Handle<StandardMaterial>>,
+    pub world_material_handle: Option<Vec<Handle<StandardMaterial>>>,
 }
 
 impl PlanetData {
