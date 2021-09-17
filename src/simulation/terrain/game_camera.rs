@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use super::{RenderChunk, PLANET_STORE};
-use crate::simulation::{chunk_id, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH};
+use crate::simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH};
 use bevy::{
     prelude::*,
     tasks::{AsyncComputeTaskPool, Task},
@@ -192,7 +192,7 @@ pub fn manage_terrain_tasks(
     mut meshers: Query<(Entity, &mut Task<MeshBuilderTask>)>,
     task_master: Res<AsyncComputeTaskPool>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
-    mut chunk_meshes: Query<(Entity, &RenderChunk)>,
+    chunk_meshes: Query<(Entity, &RenderChunk)>,
 ) {
     let mut lock = super::CHUNK_STORE.write();
     let mut chunk_meshes_to_delete = HashSet::new();
@@ -249,7 +249,6 @@ pub fn manage_terrain_tasks(
                     let asset_handle = mesh_assets.add(task.mesh.unwrap());
                     region.chunks[task.chunk_id].mesh = Some(ChunkMesh(asset_handle.clone()));
                     let chunk_id = region.chunks[task.chunk_id].id;
-                    let base = region.chunks[task.chunk_id].base;
                     let mx = (tile_x * REGION_WIDTH) as f32;
                     let my = (tile_y * REGION_HEIGHT) as f32;
                     let mz = 0.0;
