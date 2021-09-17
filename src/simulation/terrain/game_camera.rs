@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use super::{RenderChunk, PLANET_STORE};
 use crate::simulation::{chunk_id, REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH};
 use bevy::{
@@ -190,14 +192,27 @@ pub fn manage_terrain_tasks(
     mut meshers: Query<(Entity, &mut Task<MeshBuilderTask>)>,
     task_master: Res<AsyncComputeTaskPool>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
+    mut chunk_meshes: Query<(Entity, &RenderChunk)>,
 ) {
     let mut lock = super::CHUNK_STORE.write();
+    let mut chunk_meshes_to_delete = HashSet::new();
     lock.regions.iter_mut().for_each(|(_pidx, r)| {
         for t in r.chunk_builder_tasks.drain(..) {
             commands.spawn().insert(t);
         }
+        for c in r.chunk_meshes_to_delete.drain(..) {
+            chunk_meshes_to_delete.insert(c);
+        }
     });
     std::mem::drop(lock);
+
+    if !chunk_meshes_to_delete.is_empty() {
+        chunk_meshes.iter().for_each(|(entity, cm)| {
+            if chunk_meshes_to_delete.contains(&cm.0) {
+                commands.entity(entity).despawn();
+            }
+        });
+    }
 
     for (entity, mut task) in generators.iter_mut() {
         if let Some(task) = future::block_on(future::poll_once(&mut *task)) {
@@ -233,6 +248,7 @@ pub fn manage_terrain_tasks(
 
                     let asset_handle = mesh_assets.add(task.mesh.unwrap());
                     region.chunks[task.chunk_id].mesh = Some(ChunkMesh(asset_handle.clone()));
+                    let chunk_id = region.chunks[task.chunk_id].id;
                     let base = region.chunks[task.chunk_id].base;
                     let mx = (tile_x * REGION_WIDTH) as f32;
                     let my = (tile_y * REGION_HEIGHT) as f32;
@@ -249,9 +265,7 @@ pub fn manage_terrain_tasks(
                             transform: Transform::from_xyz(mx, my, mz),
                             ..Default::default()
                         })
-                        .insert(RenderChunk(chunk_id(
-                            tile_x, tile_y, base.0, base.1, base.2,
-                        )));
+                        .insert(RenderChunk(chunk_id));
                 }
                 region.chunks[task.chunk_id].status = ChunkStatus::Loaded;
             }

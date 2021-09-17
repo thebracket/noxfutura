@@ -16,6 +16,7 @@ pub struct RegionChunk {
     pub tile_x: usize,
     pub tile_y: usize,
     pub chunk_builder_tasks: Vec<Task<ChunkBuilderTask>>,
+    pub chunk_meshes_to_delete: Vec<usize>,
 }
 
 impl RegionChunk {
@@ -34,6 +35,7 @@ impl RegionChunk {
             tile_x,
             tile_y,
             chunk_builder_tasks: Vec::new(),
+            chunk_meshes_to_delete: Vec::new(),
         }
     }
 
@@ -47,24 +49,22 @@ impl RegionChunk {
         let cam_pos = camera.look_at();
         let tx = self.tile_x;
         let ty = self.tile_y;
-        self.chunks.iter_mut().enumerate().for_each(|(idx, c)| {
+        for idx in 0..self.chunks.len() {
+            let c = &mut self.chunks[idx];
             let distance =
                 Vec3::new(c.world_center.0, c.world_center.1, c.world_center.2).distance(cam_pos);
-            //println!("{}", distance);
             if distance < 256.0 {
                 // Ensure it's active
-                //println!("Active chunk");
                 c.activate(task_master.clone(), commands, tx, ty, idx);
             } else {
                 if !c.required {
                     // It's allowed to sleep now
-                    //println!("Sleep chunk");
-                    c.deactivate(mesh_assets);
+                    c.deactivate(mesh_assets, &mut self.chunk_meshes_to_delete);
                 } else {
-                    c.disable_render(mesh_assets);
+                    c.disable_render(mesh_assets, &mut self.chunk_meshes_to_delete);
                 }
             }
-        });
+        }
     }
 
     pub fn activate_entire_region(&mut self, task_master: AsyncComputeTaskPool) {
