@@ -1,7 +1,6 @@
 mod chunk_store;
 pub use chunk_store::*;
 mod strata;
-use strata::StrataMaterials;
 mod game_camera;
 pub use game_camera::*;
 mod chunk_mesh;
@@ -10,7 +9,5 @@ mod global_planet;
 mod greedy;
 pub use global_planet::*;
 mod region_chunk;
-use region_chunk::*;
 mod region_chunk_state;
 pub use region_chunk_state::RenderChunk;
-use region_chunk_state::*;

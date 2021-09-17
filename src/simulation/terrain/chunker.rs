@@ -2,14 +2,12 @@ use crate::{
     geometry::Degrees,
     raws::RAWS,
     simulation::{
-        chunk_idx, noise_lat, noise_lon, noise_to_planet_height, planet_idx, sphere_vertex, Planet,
-        CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, TILES_PER_CHUNK,
+        chunk_idx, noise_lat, noise_lon, noise_to_planet_height, planet_idx, sphere_vertex, 
+        CHUNK_SIZE, TILES_PER_CHUNK,
     },
 };
 use bracket_noise::prelude::*;
 use bracket_random::prelude::RandomNumberGenerator;
-
-use super::strata::StrataMaterials;
 
 #[derive(Clone, Copy, Debug)]
 pub enum TileType {

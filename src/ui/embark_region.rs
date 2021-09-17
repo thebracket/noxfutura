@@ -4,9 +4,7 @@ use bevy_egui::{
     EguiContext,
 };
 
-use crate::simulation::{
-    region_builder::RegionBuilder, terrain::spawn_game_camera, REGION_HEIGHT, REGION_WIDTH,
-};
+use crate::simulation::{region_builder::RegionBuilder, terrain::spawn_game_camera};
 
 use super::EmbarkResources;
 
@@ -16,9 +14,7 @@ pub fn embark_region_menu(
     egui_context: ResMut<EguiContext>,
     mut builder: ResMut<RegionBuilder>,
     mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    task_master : Res<AsyncComputeTaskPool>
+    task_master: Res<AsyncComputeTaskPool>,
 ) {
     builder.start(task_master.clone(), &mut commands);
 
@@ -28,51 +24,6 @@ pub fn embark_region_menu(
         .show(egui_context.ctx(), |ui| {
             ui.label(builder.status());
         });
-
-    //let camera_pos = Vec3::new(0.0, 2.0, 158.0);
-
-    /*
-    if let Some(mut chunks) = builder.chunks() {
-        let material_handle = materials.add(StandardMaterial {
-            base_color: Color::rgb(0.0, 1.0, 0.0),
-            roughness: 0.5,
-            unlit: false,
-            ..Default::default()
-        });
-        while !chunks.is_empty() {
-            let c = chunks.pop().unwrap();
-            //let d = camera_pos.distance(Vec3::new(c.center.0, c.center.1, c.center.2));
-
-            //if d < 128.0 {
-                /*use crate::simulation::region_builder::chunk_to_mesh;
-                if let Some(mesh) = chunk_to_mesh(&c) {
-                    // Insert the mesh as an asset
-                    let mesh_handle = meshes.add(mesh);
-
-                    commands
-                    .spawn_bundle(PbrBundle {
-                        mesh: mesh_handle.clone(),
-                        material: material_handle.clone(),
-                        transform: Transform::from_xyz(0.0, 0.0, 0.0),
-                        ..Default::default()
-                    });
-                }*/
-            //}
-        }
-
-        // light
-        /*commands.spawn_bundle(LightBundle {
-            transform: Transform::from_xyz(camera_pos.x, camera_pos.y, camera_pos.z),
-            light: Light{ color: Color::rgb(1.0, 1.0, 1.0), fov: 90.0, depth: -256.0..256.0, range: 256.0, intensity: 5000.0 },
-            ..Default::default()
-        });
-        // camera
-        commands.spawn_bundle(PerspectiveCameraBundle {
-            transform: Transform::from_xyz(camera_pos.x, camera_pos.y, camera_pos.z).looking_at(Vec3::new(256.0, 256.0, 120.0), Vec3::Z),
-            ..Default::default()
-        });*/
-    }
-     */
 }
 
 pub fn resume_embark_region(
@@ -80,19 +31,6 @@ pub fn resume_embark_region(
     embark: Res<EmbarkResources>,
     asset_server: Res<AssetServer>,
 ) {
-    // Camera
-    /*commands
-    .spawn_bundle(PerspectiveCameraBundle {
-        transform: Transform::from_xyz(
-            (REGION_WIDTH as f32 * 1.25) + 2.0,
-            REGION_HEIGHT as f32 * 1.25,
-            256.0,
-        )
-        .looking_at(Vec3::ZERO, Vec3::Z),
-        ..Default::default()
-    })
-    .insert(RegionGenUi {});*/
-
     // UI camera
     commands.spawn_bundle(UiCameraBundle::default());
 

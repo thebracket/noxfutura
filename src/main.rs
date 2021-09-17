@@ -76,7 +76,7 @@ fn main() {
             SystemSet::on_update(AppState::EmbarkBuildRegion)
                 .with_system(embark_region_menu.system())
                 .with_system(game_camera_system.system())
-                .with_system(manage_terrain_tasks.system())
+                .with_system(manage_terrain_tasks.system()),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::EmbarkBuildRegion)

@@ -1,14 +1,13 @@
-use super::region_chunk::{ChunkBuilderTask, RegionChunk};
+use super::region_chunk::{RegionChunk};
 use super::region_chunk_state::ChunkStatus;
 use super::PLANET_STORE;
 use super::{strata::StrataMaterials, GameCamera};
 use crate::simulation::{planet_idx, Planet, WORLD_WIDTH};
 use bevy::prelude::*;
-use bevy::tasks::{AsyncComputeTaskPool, Task};
+use bevy::tasks::AsyncComputeTaskPool;
 use lazy_static::*;
 use parking_lot::RwLock;
 use std::collections::HashMap;
-use futures_lite::future;
 
 lazy_static! {
     pub static ref CHUNK_STORE: RwLock<ChunkStore> = RwLock::new(ChunkStore::new());
@@ -44,7 +43,12 @@ impl ChunkStore {
     /// asynchronously, inside a write lock. It aims to bail-out fast,
     /// leaving the loading process running in the background. That integrates
     /// with the game camera, activating region chunks as they are ready.
-    pub fn with_playable_region(&mut self, task_master : AsyncComputeTaskPool, tile_x: usize, tile_y: usize) {
+    pub fn with_playable_region(
+        &mut self,
+        task_master: AsyncComputeTaskPool,
+        tile_x: usize,
+        tile_y: usize,
+    ) {
         let region_idx = planet_idx(tile_x, tile_y);
         if let Some(region) = self.regions.get_mut(&region_idx) {
             // The region exists, just need to initialize it
@@ -74,7 +78,7 @@ impl ChunkStore {
         camera: &GameCamera,
         mesh_assets: &mut ResMut<Assets<Mesh>>,
         commands: &mut Commands,
-        task_master : AsyncComputeTaskPool,
+        task_master: AsyncComputeTaskPool,
     ) {
         use std::collections::HashSet;
 

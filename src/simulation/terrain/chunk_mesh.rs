@@ -1,4 +1,4 @@
-use crate::simulation::{chunk_idx, mapidx, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
+use crate::simulation::{chunk_idx, mapidx, CHUNK_SIZE};
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 
 use super::{
