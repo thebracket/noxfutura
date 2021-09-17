@@ -3,7 +3,7 @@ use crate::simulation::{
     region_builder::strata::StrataMaterials, CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT,
     CHUNK_SIZE, CHUNK_WIDTH,
 };
-use bevy::prelude::Mesh;
+use bevy::{prelude::Commands, tasks::AsyncComputeTaskPool};
 use lazy_static::*;
 use parking_lot::RwLock;
 //mod chunk_mesh;
@@ -29,13 +29,17 @@ impl RegionBuilder {
         }
     }
 
-    pub fn start(&mut self) {
+    pub fn start(&mut self, task_master : AsyncComputeTaskPool, commands: &mut Commands) {
         if !self.started {
             self.started = true;
             let p = self.planet.clone();
             let x = self.tile_x;
             let y = self.tile_y;
-            std::thread::spawn(move || build_region(p, x, y));
+            let tm = task_master.clone();
+            let task = task_master.spawn(async move {
+                build_region(p, x, y, tm);
+            });
+            commands.spawn().insert(task);
         }
     }
 
@@ -74,10 +78,12 @@ fn update_status(new_status: RegionBuilderStatus) {
     REGION_GEN.write().status = new_status;
 }
 
-fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
+fn build_region(planet: Planet, tile_x: usize, tile_y: usize, task_master : AsyncComputeTaskPool) {
+    println!("Started task");
     let mut cl = crate::simulation::terrain::CHUNK_STORE.write();
     cl.set_planet(planet);
-    cl.with_playable_region(tile_x, tile_y);
+    cl.with_playable_region(task_master.clone(), tile_x, tile_y);
+    println!("Ending task");
     /*
     println!("Reading material lists");
     update_status(RegionBuilderStatus::MaterialMap);

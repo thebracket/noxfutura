@@ -1,13 +1,13 @@
-use super::{chunk_mesh::chunk_to_mesh, chunker::Chunk, PLANET_STORE};
-use crate::simulation::{
-    chunk_id, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, REGION_HEIGHT, REGION_WIDTH,
-};
-use bevy::prelude::{Assets, Commands, Handle, Mesh, PbrBundle, ResMut, Transform};
+use super::{PLANET_STORE, chunk_mesh::chunk_to_mesh, chunker::Chunk, region_chunk::ChunkBuilderTask};
+use crate::simulation::{CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, REGION_HEIGHT, REGION_WIDTH, chunk_id, planet_idx};
+use bevy::{prelude::{Assets, Commands, Handle, Mesh, PbrBundle, ResMut, Transform}, tasks::AsyncComputeTaskPool};
 
 #[derive(Clone, PartialEq, Eq)]
 pub enum ChunkStatus {
     Expired,
     NotLoaded,
+    AsyncLoading,
+    AsyncMeshing,
     Loaded,
 }
 
@@ -71,12 +71,28 @@ impl ChunkState {
 
     pub fn activate(
         &mut self,
-        mesh_assets: &mut ResMut<Assets<Mesh>>,
+        task_master : AsyncComputeTaskPool,
         commands: &mut Commands,
         tile_x: usize,
         tile_y: usize,
+        idx: usize,
     ) {
-        if self.status != ChunkStatus::Loaded {
+        if self.status == ChunkStatus::NotLoaded || self.status == ChunkStatus::Expired {
+            self.status = ChunkStatus::AsyncLoading;
+            let base = self.base;
+            let task = task_master.spawn(async move {
+                let chunk = Chunk::generate(
+                    tile_x, tile_y, base.0, base.1, base.2,
+                );
+                ChunkBuilderTask{
+                    chunk,
+                    planet_idx: planet_idx(tile_x, tile_y),
+                    chunk_id: idx,
+                }
+            });
+            commands.spawn().insert(task);
+        }
+        /*if self.status != ChunkStatus::Loaded {
             // Load the chunk
             let region_x = self.base.0;
             let region_y = self.base.1;
@@ -116,7 +132,7 @@ impl ChunkState {
                     )));
             }
             self.status = ChunkStatus::Loaded;
-        }
+        }*/
     }
 }
 

@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, tasks::AsyncComputeTaskPool};
 use bevy_egui::{
     egui::{self, Pos2},
     EguiContext,
@@ -18,8 +18,9 @@ pub fn embark_region_menu(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    task_master : Res<AsyncComputeTaskPool>
 ) {
-    builder.start();
+    builder.start(task_master.clone(), &mut commands);
 
     egui::Window::new("Building Embark Region")
         .title_bar(true)

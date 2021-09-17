@@ -1,8 +1,9 @@
-use crate::{
-    simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH},
-    ui::UiResources,
-};
-use bevy::{prelude::*, render::camera::Camera};
+use crate::{simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH, WORLD_WIDTH, chunk_id}, ui::UiResources};
+use bevy::{prelude::*, render::camera::Camera, tasks::{AsyncComputeTaskPool, Task}};
+use futures_lite::future;
+use super::{PLANET_STORE,RenderChunk};
+
+use super::{chunk_mesh::chunk_to_mesh, region_chunk::ChunkBuilderTask, region_chunk_state::{ChunkMesh, ChunkStatus}};
 
 pub fn spawn_game_camera(
     commands: &mut Commands,
@@ -96,6 +97,7 @@ pub fn game_camera_system(
     mut camera_query: Query<(&mut Transform, &mut GameCamera)>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
     mut commands: Commands,
+    task_master : Res<AsyncComputeTaskPool>,
 ) {
     let mut moved = false;
     for (mut trans, mut game_camera) in camera_query.iter_mut() {
@@ -104,8 +106,8 @@ pub fn game_camera_system(
                 game_camera.x -= 1;
                 moved = true;
             } else {
-                //game_camera.x = REGION_WIDTH - 1;
-                //game_camera.tile_x -= 1;
+                game_camera.x = REGION_WIDTH - 1;
+                game_camera.tile_x -= 1;
             }
         }
         if keyboard_input.pressed(KeyCode::Right) {
@@ -113,8 +115,8 @@ pub fn game_camera_system(
                 game_camera.x += 1;
                 moved = true;
             } else {
-                //game_camera.x = 0;
-                //game_camera.tile_x += 1;
+                game_camera.x = 0;
+                game_camera.tile_x += 1;
             }
         }
         if keyboard_input.pressed(KeyCode::Down) {
@@ -160,7 +162,94 @@ pub fn game_camera_system(
             trans.look_at(target, Vec3::Z);
             crate::simulation::terrain::CHUNK_STORE
                 .write()
-                .manage_for_camera(&game_camera, &mut mesh_assets, &mut commands);
+                .manage_for_camera(&game_camera, &mut mesh_assets, &mut commands, task_master.clone());
         }
     }
+}
+
+pub fn manage_terrain_tasks(
+    mut commands: Commands,
+    mut generators: Query<(Entity, &mut Task<ChunkBuilderTask>)>,
+    mut meshers: Query<(Entity, &mut Task<MeshBuilderTask>)>,
+    task_master : Res<AsyncComputeTaskPool>,
+    mut mesh_assets: ResMut<Assets<Mesh>>,
+) {
+    let mut lock = super::CHUNK_STORE.write();
+    lock.regions.iter_mut().for_each(|(_pidx, r)| {
+        for t in r.chunk_builder_tasks.drain(..) {
+            commands.spawn().insert(t);
+        }
+    });
+    std::mem::drop(lock);
+
+    for (entity, mut task) in generators.iter_mut() {
+        if let Some(task) = future::block_on(future::poll_once(&mut *task)) {
+            let mut lock = super::CHUNK_STORE.write();
+            if let Some(region) = lock.regions.get_mut(&task.planet_idx) {
+                let chunk_copy = task.chunk.clone();
+                let planet_idx = task.planet_idx;
+                let chunk_id = task.chunk_id;
+                region.chunks[task.chunk_id].chunk = Some(task.chunk);
+                region.chunks[task.chunk_id].status = ChunkStatus::AsyncMeshing;
+
+                let task = task_master.spawn(async move {
+                    let mesh = chunk_to_mesh(&chunk_copy);
+                    MeshBuilderTask{
+                        mesh,
+                        planet_idx: planet_idx,
+                        chunk_id: chunk_id,
+                    }
+                });
+                commands.spawn().insert(task);
+            }
+            commands.entity(entity).despawn();
+        }
+    }
+
+    for (entity, mut task) in meshers.iter_mut() {
+        if let Some(task) = future::block_on(future::poll_once(&mut *task)) {
+            let mut lock = super::CHUNK_STORE.write();
+            if let Some(region) = lock.regions.get_mut(&task.planet_idx) {
+
+                if task.mesh.is_some() {
+                    let tile_x = task.planet_idx % WORLD_WIDTH;
+                    let tile_y = task.planet_idx / WORLD_WIDTH;
+
+                    let asset_handle = mesh_assets.add(task.mesh.unwrap());
+                    region.chunks[task.chunk_id].mesh = Some(ChunkMesh(asset_handle.clone()));
+                    let base = region.chunks[task.chunk_id].base;
+                    let mx = (tile_x * REGION_WIDTH) as f32;
+                    let my = (tile_y * REGION_HEIGHT) as f32;
+                    let mz = 0.0;
+                    commands
+                        .spawn_bundle(PbrBundle {
+                            mesh: asset_handle.clone(),
+                            material: PLANET_STORE
+                                .read()
+                                .world_material_handle
+                                .as_ref()
+                                .unwrap()
+                                .clone(),
+                            transform: Transform::from_xyz(mx, my, mz),
+                            ..Default::default()
+                        })
+                        .insert(RenderChunk(chunk_id(
+                            tile_x,
+                            tile_y,
+                            base.0,
+                            base.1,
+                            base.2,
+                        )));
+                }
+                region.chunks[task.chunk_id].status = ChunkStatus::Loaded;
+            }
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
+pub struct MeshBuilderTask {
+    pub mesh : Option<Mesh>,
+    pub planet_idx: usize,
+    pub chunk_id: usize
 }
