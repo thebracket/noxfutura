@@ -1,7 +1,7 @@
 mod chunk_store;
 pub use chunk_store::*;
-mod strata;
 mod game_camera;
+mod strata;
 pub use game_camera::*;
 mod chunk_mesh;
 mod chunker;

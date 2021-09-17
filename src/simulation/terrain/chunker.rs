@@ -2,7 +2,7 @@ use crate::{
     geometry::Degrees,
     raws::RAWS,
     simulation::{
-        chunk_idx, noise_lat, noise_lon, noise_to_planet_height, planet_idx, sphere_vertex, 
+        chunk_idx, noise_lat, noise_lon, noise_to_planet_height, planet_idx, sphere_vertex,
         CHUNK_SIZE, TILES_PER_CHUNK,
     },
 };

@@ -1,4 +1,4 @@
-use super::region_chunk::{RegionChunk};
+use super::region_chunk::RegionChunk;
 use super::region_chunk_state::ChunkStatus;
 use super::PLANET_STORE;
 use super::{strata::StrataMaterials, GameCamera};

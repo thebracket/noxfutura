@@ -44,7 +44,7 @@ impl RegionChunk {
         commands: &mut Commands,
         task_master: AsyncComputeTaskPool,
     ) {
-        let cam_pos = camera.pos_world();
+        let cam_pos = camera.look_at();
         let tx = self.tile_x;
         let ty = self.tile_y;
         self.chunks.iter_mut().enumerate().for_each(|(idx, c)| {
