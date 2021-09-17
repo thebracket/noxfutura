@@ -16,6 +16,11 @@ pub fn chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
 fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Mesh> {
     if let Some(tiles) = &chunk.tiles {
         if let Some(revealed) = &chunk.revealed {
+            if revealed.iter().filter(|r| **r==true).count() == 0 {
+                // Bail out if there are no visible tiles
+                return None;
+            }
+
             let mut vertices = Vec::new();
             let mut normals = Vec::new();
             let mut uv = Vec::new();
