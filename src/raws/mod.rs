@@ -8,7 +8,6 @@ pub use block_type::BlockType;
 pub struct Raws {
     pub biomes: Biomes,
     pub materials: Materials,
-    //pub matmap: material_map::MaterialMap,
     pub plants: Plants,
     pub buildings: Buildings,
     pub vox: VoxelModels,
@@ -26,7 +25,6 @@ impl Raws {
         Self {
             biomes: Biomes::new(),
             materials: Materials::new(),
-            //matmap: material_map::MaterialMap::new(),
             plants: Plants::new(),
             buildings: Buildings::new(),
             vox: VoxelModels::new(),

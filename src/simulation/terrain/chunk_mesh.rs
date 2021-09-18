@@ -37,7 +37,7 @@ pub struct MaterialLayer {
 fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
     if let Some(tiles) = &chunk.tiles {
         if let Some(revealed) = &chunk.revealed {
-            if revealed.iter().filter(|r| **r==true).count() == 0 {
+            if revealed.iter().filter(|r| **r == true).count() == 0 {
                 // Bail out if there are no visible tiles
                 return None;
             }
@@ -85,8 +85,11 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
                         let mut normals = Vec::new();
                         let mut uv = Vec::new();
                         greedy_cubes(cubes, &mut vertices, &mut normals, &mut uv);
-                        mat_map.push(MaterialLayer{
-                            material: *material, vertices, normals, uv
+                        mat_map.push(MaterialLayer {
+                            material: *material,
+                            vertices,
+                            normals,
+                            uv,
                         });
                     }
                 }
@@ -190,7 +193,7 @@ pub fn add_cube_geometry(
     ];
     vertices.extend_from_slice(&cube_geometry);
 
-    let normal_geometry = [
+    const NORMAL_GEOMETRY: [[f32; 3]; 36] = [
         [0.0, 0.0, -1.0],
         [0.0, 0.0, -1.0],
         [0.0, 0.0, -1.0],
@@ -228,9 +231,48 @@ pub fn add_cube_geometry(
         [0.0, 1.0, 0.0],
         [0.0, 1.0, 0.0],
     ];
-    normals.extend_from_slice(&normal_geometry);
+    normals.extend_from_slice(&NORMAL_GEOMETRY);
 
-    for _ in 0..36 {
-        uv.push([0.0, 0.0]);
-    }
+    let tw = w;
+    let th = h;
+    let uv_base: [[f32; 2]; 36] = [
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [1.0, 0.0],
+        [1.0, 1.0],
+        [0.0, 0.0],
+        [0.0, 1.0],
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [1.0, 1.0],
+        [1.0, 1.0],
+        [0.0, 1.0],
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 1.0],
+        [1.0, 1.0],
+        [1.0, 1.0],
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [0.0, 1.0],
+        [1.0, 1.0],
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 1.0],
+        [1.0, 1.0],
+        [1.0, 1.0],
+        [1.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 1.0],
+        [1.0, 1.0],
+    ];
+
+    uv.extend_from_slice(&uv_base);
 }

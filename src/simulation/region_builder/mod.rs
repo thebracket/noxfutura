@@ -1,10 +1,10 @@
 use std::time::Duration;
 
 use super::Planet;
+use crate::simulation::terrain::CHUNK_STORE;
 use bevy::{prelude::Commands, tasks::AsyncComputeTaskPool};
 use lazy_static::*;
 use parking_lot::RwLock;
-use crate::simulation::terrain::CHUNK_STORE;
 
 pub struct RegionBuilder {
     planet: Planet,

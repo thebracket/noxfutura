@@ -76,7 +76,12 @@ impl ChunkStore {
     pub fn is_region_fully_loaded(&self, tile_x: usize, tile_y: usize) -> bool {
         let idx = planet_idx(tile_x, tile_y);
         if let Some(region) = self.regions.get(&idx) {
-            return region.chunks.iter().filter(|c| c.status != ChunkStatus::Loaded).count() == 0;
+            return region
+                .chunks
+                .iter()
+                .filter(|c| c.status != ChunkStatus::Loaded)
+                .count()
+                == 0;
         } else {
             return false;
         }

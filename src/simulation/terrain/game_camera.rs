@@ -251,7 +251,8 @@ pub fn manage_terrain_tasks(
                         if let Some(mesh_list) = &mut region.chunks[task.chunk_id].mesh {
                             mesh_list.push(ChunkMesh(asset_handle.clone()));
                         } else {
-                            region.chunks[task.chunk_id].mesh = Some(vec![ChunkMesh(asset_handle.clone())]);
+                            region.chunks[task.chunk_id].mesh =
+                                Some(vec![ChunkMesh(asset_handle.clone())]);
                         }
                         let chunk_id = region.chunks[task.chunk_id].id;
                         let mx = (tile_x * REGION_WIDTH) as f32;
@@ -264,8 +265,7 @@ pub fn manage_terrain_tasks(
                                     .read()
                                     .world_material_handle
                                     .as_ref()
-                                    .unwrap()
-                                    [mat]
+                                    .unwrap()[mat]
                                     .clone(),
                                 transform: Transform::from_xyz(mx, my, mz),
                                 ..Default::default()

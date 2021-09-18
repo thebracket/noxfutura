@@ -131,8 +131,9 @@ impl Chunk {
                                         material: pick_material(&strata.igneous, n),
                                     };
                                 } else {
+                                    let mat = pick_material(&strata.sedimentary, n);
                                     tiles[idx] = TileType::Solid {
-                                        material: pick_material(&strata.sedimentary, n),
+                                        material: mat,
                                     };
                                 }
                             } else {
@@ -143,12 +144,16 @@ impl Chunk {
                                     rz as f32,
                                 );
                                 if rng.roll_dice(1, 100) < biome.soils.soil {
+                                    let mat = pick_material(&strata.soils, n);
+                                    //println!("Soil: {}", crate::raws::RAWS.read().materials.materials[mat].name);
                                     tiles[idx] = TileType::Solid {
-                                        material: pick_material(&strata.soils, n),
+                                        material: mat,
                                     };
                                 } else {
+                                    let mat = pick_material(&strata.sand, n);
+                                    //println!("Sand: {}", crate::raws::RAWS.read().materials.materials[mat].name);
                                     tiles[idx] = TileType::Solid {
-                                        material: pick_material(&strata.sand, n),
+                                        material: mat,
                                     };
                                 }
                             }
@@ -175,5 +180,5 @@ fn cell_altitude(noise: &FastNoise, tile_x: usize, tile_y: usize, x: usize, y: u
 fn pick_material(materials: &[usize], noise: f32) -> usize {
     let noise_normalized = (noise + 1.0) / 2.0;
     let n = materials.len() as f32 / 1.0;
-    (noise_normalized * n) as usize
+    materials[(noise_normalized * n) as usize]
 }

@@ -23,8 +23,10 @@ fn get_soil_indices() -> Vec<usize> {
             MaterialLayer::Soil { .. } => true,
             _ => false,
         })
+        //.for_each(|m| println!("{:#?}", m));
         .map(|(i, _)| i)
         .collect()
+    //Vec::new()
 }
 
 pub struct StrataMaterials {

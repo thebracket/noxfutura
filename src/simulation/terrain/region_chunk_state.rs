@@ -1,7 +1,9 @@
 use super::{
     chunk_mesh::chunk_to_mesh, chunker::Chunk, region_chunk::ChunkBuilderTask, MeshBuilderTask,
 };
-use crate::simulation::{CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, REGION_HEIGHT, REGION_WIDTH, chunk_id, planet_idx};
+use crate::simulation::{
+    chunk_id, planet_idx, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, REGION_HEIGHT, REGION_WIDTH,
+};
 use bevy::{
     prelude::{Assets, Commands, Handle, Mesh, ResMut},
     tasks::AsyncComputeTaskPool,
@@ -63,14 +65,22 @@ impl ChunkState {
         }
     }
 
-    pub fn deactivate(&mut self, mesh_assets: &mut ResMut<Assets<Mesh>>, chunk_meshes_to_delete: &mut Vec<usize>) {
+    pub fn deactivate(
+        &mut self,
+        mesh_assets: &mut ResMut<Assets<Mesh>>,
+        chunk_meshes_to_delete: &mut Vec<usize>,
+    ) {
         if let Some(mesh_handles) = &self.mesh {
-            mesh_handles.iter().for_each(|h| { mesh_assets.remove(h.0.clone()); });
+            mesh_handles.iter().for_each(|h| {
+                mesh_assets.remove(h.0.clone());
+            });
             //mesh_assets.remove(mesh_handle.0.clone());
         }
         if self.mesh.is_some() {
             if let Some(mesh_handles) = &self.mesh {
-                mesh_handles.iter().for_each(|h| { mesh_assets.remove(h.0.clone()); });
+                mesh_handles.iter().for_each(|h| {
+                    mesh_assets.remove(h.0.clone());
+                });
                 //mesh_assets.remove(mesh_handle.0.clone());
             }
         }
@@ -80,10 +90,16 @@ impl ChunkState {
         chunk_meshes_to_delete.push(self.id);
     }
 
-    pub fn disable_render(&mut self, mesh_assets: &mut ResMut<Assets<Mesh>>, chunk_meshes_to_delete: &mut Vec<usize>) {
+    pub fn disable_render(
+        &mut self,
+        mesh_assets: &mut ResMut<Assets<Mesh>>,
+        chunk_meshes_to_delete: &mut Vec<usize>,
+    ) {
         if self.mesh.is_some() {
             if let Some(mesh_handles) = &self.mesh {
-                mesh_handles.iter().for_each(|h| { mesh_assets.remove(h.0.clone()); });
+                mesh_handles.iter().for_each(|h| {
+                    mesh_assets.remove(h.0.clone());
+                });
                 //mesh_assets.remove(mesh_handle.0.clone());
             }
             self.mesh = None;
