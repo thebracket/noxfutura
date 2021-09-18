@@ -37,9 +37,9 @@ pub fn setup_ui(
     crate::raws::RAWS.read().materials.materials.iter().enumerate().for_each(|(i,m)| {
         let world_material_handle = materials.add(StandardMaterial {
             base_color: Color::rgb(
-                rng.next_u64() as f32 / u64::MAX as f32, 
-                rng.next_u64() as f32 / u64::MAX as f32, 
-                rng.next_u64() as f32 / u64::MAX as f32, 
+                rng.next_u64() as f32 / u64::MAX as f32,
+                rng.next_u64() as f32 / u64::MAX as f32,
+                rng.next_u64() as f32 / u64::MAX as f32,
             ),
             roughness: 0.5,
             unlit: false,
