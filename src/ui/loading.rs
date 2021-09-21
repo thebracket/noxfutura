@@ -92,7 +92,7 @@ fn load_textures(
                         } else {
                             None
                         },
-                        roughness: 0.4,
+                        roughness: 0.8,
                         unlit: false,
                         ..Default::default()
                     });

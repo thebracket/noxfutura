@@ -45,17 +45,17 @@ pub fn spawn_game_camera(
 
     commands
         .spawn_bundle(LightBundle {
-            transform: Transform::from_xyz(camera_pos.x, camera_pos.y, camera_pos.z),
+            transform: Transform::from_xyz(camera_pos.x - 64.0, camera_pos.y - 64.0, camera_pos.z + 128.0),
             light: Light {
                 color: Color::rgb(1.0, 1.0, 1.0),
-                fov: 90.0,
-                depth: -256.0..256.0,
-                range: 256.0,
-                intensity: 5000.0,
+                fov: 360.0,
+                depth: -512.0..512.0,
+                range: 512.0,
+                intensity: 50_000.0,
             },
             ..Default::default()
-        })
-        .insert(game_camera);
+        });
+        //.insert(game_camera);
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
