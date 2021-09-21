@@ -10,6 +10,7 @@ mod simulation;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum AppState {
+    Loading,
     MainMenu,
     WorldGenMenu,
     BuildingPlanet,
@@ -27,7 +28,7 @@ fn main() {
             resizable: false,
             ..Default::default()
         })
-        .add_state(AppState::MainMenu)
+        .add_state(AppState::Loading)
         .add_plugins(DefaultPlugins)
         .add_plugin(EguiPlugin)
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
@@ -36,15 +37,34 @@ fn main() {
         .add_startup_system(setup_ui.system())
         .add_startup_system(setup_main_menu.system())
         .add_system(fps_update_system.system())
-        // Main Menu State
-        .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(main_menu.system()))
+        // Loading State
         .add_system_set(
-            SystemSet::on_enter(AppState::MainMenu).with_system(resume_main_menu.system()),
+            SystemSet::on_update(AppState::Loading)
+            .with_system(loading_screen.system())
+        )
+        .add_system_set(
+            SystemSet::on_enter(AppState::Loading)
+            .with_system(resume_loading_screen.system())
+        )
+        .add_system_set(
+            SystemSet::on_exit(AppState::Loading)
+            .with_system(exit_loading.system())
+        )
+        // Main Menu State
+        .add_system_set(
+            SystemSet::on_update(AppState::MainMenu)
+            .with_system(main_menu.system())
+            //.with_system(texture_mode_system.system())
+        )
+        .add_system_set(
+            SystemSet::on_enter(AppState::MainMenu)
+            .with_system(resume_main_menu.system())
         )
         .add_system_set(SystemSet::on_exit(AppState::MainMenu).with_system(exit_main_menu.system()))
         // World-gen Menu
         .add_system_set(
-            SystemSet::on_update(AppState::WorldGenMenu).with_system(world_gen_menu.system()),
+            SystemSet::on_update(AppState::WorldGenMenu)
+                .with_system(world_gen_menu.system())
         )
         .add_system_set(
             SystemSet::on_enter(AppState::WorldGenMenu).with_system(resume_world_gen_menu.system()),
