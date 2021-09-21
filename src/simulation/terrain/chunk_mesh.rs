@@ -43,10 +43,6 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
                 return None;
             }
 
-            /*let mut vertices = Vec::new();
-            let mut normals = Vec::new();
-            let mut uv = Vec::new();*/
-
             let mut mat_map = Vec::<MaterialLayer>::new();
 
             for z in 0..CHUNK_SIZE {
@@ -141,12 +137,12 @@ const CUBE_NORMALS: [[f32;3];6] = [
 ];
 
 const CUBE_TANGENTS: [[f32;3];6] = [
-    [0.0, 1.0, 0.0],
-    [0.0, -1.0, 0.0],
+    [-1.0, 0.0, 0.0],
+    [1.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0],
     [0.0, 0.0, -1.0],
-    [0.0, 1.0, -1.0],
     [1.0, 0.0, 0.0],
-    [1.0, 0.0, 0.0],
+    [-1.0, 0.0, 0.0],
 ];
 
 pub fn add_cube_geometry(
@@ -310,6 +306,7 @@ pub fn add_cube_geometry(
 
     let tw = w;
     let th = h;
+    #[rustfmt::skip]
     let uv_base: [[f32; 2]; 36] = [
         [0.0, 0.0],
         [tw, th],
@@ -317,30 +314,35 @@ pub fn add_cube_geometry(
         [tw, th],
         [0.0, 0.0],
         [0.0, th],
+
         [0.0, 0.0],
         [tw, 0.0],
         [tw, th],
         [tw, th],
         [0.0, th],
         [0.0, 0.0],
+
         [tw, th],
         [tw, 0.0],
         [0.0, 0.0],
         [0.0, 0.0],
         [0.0, th],
         [tw, th],
+
         [tw, th],
         [0.0, 0.0],
         [tw, 0.0],
         [0.0, 0.0],
         [tw, th],
         [0.0, th],
+
         [tw, th],
         [tw, 0.0],
         [0.0, 0.0],
         [0.0, 0.0],
         [0.0, th],
         [tw, th],
+
         [tw, th],
         [tw, 0.0],
         [0.0, 0.0],

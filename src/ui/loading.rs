@@ -92,7 +92,7 @@ fn load_textures(
                         } else {
                             None
                         },
-                        roughness: 0.5,
+                        roughness: 0.4,
                         unlit: false,
                         ..Default::default()
                     });
@@ -132,6 +132,7 @@ fn load_image_if_exists(
     asset_server: &AssetServer,
 ) -> Option<Handle<Texture>> {
     let filename = format!("assets/terrain/{}.png", texture_name);
+    println!("{}", filename);
     let filename_bevy = format!("terrain/{}.png", texture_name);
     let path = Path::new(&filename);
     if path.exists() {
