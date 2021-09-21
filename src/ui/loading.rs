@@ -60,6 +60,7 @@ fn load_textures(
 ) {
     res.cycle += 1;
     ui.label("Loading World Textures");
+
     let mut tex_map = HashMap::new();
     let raw_read = crate::raws::RAWS.read();
     raw_read.materials.materials.iter().for_each(|m| {
@@ -68,6 +69,9 @@ fn load_textures(
                 if !tex_map.contains_key(texture_name) {
                     if let Some(tex_handle) = load_image_if_exists(texture_name, &asset_server) {
                         tex_map.insert(texture_name.clone(), tex_handle.clone());
+                    }
+                    if let Some(tex_handle) = load_image_if_exists(&format!("{}-n", texture_name), &asset_server) {
+                        tex_map.insert(format!("{}-n", texture_name), tex_handle.clone());
                     }
                 }
             }
@@ -83,6 +87,11 @@ fn load_textures(
 
                     let world_material_handle = materials.add(StandardMaterial {
                         base_color_texture: Some(th.clone()),
+                        normal_map: if let Some(nm) =  tex_map.get(&format!("{}-n", texture_name)) {
+                            Some(nm.clone())
+                        } else {
+                            None
+                        },
                         roughness: 0.5,
                         unlit: false,
                         ..Default::default()
@@ -138,17 +147,29 @@ fn make_texture_repeat(
     assets: &mut Assets<Texture>,
 ) -> bool
 {
+    let mut result = false;
     if let Some(mat) = materials.get_mut(handle) {
         if let Some(th) = &mat.base_color_texture {
             if let Some(t) = assets.get_mut(th) {
+                println!("Fixed up texture");
                 t.sampler.address_mode_u = AddressMode::Repeat;
                 t.sampler.address_mode_v = AddressMode::Repeat;
                 t.sampler.address_mode_w = AddressMode::Repeat;
-                return true;
+                result = true;
+            }
+        }
+        if let Some(th) = &mat.normal_map {
+            println!("Found a normal map");
+            if let Some(t) = assets.get_mut(th) {
+                println!("Fixed up normal map");
+                t.sampler.address_mode_u = AddressMode::Repeat;
+                t.sampler.address_mode_v = AddressMode::Repeat;
+                t.sampler.address_mode_w = AddressMode::Repeat;
+                result = true;
             }
         }
     }
-    false
+    result
 }
 
 pub fn resume_loading_screen(mut commands: Commands) {

@@ -10,6 +10,7 @@ pub fn greedy_cubes(
     vertices: &mut Vec<[f32; 3]>,
     normals: &mut Vec<[f32; 3]>,
     uv: &mut Vec<[f32; 2]>,
+    tangents: &mut Vec<[f32; 3]>,
 ) {
     loop {
         let min_iter = cube_index.keys().min();
@@ -29,6 +30,7 @@ pub fn greedy_cubes(
                 vertices,
                 normals,
                 uv,
+                tangents,
                 x as f32,
                 y as f32,
                 z as f32,

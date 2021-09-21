@@ -1,11 +1,9 @@
-use bevy::{prelude::*, tasks::AsyncComputeTaskPool};
+use bevy::{pbr::AmbientLight, prelude::*, tasks::AsyncComputeTaskPool};
 use bevy_egui::{
     egui::{self, Pos2},
     EguiContext,
 };
-
 use crate::simulation::{region_builder::RegionBuilder, terrain::spawn_game_camera};
-
 use super::EmbarkResources;
 
 pub struct RegionGenUi;
@@ -15,6 +13,7 @@ pub fn embark_region_menu(
     mut builder: ResMut<RegionBuilder>,
     mut commands: Commands,
     task_master: Res<AsyncComputeTaskPool>,
+    mut ambient: ResMut<AmbientLight>,
 ) {
     builder.start(task_master.clone(), &mut commands);
 
@@ -24,6 +23,9 @@ pub fn embark_region_menu(
         .show(egui_context.ctx(), |ui| {
             ui.label(builder.status());
         });
+
+    ambient.color = Color::WHITE;
+    ambient.brightness = 0.3;
 }
 
 pub fn resume_embark_region(

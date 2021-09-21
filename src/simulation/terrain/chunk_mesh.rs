@@ -32,6 +32,7 @@ pub struct MaterialLayer {
     pub vertices: Vec<[f32; 3]>,
     pub normals: Vec<[f32; 3]>,
     pub uv: Vec<[f32; 2]>,
+    pub tangents: Vec<[f32; 3]>,
 }
 
 fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
@@ -84,12 +85,14 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
                         let mut vertices = Vec::new();
                         let mut normals = Vec::new();
                         let mut uv = Vec::new();
-                        greedy_cubes(cubes, &mut vertices, &mut normals, &mut uv);
+                        let mut tangents = Vec::new();
+                        greedy_cubes(cubes, &mut vertices, &mut normals, &mut uv, &mut tangents);
                         mat_map.push(MaterialLayer {
                             material: *material,
                             vertices,
                             normals,
                             uv,
+                            tangents,
                         });
                     }
                 }
@@ -116,6 +119,7 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
                     VertexAttributeValues::Float3(mat.normals),
                 );
                 mesh.set_attribute(Mesh::ATTRIBUTE_UV_0, VertexAttributeValues::Float2(mat.uv));
+                mesh.set_attribute(Mesh::ATTRIBUTE_TANGENT, VertexAttributeValues::Float3(mat.tangents));
                 meshes.push((mat.material, mesh));
             }
 
@@ -127,10 +131,29 @@ fn populated_chunk_to_mesh(chunk: &Chunk) -> Option<Vec<(usize, Mesh)>> {
 
 const GEOMETRY_SIZE: f32 = 1.0;
 
+const CUBE_NORMALS: [[f32;3];6] = [
+    [0.0, 0.0, -1.0],
+    [0.0, 0.0, 1.0],
+    [-1.0, 0.0, 0.0],
+    [1.0, 0.0, 0.0],
+    [0.0, -1.0, 0.0],
+    [0.0, 1.0, 0.0],
+];
+
+const CUBE_TANGENTS: [[f32;3];6] = [
+    [0.0, 1.0, 0.0],
+    [0.0, -1.0, 0.0],
+    [0.0, 0.0, -1.0],
+    [0.0, 1.0, -1.0],
+    [1.0, 0.0, 0.0],
+    [1.0, 0.0, 0.0],
+];
+
 pub fn add_cube_geometry(
     vertices: &mut Vec<[f32; 3]>,
     normals: &mut Vec<[f32; 3]>,
     uv: &mut Vec<[f32; 2]>,
+    tangents: &mut Vec<[f32; 3]>,
     x: f32,
     y: f32,
     z: f32,
@@ -193,45 +216,97 @@ pub fn add_cube_geometry(
     ];
     vertices.extend_from_slice(&cube_geometry);
 
+    #[rustfmt::skip]
     const NORMAL_GEOMETRY: [[f32; 3]; 36] = [
-        [0.0, 0.0, -1.0],
-        [0.0, 0.0, -1.0],
-        [0.0, 0.0, -1.0],
-        [0.0, 0.0, -1.0],
-        [0.0, 0.0, -1.0],
-        [0.0, 0.0, -1.0],
-        [0.0, 0.0, 1.0],
-        [0.0, 0.0, 1.0],
-        [0.0, 0.0, 1.0],
-        [0.0, 0.0, 1.0],
-        [0.0, 0.0, 1.0],
-        [0.0, 0.0, 1.0],
-        [-1.0, 0.0, 0.0],
-        [-1.0, 0.0, 0.0],
-        [-1.0, 0.0, 0.0],
-        [-1.0, 0.0, 0.0],
-        [-1.0, 0.0, 0.0],
-        [-1.0, 0.0, 0.0],
-        [1.0, 0.0, 0.0],
-        [1.0, 0.0, 0.0],
-        [1.0, 0.0, 0.0],
-        [1.0, 0.0, 0.0],
-        [1.0, 0.0, 0.0],
-        [1.0, 0.0, 0.0],
-        [0.0, -1.0, 0.0],
-        [0.0, -1.0, 0.0],
-        [0.0, -1.0, 0.0],
-        [0.0, -1.0, 0.0],
-        [0.0, -1.0, 0.0],
-        [0.0, -1.0, 0.0],
-        [0.0, 1.0, 0.0],
-        [0.0, 1.0, 0.0],
-        [0.0, 1.0, 0.0],
-        [0.0, 1.0, 0.0],
-        [0.0, 1.0, 0.0],
-        [0.0, 1.0, 0.0],
+        CUBE_NORMALS[0],
+        CUBE_NORMALS[0],
+        CUBE_NORMALS[0],
+        CUBE_NORMALS[0],
+        CUBE_NORMALS[0],
+        CUBE_NORMALS[0],
+
+        CUBE_NORMALS[1],
+        CUBE_NORMALS[1],
+        CUBE_NORMALS[1],
+        CUBE_NORMALS[1],
+        CUBE_NORMALS[1],
+        CUBE_NORMALS[1],
+
+        CUBE_NORMALS[2],
+        CUBE_NORMALS[2],
+        CUBE_NORMALS[2],
+        CUBE_NORMALS[2],
+        CUBE_NORMALS[2],
+        CUBE_NORMALS[2],
+
+        CUBE_NORMALS[3],
+        CUBE_NORMALS[3],
+        CUBE_NORMALS[3],
+        CUBE_NORMALS[3],
+        CUBE_NORMALS[3],
+        CUBE_NORMALS[3],
+
+        CUBE_NORMALS[4],
+        CUBE_NORMALS[4],
+        CUBE_NORMALS[4],
+        CUBE_NORMALS[4],
+        CUBE_NORMALS[4],
+        CUBE_NORMALS[4],
+
+        CUBE_NORMALS[5],
+        CUBE_NORMALS[5],
+        CUBE_NORMALS[5],
+        CUBE_NORMALS[5],
+        CUBE_NORMALS[5],
+        CUBE_NORMALS[5],
     ];
     normals.extend_from_slice(&NORMAL_GEOMETRY);
+
+    #[rustfmt::skip]
+    const TANGENT_GEOMETRY: [[f32; 3]; 36] = [
+        CUBE_TANGENTS[0],
+        CUBE_TANGENTS[0],
+        CUBE_TANGENTS[0],
+        CUBE_TANGENTS[0],
+        CUBE_TANGENTS[0],
+        CUBE_TANGENTS[0],
+
+        CUBE_TANGENTS[1],
+        CUBE_TANGENTS[1],
+        CUBE_TANGENTS[1],
+        CUBE_TANGENTS[1],
+        CUBE_TANGENTS[1],
+        CUBE_TANGENTS[1],
+
+        CUBE_TANGENTS[2],
+        CUBE_TANGENTS[2],
+        CUBE_TANGENTS[2],
+        CUBE_TANGENTS[2],
+        CUBE_TANGENTS[2],
+        CUBE_TANGENTS[2],
+
+        CUBE_TANGENTS[3],
+        CUBE_TANGENTS[3],
+        CUBE_TANGENTS[3],
+        CUBE_TANGENTS[3],
+        CUBE_TANGENTS[3],
+        CUBE_TANGENTS[3],
+
+        CUBE_TANGENTS[4],
+        CUBE_TANGENTS[4],
+        CUBE_TANGENTS[4],
+        CUBE_TANGENTS[4],
+        CUBE_TANGENTS[4],
+        CUBE_TANGENTS[4],
+
+        CUBE_TANGENTS[5],
+        CUBE_TANGENTS[5],
+        CUBE_TANGENTS[5],
+        CUBE_TANGENTS[5],
+        CUBE_TANGENTS[5],
+        CUBE_TANGENTS[5],
+    ];
+    tangents.extend_from_slice(&TANGENT_GEOMETRY);
 
     let tw = w;
     let th = h;
