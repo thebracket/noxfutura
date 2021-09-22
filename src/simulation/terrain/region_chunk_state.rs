@@ -1,6 +1,4 @@
-use super::{
-    chunk_mesh::chunk_to_mesh, chunker::Chunk, region_chunk::ChunkBuilderTask, MeshBuilderTask,
-};
+use super::{MeshBuilderTask, PlanetChange, chunk_mesh::chunk_to_mesh, chunker::{Chunk, TileType}, region_chunk::ChunkBuilderTask};
 use crate::simulation::{
     chunk_id, planet_idx, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, REGION_HEIGHT, REGION_WIDTH,
 };
@@ -165,6 +163,25 @@ impl ChunkState {
             }
         });
         commands.spawn().insert(task);
+    }
+
+    pub fn get_tile_type(&self, mapidx: usize) -> Option<TileType> {
+        if let Some(chunk) = &self.chunk {
+            Some(chunk.get_tile_type(mapidx))
+        } else {
+            None
+        }
+    }
+
+    pub fn enqueue_change(&mut self, change: PlanetChange) {
+        // TODO: Store the change for save purposes
+        if let Some(chunk) = &mut self.chunk {
+            self.dirty = true;
+            chunk.apply_change(change);
+            self.status = ChunkStatus::LoadedNoMesh;
+        } else {
+            println!("Skipped change");
+        }
     }
 }
 

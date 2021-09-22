@@ -1,10 +1,5 @@
-use super::{
-    region_chunk_state::{ChunkState, ChunkStatus},
-    GameCamera,
-};
-use crate::simulation::{
-    planet_idx, terrain::chunker::Chunk, CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_WIDTH,
-};
+use super::{GameCamera, PlanetChange, chunker::TileType, region_chunk_state::{ChunkState, ChunkStatus}};
+use crate::simulation::{CHUNKS_PER_REGION, CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, chunk_idx, idxmap, planet_idx, terrain::chunker::Chunk};
 use bevy::{
     prelude::{Assets, Commands, Mesh, ResMut, Vec3},
     tasks::{AsyncComputeTaskPool, Task},
@@ -87,6 +82,21 @@ impl RegionChunk {
         for t in tasks.drain(..) {
             self.chunk_builder_tasks.push(t);
         }
+    }
+
+    pub fn find_chunk(&self, tile_x: usize, tile_y: usize, tile_z: usize) -> usize {
+        ((tile_z / CHUNK_SIZE) * CHUNK_WIDTH * CHUNK_HEIGHT) + ((tile_y / CHUNK_SIZE) * CHUNK_WIDTH) + (tile_x / CHUNK_SIZE)
+    }
+
+    pub fn get_tile_type(&self, mapidx: usize) -> Option<TileType> {
+        let (x, y, z) = idxmap(mapidx);
+        self.chunks[self.find_chunk(x, y, z)].get_tile_type(mapidx)
+    }
+
+    pub fn enqueue_change(&mut self, change: PlanetChange) {
+        let (x, y, z) = idxmap(change.tile_idx);
+        let chunk_id = self.find_chunk(x, y, z);
+        self.chunks[chunk_id].enqueue_change(change);
     }
 }
 

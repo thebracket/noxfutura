@@ -1,3 +1,4 @@
+use super::chunker::TileType;
 use super::region_chunk::RegionChunk;
 use super::region_chunk_state::ChunkStatus;
 use super::PLANET_STORE;
@@ -130,5 +131,68 @@ impl ChunkStore {
         to_destroy.iter().for_each(|pidx| {
             self.regions.remove(pidx);
         });
+    }
+}
+
+pub fn get_tile_type(region_idx: usize, tile_idx: usize) -> Option<TileType> {
+    let rlock = CHUNK_STORE.read();
+    if let Some(region) = rlock.regions.get(&region_idx) {
+        region.get_tile_type(tile_idx)
+    } else {
+        None
+    }
+}
+
+lazy_static! {
+    pub static ref PLANET_CHANGE_QUEUE: RwLock<PlanetChangeQueue> = RwLock::new(PlanetChangeQueue::new());
+}
+
+pub enum TileChange{
+    SetTileType{result: TileType},
+}
+
+pub struct PlanetChange{
+    pub region_idx: usize,
+    pub tile_idx: usize,
+    pub change: TileChange,
+}
+
+pub struct PlanetChangeQueue{
+    pub queue: Vec<PlanetChange>,
+}
+
+impl PlanetChangeQueue {
+    pub fn new() -> Self {
+        Self{
+            queue: Vec::new(),
+        }
+    }
+}
+
+pub fn change_tile_type(region_idx: usize, tile_idx: usize, new_tile: TileType) {
+    let mut queue = PLANET_CHANGE_QUEUE.write();
+    queue.queue.push(
+        PlanetChange{
+            region_idx,
+            tile_idx,
+            change: TileChange::SetTileType{result: new_tile},
+        }
+    );
+}
+
+pub fn tile_changes_system(
+
+) {
+    if PLANET_CHANGE_QUEUE.read().queue.is_empty() {
+        return;
+    }
+
+    let mut queue_lock = PLANET_CHANGE_QUEUE.write();
+    for c in queue_lock.queue.drain(0..) {
+        let mut rlock = CHUNK_STORE.write();
+        let ridx = c.region_idx; // Copy so we're moving without borrow issues
+        if let Some(region) = rlock.regions.get_mut(&ridx) {
+            region.enqueue_change(c);
+        }
     }
 }

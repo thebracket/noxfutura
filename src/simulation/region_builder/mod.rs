@@ -1,7 +1,7 @@
 use std::time::Duration;
 
-use super::Planet;
-use crate::simulation::terrain::CHUNK_STORE;
+use super::{Planet, mapidx, terrain::{change_tile_type, chunker::{RampDirection, TileType}}};
+use crate::simulation::{REGION_HEIGHT, REGION_WIDTH, planet_idx, terrain::{CHUNK_STORE, chunker::cell_altitude, get_tile_type}};
 use bevy::{prelude::Commands, tasks::AsyncComputeTaskPool};
 use lazy_static::*;
 use parking_lot::RwLock;
@@ -42,6 +42,7 @@ impl RegionBuilder {
             RegionBuilderStatus::Initializing => String::from("Initializing"),
             RegionBuilderStatus::Chunking => String::from("Dividing & Conquering"),
             RegionBuilderStatus::Loaded => String::from("Region activated, making it pretty"),
+            RegionBuilderStatus::Ramping => String::from("Ramping up the volume"),
         }
     }
 }
@@ -50,6 +51,7 @@ pub enum RegionBuilderStatus {
     Initializing,
     Chunking,
     Loaded,
+    Ramping,
 }
 
 pub struct RegionGen {
@@ -86,4 +88,51 @@ fn build_region(planet: Planet, tile_x: usize, tile_y: usize, task_master: Async
         std::thread::sleep(Duration::from_micros(10));
     }
     update_status(RegionBuilderStatus::Loaded);
+
+    let mut altitudes = vec![0; REGION_WIDTH * REGION_HEIGHT];
+    {
+        use crate::simulation::terrain::PLANET_STORE;
+        let plock = PLANET_STORE.read();
+        let noise = plock.height_noise.as_ref().unwrap();
+        for y in 0..REGION_HEIGHT {
+            for x in 0..REGION_WIDTH {
+                let altitude = cell_altitude(&noise, tile_x, tile_y, x, y);
+                let altitude_idx = (y * REGION_WIDTH) + x;
+                altitudes[altitude_idx] = altitude;
+            }
+        }
+    }
+
+    // Time to make ramps
+    update_status(RegionBuilderStatus::Ramping);
+    ramping(planet_idx(tile_x, tile_y), &altitudes);
+}
+
+fn is_floor(planet_idx: usize, x: usize, y: usize, z: usize) -> bool {
+    match get_tile_type(planet_idx, mapidx(x, y, z-1)) {
+        Some(TileType::Solid{..}) => true,
+        _ => false,
+    }
+}
+
+fn ramping(planet_idx: usize, altitudes: &[u32]) {
+    for y in 1..REGION_HEIGHT-1 {
+        for x in 1..REGION_WIDTH-1 {
+            let z = altitudes[(y * REGION_WIDTH)+x] as usize;
+            if is_floor(planet_idx, x, y, z) {
+                if is_floor(planet_idx, x, y-1, z+1) {
+                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::NorthSouth});
+                }
+                else if is_floor(planet_idx, x, y+1, z+1) {
+                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::SouthNorth});
+                }
+                else if is_floor(planet_idx, x+1, y, z+1) {
+                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::WestEast});
+                }
+                else if is_floor(planet_idx, x-1, y-1, z+1) {
+                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::EastWest});
+                }
+            }
+        }
+    }
 }

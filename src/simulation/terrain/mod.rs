@@ -4,7 +4,7 @@ mod game_camera;
 mod strata;
 pub use game_camera::*;
 mod chunk_mesh;
-mod chunker;
+pub mod chunker;
 mod global_planet;
 mod greedy;
 pub use global_planet::*;

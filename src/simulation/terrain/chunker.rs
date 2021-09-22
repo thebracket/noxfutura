@@ -1,19 +1,30 @@
-use crate::{
-    geometry::Degrees,
-    raws::RAWS,
-    simulation::{
-        chunk_idx, noise_lat, noise_lon, noise_to_planet_height, planet_idx, sphere_vertex,
-        CHUNK_SIZE, TILES_PER_CHUNK,
-    },
-};
+use crate::{geometry::Degrees, raws::RAWS, simulation::{CHUNK_SIZE, TILES_PER_CHUNK, chunk_idx, idxmap, noise_lat, noise_lon, noise_to_planet_height, planet_idx, sphere_vertex, terrain::TileChange}};
 use bracket_noise::prelude::*;
 use bracket_random::prelude::RandomNumberGenerator;
+use super::PlanetChange;
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum RampDirection {
+    NorthSouth,
+    SouthNorth,
+    EastWest,
+    WestEast,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum StairsType {
+    Up,
+    Down,
+    UpDown,
+}
 
 #[derive(Clone, Copy, Debug)]
 pub enum TileType {
     Empty,
     SemiMoltenRock,
     Solid { material: usize },
+    Ramp { direction: RampDirection },
+    Stairs { direction: StairsType },
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -74,7 +85,6 @@ impl Chunk {
                 let altitude = cell_altitude(&noise, tile_x, tile_y, x, y);
                 let altitude_idx = ((y - region_y) * CHUNK_SIZE) + (x - region_x);
                 altitudes[altitude_idx] = altitude;
-                //altitudes[altitude_idx] = 128;
             }
         }
 
@@ -167,9 +177,39 @@ impl Chunk {
 
         chunk
     }
+
+    pub fn get_tile_type(&self, map_idx: usize) -> TileType {
+        if let Some(tiles) = &self.tiles {
+            let (x, y, z) = idxmap(map_idx);
+            let cx = x - self.base.0;
+            let cy = y - self.base.1;
+            let cz = z - self.base.2;
+            let chunk_id = chunk_idx(cx, cy, cz);
+            tiles[chunk_id]
+        } else {
+            TileType::Empty
+        }
+    }
+
+    pub fn apply_change(&mut self, change: PlanetChange) {
+        // If there are no tiles, make some!
+        if !self.tiles.is_some() {
+            self.tiles = Some(vec![TileType::Empty; TILES_PER_CHUNK]);
+        }
+
+        let (x, y, z) = idxmap(change.tile_idx);
+        let cx = x - self.base.0;
+        let cy = y - self.base.1;
+        let cz = z - self.base.2;
+        let chunk_id = chunk_idx(cx, cy, cz);
+
+        match change.change {
+            TileChange::SetTileType{result} => self.tiles.as_mut().unwrap()[chunk_id] = result,
+        }
+    }
 }
 
-fn cell_altitude(noise: &FastNoise, tile_x: usize, tile_y: usize, x: usize, y: usize) -> u32 {
+pub fn cell_altitude(noise: &FastNoise, tile_x: usize, tile_y: usize, x: usize, y: usize) -> u32 {
     let lat = noise_lat(tile_y, y);
     let lon = noise_lon(tile_x, x);
     let sphere_coords = sphere_vertex(100.0, Degrees::new(lat), Degrees::new(lon));
