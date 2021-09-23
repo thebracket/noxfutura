@@ -23,8 +23,8 @@ pub enum TileType {
     Empty,
     SemiMoltenRock,
     Solid { material: usize },
-    Ramp { direction: RampDirection },
-    Stairs { direction: StairsType },
+    Ramp { material: usize, direction: RampDirection },
+    Stairs { material: usize, direction: StairsType },
 }
 
 #[derive(Clone, Copy, Debug)]

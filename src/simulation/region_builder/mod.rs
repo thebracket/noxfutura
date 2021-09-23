@@ -115,22 +115,31 @@ fn is_floor(planet_idx: usize, x: usize, y: usize, z: usize) -> bool {
     }
 }
 
+fn get_material(planet_idx: usize, x: usize, y: usize, z: usize) -> usize {
+    match get_tile_type(planet_idx, mapidx(x, y, z)) {
+        Some(TileType::Solid{ material}) => material,
+        Some(TileType::Ramp{ material, ..}) => material,
+        _ => 0,
+    }
+}
+
 fn ramping(planet_idx: usize, altitudes: &[u32]) {
     for y in 1..REGION_HEIGHT-1 {
         for x in 1..REGION_WIDTH-1 {
             let z = altitudes[(y * REGION_WIDTH)+x] as usize;
             if is_floor(planet_idx, x, y, z) {
-                if is_floor(planet_idx, x, y-1, z+1) {
-                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::NorthSouth});
+                let material = get_material(planet_idx, x, y, z-1);
+                if is_floor(planet_idx, x, y-1, z) {
+                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::NorthSouth, material});
                 }
-                else if is_floor(planet_idx, x, y+1, z+1) {
-                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::SouthNorth});
+                else if is_floor(planet_idx, x, y+1, z) {
+                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::SouthNorth, material});
                 }
-                else if is_floor(planet_idx, x+1, y, z+1) {
-                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::WestEast});
+                else if is_floor(planet_idx, x+1, y, z) {
+                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::WestEast, material});
                 }
-                else if is_floor(planet_idx, x-1, y-1, z+1) {
-                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::EastWest});
+                else if is_floor(planet_idx, x-1, y-1, z) {
+                    change_tile_type(planet_idx, mapidx(x, y, z), TileType::Ramp{direction: RampDirection::EastWest, material});
                 }
             }
         }

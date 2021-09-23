@@ -1,7 +1,6 @@
 use crate::simulation::{idxmap, REGION_WIDTH};
 use std::collections::HashMap;
-
-use super::chunk_mesh::add_cube_geometry;
+use crate::geometry::add_cube_geometry;
 
 pub type CubeMap = HashMap<usize, (usize, bool)>;
 
