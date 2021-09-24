@@ -1,9 +1,5 @@
-use bracket_noise::prelude::FastNoise;
-use bracket_random::prelude::RandomNumberGenerator;
-
 use super::{PlanetLocation, TileType};
 use crate::raws::RAWS;
-use crate::simulation::CHUNK_SIZE;
 use crate::simulation::terrain::PLANET_STORE;
 use crate::{
     geometry::Degrees,
@@ -12,6 +8,8 @@ use crate::{
         REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH,
     },
 };
+use bracket_noise::prelude::FastNoise;
+use bracket_random::prelude::RandomNumberGenerator;
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum RegionStatus {

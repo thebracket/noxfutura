@@ -1,7 +1,10 @@
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 
-use super::{greedy::greedy_cubes, PlanetLocation, RampDirection, TileType, REGIONS, ChunkLocation, ChunkIterator};
-use crate::simulation::{mapidx, CHUNK_SIZE, REGION_HEIGHT, REGION_WIDTH};
+use super::{
+    greedy::greedy_cubes, ChunkIterator, ChunkLocation, PlanetLocation, RampDirection, TileType,
+    REGIONS,
+};
+use crate::simulation::{CHUNK_SIZE, REGION_HEIGHT, REGION_WIDTH};
 use std::collections::{HashMap, HashSet};
 
 pub struct RenderChunk {
@@ -141,14 +144,16 @@ pub fn build_render_chunk(
         let region_idx = region_id.to_region_index();
         if let Some(region) = region_lock.regions.get(&region_idx) {
             for _ in 0..CHUNK_SIZE {
-                chunk.layers.push(RenderChunkLayer::new(region_id, location));
+                chunk
+                    .layers
+                    .push(RenderChunkLayer::new(region_id, location));
             }
 
             ChunkIterator::new(location)
                 .map(|loc| (loc, loc.to_tile_index()))
                 .filter(|(_, idx)| region.revealed[*idx])
                 .filter(|(_, idx)| region.tile_types[*idx] != TileType::Empty)
-                .for_each(|(loc,idx)| {
+                .for_each(|(loc, idx)| {
                     let material = region.material[idx];
                     let layer = loc.z - location.z;
                     match region.tile_types[idx] {
@@ -159,8 +164,7 @@ pub fn build_render_chunk(
                         }
                         _ => {}
                     }
-                }
-            );
+                });
 
             for layer in chunk.layers.iter_mut() {
                 let mesh_list = layer.create_geometry();

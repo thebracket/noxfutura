@@ -8,10 +8,6 @@ pub struct ChunkLocation {
 }
 
 impl ChunkLocation {
-    pub fn new(x:usize, y: usize, z: usize) -> Self {
-        Self {x,y,z}
-    }
-
     pub fn to_tile_index(&self) -> usize {
         mapidx(self.x, self.y, self.z)
     }

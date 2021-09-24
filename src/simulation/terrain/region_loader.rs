@@ -1,4 +1,7 @@
-use super::{REGIONS, Region, RegionStatus, ChunkLocation, region_chunks::{RenderChunk, build_render_chunk}};
+use super::{
+    region_chunks::{build_render_chunk, RenderChunk},
+    ChunkLocation, Region, RegionStatus, REGIONS,
+};
 use crate::simulation::terrain::PLANET_STORE;
 use crate::simulation::{CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
 use bevy::{
@@ -44,12 +47,8 @@ pub fn load_regions(
                                         y: y * CHUNK_SIZE,
                                         z: z * CHUNK_SIZE,
                                     };
-                                    let task = task_master.spawn(async move {
-                                        build_render_chunk(
-                                            loc,
-                                            cloc,
-                                        )
-                                    });
+                                    let task = task_master
+                                        .spawn(async move { build_render_chunk(loc, cloc) });
                                     commands.spawn().insert(task);
                                     //println!("Spawned renderer for {},{},{}", x, y, z);
                                 }
@@ -96,7 +95,10 @@ pub fn load_regions(
                                     .unwrap()[material_id]
                                     .clone(),
                                 transform: Transform::from_xyz(mx, my, mz),
-                                visible: Visible{is_visible: true, is_transparent: false},
+                                visible: Visible {
+                                    is_visible: true,
+                                    is_transparent: false,
+                                },
                                 ..Default::default()
                             });
                             n_spawned += 1;

@@ -31,11 +31,7 @@ pub fn spawn_game_camera(
         .insert(game_camera.clone());
 
     commands.spawn_bundle(LightBundle {
-        transform: Transform::from_xyz(
-            camera_pos.x,
-            camera_pos.y,
-            camera_pos.z + 128.0,
-        ),
+        transform: Transform::from_xyz(camera_pos.x, camera_pos.y, camera_pos.z + 128.0),
         light: Light {
             color: Color::rgb(1.0, 1.0, 1.0),
             fov: 360.0,
