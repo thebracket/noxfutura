@@ -1,4 +1,4 @@
-use crate::geometry::add_cube_geometry;
+use crate::geometry::{add_cube_geometry, add_floor_geometry};
 use crate::simulation::{idxmap, REGION_WIDTH};
 use std::collections::HashSet;
 
@@ -40,32 +40,40 @@ pub fn greedy_cubes(
     }
 }
 
-/*pub fn greedy_floors(cube_index: &mut CubeMap, layer: &mut Vec<f32>, element_count: &mut u32) {
+pub fn greedy_floors(
+    cube_index: &mut CubeMap, 
+    vertices: &mut Vec<[f32; 3]>,
+    normals: &mut Vec<[f32; 3]>,
+    uv: &mut Vec<[f32; 2]>,
+    tangents: &mut Vec<[f32; 3]>,
+) {
     loop {
-        let min_iter = cube_index.keys().min();
+        let min_iter = cube_index.iter().min();
         if min_iter.is_none() {
             break;
         } else {
             let idx = *min_iter.unwrap();
-            let mat_idx = cube_index.remove(&idx).unwrap();
+            let mat_idx = cube_index.remove(&idx);
 
             let (x, y, z) = idxmap(idx);
-            let width = grow_right(cube_index, idx, mat_idx);
-            let height = grow_down(cube_index, idx, width, mat_idx);
+            let width = grow_right(cube_index, idx);
+            let height = grow_down(cube_index, idx, width);
 
-            nox_utils::add_floor_geometry(
-                layer,
-                element_count,
+            add_floor_geometry(
+                vertices,
+                normals,
+                uv,
+                tangents,
                 x as f32,
                 y as f32,
                 z as f32,
                 width as f32,
                 height as f32,
-                mat_idx,
+                1.0,
             );
         }
     }
-}*/
+}
 
 fn grow_right(cube_index: &mut CubeMap, idx: usize) -> usize {
     let mut width = 1;

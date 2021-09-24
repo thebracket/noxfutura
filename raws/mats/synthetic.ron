@@ -9,6 +9,7 @@
             tint: (1.0, 1.0, 1.0),
             texture: Some(
                 MaterialTextureSet(
+                    roughness: Some(0.1),
                     base: Some("titanium"),
                     floor: Some("metalfloor"),
                     constructed: Some("metalfloor"),

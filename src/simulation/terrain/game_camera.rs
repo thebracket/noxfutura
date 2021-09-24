@@ -128,13 +128,13 @@ pub fn game_camera_system(
                 moved = true;
             }
         }
-        if keyboard_input.pressed(KeyCode::Comma) {
+        if keyboard_input.just_pressed(KeyCode::Comma) {
             if game_camera.z < REGION_DEPTH - 2 {
                 game_camera.z += 1;
                 moved = true;
             }
         }
-        if keyboard_input.pressed(KeyCode::Period) {
+        if keyboard_input.just_pressed(KeyCode::Period) {
             if game_camera.z > 0 {
                 game_camera.z -= 1;
                 moved = true;
@@ -142,6 +142,14 @@ pub fn game_camera_system(
         }
         if keyboard_input.just_pressed(KeyCode::Tab) {
             game_camera.mode = next_camera(game_camera.mode);
+            moved = true;
+        }
+        if keyboard_input.pressed(KeyCode::NumpadSubtract) {
+            game_camera.zoom += 1;
+            moved = true;
+        }
+        if keyboard_input.pressed(KeyCode::NumpadAdd) {
+            game_camera.zoom -= 1;
             moved = true;
         }
 

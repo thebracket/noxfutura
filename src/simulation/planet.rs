@@ -42,7 +42,7 @@ impl Planet {
         noise.set_fractal_type(FractalType::FBM);
         noise.set_fractal_octaves(5);
         noise.set_fractal_gain(0.5);
-        noise.set_fractal_lacunarity(3.5);
+        noise.set_fractal_lacunarity(2.0);
         noise.set_frequency(0.01);
         noise
     }

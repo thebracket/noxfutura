@@ -7,6 +7,8 @@ use std::collections::{HashMap, HashSet};
 pub enum ChangeRequest {
     RevealTile { idx: usize },
     SolidTile { idx: usize, material: usize },
+    EmptyTile { idx: usize },
+    Floor { idx: usize, material: usize },
 }
 
 pub struct MapChangeBatch {
@@ -69,6 +71,15 @@ fn process_batch(batch: MapChangeBatch) -> HashSet<ChunkLocation> {
                 }
                 ChangeRequest::SolidTile { idx, material } => {
                     region.tile_types[idx] = TileType::Solid;
+                    region.material[idx] = material;
+                    add_chunk(&mut refresh_chunks, idx);
+                }
+                ChangeRequest::EmptyTile{idx} => {
+                    region.tile_types[idx] = TileType::Empty;
+                    add_chunk(&mut refresh_chunks, idx);
+                }
+                ChangeRequest::Floor{idx, material} => {
+                    region.tile_types[idx] = TileType::Floor;
                     region.material[idx] = material;
                     add_chunk(&mut refresh_chunks, idx);
                 }

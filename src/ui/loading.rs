@@ -108,7 +108,7 @@ fn load_textures(
                         } else {
                             None
                         },
-                        roughness: 0.8,
+                        roughness: texture.roughness.unwrap_or(0.8),
                         unlit: false,
                         ..Default::default()
                     });

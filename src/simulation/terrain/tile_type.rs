@@ -18,6 +18,7 @@ pub enum TileType {
     Empty,
     SemiMoltenRock,
     Solid,
+    Floor,
     Ramp { direction: RampDirection },
     Stairs { direction: StairsType },
 }

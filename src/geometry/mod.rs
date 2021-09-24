@@ -4,3 +4,5 @@ mod cube;
 pub use cube::*;
 mod ramp;
 pub use ramp::*;
+mod floor;
+pub use floor::*;

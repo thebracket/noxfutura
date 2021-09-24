@@ -1,9 +1,6 @@
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 
-use super::{
-    greedy::greedy_cubes, ChunkIterator, ChunkLocation, PlanetLocation, RampDirection, TileType,
-    REGIONS,
-};
+use super::{ChunkIterator, ChunkLocation, PlanetLocation, REGIONS, RampDirection, TileType, greedy::{greedy_cubes, greedy_floors}};
 use crate::simulation::{CHUNK_SIZE, REGION_HEIGHT, REGION_WIDTH};
 use std::collections::{HashMap, HashSet};
 
@@ -27,6 +24,7 @@ impl RenderChunk {
 pub struct MaterialBuffer {
     pub material: usize,
     pub cubes: HashSet<usize>,
+    pub floors: HashSet<usize>,
     pub ramps: Vec<(usize, RampDirection)>,
 }
 
@@ -36,11 +34,12 @@ impl MaterialBuffer {
             material,
             cubes: HashSet::new(),
             ramps: Vec::new(),
+            floors: HashSet::new(),
         }
     }
 
     fn create_geometry(&mut self) -> Option<Mesh> {
-        if self.cubes.is_empty() && self.ramps.is_empty() {
+        if self.cubes.is_empty() && self.ramps.is_empty() && self.floors.is_empty() {
             return None; // Nothing to do here
         }
 
@@ -48,8 +47,16 @@ impl MaterialBuffer {
         let mut normals = Vec::new();
         let mut uv = Vec::new();
         let mut tangents = Vec::new();
+
         greedy_cubes(
             &mut self.cubes,
+            &mut vertices,
+            &mut normals,
+            &mut uv,
+            &mut tangents,
+        );
+        greedy_floors(
+            &mut self.floors,
             &mut vertices,
             &mut normals,
             &mut uv,
@@ -114,6 +121,16 @@ impl RenderChunkLayer {
         }
     }
 
+    fn add_floor(&mut self, material: usize, idx: usize) {
+        if let Some(mb) = self.materials.get_mut(&material) {
+            mb.floors.insert(idx);
+        } else {
+            let mut mb = MaterialBuffer::new(material);
+            mb.floors.insert(idx);
+            self.materials.insert(material, mb);
+        }
+    }
+
     fn add_ramp(&mut self, material: usize, idx: usize, direction: RampDirection) {
         if let Some(mb) = self.materials.get_mut(&material) {
             mb.ramps.push((idx, direction));
@@ -173,6 +190,9 @@ pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) ->
                         }
                         TileType::Solid => {
                             chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
+                        }
+                        TileType::Floor => {
+                            chunk.layers.as_mut().unwrap()[layer].add_floor(material, idx)
                         }
                         TileType::Ramp { direction } => {
                             chunk.layers.as_mut().unwrap()[layer].add_ramp(material, idx, direction)
