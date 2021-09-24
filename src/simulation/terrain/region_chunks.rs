@@ -10,7 +10,17 @@ use std::collections::{HashMap, HashSet};
 pub struct RenderChunk {
     pub region: PlanetLocation,
     pub location: ChunkLocation,
-    pub layers: Vec<RenderChunkLayer>,
+    pub layers: Option<Vec<RenderChunkLayer>>,
+}
+
+impl RenderChunk {
+    fn empty(region: PlanetLocation, location: ChunkLocation) -> Self {
+        Self {
+            region,
+            location,
+            layers: None,
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -126,17 +136,14 @@ impl RenderChunkLayer {
     }
 }
 
-pub fn build_render_chunk(
-    region_id: PlanetLocation,
-    location: ChunkLocation,
-) -> Option<RenderChunk> {
+pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) -> RenderChunk {
     if is_chunk_empty(region_id, location) {
-        None
+        RenderChunk::empty(region_id, location)
     } else {
         let mut chunk = RenderChunk {
             region: region_id,
             location,
-            layers: Vec::with_capacity(CHUNK_SIZE),
+            layers: Some(Vec::with_capacity(CHUNK_SIZE)),
         };
 
         // Build the basic geometric elements
@@ -148,6 +155,8 @@ pub fn build_render_chunk(
                 local_location.z += layer;
                 chunk
                     .layers
+                    .as_mut()
+                    .unwrap()
                     .push(RenderChunkLayer::new(region_id, local_location));
             }
 
@@ -159,16 +168,20 @@ pub fn build_render_chunk(
                     let material = region.material[idx];
                     let layer = loc.z - location.z;
                     match region.tile_types[idx] {
-                        TileType::SemiMoltenRock => chunk.layers[layer].add_cube(material, idx),
-                        TileType::Solid => chunk.layers[layer].add_cube(material, idx),
+                        TileType::SemiMoltenRock => {
+                            chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
+                        }
+                        TileType::Solid => {
+                            chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
+                        }
                         TileType::Ramp { direction } => {
-                            chunk.layers[layer].add_ramp(material, idx, direction)
+                            chunk.layers.as_mut().unwrap()[layer].add_ramp(material, idx, direction)
                         }
                         _ => {}
                     }
                 });
 
-            for layer in chunk.layers.iter_mut() {
+            for layer in chunk.layers.as_mut().unwrap().iter_mut() {
                 let mesh_list = layer.create_geometry();
                 if mesh_list.is_empty() {
                     layer.meshes = None;
@@ -177,10 +190,10 @@ pub fn build_render_chunk(
                 }
             }
 
-            Some(chunk)
+            chunk
         } else {
             println!("Returning none due to region inaccessible");
-            None
+            RenderChunk::empty(region_id, location)
         }
     }
 }

@@ -21,6 +21,8 @@ miniz_oxide = "0.4.4"
 bevy_simple_tilemap = "0.5"
 smallvec = "1.6"
 futures-lite = "1.12"
+flate2 = "1.0"
+byteorder = "1.4"
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]

@@ -4,7 +4,7 @@ pub use tile_type::*;
 mod global_planet;
 pub use global_planet::*;
 mod strata;
-use super::{Planet, WORLD_WIDTH};
+use super::{mapidx, Planet, REGION_DEPTH, WORLD_WIDTH};
 use lazy_static::*;
 use parking_lot::RwLock;
 pub use region::*;
@@ -19,6 +19,8 @@ mod chunk_iter;
 use chunk_iter::*;
 mod chunk_location;
 pub use chunk_location::*;
+mod change_batch;
+pub use change_batch::*;
 
 /// Call this after the raw files have loaded.
 pub fn verify_strata() {
@@ -49,7 +51,7 @@ impl Regions {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
 pub struct PlanetLocation {
     pub x: usize,
     pub y: usize,
@@ -71,4 +73,45 @@ pub fn spawn_playable_region(location: PlanetLocation) {
     region_lock
         .regions
         .insert(index, Region::new(location, RegionRequirement::Required));
+}
+
+pub fn is_region_loaded(location: PlanetLocation) -> bool {
+    let index = location.to_region_index();
+    let region_lock = REGIONS.read();
+    if let Some(region) = region_lock.regions.get(&index) {
+        if region.status == RegionStatus::CreatedTiles {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+pub fn ground_z(region_id: PlanetLocation, x: usize, y: usize) -> usize {
+    let index = region_id.to_region_index();
+    let region_lock = REGIONS.read();
+    if let Some(region) = region_lock.regions.get(&index) {
+        if region.status == RegionStatus::CreatedTiles {
+            let mut z = REGION_DEPTH - 1;
+            let mut hit_ground = false;
+            while !hit_ground {
+                let idx = mapidx(x, y, z);
+                if region.tile_types[idx] == TileType::Solid {
+                    hit_ground = true;
+                    z += 1;
+                } else {
+                    z -= 1;
+                }
+                if z == 1 {
+                    hit_ground = true;
+                }
+            }
+            return z;
+        } else {
+            return 0;
+        }
+    }
+    0
 }

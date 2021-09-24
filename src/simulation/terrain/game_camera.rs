@@ -151,12 +151,20 @@ pub fn game_camera_system(
             trans.look_at(target, Vec3::Z);
 
             // Simple distance-based visibility
-            let camera_vec3 = Vec3::new(game_camera.x as f32, game_camera.y as f32, game_camera.z as f32);
+            let camera_vec3 = Vec3::new(
+                game_camera.x as f32,
+                game_camera.y as f32,
+                game_camera.z as f32,
+            );
             for (chunk_layer, mut visible) in render_chunk_query.iter_mut() {
-                if chunk_layer.world_z > game_camera.z || chunk_layer.world_z < game_camera.z - 64  {
+                if chunk_layer.world_z > game_camera.z || chunk_layer.world_z < game_camera.z - 64 {
                     visible.is_visible = false;
                 } else {
-                    let chunk_vec3 = Vec3::new(chunk_layer.chunk_base.x as f32, chunk_layer.chunk_base.y as f32, chunk_layer.chunk_base.z as f32);
+                    let chunk_vec3 = Vec3::new(
+                        chunk_layer.chunk_base.x as f32,
+                        chunk_layer.chunk_base.y as f32,
+                        chunk_layer.chunk_base.z as f32,
+                    );
                     let distance = camera_vec3.distance(chunk_vec3);
                     if distance < 192.0 {
                         visible.is_visible = true;

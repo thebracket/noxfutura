@@ -1,6 +1,7 @@
 use super::{
+    process_terrain_changes,
     region_chunks::{build_render_chunk, RenderChunk},
-    ChunkLocation, Region, RegionStatus, REGIONS,
+    terrain_changes_requested, ChunkLocation, PlanetLocation, Region, RegionStatus, REGIONS,
 };
 use crate::simulation::terrain::PLANET_STORE;
 use crate::simulation::{CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
@@ -10,18 +11,20 @@ use bevy::{
 };
 use futures_lite::future;
 
-pub struct MapRenderLayer{
+pub struct MapRenderLayer {
     pub chunk_base: ChunkLocation,
+    pub region_id: PlanetLocation,
     pub world_z: usize,
-    pub material_handle: Handle<StandardMaterial>,
+    pub mesh_handle: Handle<Mesh>,
 }
 
 pub fn load_regions(
     mut commands: Commands,
     task_master: Res<AsyncComputeTaskPool>,
     mut region_loaders: Query<(Entity, &mut Task<Region>)>,
-    mut chunk_loaders: Query<(Entity, &mut Task<Option<RenderChunk>>)>,
+    mut chunk_loaders: Query<(Entity, &mut Task<RenderChunk>)>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
+    mut chunk_query: Query<(Entity, &MapRenderLayer)>,
 ) {
     // Internal scope to remove lock at end
     {
@@ -82,36 +85,46 @@ pub fn load_regions(
     // Handle chunk mesh creation
     let mut n_spawned = 0;
     for (chunk_entity, mut task) in chunk_loaders.iter_mut() {
-        if let Some(maybe_chunk) = future::block_on(future::poll_once(&mut *task)) {
-            if let Some(mut chunk) = maybe_chunk {
+        if let Some(mut chunk) = future::block_on(future::poll_once(&mut *task)) {
+            // TODO: Remove existing assets here
+            chunk_query
+                .iter()
+                .filter(|(_, cm)| cm.region_id == chunk.region && cm.chunk_base == chunk.location)
+                .for_each(|(entity, cm)| {
+                    mesh_assets.remove(cm.mesh_handle.clone());
+                    commands.entity(entity).despawn();
+                });
+
+            if let Some(layers) = chunk.layers.as_mut() {
                 // Geometry
-                for layer in chunk.layers.drain(0..) {
+                for layer in layers.drain(0..) {
                     let (mx, my, mz) = layer.to_world();
                     if layer.meshes.is_some() {
                         let mut meshes = layer.meshes.unwrap();
                         for (material_id, mesh) in meshes.drain(0..) {
                             let mesh_handle = mesh_assets.add(mesh);
-                            let material_handle = PLANET_STORE
-                                .read()
-                                .world_material_handle
-                                .as_ref()
-                                .unwrap()[material_id]
-                                .clone();
+                            let material_handle =
+                                PLANET_STORE.read().world_material_handle.as_ref().unwrap()
+                                    [material_id]
+                                    .clone();
 
-                            commands.spawn_bundle(PbrBundle {
-                                mesh: mesh_handle,
-                                material: material_handle.clone(),
-                                transform: Transform::from_xyz(mx, my, mz),
-                                visible: Visible {
-                                    is_visible: true,
-                                    is_transparent: false,
-                                },
-                                ..Default::default()
-                            }).insert(MapRenderLayer{
-                                chunk_base: chunk.location,
-                                world_z: layer.location.z,
-                                material_handle: material_handle.clone()
-                            });
+                            commands
+                                .spawn_bundle(PbrBundle {
+                                    mesh: mesh_handle.clone(),
+                                    material: material_handle.clone(),
+                                    transform: Transform::from_xyz(mx, my, mz),
+                                    visible: Visible {
+                                        is_visible: true,
+                                        is_transparent: false,
+                                    },
+                                    ..Default::default()
+                                })
+                                .insert(MapRenderLayer {
+                                    chunk_base: chunk.location,
+                                    world_z: layer.location.z,
+                                    mesh_handle: mesh_handle.clone(),
+                                    region_id: chunk.region,
+                                });
                             n_spawned += 1;
                             //println!("Spawned mesh for {},{},{}", layer.location.x, layer.location.y, layer.location.z);
                         }
@@ -123,5 +136,18 @@ pub fn load_regions(
     }
     if n_spawned > 0 {
         println!("Spawned {} meshes", n_spawned);
+    }
+
+    // Handle world changes
+    if terrain_changes_requested() {
+        let updates = process_terrain_changes();
+        for (region_id, chunks) in updates.iter() {
+            for chunk in chunks.iter() {
+                let region = region_id.clone();
+                let cloc = chunk.clone();
+                let task = task_master.spawn(async move { build_render_chunk(region, cloc) });
+                commands.spawn().insert(task);
+            }
+        }
     }
 }

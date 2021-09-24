@@ -7,6 +7,7 @@ use simulation::terrain::{game_camera_system, load_regions};
 use ui::*;
 mod geometry;
 mod raws;
+mod rex;
 mod simulation;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]

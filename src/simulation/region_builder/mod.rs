@@ -1,13 +1,13 @@
-use std::time::Duration;
-
 use super::{
     mapidx,
-    terrain::{set_global_planet, spawn_playable_region, PlanetLocation},
+    terrain::{is_region_loaded, set_global_planet, spawn_playable_region, PlanetLocation},
     Planet,
 };
 use bevy::{prelude::Commands, tasks::AsyncComputeTaskPool};
 use lazy_static::*;
 use parking_lot::RwLock;
+use std::time::Duration;
+mod shipwright;
 
 pub struct RegionBuilder {
     planet: Planet,
@@ -32,9 +32,8 @@ impl RegionBuilder {
             let p = self.planet.clone();
             let x = self.tile_x;
             let y = self.tile_y;
-            let tm = task_master.clone();
             let task = task_master.spawn(async move {
-                build_region(p, x, y, tm);
+                build_region(p, x, y);
             });
             commands.spawn().insert(task);
         }
@@ -45,7 +44,8 @@ impl RegionBuilder {
             RegionBuilderStatus::Initializing => String::from("Initializing"),
             RegionBuilderStatus::Chunking => String::from("Dividing & Conquering"),
             RegionBuilderStatus::Loaded => String::from("Region activated, making it pretty"),
-            RegionBuilderStatus::Ramping => String::from("Ramping up the volume"),
+            RegionBuilderStatus::Ramping => String::from("Smoothing Rough Edges"),
+            RegionBuilderStatus::Crashing => String::from("Crash Landing"),
         }
     }
 }
@@ -55,6 +55,7 @@ pub enum RegionBuilderStatus {
     Chunking,
     Loaded,
     Ramping,
+    Crashing,
 }
 
 pub struct RegionGen {
@@ -77,8 +78,19 @@ fn update_status(new_status: RegionBuilderStatus) {
     REGION_GEN.write().status = new_status;
 }
 
-fn build_region(planet: Planet, tile_x: usize, tile_y: usize, task_master: AsyncComputeTaskPool) {
+fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
     set_global_planet(planet);
+    update_status(RegionBuilderStatus::Chunking);
+    let planet_idx = PlanetLocation::new(tile_x, tile_y);
+    spawn_playable_region(planet_idx);
+    while !is_region_loaded(planet_idx) {
+        std::thread::sleep(Duration::from_millis(10));
+    }
     update_status(RegionBuilderStatus::Loaded);
-    spawn_playable_region(PlanetLocation::new(tile_x, tile_y));
+
+    // TODO: Ramp building
+
+    // Crash the ship
+    update_status(RegionBuilderStatus::Crashing);
+    shipwright::build_escape_pod(planet_idx);
 }

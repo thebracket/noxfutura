@@ -1,6 +1,6 @@
 use crate::simulation::mapidx;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct ChunkLocation {
     pub x: usize,
     pub y: usize,

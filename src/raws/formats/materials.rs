@@ -3,15 +3,22 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Materials {
     pub materials: Vec<MaterialDef>,
-    pub material_list: Option<Vec<TextureMap>>,
 }
 
 impl Materials {
     pub fn new() -> Self {
         Self {
             materials: Vec::new(),
-            material_list: None,
         }
+    }
+
+    pub fn find_by_name(&self, name: &str) -> usize {
+        self.materials
+            .iter()
+            .enumerate()
+            .filter_map(|(i, m)| if m.name == name { Some(i) } else { None })
+            .nth(0)
+            .unwrap_or(0)
     }
 }
 
