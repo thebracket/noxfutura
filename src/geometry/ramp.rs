@@ -1,4 +1,4 @@
-use crate::simulation::{idxmap, terrain::chunker::RampDirection};
+/*use crate::simulation::{idxmap, terrain::chunker::RampDirection};
 
 pub fn add_ramp_geometry(
     direction: RampDirection,
@@ -78,3 +78,4 @@ fn north_south(
     ];
     vertices.extend_from_slice(&cube_geometry);
 }
+*/

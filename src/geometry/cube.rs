@@ -1,6 +1,6 @@
 const GEOMETRY_SIZE: f32 = 1.0;
 
-const CUBE_NORMALS: [[f32;3];6] = [
+const CUBE_NORMALS: [[f32; 3]; 6] = [
     [0.0, 0.0, -1.0],
     [0.0, 0.0, 1.0],
     [-1.0, 0.0, 0.0],
@@ -9,7 +9,7 @@ const CUBE_NORMALS: [[f32;3];6] = [
     [0.0, 1.0, 0.0],
 ];
 
-const CUBE_TANGENTS: [[f32;3];6] = [
+const CUBE_TANGENTS: [[f32; 3]; 6] = [
     [-1.0, 0.0, 0.0],
     [1.0, 0.0, 0.0],
     [0.0, 0.0, 1.0],

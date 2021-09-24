@@ -1,8 +1,8 @@
-use crate::simulation::{idxmap, REGION_WIDTH};
-use std::collections::HashMap;
 use crate::geometry::add_cube_geometry;
+use crate::simulation::{idxmap, REGION_WIDTH};
+use std::collections::HashSet;
 
-pub type CubeMap = HashMap<usize, (usize, bool)>;
+pub type CubeMap = HashSet<usize>;
 
 pub fn greedy_cubes(
     cube_index: &mut CubeMap,
@@ -12,17 +12,16 @@ pub fn greedy_cubes(
     tangents: &mut Vec<[f32; 3]>,
 ) {
     loop {
-        let min_iter = cube_index.keys().min();
+        let min_iter = cube_index.iter().min();
         if min_iter.is_none() {
             break;
         } else {
             let idx = *min_iter.unwrap();
-            let mat_idx = cube_index.remove(&idx).unwrap();
+            cube_index.remove(&idx);
 
             let (x, y, z) = idxmap(idx);
-            let width = grow_right(cube_index, idx, mat_idx);
-            let height = grow_down(cube_index, idx, width, mat_idx);
-            //let depth = grow_in(&mut cube_index, idx, width, height);
+            let width = grow_right(cube_index, idx);
+            let height = grow_down(cube_index, idx, width);
             let depth = 1;
 
             add_cube_geometry(
@@ -68,11 +67,11 @@ pub fn greedy_cubes(
     }
 }*/
 
-fn grow_right(cube_index: &mut CubeMap, idx: usize, mat: (usize, bool)) -> usize {
+fn grow_right(cube_index: &mut CubeMap, idx: usize) -> usize {
     let mut width = 1;
     let mut candidate_idx = idx + 1;
 
-    while cube_index.contains_key(&candidate_idx) && cube_index[&candidate_idx] == mat {
+    while cube_index.contains(&candidate_idx) {
         cube_index.remove(&candidate_idx);
         width += 1;
         candidate_idx += 1;
@@ -81,15 +80,12 @@ fn grow_right(cube_index: &mut CubeMap, idx: usize, mat: (usize, bool)) -> usize
     width
 }
 
-fn grow_down(cube_index: &mut CubeMap, idx: usize, width: usize, mat: (usize, bool)) -> usize {
+fn grow_down(cube_index: &mut CubeMap, idx: usize, width: usize) -> usize {
     let mut height = 1;
     let mut candidate_idx = idx + REGION_WIDTH;
     'outer: loop {
         for cidx in candidate_idx..candidate_idx + width {
-            if !cube_index.contains_key(&cidx) {
-                break 'outer;
-            }
-            if cube_index[&cidx] != mat {
+            if !cube_index.contains(&cidx) {
                 break 'outer;
             }
         }

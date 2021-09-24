@@ -2,7 +2,8 @@ use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_egui::EguiPlugin;
 use bevy_simple_tilemap::prelude::*;
 mod ui;
-use simulation::terrain::{game_camera_system, manage_terrain_tasks, tile_changes_system};
+use simulation::terrain::{game_camera_system, load_regions};
+//use simulation::terrain::{game_camera_system, manage_terrain_tasks, tile_changes_system};
 use ui::*;
 mod geometry;
 mod raws;
@@ -39,32 +40,23 @@ fn main() {
         .add_system(fps_update_system.system())
         // Loading State
         .add_system_set(
-            SystemSet::on_update(AppState::Loading)
-            .with_system(loading_screen.system())
+            SystemSet::on_update(AppState::Loading).with_system(loading_screen.system()),
         )
         .add_system_set(
-            SystemSet::on_enter(AppState::Loading)
-            .with_system(resume_loading_screen.system())
+            SystemSet::on_enter(AppState::Loading).with_system(resume_loading_screen.system()),
         )
-        .add_system_set(
-            SystemSet::on_exit(AppState::Loading)
-            .with_system(exit_loading.system())
-        )
+        .add_system_set(SystemSet::on_exit(AppState::Loading).with_system(exit_loading.system()))
         // Main Menu State
         .add_system_set(
-            SystemSet::on_update(AppState::MainMenu)
-            .with_system(main_menu.system())
-            //.with_system(texture_mode_system.system())
+            SystemSet::on_update(AppState::MainMenu).with_system(main_menu.system()), //.with_system(texture_mode_system.system())
         )
         .add_system_set(
-            SystemSet::on_enter(AppState::MainMenu)
-            .with_system(resume_main_menu.system())
+            SystemSet::on_enter(AppState::MainMenu).with_system(resume_main_menu.system()),
         )
         .add_system_set(SystemSet::on_exit(AppState::MainMenu).with_system(exit_main_menu.system()))
         // World-gen Menu
         .add_system_set(
-            SystemSet::on_update(AppState::WorldGenMenu)
-                .with_system(world_gen_menu.system())
+            SystemSet::on_update(AppState::WorldGenMenu).with_system(world_gen_menu.system()),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::WorldGenMenu).with_system(resume_world_gen_menu.system()),
@@ -95,9 +87,8 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(AppState::EmbarkBuildRegion)
                 .with_system(embark_region_menu.system())
-                .with_system(game_camera_system.system())
-                .with_system(manage_terrain_tasks.system())
-                .with_system(tile_changes_system.system())
+                .with_system(load_regions.system())
+                .with_system(game_camera_system.system()),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::EmbarkBuildRegion)

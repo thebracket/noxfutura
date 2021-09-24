@@ -1,10 +1,13 @@
-use crate::AppState;
+use crate::{simulation::terrain::verify_strata, AppState};
 use bevy::{app::Events, prelude::*, render::texture::AddressMode};
 use bevy_egui::{
     egui::{self, Pos2},
     EguiContext,
 };
-use std::{collections::{HashSet, HashMap}, path::Path};
+use std::{
+    collections::{HashMap, HashSet},
+    path::Path,
+};
 
 pub struct LoadingResource {
     cycle: u8,
@@ -26,19 +29,28 @@ pub fn loading_screen(
         .resizable(false)
         .title_bar(false)
         .fixed_pos(Pos2::new(500.0, 200.0))
-        .show(egui_context.ctx(), |ui| {
-            match res.cycle {
-                0..=2 => res.cycle += 1,
-                3 => load_raws(&mut res, ui),
-                4 => load_textures(&mut res, &asset_server, &mut materials, ui),
-                5 => texture_events(ui, res, ev_asset, materials, assets, state),
-                _ => {}
-            }
+        .show(egui_context.ctx(), |ui| match res.cycle {
+            0..=2 => res.cycle += 1,
+            3 => load_raws(&mut res, ui),
+            4 => load_textures(&mut res, &asset_server, &mut materials, ui),
+            5 => texture_events(ui, res, ev_asset, materials, assets, state),
+            _ => {}
         });
 }
 
-fn texture_events(ui: &mut egui::Ui, mut res: ResMut<LoadingResource>, ev_asset: Res<Events<AssetEvent<StandardMaterial>>>, mut materials: ResMut<Assets<StandardMaterial>>, mut assets: ResMut<Assets<Texture>>, mut state: ResMut<State<AppState>>) {
-    ui.label(format!("Material {} of {}", res.world_textures.len(), res.total_textures));
+fn texture_events(
+    ui: &mut egui::Ui,
+    mut res: ResMut<LoadingResource>,
+    ev_asset: Res<Events<AssetEvent<StandardMaterial>>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut assets: ResMut<Assets<Texture>>,
+    mut state: ResMut<State<AppState>>,
+) {
+    ui.label(format!(
+        "Material {} of {}",
+        res.world_textures.len(),
+        res.total_textures
+    ));
     let mut evr_asset = ev_asset.get_reader();
     for event in evr_asset.iter(&ev_asset) {
         if let AssetEvent::Created { handle } = event {
@@ -48,7 +60,9 @@ fn texture_events(ui: &mut egui::Ui, mut res: ResMut<LoadingResource>, ev_asset:
         }
     }
     if res.world_textures.is_empty() {
-        state.set(AppState::MainMenu).expect("Failed to change mode");
+        state
+            .set(AppState::MainMenu)
+            .expect("Failed to change mode");
     }
 }
 
@@ -56,7 +70,7 @@ fn load_textures(
     res: &mut LoadingResource,
     asset_server: &AssetServer,
     materials: &mut Assets<StandardMaterial>,
-    ui: &mut egui::Ui
+    ui: &mut egui::Ui,
 ) {
     res.cycle += 1;
     ui.label("Loading World Textures");
@@ -70,7 +84,9 @@ fn load_textures(
                     if let Some(tex_handle) = load_image_if_exists(texture_name, &asset_server) {
                         tex_map.insert(texture_name.clone(), tex_handle.clone());
                     }
-                    if let Some(tex_handle) = load_image_if_exists(&format!("{}-n", texture_name), &asset_server) {
+                    if let Some(tex_handle) =
+                        load_image_if_exists(&format!("{}-n", texture_name), &asset_server)
+                    {
                         tex_map.insert(format!("{}-n", texture_name), tex_handle.clone());
                     }
                 }
@@ -87,7 +103,7 @@ fn load_textures(
 
                     let world_material_handle = materials.add(StandardMaterial {
                         base_color_texture: Some(th.clone()),
-                        normal_map: if let Some(nm) =  tex_map.get(&format!("{}-n", texture_name)) {
+                        normal_map: if let Some(nm) = tex_map.get(&format!("{}-n", texture_name)) {
                             Some(nm.clone())
                         } else {
                             None
@@ -122,15 +138,10 @@ fn load_raws(res: &mut ResMut<LoadingResource>, ui: &mut egui::Ui) {
     res.cycle += 1;
     ui.label("Loading Raw Files");
     crate::raws::load_raws();
-    crate::simulation::terrain::CHUNK_STORE
-        .write()
-        .verify_strata();
+    verify_strata();
 }
 
-fn load_image_if_exists(
-    texture_name: &str,
-    asset_server: &AssetServer,
-) -> Option<Handle<Texture>> {
+fn load_image_if_exists(texture_name: &str, asset_server: &AssetServer) -> Option<Handle<Texture>> {
     let filename = format!("assets/terrain/{}.png", texture_name);
     println!("{}", filename);
     let filename_bevy = format!("terrain/{}.png", texture_name);
@@ -146,8 +157,7 @@ fn make_texture_repeat(
     handle: &Handle<StandardMaterial>,
     materials: &mut Assets<StandardMaterial>,
     assets: &mut Assets<Texture>,
-) -> bool
-{
+) -> bool {
     let mut result = false;
     if let Some(mat) = materials.get_mut(handle) {
         if let Some(th) = &mat.base_color_texture {

@@ -1,10 +1,10 @@
+use super::EmbarkResources;
+use crate::simulation::{region_builder::RegionBuilder, terrain::spawn_game_camera};
 use bevy::{pbr::AmbientLight, prelude::*, tasks::AsyncComputeTaskPool};
 use bevy_egui::{
     egui::{self, Pos2},
     EguiContext,
 };
-use crate::simulation::{region_builder::RegionBuilder, terrain::spawn_game_camera};
-use super::EmbarkResources;
 
 pub struct RegionGenUi;
 
