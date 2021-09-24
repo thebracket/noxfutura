@@ -10,6 +10,12 @@ use bevy::{
 };
 use futures_lite::future;
 
+pub struct MapRenderLayer{
+    pub chunk_base: ChunkLocation,
+    pub world_z: usize,
+    pub material_handle: Handle<StandardMaterial>,
+}
+
 pub fn load_regions(
     mut commands: Commands,
     task_master: Res<AsyncComputeTaskPool>,
@@ -85,21 +91,26 @@ pub fn load_regions(
                         let mut meshes = layer.meshes.unwrap();
                         for (material_id, mesh) in meshes.drain(0..) {
                             let mesh_handle = mesh_assets.add(mesh);
+                            let material_handle = PLANET_STORE
+                                .read()
+                                .world_material_handle
+                                .as_ref()
+                                .unwrap()[material_id]
+                                .clone();
 
                             commands.spawn_bundle(PbrBundle {
                                 mesh: mesh_handle,
-                                material: PLANET_STORE
-                                    .read()
-                                    .world_material_handle
-                                    .as_ref()
-                                    .unwrap()[material_id]
-                                    .clone(),
+                                material: material_handle.clone(),
                                 transform: Transform::from_xyz(mx, my, mz),
                                 visible: Visible {
                                     is_visible: true,
                                     is_transparent: false,
                                 },
                                 ..Default::default()
+                            }).insert(MapRenderLayer{
+                                chunk_base: chunk.location,
+                                world_z: layer.location.z,
+                                material_handle: material_handle.clone()
                             });
                             n_spawned += 1;
                             //println!("Spawned mesh for {},{},{}", layer.location.x, layer.location.y, layer.location.z);

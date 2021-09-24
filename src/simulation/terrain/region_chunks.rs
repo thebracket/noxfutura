@@ -143,10 +143,12 @@ pub fn build_render_chunk(
         let region_lock = REGIONS.read();
         let region_idx = region_id.to_region_index();
         if let Some(region) = region_lock.regions.get(&region_idx) {
-            for _ in 0..CHUNK_SIZE {
+            for layer in 0..CHUNK_SIZE {
+                let mut local_location = location;
+                local_location.z += layer;
                 chunk
                     .layers
-                    .push(RenderChunkLayer::new(region_id, location));
+                    .push(RenderChunkLayer::new(region_id, local_location));
             }
 
             ChunkIterator::new(location)
