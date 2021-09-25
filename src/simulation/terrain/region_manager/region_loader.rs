@@ -1,4 +1,3 @@
-use crate::simulation::terrain::region_manager::chunking::build_render_chunk;
 use crate::simulation::terrain::REGIONS;
 use crate::simulation::terrain::{AllChunksIterator, RegionStatus};
 use bevy::{prelude::*, tasks::AsyncComputeTaskPool};
