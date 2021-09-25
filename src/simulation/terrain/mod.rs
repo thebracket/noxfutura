@@ -4,8 +4,6 @@ pub use tile_type::*;
 mod global_planet;
 pub use global_planet::*;
 pub use region::*;
-mod region_loader;
-pub use region_loader::*;
 mod game_camera;
 mod greedy;
 mod region_chunks;
