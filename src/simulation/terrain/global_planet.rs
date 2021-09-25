@@ -28,3 +28,10 @@ impl PlanetData {
         }
     }
 }
+
+pub fn set_global_planet(planet: Planet) {
+    let planet_copy = planet.clone();
+    PLANET_STORE.write().planet = Some(planet);
+    PLANET_STORE.write().height_noise = Some(planet_copy.get_height_noise());
+    PLANET_STORE.write().material_noise = Some(planet_copy.get_material_noise());
+}
