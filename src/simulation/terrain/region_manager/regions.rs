@@ -1,10 +1,10 @@
+use crate::simulation::terrain::Region;
 use lazy_static::*;
 use parking_lot::RwLock;
 use std::collections::HashMap;
-use crate::simulation::terrain::Region;
 
 lazy_static! {
-  pub(crate) static ref REGIONS: RwLock<Regions> = RwLock::new(Regions::new());
+    pub(crate) static ref REGIONS: RwLock<Regions> = RwLock::new(Regions::new());
 }
 
 pub struct Regions {

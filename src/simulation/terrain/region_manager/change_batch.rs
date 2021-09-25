@@ -1,4 +1,8 @@
-use crate::simulation::{CHUNK_SIZE, idxmap, terrain::{ChunkLocation, PlanetLocation, REGIONS, TileType}};
+use crate::simulation::{
+    idxmap,
+    terrain::{ChunkLocation, PlanetLocation, TileType, REGIONS},
+    CHUNK_SIZE,
+};
 use lazy_static::*;
 use parking_lot::RwLock;
 use std::collections::{HashMap, HashSet};

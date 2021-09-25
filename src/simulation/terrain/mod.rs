@@ -3,7 +3,6 @@ mod tile_type;
 pub use tile_type::*;
 mod global_planet;
 pub use global_planet::*;
-use super::{mapidx, REGION_DEPTH};
 pub use region::*;
 mod region_loader;
 pub use region_loader::*;
@@ -19,4 +18,3 @@ mod region_manager;
 pub(crate) use region_manager::*;
 mod planet_location;
 pub use planet_location::PlanetLocation;
-

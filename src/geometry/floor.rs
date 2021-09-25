@@ -34,7 +34,7 @@ pub fn add_floor_geometry(
     let y0 = y * GEOMETRY_SIZE;
     let y1 = (y0 + h) * GEOMETRY_SIZE;
     let z0 = z * GEOMETRY_SIZE;
-    
+
     //println!("Cube at: {},{},{}", x0, y0, z0);
 
     #[rustfmt::skip]

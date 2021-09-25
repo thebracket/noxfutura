@@ -1,5 +1,5 @@
-use crate::simulation::terrain::{PlanetLocation, Region, RegionRequirement};
 use super::REGIONS;
+use crate::simulation::terrain::{PlanetLocation, Region, RegionRequirement};
 
 pub fn spawn_playable_region(location: PlanetLocation) {
     let index = location.to_region_index();

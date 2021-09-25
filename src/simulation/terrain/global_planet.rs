@@ -1,9 +1,9 @@
+use crate::raws::StrataMaterials;
 use crate::simulation::Planet;
 use bevy::prelude::{Handle, StandardMaterial};
 use bracket_noise::prelude::FastNoise;
 use lazy_static::*;
 use parking_lot::RwLock;
-use crate::raws::StrataMaterials;
 
 lazy_static! {
     pub static ref PLANET_STORE: RwLock<PlanetData> = RwLock::new(PlanetData::new());

@@ -1,5 +1,9 @@
-use crate::simulation::{REGION_DEPTH, mapidx, terrain::{PlanetLocation, RegionStatus, TileType}};
 use super::REGIONS;
+use crate::simulation::{
+    mapidx,
+    terrain::{PlanetLocation, RegionStatus, TileType},
+    REGION_DEPTH,
+};
 
 pub fn is_region_loaded(location: PlanetLocation) -> bool {
     let index = location.to_region_index();
