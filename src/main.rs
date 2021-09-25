@@ -2,7 +2,10 @@ use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_egui::EguiPlugin;
 use bevy_simple_tilemap::prelude::*;
 mod ui;
-use simulation::terrain::{chunk_mesh_creation_system, created_regions_handler_system, game_camera_system, load_regions, terrain_change_system};
+use simulation::terrain::{
+    chunk_mesh_creation_system, game_camera_system, load_regions, region_tile_applicator_system,
+    terrain_change_system,
+};
 //use simulation::terrain::{game_camera_system, manage_terrain_tasks, tile_changes_system};
 use ui::*;
 mod geometry;
@@ -89,7 +92,7 @@ fn main() {
             SystemSet::on_update(AppState::EmbarkBuildRegion)
                 .with_system(embark_region_menu.system())
                 .with_system(load_regions.system())
-                .with_system(created_regions_handler_system.system())
+                .with_system(region_tile_applicator_system.system())
                 .with_system(chunk_mesh_creation_system.system())
                 .with_system(terrain_change_system.system())
                 .with_system(game_camera_system.system()),

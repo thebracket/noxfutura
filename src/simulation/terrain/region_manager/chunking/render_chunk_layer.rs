@@ -1,7 +1,10 @@
-use std::collections::HashMap;
-use bevy::prelude::Mesh;
-use crate::simulation::{REGION_HEIGHT, REGION_WIDTH, terrain::{ChunkLocation, PlanetLocation, RampDirection}};
 use super::material_buffer::MaterialBuffer;
+use crate::simulation::{
+    terrain::{ChunkLocation, PlanetLocation, RampDirection},
+    REGION_HEIGHT, REGION_WIDTH,
+};
+use bevy::prelude::Mesh;
+use std::collections::HashMap;
 
 /// A RenderChunkLayer represents a z-layer inside a chunk, transitioning into a renderable
 /// mesh. One layer per CHUNK z. Actual division of labor and geometry is handled by the

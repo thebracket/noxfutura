@@ -1,6 +1,9 @@
-use crate::simulation::{CHUNK_SIZE, terrain::{ChunkLocation, PlanetLocation, TileType, chunk_iter::ChunkIterator}};
-use super::{RenderChunk, render_chunk_layer::RenderChunkLayer};
+use super::{render_chunk_layer::RenderChunkLayer, RenderChunk};
 use crate::simulation::terrain::REGIONS;
+use crate::simulation::{
+    terrain::{chunk_iter::ChunkIterator, ChunkLocation, PlanetLocation, TileType},
+    CHUNK_SIZE,
+};
 
 pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) -> RenderChunk {
     if is_chunk_empty(region_id, location) {

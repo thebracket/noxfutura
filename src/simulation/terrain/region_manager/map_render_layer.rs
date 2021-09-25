@@ -1,5 +1,5 @@
-use bevy::prelude::{Handle, Mesh};
 use crate::simulation::terrain::{ChunkLocation, PlanetLocation};
+use bevy::prelude::{Handle, Mesh};
 
 /// Used as a component, attached to Mesh elements that make up the terrain.
 /// Contains the indexing required to remove/replace/edit meshes.

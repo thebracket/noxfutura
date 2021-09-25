@@ -1,11 +1,8 @@
-use bevy::{prelude::*, tasks::AsyncComputeTaskPool};
 use super::{build_render_chunk, process_terrain_changes, terrain_changes_requested};
+use bevy::{prelude::*, tasks::AsyncComputeTaskPool};
 
 /// Processes pending terrain changes and spawns update tasks
-pub fn terrain_change_system(
-    mut commands: Commands,
-    task_master: Res<AsyncComputeTaskPool>,
-) {
+pub fn terrain_change_system(mut commands: Commands, task_master: Res<AsyncComputeTaskPool>) {
     if terrain_changes_requested() {
         let updates = process_terrain_changes();
         for (region_id, chunks) in updates.iter() {

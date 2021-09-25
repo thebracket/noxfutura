@@ -6,5 +6,5 @@ pub fn spawn_playable_region(location: PlanetLocation) {
     let mut region_lock = REGIONS.write();
     region_lock
         .regions
-        .insert(index, Region::new(location, RegionRequirement::Required));
+        .insert(index, Region::new(location, RegionRequirement::Required, true));
 }

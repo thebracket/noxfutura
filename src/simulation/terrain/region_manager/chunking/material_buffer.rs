@@ -1,7 +1,7 @@
-use std::collections::HashSet;
-use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
-use crate::simulation::terrain::RampDirection;
 use super::greedy::{greedy_cubes, greedy_floors};
+use crate::simulation::terrain::RampDirection;
+use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
+use std::collections::HashSet;
 
 /// A MaterialBuffer stores a set of materials and primitives required
 /// to render a RenderChunk. They are abstract until greedy-meshing
