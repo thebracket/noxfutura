@@ -3,8 +3,7 @@ use super::{
     region_chunks::{build_render_chunk, RenderChunk},
     terrain_changes_requested, ChunkLocation, PlanetLocation, Region, RegionStatus, REGIONS,
 };
-use crate::simulation::terrain::PLANET_STORE;
-use crate::simulation::{CHUNK_DEPTH, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH};
+use crate::simulation::terrain::{all_chunks_iter::AllChunksIterator, PLANET_STORE};
 use bevy::{
     prelude::*,
     tasks::{AsyncComputeTaskPool, Task},
@@ -47,22 +46,13 @@ pub fn load_regions(
                         println!("Spawning meshers");
                         region.should_rechunk = false;
                         // Spawn chunk-making tasks
-                        for z in 0..CHUNK_DEPTH {
-                            for y in 0..CHUNK_HEIGHT {
-                                for x in 0..CHUNK_WIDTH {
-                                    let loc = region.location;
-                                    let cloc = ChunkLocation {
-                                        x: x * CHUNK_SIZE,
-                                        y: y * CHUNK_SIZE,
-                                        z: z * CHUNK_SIZE,
-                                    };
-                                    let task = task_master
-                                        .spawn(async move { build_render_chunk(loc, cloc) });
-                                    commands.spawn().insert(task);
-                                    //println!("Spawned renderer for {},{},{}", x, y, z);
-                                }
-                            }
-                        }
+                        AllChunksIterator::new().for_each(|chunk_base| {
+                            let loc = region.location;
+                            let cloc = chunk_base.clone();
+                            let task =
+                                task_master.spawn(async move { build_render_chunk(loc, cloc) });
+                            commands.spawn().insert(task);
+                        });
                     }
                 }
                 _ => {}

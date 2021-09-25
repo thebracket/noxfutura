@@ -12,6 +12,8 @@ mod region_chunks;
 pub use game_camera::*;
 mod chunk_iter;
 use chunk_iter::*;
+mod all_chunks_iter;
+use all_chunks_iter::*;
 mod chunk_location;
 pub use chunk_location::*;
 mod region_manager;

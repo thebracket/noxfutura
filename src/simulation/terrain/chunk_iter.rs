@@ -1,6 +1,9 @@
 use super::ChunkLocation;
 use crate::simulation::CHUNK_SIZE;
 
+/// Iterates all tiles in a CHUNK_SIZE^3 chunk, based on the ChunkLocation
+/// as the base position. Each returned location is a region-wide location,
+/// not a chunk-wide location.
 pub struct ChunkIterator {
     chunk_base: ChunkLocation,
     current: ChunkLocation,
