@@ -16,3 +16,5 @@ mod created_regions_handler;
 pub(crate) use created_regions_handler::created_regions_handler_system;
 mod region_loader;
 pub(crate) use region_loader::*;
+mod chunking;
+pub(crate) use chunking::*;

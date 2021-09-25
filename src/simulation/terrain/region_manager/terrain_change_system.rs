@@ -1,6 +1,5 @@
 use bevy::{prelude::*, tasks::AsyncComputeTaskPool};
-use crate::simulation::terrain::region_chunks::build_render_chunk;
-use super::{process_terrain_changes, terrain_changes_requested};
+use super::{build_render_chunk, process_terrain_changes, terrain_changes_requested};
 
 /// Processes pending terrain changes and spawns update tasks
 pub fn terrain_change_system(

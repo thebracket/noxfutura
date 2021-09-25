@@ -1,7 +1,8 @@
 use bevy::{prelude::*, tasks::Task};
 use futures_lite::future;
-use crate::simulation::terrain::{MapRenderLayer, region_chunks::RenderChunk};
+use crate::simulation::terrain::MapRenderLayer;
 use crate::simulation::terrain::PLANET_STORE;
+use super::RenderChunk;
 
 /// Receives results/futures from RenderChunk creation tasks,
 /// and turns them into actual usable meshes/geometry with
