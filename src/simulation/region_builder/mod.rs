@@ -1,5 +1,4 @@
 use super::{
-    mapidx,
     terrain::{is_region_loaded, set_global_planet, spawn_playable_region, PlanetLocation},
     Planet,
 };
@@ -50,6 +49,7 @@ impl RegionBuilder {
     }
 }
 
+#[allow(dead_code)]
 pub enum RegionBuilderStatus {
     Initializing,
     Chunking,

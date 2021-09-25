@@ -74,11 +74,11 @@ fn process_batch(batch: MapChangeBatch) -> HashSet<ChunkLocation> {
                     region.material[idx] = material;
                     add_chunk(&mut refresh_chunks, idx);
                 }
-                ChangeRequest::EmptyTile{idx} => {
+                ChangeRequest::EmptyTile { idx } => {
                     region.tile_types[idx] = TileType::Empty;
                     add_chunk(&mut refresh_chunks, idx);
                 }
-                ChangeRequest::Floor{idx, material} => {
+                ChangeRequest::Floor { idx, material } => {
                     region.tile_types[idx] = TileType::Floor;
                     region.material[idx] = material;
                     add_chunk(&mut refresh_chunks, idx);

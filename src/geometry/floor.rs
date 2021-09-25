@@ -28,15 +28,13 @@ pub fn add_floor_geometry(
     z: f32,
     w: f32,
     h: f32,
-    d: f32,
 ) {
     let x0 = x * GEOMETRY_SIZE;
     let x1 = (x0 + w) * GEOMETRY_SIZE;
     let y0 = y * GEOMETRY_SIZE;
     let y1 = (y0 + h) * GEOMETRY_SIZE;
     let z0 = z * GEOMETRY_SIZE;
-    //let z1 = (z0 + d) * GEOMETRY_SIZE;
-
+    
     //println!("Cube at: {},{},{}", x0, y0, z0);
 
     #[rustfmt::skip]

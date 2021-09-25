@@ -1,6 +1,9 @@
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 
-use super::{ChunkIterator, ChunkLocation, PlanetLocation, REGIONS, RampDirection, TileType, greedy::{greedy_cubes, greedy_floors}};
+use super::{
+    greedy::{greedy_cubes, greedy_floors},
+    ChunkIterator, ChunkLocation, PlanetLocation, RampDirection, TileType, REGIONS,
+};
 use crate::simulation::{CHUNK_SIZE, REGION_HEIGHT, REGION_WIDTH};
 use std::collections::{HashMap, HashSet};
 

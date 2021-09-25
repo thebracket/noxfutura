@@ -41,7 +41,7 @@ pub fn greedy_cubes(
 }
 
 pub fn greedy_floors(
-    cube_index: &mut CubeMap, 
+    cube_index: &mut CubeMap,
     vertices: &mut Vec<[f32; 3]>,
     normals: &mut Vec<[f32; 3]>,
     uv: &mut Vec<[f32; 2]>,
@@ -53,7 +53,7 @@ pub fn greedy_floors(
             break;
         } else {
             let idx = *min_iter.unwrap();
-            let mat_idx = cube_index.remove(&idx);
+            cube_index.remove(&idx);
 
             let (x, y, z) = idxmap(idx);
             let width = grow_right(cube_index, idx);
@@ -69,7 +69,6 @@ pub fn greedy_floors(
                 z as f32,
                 width as f32,
                 height as f32,
-                1.0,
             );
         }
     }

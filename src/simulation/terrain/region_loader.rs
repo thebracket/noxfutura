@@ -24,7 +24,7 @@ pub fn load_regions(
     mut region_loaders: Query<(Entity, &mut Task<Region>)>,
     mut chunk_loaders: Query<(Entity, &mut Task<RenderChunk>)>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
-    mut chunk_query: Query<(Entity, &MapRenderLayer)>,
+    chunk_query: Query<(Entity, &MapRenderLayer)>,
 ) {
     // Internal scope to remove lock at end
     {

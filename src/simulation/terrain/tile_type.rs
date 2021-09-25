@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum RampDirection {
     NorthSouth,
@@ -6,6 +7,7 @@ pub enum RampDirection {
     WestEast,
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum StairsType {
     Up,
@@ -13,6 +15,7 @@ pub enum StairsType {
     UpDown,
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum TileType {
     Empty,

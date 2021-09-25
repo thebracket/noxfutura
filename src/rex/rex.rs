@@ -41,36 +41,10 @@ pub struct XpLayer {
 }
 
 impl XpLayer {
-    /// Construct a new XpLayer of width by height. The contents will be empty (black foreground
-    /// and background, character 0).
-    pub fn new(width: usize, height: usize) -> XpLayer {
-        XpLayer {
-            width,
-            height,
-            cells: vec![
-                XpCell {
-                    ch: 0,
-                    fg: XpColor::BLACK,
-                    bg: XpColor::BLACK
-                };
-                width * height
-            ],
-        }
-    }
-
     /// Get the cell at coordinates (x,y), or None if it is out of range.
     pub fn get(&self, x: usize, y: usize) -> Option<&XpCell> {
         if x < self.width && y < self.height {
             Some(&self.cells[x * self.height + y])
-        } else {
-            None
-        }
-    }
-
-    /// Get mutable reference to the cell at coordinates (x,y), or None if it is out of range.
-    pub fn get_mut(&mut self, x: usize, y: usize) -> Option<&mut XpCell> {
-        if x < self.width && y < self.height {
-            Some(&mut self.cells[x * self.height + y])
         } else {
             None
         }
@@ -87,15 +61,6 @@ pub struct XpFile {
 }
 
 impl XpFile {
-    /// Construct a new XpFile with one layer of width by height. The contents will be empty (black
-    /// foreground and background, character 0).
-    pub fn new(width: usize, height: usize) -> XpFile {
-        XpFile {
-            version: -1,
-            layers: vec![XpLayer::new(width, height)],
-        }
-    }
-
     /// Read a xp image from a stream
     pub fn read<R: Read>(f: &mut R) -> io::Result<XpFile> {
         let mut rdr = GzDecoder::new(f);

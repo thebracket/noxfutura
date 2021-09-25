@@ -18,6 +18,7 @@ pub enum RegionStatus {
     CreatedTiles,
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum RegionRequirement {
     Unimportant,

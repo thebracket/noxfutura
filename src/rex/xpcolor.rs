@@ -12,6 +12,7 @@ pub struct XpColor {
     pub b: u8,
 }
 
+#[allow(dead_code)]
 impl XpColor {
     /// deepest black
     pub const BLACK: Self = Self { r: 0, g: 0, b: 0 };

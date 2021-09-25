@@ -23,12 +23,14 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
     let z = ground_z(region_id, crash_x, crash_y) - 2;
 
     let crash_v3 = Vec3::new(crash_x as f32, crash_y as f32, z as f32);
-    for x in crash_x - 10 .. crash_x + 10 {
-        for y in crash_y - 10 .. crash_y + 10 {
+    for x in crash_x - 10..crash_x + 10 {
+        for y in crash_y - 10..crash_y + 10 {
             let site_v3 = Vec3::new(x as f32, y as f32, z as f32 + 1.0);
             if crash_v3.distance(site_v3) < 8.0 {
-                for z in z+2 .. z+7 {
-                    changes.enqueue_change(ChangeRequest::EmptyTile{idx: mapidx(x, y, z)});
+                for z in z + 2..z + 7 {
+                    changes.enqueue_change(ChangeRequest::EmptyTile {
+                        idx: mapidx(x, y, z),
+                    });
                 }
             }
         }
@@ -49,7 +51,7 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                     changes.enqueue_change(ChangeRequest::RevealTile { idx: tile_idx });
                     match glyph.ch {
                         32 => {} // Ignore space
-                        176 => changes.enqueue_change(ChangeRequest::Floor{
+                        176 => changes.enqueue_change(ChangeRequest::Floor {
                             idx: tile_idx,
                             material: plasteel,
                         }),
@@ -58,7 +60,7 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                             material: plasteel,
                         }),
                         _ => {
-                            changes.enqueue_change(ChangeRequest::EmptyTile{idx: tile_idx});
+                            changes.enqueue_change(ChangeRequest::EmptyTile { idx: tile_idx });
                             println!("No decoder for glyph {} in spaceship", glyph.ch);
                         }
                     }
