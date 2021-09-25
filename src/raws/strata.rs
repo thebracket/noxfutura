@@ -1,4 +1,10 @@
 use crate::raws::{MaterialLayer, RAWS};
+use crate::simulation::terrain::PLANET_STORE;
+
+/// Call this after the raw files have loaded.
+pub fn verify_strata() {
+    PLANET_STORE.write().strata = Some(StrataMaterials::read());
+}
 
 fn get_strata_indices(st: MaterialLayer) -> Vec<usize> {
     let mlock = RAWS.read();

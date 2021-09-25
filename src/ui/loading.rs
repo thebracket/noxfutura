@@ -1,4 +1,4 @@
-use crate::{simulation::terrain::verify_strata, AppState};
+use crate::AppState;
 use bevy::{app::Events, prelude::*, render::texture::AddressMode};
 use bevy_egui::{
     egui::{self, Pos2},
@@ -138,7 +138,6 @@ fn load_raws(res: &mut ResMut<LoadingResource>, ui: &mut egui::Ui) {
     res.cycle += 1;
     ui.label("Loading Raw Files");
     crate::raws::load_raws();
-    verify_strata();
 }
 
 fn load_image_if_exists(texture_name: &str, asset_server: &AssetServer) -> Option<Handle<Texture>> {

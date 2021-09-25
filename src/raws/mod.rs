@@ -4,6 +4,8 @@ use lazy_static::*;
 use parking_lot::RwLock;
 mod block_type;
 pub use block_type::BlockType;
+mod strata;
+pub use strata::StrataMaterials;
 
 pub struct Raws {
     pub biomes: Biomes,
@@ -68,4 +70,5 @@ lazy_static! {
 
 pub fn load_raws() {
     RAWS.write().load();
+    strata::verify_strata();
 }

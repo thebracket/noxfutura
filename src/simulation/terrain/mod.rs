@@ -3,7 +3,6 @@ mod tile_type;
 pub use tile_type::*;
 mod global_planet;
 pub use global_planet::*;
-mod strata;
 use super::{mapidx, Planet, REGION_DEPTH, WORLD_WIDTH};
 use lazy_static::*;
 use parking_lot::RwLock;
@@ -21,12 +20,6 @@ mod chunk_location;
 pub use chunk_location::*;
 mod change_batch;
 pub use change_batch::*;
-
-/// Call this after the raw files have loaded.
-pub fn verify_strata() {
-    use self::strata::StrataMaterials;
-    PLANET_STORE.write().strata = Some(StrataMaterials::read());
-}
 
 pub fn set_global_planet(planet: Planet) {
     let planet_copy = planet.clone();
