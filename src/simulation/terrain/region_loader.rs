@@ -3,7 +3,7 @@ use super::{
     region_chunks::{build_render_chunk, RenderChunk},
     terrain_changes_requested, ChunkLocation, PlanetLocation, Region, RegionStatus, REGIONS,
 };
-use crate::simulation::terrain::{all_chunks_iter::AllChunksIterator, PLANET_STORE};
+use crate::simulation::terrain::{AllChunksIterator, PLANET_STORE};
 use bevy::{
     prelude::*,
     tasks::{AsyncComputeTaskPool, Task},
