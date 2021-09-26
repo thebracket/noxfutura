@@ -71,3 +71,18 @@ pub fn ground_z(region_id: PlanetLocation, x: usize, y: usize) -> usize {
     }
     0
 }
+
+/// Returns true if a tile is solid - cannot be walked into.
+pub fn is_tile_solid(region_id: PlanetLocation, tile_idx: usize) -> bool {
+    let index = region_id.to_region_index();
+    let region_lock = REGIONS.read();
+    if let Some(region) = region_lock.regions.get(&index) {
+        match region.tile_types[tile_idx] {
+            TileType::Solid => true,
+            TileType::SemiMoltenRock => true,
+            _ => false
+        }
+    } else {
+        false
+    }
+}
