@@ -1,4 +1,4 @@
-use super::greedy::{greedy_cubes, greedy_floors};
+use super::greedy::{greedy_cubes, greedy_floors, greedy_topless_cubes};
 use crate::simulation::terrain::RampDirection;
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 use std::collections::HashSet;
@@ -11,6 +11,7 @@ use std::collections::HashSet;
 pub struct MaterialBuffer {
     pub material: usize,
     pub cubes: HashSet<usize>,
+    pub topless_cubes: HashSet<usize>,
     pub floors: HashSet<usize>,
     pub ramps: Vec<(usize, RampDirection)>,
 }
@@ -20,13 +21,18 @@ impl MaterialBuffer {
         Self {
             material,
             cubes: HashSet::new(),
+            topless_cubes: HashSet::new(),
             ramps: Vec::new(),
             floors: HashSet::new(),
         }
     }
 
     pub(crate) fn create_geometry(&mut self) -> Option<Mesh> {
-        if self.cubes.is_empty() && self.ramps.is_empty() && self.floors.is_empty() {
+        if self.cubes.is_empty()
+            && self.topless_cubes.is_empty()
+            && self.ramps.is_empty()
+            && self.floors.is_empty()
+        {
             return None; // Nothing to do here
         }
 
@@ -37,6 +43,13 @@ impl MaterialBuffer {
 
         greedy_cubes(
             &mut self.cubes,
+            &mut vertices,
+            &mut normals,
+            &mut uv,
+            &mut tangents,
+        );
+        greedy_topless_cubes(
+            &mut self.topless_cubes,
             &mut vertices,
             &mut normals,
             &mut uv,

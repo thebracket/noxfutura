@@ -80,7 +80,7 @@ pub fn is_tile_solid(region_id: PlanetLocation, tile_idx: usize) -> bool {
         match region.tile_types[tile_idx] {
             TileType::Solid => true,
             TileType::SemiMoltenRock => true,
-            _ => false
+            _ => false,
         }
     } else {
         false

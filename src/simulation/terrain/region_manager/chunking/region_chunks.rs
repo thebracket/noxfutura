@@ -1,9 +1,10 @@
 use super::{render_chunk_layer::RenderChunkLayer, RenderChunk};
-use crate::simulation::terrain::REGIONS;
+use crate::simulation::terrain::{Region, REGIONS};
 use crate::simulation::{
     terrain::{chunk_iter::ChunkIterator, ChunkLocation, PlanetLocation, TileType},
     CHUNK_SIZE,
 };
+use crate::simulation::{REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH};
 
 pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) -> RenderChunk {
     if is_chunk_empty(region_id, location) {
@@ -38,10 +39,22 @@ pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) ->
                     let layer = loc.z - location.z;
                     match region.tile_types[idx] {
                         TileType::SemiMoltenRock => {
-                            chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
+                            add_cube(
+                                &mut chunk.layers.as_mut().unwrap()[layer],
+                                region,
+                                material,
+                                idx,
+                            );
+                            //chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
                         }
                         TileType::Solid => {
-                            chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
+                            add_cube(
+                                &mut chunk.layers.as_mut().unwrap()[layer],
+                                region,
+                                material,
+                                idx,
+                            );
+                            //chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
                         }
                         TileType::Floor => {
                             chunk.layers.as_mut().unwrap()[layer].add_floor(material, idx)
@@ -67,6 +80,19 @@ pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) ->
             println!("Returning none due to region inaccessible");
             RenderChunk::empty(region_id, location)
         }
+    }
+}
+
+fn add_cube(layer: &mut RenderChunkLayer, region: &Region, material: usize, idx: usize) {
+    if idx < REGION_TILES_COUNT - (REGION_WIDTH * REGION_HEIGHT) {
+        let above = idx + (REGION_WIDTH * REGION_HEIGHT);
+        if region.tile_types[above] == TileType::Floor {
+            layer.add_topless_cube(material, idx);
+        } else {
+            layer.add_cube(material, idx);
+        }
+    } else {
+        layer.add_cube(material, idx);
     }
 }
 

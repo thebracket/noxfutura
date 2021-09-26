@@ -45,6 +45,16 @@ impl RenderChunkLayer {
         }
     }
 
+    pub(crate) fn add_topless_cube(&mut self, material: usize, idx: usize) {
+        if let Some(mb) = self.materials.get_mut(&material) {
+            mb.topless_cubes.insert(idx);
+        } else {
+            let mut mb = MaterialBuffer::new(material);
+            mb.topless_cubes.insert(idx);
+            self.materials.insert(material, mb);
+        }
+    }
+
     pub(crate) fn add_floor(&mut self, material: usize, idx: usize) {
         if let Some(mb) = self.materials.get_mut(&material) {
             mb.floors.insert(idx);
