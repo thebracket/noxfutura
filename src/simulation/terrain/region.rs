@@ -30,7 +30,11 @@ pub struct Region {
 }
 
 impl Region {
-    pub fn new(location: PlanetLocation, required: RegionRequirement, requires_render_chunks: bool) -> Self {
+    pub fn new(
+        location: PlanetLocation,
+        required: RegionRequirement,
+        requires_render_chunks: bool,
+    ) -> Self {
         Self {
             location,
             required,

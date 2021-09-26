@@ -5,7 +5,7 @@ pub(crate) use change_batch::*;
 mod queries;
 pub(crate) use queries::*;
 mod spawn;
-pub use spawn::spawn_playable_region;
+pub use spawn::*;
 mod terrain_change_system;
 pub(crate) use terrain_change_system::*;
 mod chunk_mesh_creation;
