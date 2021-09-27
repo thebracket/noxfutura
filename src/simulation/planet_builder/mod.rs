@@ -64,10 +64,11 @@ impl PlanetBuilder {
         }
     }
 
-    pub fn start(&mut self, seed: &str) {
+    pub fn start(&mut self, seed: &str, worldgen_lacunarity: f32) {
         if !self.started {
             let seed = seed.to_string();
-            std::thread::spawn(|| make_planet(seed));
+            let lacunarity = worldgen_lacunarity;
+            std::thread::spawn(move || make_planet(seed, lacunarity));
             self.started = true;
         }
     }
@@ -109,7 +110,7 @@ fn update_status(new_status: PlanetBuilderStatus) {
     PLANET_GEN.write().status = new_status;
 }
 
-fn make_planet(seed: String) {
+fn make_planet(seed: String, worldgen_lacunarity: f32) {
     let mut base_seed = 0;
     seed.chars().for_each(|c| base_seed += c as u64);
     update_status(PlanetBuilderStatus::Initializing);
@@ -120,6 +121,7 @@ fn make_planet(seed: String) {
         water_height: 0,
         plains_height: 0,
         hills_height: 0,
+        lacunarity: worldgen_lacunarity,
     };
 
     update_status(PlanetBuilderStatus::Flattening);

@@ -18,7 +18,7 @@ pub fn planet_builder_menu(
     res: Res<UiResources>,
     mut state: ResMut<State<AppState>>,
 ) {
-    planet_builder.start(&res.worldgen_seed);
+    planet_builder.start(&res.worldgen_seed, res.worldgen_lacunarity);
     if planet_builder.is_done() {
         // Bail out
         state.set(AppState::MainMenu).unwrap();

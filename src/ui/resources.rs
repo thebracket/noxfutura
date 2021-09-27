@@ -4,6 +4,7 @@ pub struct UiResources {
     pub backgrounds: Handle<TextureAtlas>,
     pub worldgen_tex: Handle<Texture>,
     pub worldgen_seed: String,
+    pub worldgen_lacunarity: f32,
     pub embark_tiles: Handle<TextureAtlas>,
 }
 
@@ -28,6 +29,7 @@ pub fn setup_ui(
     commands.insert_resource(UiResources {
         backgrounds: texture_atlas_handle.clone(),
         worldgen_seed: "Test Seed".to_string(),
+        worldgen_lacunarity: 2.0,
         worldgen_tex,
         embark_tiles: embark_atlas_handle.clone(),
     });
