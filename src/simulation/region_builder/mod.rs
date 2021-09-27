@@ -1,7 +1,7 @@
 use super::{
     terrain::{
-        is_region_loaded, set_global_planet, spawn_playable_region, spawn_region_for_reference,
-        PlanetLocation,
+        get_material_idx, is_region_loaded, is_tile_floor, set_global_planet,
+        spawn_playable_region, spawn_region_for_reference, PlanetLocation,
     },
     Planet,
 };
@@ -9,6 +9,7 @@ use bevy::{prelude::Commands, tasks::AsyncComputeTaskPool};
 use lazy_static::*;
 use parking_lot::RwLock;
 use std::time::Duration;
+mod ramping;
 mod shipwright;
 use crate::simulation::{
     mapidx,
@@ -101,19 +102,8 @@ fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
     }
     update_status(RegionBuilderStatus::Loaded);
 
-    // Load into memory for ramping - start the loading early
-    let neighbors = [
-        PlanetLocation::new(planet_idx.x - 1, planet_idx.y),
-        PlanetLocation::new(planet_idx.x + 1, planet_idx.y),
-        PlanetLocation::new(planet_idx.x, planet_idx.y - 1),
-        PlanetLocation::new(planet_idx.x, planet_idx.y + 1),
-    ];
-    neighbors
-        .iter()
-        .for_each(|n| spawn_region_for_reference(*n));
-
     // Water features (temporary code)
-    update_status(RegionBuilderStatus::Water);
+    /*update_status(RegionBuilderStatus::Water);
     let water_level = PLANET_STORE.read().planet.as_ref().unwrap().water_height as usize;
     println!("Water level: {}", water_level);
     let mut changes = MapChangeBatch::new(planet_idx);
@@ -130,13 +120,11 @@ fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
             }
         }
     }
-    submit_change_batch(changes);
+    submit_change_batch(changes);*/
 
     // Ramping
     update_status(RegionBuilderStatus::Ramping);
-    while !are_regions_loaded(&neighbors) {
-        std::thread::sleep(Duration::from_millis(10));
-    }
+    ramping::build_ramps(planet_idx);
 
     // Beaches
 

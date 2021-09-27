@@ -1,6 +1,6 @@
 use crate::simulation::{
     idxmap,
-    terrain::{ChunkLocation, PlanetLocation, TileType, REGIONS},
+    terrain::{ChunkLocation, PlanetLocation, RampDirection, TileType, REGIONS},
     CHUNK_SIZE,
 };
 use lazy_static::*;
@@ -8,10 +8,25 @@ use parking_lot::RwLock;
 use std::collections::{HashMap, HashSet};
 
 pub enum ChangeRequest {
-    RevealTile { idx: usize },
-    SolidTile { idx: usize, material: usize },
-    EmptyTile { idx: usize },
-    Floor { idx: usize, material: usize },
+    RevealTile {
+        idx: usize,
+    },
+    SolidTile {
+        idx: usize,
+        material: usize,
+    },
+    EmptyTile {
+        idx: usize,
+    },
+    Floor {
+        idx: usize,
+        material: usize,
+    },
+    Ramp {
+        idx: usize,
+        material: usize,
+        direction: RampDirection,
+    },
 }
 
 pub struct MapChangeBatch {
@@ -83,6 +98,15 @@ fn process_batch(batch: MapChangeBatch) -> HashSet<ChunkLocation> {
                 }
                 ChangeRequest::Floor { idx, material } => {
                     region.tile_types[idx] = TileType::Floor;
+                    region.material[idx] = material;
+                    add_chunk(&mut refresh_chunks, idx);
+                }
+                ChangeRequest::Ramp {
+                    idx,
+                    material,
+                    direction,
+                } => {
+                    region.tile_types[idx] = TileType::Ramp { direction };
                     region.material[idx] = material;
                     add_chunk(&mut refresh_chunks, idx);
                 }

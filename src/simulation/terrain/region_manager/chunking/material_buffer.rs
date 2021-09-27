@@ -1,5 +1,5 @@
 use super::greedy::{greedy_cubes, greedy_floors, greedy_topless_cubes};
-use crate::simulation::terrain::RampDirection;
+use crate::{geometry::add_ramp_geometry, simulation::terrain::RampDirection};
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
 use std::collections::HashSet;
 
@@ -62,6 +62,16 @@ impl MaterialBuffer {
             &mut uv,
             &mut tangents,
         );
+        for ramp in &self.ramps {
+            add_ramp_geometry(
+                ramp.1,
+                ramp.0,
+                &mut vertices,
+                &mut normals,
+                &mut uv,
+                &mut tangents,
+            );
+        }
 
         if vertices.is_empty() {
             return None;

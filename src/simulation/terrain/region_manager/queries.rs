@@ -1,6 +1,6 @@
 use super::REGIONS;
 use crate::simulation::{
-    mapidx,
+    idxmap, mapidx,
     terrain::{PlanetLocation, RegionStatus, TileType},
     REGION_DEPTH,
 };
@@ -84,5 +84,38 @@ pub fn is_tile_solid(region_id: PlanetLocation, tile_idx: usize) -> bool {
         }
     } else {
         false
+    }
+}
+
+/// Returns true if a tile is a floor or has a solid tile underneath it.
+pub fn is_tile_floor(region_id: PlanetLocation, tile_idx: usize) -> bool {
+    let index = region_id.to_region_index();
+    let region_lock = REGIONS.read();
+    if let Some(region) = region_lock.regions.get(&index) {
+        match region.tile_types[tile_idx] {
+            TileType::Floor => true,
+            TileType::Empty => {
+                let (x, y, z) = idxmap(tile_idx);
+                if z > 1 {
+                    let below_idx = mapidx(x, y, z - 1);
+                    is_tile_solid(region_id, below_idx)
+                } else {
+                    false // Bottom of map
+                }
+            }
+            _ => false,
+        }
+    } else {
+        false
+    }
+}
+
+pub fn get_material_idx(region_id: PlanetLocation, tile_idx: usize) -> usize {
+    let index = region_id.to_region_index();
+    let region_lock = REGIONS.read();
+    if let Some(region) = region_lock.regions.get(&index) {
+        region.material[tile_idx]
+    } else {
+        0
     }
 }
