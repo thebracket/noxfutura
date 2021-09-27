@@ -369,9 +369,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_egui"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1948fb04b80575cbcf390a57490f5325e12f3a0a351a70086c8af27407260eb7"
+checksum = "d75b0b49b2598a3639b408fb58039b3db7038a158cf6375ce07d4ad1015ead18"
 dependencies = [
  "bevy",
  "clipboard",
@@ -1296,18 +1296,18 @@ checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
 
 [[package]]
 name = "egui"
-version = "0.13.1"
+version = "0.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77f9b394ccacc0cccb30f6de7371038a116931aa3186acd908b9ec61f405f15c"
+checksum = "b403f29d592b5c2267279bfdf2cd3fe3ba0e7a8738d03203a6f1536e8e9d26bd"
 dependencies = [
  "epaint",
 ]
 
 [[package]]
 name = "emath"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80eea7508c08a7b4e2a041adcdca6f400d8606622c6bb980ecbbdc5f1aff9a4c"
+checksum = "cca5179aa9d15128cebb79bb56dda73a79cc66b402056ff19a992e54b365e15c"
 
 [[package]]
 name = "env_logger"
@@ -1321,9 +1321,9 @@ dependencies = [
 
 [[package]]
 name = "epaint"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "132e30d483d9fa252fe06aa112de777d068503c379fa51bc5834204ee3258fce"
+checksum = "136e7d88da926182bcfdb8217137dd347dfe5dc03b8988eaba3ef8becf83394a"
 dependencies = [
  "ab_glyph",
  "ahash 0.7.2",
@@ -2433,6 +2433,7 @@ dependencies = [
  "ron",
  "serde",
  "smallvec",
+ "tobj",
 ]
 
 [[package]]
@@ -3244,6 +3245,15 @@ name = "thunderdome"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7572415bd688d401c52f6e36f4c8e805b9ae1622619303b9fa835d531db0acae"
+
+[[package]]
+name = "tobj"
+version = "3.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "267a53ebc1139c69d3feedc33a381c382b2e3b0c47f44f48679e90c4a69b8dac"
+dependencies = [
+ "ahash 0.7.2",
+]
 
 [[package]]
 name = "toml"
