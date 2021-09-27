@@ -1,7 +1,7 @@
 use bevy::math::Vec3;
 
 use crate::{
-    rex::XpFile,
+    asset_handlers::rex::XpFile,
     simulation::{
         mapidx,
         terrain::{ground_z, submit_change_batch, ChangeRequest, MapChangeBatch, PlanetLocation},

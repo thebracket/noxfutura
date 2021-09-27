@@ -10,7 +10,7 @@ use simulation::terrain::{
 use ui::*;
 mod geometry;
 mod raws;
-mod rex;
+mod asset_handlers;
 mod simulation;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
