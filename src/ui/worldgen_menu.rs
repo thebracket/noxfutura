@@ -21,9 +21,7 @@ pub fn world_gen_menu(
             ui.text_edit_singleline(&mut res.worldgen_seed);
 
             ui.label("Bumpiness");
-            ui.add(
-                egui::Slider::new(&mut res.worldgen_lacunarity, 2.0 ..= 4.0).clamp_to_range(true)
-            );
+            ui.add(egui::Slider::new(&mut res.worldgen_lacunarity, 2.0..=4.0).clamp_to_range(true));
 
             if ui.button("Create World").clicked() {
                 state.set(AppState::BuildingPlanet).unwrap();

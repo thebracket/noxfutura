@@ -35,7 +35,11 @@ pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) ->
                 .filter(|(_, idx)| region.revealed[*idx])
                 .filter(|(_, idx)| region.tile_types[*idx] != TileType::Empty)
                 .for_each(|(loc, idx)| {
-                    let material = region.material[idx];
+                    let material = if region.vegetation[idx].is_some() {
+                        255
+                    } else {
+                        region.material[idx]
+                    };
                     let layer = loc.z - location.z;
                     match region.tile_types[idx] {
                         TileType::SemiMoltenRock => {

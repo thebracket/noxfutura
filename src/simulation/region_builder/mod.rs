@@ -1,7 +1,7 @@
 use super::{
     terrain::{
-        get_material_idx, is_region_loaded, is_tile_floor, set_global_planet,
-        spawn_playable_region, spawn_region_for_reference, PlanetLocation,
+        is_region_loaded, set_global_planet, spawn_playable_region, terrain_changes_requested,
+        PlanetLocation,
     },
     Planet,
 };
@@ -9,16 +9,11 @@ use bevy::{prelude::Commands, tasks::AsyncComputeTaskPool};
 use lazy_static::*;
 use parking_lot::RwLock;
 use std::time::Duration;
+mod debris;
+mod plants;
 mod ramping;
 mod shipwright;
-use crate::simulation::{
-    mapidx,
-    terrain::{
-        are_regions_loaded, ground_z, submit_change_batch, ChangeRequest, MapChangeBatch,
-        PLANET_STORE,
-    },
-    REGION_HEIGHT, REGION_WIDTH,
-};
+use crate::simulation::terrain::PLANET_STORE;
 
 pub struct RegionBuilder {
     planet: Planet,
@@ -58,6 +53,8 @@ impl RegionBuilder {
             RegionBuilderStatus::Ramping => String::from("Smoothing Rough Edges"),
             RegionBuilderStatus::Crashing => String::from("Crash Landing"),
             RegionBuilderStatus::Water => String::from("Just Add Water"),
+            RegionBuilderStatus::Vegetation => String::from("Re-seeding the lawn"),
+            RegionBuilderStatus::Debris => String::from("Making a terrible mess"),
         }
     }
 }
@@ -69,7 +66,9 @@ pub enum RegionBuilderStatus {
     Loaded,
     Water,
     Ramping,
+    Vegetation,
     Crashing,
+    Debris,
 }
 
 pub struct RegionGen {
@@ -120,25 +119,43 @@ fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
             }
         }
     }
-    submit_change_batch(changes);*/
+    submit_change_batch(changes);
+    while terrain_changes_requested() {
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    */
 
     // Ramping
     update_status(RegionBuilderStatus::Ramping);
     ramping::build_ramps(planet_idx);
+    while terrain_changes_requested() {
+        std::thread::sleep(Duration::from_millis(10));
+    }
 
     // Beaches
 
     // Vegetation
+    update_status(RegionBuilderStatus::Vegetation);
+    plants::grow_plants(planet_idx);
+    std::thread::sleep(Duration::from_secs(2));
 
     // Crash the ship
     update_status(RegionBuilderStatus::Crashing);
     shipwright::build_escape_pod(planet_idx);
+    while terrain_changes_requested() {
+        std::thread::sleep(Duration::from_millis(10));
+    }
 
     // Trees
 
     // Blight
 
     // Debris Trail
+    update_status(RegionBuilderStatus::Crashing);
+    debris::debris_trail(planet_idx);
+    while terrain_changes_requested() {
+        std::thread::sleep(Duration::from_millis(10));
+    }
 
     // Flags
 

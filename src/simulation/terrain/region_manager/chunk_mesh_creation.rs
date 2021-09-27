@@ -32,10 +32,13 @@ pub fn chunk_mesh_creation_system(
                         let mut meshes = layer.meshes.unwrap();
                         for (material_id, mesh) in meshes.drain(0..) {
                             let mesh_handle = mesh_assets.add(mesh);
-                            let material_handle =
+                            let material_handle = if material_id == 255 {
+                                PLANET_STORE.read().grass_handle.as_ref().unwrap().clone()
+                            } else {
                                 PLANET_STORE.read().world_material_handle.as_ref().unwrap()
                                     [material_id]
-                                    .clone();
+                                    .clone()
+                            };
 
                             commands
                                 .spawn_bundle(PbrBundle {

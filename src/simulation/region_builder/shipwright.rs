@@ -49,6 +49,7 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                 let glyph = layer.get(x, y);
                 if let Some(glyph) = glyph {
                     changes.enqueue_change(ChangeRequest::RevealTile { idx: tile_idx });
+                    changes.enqueue_change(ChangeRequest::NoVegetation { idx: tile_idx });
                     match glyph.ch {
                         32 => {} // Ignore space
                         176 => changes.enqueue_change(ChangeRequest::Floor {

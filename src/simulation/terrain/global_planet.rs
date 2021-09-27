@@ -15,6 +15,7 @@ pub struct PlanetData {
     pub height_noise: Option<FastNoise>,
     pub material_noise: Option<FastNoise>,
     pub world_material_handle: Option<Vec<Handle<StandardMaterial>>>,
+    pub grass_handle: Option<Handle<StandardMaterial>>,
 }
 
 impl PlanetData {
@@ -25,6 +26,7 @@ impl PlanetData {
             height_noise: None,
             material_noise: None,
             world_material_handle: None,
+            grass_handle: None,
         }
     }
 }

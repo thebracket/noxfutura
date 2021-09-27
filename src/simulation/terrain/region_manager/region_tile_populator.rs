@@ -136,6 +136,20 @@ pub fn populate_region_chunk(region_id: usize, chunk_id: ChunkLocation) -> Regio
                         result.tile_types[chunk_idx] = TileType::Solid;
                         result.material[chunk_idx] = pick_material(&strata.sand, n);
                     }
+                } else if rz == altitude {
+                    // Soil or sand
+                    let n = cell_noise.get_noise3d(
+                        noise_lon(tile_y, ry * 2),
+                        noise_lat(tile_x, rx * 2),
+                        rz as f32,
+                    );
+                    if rng.roll_dice(1, 100) < biome.soils.soil {
+                        result.tile_types[chunk_idx] = TileType::Floor;
+                        result.material[chunk_idx] = pick_material(&strata.soils, n);
+                    } else {
+                        result.tile_types[chunk_idx] = TileType::Floor;
+                        result.material[chunk_idx] = pick_material(&strata.sand, n);
+                    }
                 }
             }
         }

@@ -27,6 +27,13 @@ pub enum ChangeRequest {
         material: usize,
         direction: RampDirection,
     },
+    SpawnPlant {
+        idx: usize,
+        plant_type: usize,
+    },
+    NoVegetation {
+        idx: usize,
+    },
 }
 
 pub struct MapChangeBatch {
@@ -52,7 +59,9 @@ lazy_static! {
 }
 
 pub fn submit_change_batch(batch: MapChangeBatch) {
-    CHANGE_BATCHES.write().push(batch);
+    if !batch.changes.is_empty() {
+        CHANGE_BATCHES.write().push(batch);
+    }
 }
 
 pub fn terrain_changes_requested() -> bool {
@@ -108,6 +117,14 @@ fn process_batch(batch: MapChangeBatch) -> HashSet<ChunkLocation> {
                 } => {
                     region.tile_types[idx] = TileType::Ramp { direction };
                     region.material[idx] = material;
+                    add_chunk(&mut refresh_chunks, idx);
+                }
+                ChangeRequest::SpawnPlant { idx, plant_type } => {
+                    region.vegetation[idx] = Some(plant_type);
+                    add_chunk(&mut refresh_chunks, idx);
+                }
+                ChangeRequest::NoVegetation { idx } => {
+                    region.vegetation[idx] = None;
                     add_chunk(&mut refresh_chunks, idx);
                 }
             }

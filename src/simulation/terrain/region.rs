@@ -27,6 +27,7 @@ pub struct Region {
     pub tile_types: Vec<TileType>,
     pub material: Vec<usize>,
     pub revealed: Vec<bool>,
+    pub vegetation: Vec<Option<usize>>,
 }
 
 impl Region {
@@ -44,6 +45,7 @@ impl Region {
             revealed: vec![false; REGION_TILES_COUNT],
             requires_render_chunks,
             chunks_loaded: vec![false; CHUNKS_PER_REGION],
+            vegetation: vec![None; REGION_TILES_COUNT],
         }
     }
 }

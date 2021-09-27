@@ -132,6 +132,19 @@ fn load_textures(
     crate::simulation::terrain::PLANET_STORE
         .write()
         .world_material_handle = Some(matmap);
+
+    let grass_tex_handle = load_image_if_exists("grass", &asset_server).unwrap();
+    let grass_normal_handle = load_image_if_exists("grass-n", &asset_server).unwrap();
+    let grass_handle = materials.add(StandardMaterial {
+        base_color_texture: Some(grass_tex_handle),
+        normal_map: Some(grass_normal_handle),
+        roughness: 0.5,
+        unlit: false,
+        ..Default::default()
+    });
+    crate::simulation::terrain::PLANET_STORE
+        .write()
+        .grass_handle = Some(grass_handle.clone());
 }
 
 fn load_raws(res: &mut ResMut<LoadingResource>, ui: &mut egui::Ui) {
