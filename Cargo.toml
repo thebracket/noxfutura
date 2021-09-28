@@ -23,7 +23,7 @@ smallvec = "1.6"
 futures-lite = "1.12"
 flate2 = "1.0"
 byteorder = "1.4"
-tobj = "3.2"
+bevy_obj = "0.5"
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]

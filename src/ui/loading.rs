@@ -133,6 +133,7 @@ fn load_textures(
         .write()
         .world_material_handle = Some(matmap);
 
+    // Load grass
     let grass_tex_handle = load_image_if_exists("grass", &asset_server).unwrap();
     let grass_normal_handle = load_image_if_exists("grass-n", &asset_server).unwrap();
     let grass_handle = materials.add(StandardMaterial {
@@ -145,6 +146,10 @@ fn load_textures(
     crate::simulation::terrain::PLANET_STORE
         .write()
         .grass_handle = Some(grass_handle.clone());
+
+    // Load wavefront - test code
+    let tree_handle: Handle<Mesh> = asset_server.load("obj/Low_Poly_Forest_treeTall01.obj");
+    crate::simulation::terrain::PLANET_STORE.write().tree_handle = Some(tree_handle.clone());
 }
 
 fn load_raws(res: &mut ResMut<LoadingResource>, ui: &mut egui::Ui) {

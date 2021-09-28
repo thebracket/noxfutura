@@ -1,5 +1,6 @@
 use crate::raws::{MaterialLayer, RAWS};
 use crate::simulation::region_builder::PLANET_STORE;
+use crate::simulation::spawner::spawn_tree;
 use crate::simulation::terrain::{
     get_material_idx, ground_z, is_tile_floor, submit_change_batch, ChangeRequest, MapChangeBatch,
     PlanetLocation,

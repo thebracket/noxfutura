@@ -174,7 +174,7 @@ pub fn game_camera_system(
                         chunk_layer.chunk_base.z as f32,
                     );
                     let distance = camera_vec3.distance(chunk_vec3);
-                    if distance < 192.0 {
+                    if distance < 256.0 {
                         visible.is_visible = true;
                     } else {
                         visible.is_visible = false;

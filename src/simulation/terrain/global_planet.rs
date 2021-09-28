@@ -1,6 +1,6 @@
 use crate::raws::StrataMaterials;
 use crate::simulation::Planet;
-use bevy::prelude::{Handle, StandardMaterial};
+use bevy::prelude::{Handle, Mesh, StandardMaterial};
 use bracket_noise::prelude::FastNoise;
 use lazy_static::*;
 use parking_lot::RwLock;
@@ -16,6 +16,8 @@ pub struct PlanetData {
     pub material_noise: Option<FastNoise>,
     pub world_material_handle: Option<Vec<Handle<StandardMaterial>>>,
     pub grass_handle: Option<Handle<StandardMaterial>>,
+    pub tree_handle: Option<Handle<Mesh>>,
+    pub tree_mat: Option<Handle<StandardMaterial>>,
 }
 
 impl PlanetData {
@@ -27,6 +29,8 @@ impl PlanetData {
             material_noise: None,
             world_material_handle: None,
             grass_handle: None,
+            tree_handle: None,
+            tree_mat: None,
         }
     }
 }

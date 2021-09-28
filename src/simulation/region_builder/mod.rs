@@ -1,7 +1,9 @@
 use super::{
+    mapidx,
+    spawner::spawn_tree,
     terrain::{
-        is_region_loaded, set_global_planet, spawn_playable_region, terrain_changes_requested,
-        PlanetLocation,
+        ground_z, is_region_loaded, set_global_planet, spawn_playable_region,
+        terrain_changes_requested, PlanetLocation,
     },
     Planet,
 };
@@ -13,6 +15,7 @@ mod debris;
 mod plants;
 mod ramping;
 mod shipwright;
+mod trees;
 use crate::simulation::terrain::PLANET_STORE;
 
 pub struct RegionBuilder {
@@ -55,6 +58,7 @@ impl RegionBuilder {
             RegionBuilderStatus::Water => String::from("Just Add Water"),
             RegionBuilderStatus::Vegetation => String::from("Re-seeding the lawn"),
             RegionBuilderStatus::Debris => String::from("Making a terrible mess"),
+            RegionBuilderStatus::Trees => String::from("Planting trees"),
         }
     }
 }
@@ -67,6 +71,7 @@ pub enum RegionBuilderStatus {
     Water,
     Ramping,
     Vegetation,
+    Trees,
     Crashing,
     Debris,
 }
@@ -147,6 +152,8 @@ fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
     }
 
     // Trees
+    update_status(RegionBuilderStatus::Trees);
+    trees::plant_trees(planet_idx);
 
     // Blight
 

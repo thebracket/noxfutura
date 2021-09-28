@@ -15,6 +15,7 @@ pub fn setup_ui(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let texture_handle = asset_server.load("images/backgrounds.png");
     let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(1280.0, 1024.0), 2, 1);
@@ -33,4 +34,12 @@ pub fn setup_ui(
         worldgen_tex,
         embark_tiles: embark_atlas_handle.clone(),
     });
+
+    let tree_tex: Handle<Texture> = asset_server.load("obj/treeTall.png");
+    let tree_mat = materials.add(StandardMaterial {
+        base_color_texture: Some(tree_tex),
+        roughness: 0.8,
+        ..Default::default()
+    });
+    crate::simulation::terrain::PLANET_STORE.write().tree_mat = Some(tree_mat);
 }

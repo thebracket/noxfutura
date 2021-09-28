@@ -1,16 +1,20 @@
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_egui::EguiPlugin;
+use bevy_obj::*;
 use bevy_simple_tilemap::prelude::*;
 mod ui;
-use simulation::terrain::{
-    chunk_mesh_creation_system, game_camera_system, load_regions, region_tile_applicator_system,
-    terrain_change_system,
+use simulation::{
+    spawner::spawn_game_entities,
+    terrain::{
+        chunk_mesh_creation_system, game_camera_system, load_regions,
+        region_tile_applicator_system, terrain_change_system,
+    },
 };
 //use simulation::terrain::{game_camera_system, manage_terrain_tasks, tile_changes_system};
 use ui::*;
+mod asset_handlers;
 mod geometry;
 mod raws;
-mod asset_handlers;
 mod simulation;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -38,6 +42,7 @@ fn main() {
         .add_plugin(EguiPlugin)
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         .add_plugin(SimpleTileMapPlugin)
+        .add_plugin(ObjPlugin)
         .add_startup_system(setup_fps.system())
         .add_startup_system(setup_ui.system())
         .add_startup_system(setup_main_menu.system())
@@ -95,6 +100,7 @@ fn main() {
                 .with_system(region_tile_applicator_system.system())
                 .with_system(chunk_mesh_creation_system.system())
                 .with_system(terrain_change_system.system())
+                .with_system(spawn_game_entities.system())
                 .with_system(game_camera_system.system()),
         )
         .add_system_set(

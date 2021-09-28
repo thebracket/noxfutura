@@ -488,6 +488,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_obj"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0ddddf281a90e0c18bcc5cdfa5b3666419b93e4f1c74e5bbcf33a96617742df"
+dependencies = [
+ "anyhow",
+ "bevy_app",
+ "bevy_asset",
+ "bevy_render",
+ "bevy_utils",
+ "obj-rs",
+ "thiserror",
+]
+
+[[package]]
 name = "bevy_pbr"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2420,6 +2435,7 @@ dependencies = [
  "Inflector",
  "bevy",
  "bevy_egui",
+ "bevy_obj",
  "bevy_simple_tilemap",
  "bincode",
  "bracket-noise",
@@ -2433,7 +2449,6 @@ dependencies = [
  "ron",
  "serde",
  "smallvec",
- "tobj",
 ]
 
 [[package]]
@@ -2550,6 +2565,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "obj-rs"
+version = "0.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "21fb5f56c5833319f6cb0714a9548853ee4ef745a2c4136da82343c7bd1ae14c"
+dependencies = [
+ "num-traits",
+ "vec_map",
 ]
 
 [[package]]
@@ -3245,15 +3270,6 @@ name = "thunderdome"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7572415bd688d401c52f6e36f4c8e805b9ae1622619303b9fa835d531db0acae"
-
-[[package]]
-name = "tobj"
-version = "3.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "267a53ebc1139c69d3feedc33a381c382b2e3b0c47f44f48679e90c4a69b8dac"
-dependencies = [
- "ahash 0.7.2",
-]
 
 [[package]]
 name = "toml"
