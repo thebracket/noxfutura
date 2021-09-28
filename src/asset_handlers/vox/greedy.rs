@@ -37,12 +37,12 @@ pub fn greedy_cubes(
             let mat_idx = cube_index.remove(&idx).unwrap();
 
             let (x, y, z) = size.idxmap(idx as u32);
-            //let width = grow_right(&mut cube_index, idx as u32, mat_idx);
-            //let height = grow_down(&mut cube_index, idx as u32, width, mat_idx, size);
-            //let depth = grow_in(&mut cube_index, idx as u32, width, height, mat_idx, size);
-            let width = 1;
-            let height = 1;
-            let depth = 1;
+            let width = grow_right(&mut cube_index, idx as u32, mat_idx);
+            let height = grow_down(&mut cube_index, idx as u32, width, mat_idx, size);
+            let depth = grow_in(&mut cube_index, idx as u32, width, height, mat_idx, size);
+            //let width = 1;
+            //let height = 1;
+            //let depth = 1;
 
             add_vox_cube(
                 vertices,

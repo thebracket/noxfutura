@@ -155,7 +155,7 @@ fn load_textures(
 
     // Load all voxel meshes
     for vox in crate::raws::RAWS.read().vox.vox.iter() {
-        let filename = format!("assets/vox/{}", vox.file);
+        let filename = format!("assets/vox/{}.vox", vox.file);
         let template = crate::asset_handlers::vox::load_vox_file(&filename);
         crate::simulation::terrain::PLANET_STORE.write().vox_templates.push(template.clone());
         crate::simulation::terrain::PLANET_STORE.write().vox_meshes.push(meshes.add(template.to_mesh()));

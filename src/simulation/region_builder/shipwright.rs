@@ -1,6 +1,6 @@
 use bevy::math::Vec3;
 
-use crate::{asset_handlers::rex::XpFile, simulation::{REGION_HEIGHT, REGION_WIDTH, mapidx, spawner::spawn_cryobed, terrain::{ground_z, submit_change_batch, ChangeRequest, MapChangeBatch, PlanetLocation}}};
+use crate::{asset_handlers::rex::XpFile, simulation::{REGION_HEIGHT, REGION_WIDTH, mapidx, spawner::spawn_raws_entity, terrain::{ground_z, submit_change_batch, ChangeRequest, MapChangeBatch, PlanetLocation}}};
 use std::fs::File;
 
 fn load_ship() -> XpFile {
@@ -50,16 +50,58 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_cryobed(region_id, tile_idx);
+                            spawn_raws_entity(region_id, tile_idx, "cryo_bed");
+                        }
+                        76 => {
+                            changes.enqueue_change(ChangeRequest::Floor {
+                                idx: tile_idx,
+                                material: plasteel,
+                            });
+                            spawn_raws_entity(region_id, tile_idx, "ship_lamp");
                         }
                         176 => changes.enqueue_change(ChangeRequest::Floor {
                             idx: tile_idx,
                             material: plasteel,
                         }),
+                        178 => {
+                            changes.enqueue_change(ChangeRequest::Floor {
+                                idx: tile_idx,
+                                material: plasteel,
+                            });
+                            spawn_raws_entity(region_id, tile_idx, "solar_panel");
+                        }
                         219 => changes.enqueue_change(ChangeRequest::SolidTile {
                             idx: tile_idx,
                             material: plasteel,
                         }),
+                        232 => {
+                            changes.enqueue_change(ChangeRequest::Floor {
+                                idx: tile_idx,
+                                material: plasteel,
+                            });
+                            spawn_raws_entity(region_id, tile_idx, "rtg");
+                        }
+                        236 => {
+                            changes.enqueue_change(ChangeRequest::Floor {
+                                idx: tile_idx,
+                                material: plasteel,
+                            });
+                            spawn_raws_entity(region_id, tile_idx, "storage_locker");
+                        }
+                        241 => {
+                            changes.enqueue_change(ChangeRequest::Floor {
+                                idx: tile_idx,
+                                material: plasteel,
+                            });
+                            spawn_raws_entity(region_id, tile_idx, "battery");
+                        }
+                        243 => {
+                            changes.enqueue_change(ChangeRequest::Floor {
+                                idx: tile_idx,
+                                material: plasteel,
+                            });
+                            spawn_raws_entity(region_id, tile_idx, "ship_defense_turret");
+                        }
                         _ => {
                             changes.enqueue_change(ChangeRequest::EmptyTile { idx: tile_idx });
                             println!("No decoder for glyph {} in spaceship", glyph.ch);
