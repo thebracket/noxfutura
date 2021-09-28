@@ -1,4 +1,4 @@
-use crate::raws::StrataMaterials;
+use crate::{asset_handlers::vox::VoxTemplate, raws::StrataMaterials};
 use crate::simulation::Planet;
 use bevy::prelude::{Handle, Mesh, StandardMaterial};
 use bracket_noise::prelude::FastNoise;
@@ -18,8 +18,9 @@ pub struct PlanetData {
     pub grass_handle: Option<Handle<StandardMaterial>>,
     pub tree_handle: Option<Handle<Mesh>>,
     pub tree_mat: Option<Handle<StandardMaterial>>,
-    pub bed_handle: Option<Handle<Mesh>>,
     pub vox_mat: Option<Handle<StandardMaterial>>,
+    pub vox_templates: Vec<VoxTemplate>,
+    pub vox_meshes: Vec<Handle<Mesh>>,
 }
 
 impl PlanetData {
@@ -33,8 +34,9 @@ impl PlanetData {
             grass_handle: None,
             tree_handle: None,
             tree_mat: None,
-            bed_handle: None,
             vox_mat: None,
+            vox_templates: Vec::new(),
+            vox_meshes: Vec::new(),
         }
     }
 }

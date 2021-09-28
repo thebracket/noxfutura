@@ -153,10 +153,13 @@ fn load_textures(
     let tree_handle: Handle<Mesh> = asset_server.load("obj/Low_Poly_Forest_treeTall01.obj");
     crate::simulation::terrain::PLANET_STORE.write().tree_handle = Some(tree_handle.clone());
 
-    // Load cryobed - also test code
-    let bed_mesh = crate::asset_handlers::vox::load_vox_file("assets/vox/cryobed32.vox").to_mesh();
-    let bed_handle = meshes.add(bed_mesh);
-    crate::simulation::terrain::PLANET_STORE.write().bed_handle = Some(bed_handle.clone());
+    // Load all voxel meshes
+    for vox in crate::raws::RAWS.read().vox.vox.iter() {
+        let filename = format!("assets/vox/{}", vox.file);
+        let template = crate::asset_handlers::vox::load_vox_file(&filename);
+        crate::simulation::terrain::PLANET_STORE.write().vox_templates.push(template.clone());
+        crate::simulation::terrain::PLANET_STORE.write().vox_meshes.push(meshes.add(template.to_mesh()));
+    }
 }
 
 fn load_raws(res: &mut ResMut<LoadingResource>, ui: &mut egui::Ui) {

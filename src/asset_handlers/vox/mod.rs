@@ -25,6 +25,7 @@ pub fn load_vox_file(filename: &str) -> VoxTemplate {
     }
 }
 
+#[derive(Clone)]
 pub struct VoxTemplate {
     pub size: ModelSize,
     pub voxels: VoxMap,

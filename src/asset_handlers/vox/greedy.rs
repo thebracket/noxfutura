@@ -251,7 +251,7 @@ fn add_vox_cube(
 
     let mx = ((mat_idx % 16) * 4)+2;
     let my = ((mat_idx / 16) * 4)+2;
-    println!("Mat: {}={},{}",mat_idx, mx, my);
+    //println!("Mat: {}={},{}",mat_idx, mx, my);
 
     let mat_x = 1.0 - (mx as f32 / 64.0);
     let mat_y = my as f32 / 64.0;

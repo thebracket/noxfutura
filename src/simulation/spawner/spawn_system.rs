@@ -36,11 +36,12 @@ pub fn spawn_game_entities(mut commands: Commands) {
                 });
             }
             SpawnRequest::CryoBed => {
+                let mesh_id = crate::raws::RAWS.read().vox.get_model_idx("cryo_bed");
                 let mut transform = Transform::default();
                 transform.translation = Vec3::new(mx, my, mz);
                 transform.scale = Vec3::new(0.03125, 0.03125, 0.03125);
                 commands.spawn_bundle(PbrBundle {
-                    mesh: plock.bed_handle.as_ref().unwrap().clone(),
+                    mesh: plock.vox_meshes[mesh_id].clone(),
                     material: plock.vox_mat.as_ref().unwrap().clone(),
                     transform,
                     visible: Visible {
