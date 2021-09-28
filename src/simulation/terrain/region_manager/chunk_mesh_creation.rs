@@ -1,5 +1,5 @@
 use super::RenderChunk;
-use crate::simulation::terrain::MapRenderLayer;
+use crate::components::{MapRenderLayer, Position};
 use crate::simulation::terrain::PLANET_STORE;
 use bevy::{prelude::*, tasks::Task};
 use futures_lite::future;
@@ -56,7 +56,8 @@ pub fn chunk_mesh_creation_system(
                                     world_z: layer.location.z,
                                     mesh_handle: mesh_handle.clone(),
                                     region_id: chunk.region,
-                                });
+                                })
+                                .insert(Position::new(chunk.region, chunk.location.x, chunk.location.y, layer.location.z));
                         }
                     }
                 }

@@ -17,6 +17,7 @@ mod asset_handlers;
 mod geometry;
 mod raws;
 mod simulation;
+mod components;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum AppState {

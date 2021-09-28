@@ -1,5 +1,5 @@
 use super::{SPAWNS, SpawnRequest};
-use crate::simulation::{idxmap, terrain::PLANET_STORE};
+use crate::{components::Position, simulation::{idxmap, terrain::{PLANET_STORE, PlanetLocation}}};
 use bevy::prelude::*;
 
 pub fn spawn_game_entities(mut commands: Commands) {
@@ -22,6 +22,8 @@ pub fn spawn_game_entities(mut commands: Commands) {
 
         match &s.event {
             SpawnRequest::Tree => {
+                let (x,y,z) = idxmap(s.tile_location);
+                let pos = Position::new(s.region_id, x, y, z);
                 let plock = PLANET_STORE.read();
                 commands.spawn_bundle(PbrBundle {
                     mesh: plock.tree_handle.as_ref().unwrap().clone(),
@@ -32,21 +34,25 @@ pub fn spawn_game_entities(mut commands: Commands) {
                         is_transparent: false,
                     },
                     ..Default::default()
-                });
+                })
+                .insert(pos);
             }
             SpawnRequest::RawEntity{tag} => {
-                spawn_vox_mesh(&mut commands, mx, my, mz, &tag);
+                let (x,y,z) = idxmap(s.tile_location);
+                spawn_vox_mesh(&mut commands, s.region_id, x, y, z, &tag);
             }
         }
     });
     spawns.clear();
 }
 
-fn spawn_vox_mesh(commands: &mut Commands, mx:f32, my: f32, mz: f32, tag: &str) {
+fn spawn_vox_mesh(commands: &mut Commands, region_id: PlanetLocation, x: usize, y: usize, z:usize, tag: &str) {
+    let pos = Position::new(region_id, x, y, z);
+    let world_pos = pos.to_world();
     let plock = PLANET_STORE.read();
     let mesh_id = crate::raws::RAWS.read().vox.get_model_idx(tag);
     let mut transform = Transform::default();
-    transform.translation = Vec3::new(mx, my, mz);
+    transform.translation = world_pos;
     transform.scale = Vec3::new(0.03125, 0.03125, 0.03125);
     commands.spawn_bundle(PbrBundle {
         mesh: plock.vox_meshes[mesh_id].clone(),
@@ -57,5 +63,5 @@ fn spawn_vox_mesh(commands: &mut Commands, mx:f32, my: f32, mz: f32, tag: &str) 
             is_transparent: false,
         },
         ..Default::default()
-    });
+    }).insert(pos);
 }

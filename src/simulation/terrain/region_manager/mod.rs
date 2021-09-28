@@ -10,8 +10,6 @@ mod terrain_change_system;
 pub(crate) use terrain_change_system::*;
 mod chunk_mesh_creation;
 pub(crate) use chunk_mesh_creation::*;
-mod map_render_layer;
-pub(crate) use map_render_layer::MapRenderLayer;
 mod region_loader;
 pub(crate) use region_loader::*;
 mod chunking;

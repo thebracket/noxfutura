@@ -1,7 +1,6 @@
-use crate::simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH};
+use crate::{components::Position, simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH}};
 use bevy::prelude::*;
-
-use super::MapRenderLayer;
+use crate::components::MapRenderLayer;
 
 pub fn spawn_game_camera(
     commands: &mut Commands,
@@ -100,7 +99,8 @@ impl GameCamera {
 pub fn game_camera_system(
     keyboard_input: Res<Input<KeyCode>>,
     mut camera_query: Query<(&mut Transform, &mut GameCamera)>,
-    mut render_chunk_query: Query<(&MapRenderLayer, &mut Visible)>,
+    //mut render_chunk_query: Query<(&MapRenderLayer, &mut Visible)>,
+    mut renderable_query: Query<(&Position, &mut Visible)>,
 ) {
     let mut moved = false;
     for (mut trans, mut game_camera) in camera_query.iter_mut() {
@@ -159,7 +159,7 @@ pub fn game_camera_system(
             trans.look_at(target, Vec3::Z);
 
             // Simple distance-based visibility
-            let camera_vec3 = Vec3::new(
+            /*let camera_vec3 = Vec3::new(
                 game_camera.x as f32,
                 game_camera.y as f32,
                 game_camera.z as f32,
@@ -174,6 +174,21 @@ pub fn game_camera_system(
                         chunk_layer.chunk_base.z as f32,
                     );
                     let distance = camera_vec3.distance(chunk_vec3);
+                    if distance < 256.0 {
+                        visible.is_visible = true;
+                    } else {
+                        visible.is_visible = false;
+                    }
+                }
+            }*/
+
+            let camera_vec3 = game_camera.pos_world();
+
+            for (pos, mut visible) in renderable_query.iter_mut() {
+                if pos.z > game_camera.z || pos.z < game_camera.z - 64 {
+                    visible.is_visible = false;
+                } else {
+                    let distance = camera_vec3.distance(pos.to_world());
                     if distance < 256.0 {
                         visible.is_visible = true;
                     } else {
