@@ -15,6 +15,7 @@ pub struct EntitySpawn {
 
 pub enum SpawnRequest {
     Tree,
+    CryoBed,
 }
 
 pub fn spawn_tree(region_id: PlanetLocation, tile_location: usize) {
@@ -22,5 +23,13 @@ pub fn spawn_tree(region_id: PlanetLocation, tile_location: usize) {
         region_id,
         tile_location,
         event: SpawnRequest::Tree,
+    });
+}
+
+pub fn spawn_cryobed(region_id: PlanetLocation, tile_location: usize) {
+    SPAWNS.write().push(EntitySpawn {
+        region_id,
+        tile_location,
+        event: SpawnRequest::CryoBed,
     });
 }

@@ -1,4 +1,4 @@
-use super::SPAWNS;
+use super::{SPAWNS, SpawnRequest};
 use crate::simulation::{idxmap, terrain::PLANET_STORE};
 use bevy::prelude::*;
 
@@ -22,16 +22,31 @@ pub fn spawn_game_entities(mut commands: Commands) {
         transform.scale = Vec3::new(0.005, 0.005, 0.005);
         transform.rotate(Quat::from_rotation_ypr(0.0, 1.5708, 0.0));
 
-        commands.spawn_bundle(PbrBundle {
-            mesh: plock.tree_handle.as_ref().unwrap().clone(),
-            material: plock.tree_mat.as_ref().unwrap().clone(),
-            transform,
-            visible: Visible {
-                is_visible: true,
-                is_transparent: false,
-            },
-            ..Default::default()
-        });
+        match s.event {
+            SpawnRequest::Tree => {
+                commands.spawn_bundle(PbrBundle {
+                    mesh: plock.tree_handle.as_ref().unwrap().clone(),
+                    material: plock.tree_mat.as_ref().unwrap().clone(),
+                    transform,
+                    visible: Visible {
+                        is_visible: true,
+                        is_transparent: false,
+                    },
+                    ..Default::default()
+                });
+            }
+            SpawnRequest::CryoBed => {
+                commands.spawn_bundle(PbrBundle {
+                    mesh: plock.bed_handle.as_ref().unwrap().clone(),
+                    transform: Transform::from_xyz(mx, my, mz),
+                    visible: Visible {
+                        is_visible: true,
+                        is_transparent: false,
+                    },
+                    ..Default::default()
+                });
+            }
+        }
     });
     spawns.clear();
 }

@@ -1,13 +1,6 @@
 use bevy::math::Vec3;
 
-use crate::{
-    asset_handlers::rex::XpFile,
-    simulation::{
-        mapidx,
-        terrain::{ground_z, submit_change_batch, ChangeRequest, MapChangeBatch, PlanetLocation},
-        REGION_HEIGHT, REGION_WIDTH,
-    },
-};
+use crate::{asset_handlers::rex::XpFile, simulation::{REGION_HEIGHT, REGION_WIDTH, mapidx, spawner::spawn_cryobed, terrain::{ground_z, submit_change_batch, ChangeRequest, MapChangeBatch, PlanetLocation}}};
 use std::fs::File;
 
 fn load_ship() -> XpFile {
@@ -52,6 +45,13 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                     changes.enqueue_change(ChangeRequest::NoVegetation { idx: tile_idx });
                     match glyph.ch {
                         32 => {} // Ignore space
+                        48 => {
+                            changes.enqueue_change(ChangeRequest::Floor {
+                                idx: tile_idx,
+                                material: plasteel,
+                            });
+                            spawn_cryobed(region_id, tile_idx);
+                        }
                         176 => changes.enqueue_change(ChangeRequest::Floor {
                             idx: tile_idx,
                             material: plasteel,

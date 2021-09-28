@@ -23,6 +23,7 @@ pub fn loading_screen(
     mut materials: ResMut<Assets<StandardMaterial>>,
     asset_server: Res<AssetServer>,
     assets: ResMut<Assets<Texture>>,
+    mut meshes: ResMut<Assets<Mesh>>,
 ) {
     egui::Window::new("Loading - Please Wait")
         .auto_sized()
@@ -32,7 +33,7 @@ pub fn loading_screen(
         .show(egui_context.ctx(), |ui| match res.cycle {
             0..=2 => res.cycle += 1,
             3 => load_raws(&mut res, ui),
-            4 => load_textures(&mut res, &asset_server, &mut materials, ui),
+            4 => load_textures(&mut res, &asset_server, &mut materials, ui, &mut meshes),
             5 => texture_events(ui, res, ev_asset, materials, assets, state),
             _ => {}
         });
@@ -71,6 +72,7 @@ fn load_textures(
     asset_server: &AssetServer,
     materials: &mut Assets<StandardMaterial>,
     ui: &mut egui::Ui,
+    meshes: &mut Assets<Mesh>,
 ) {
     res.cycle += 1;
     ui.label("Loading World Textures");
@@ -150,6 +152,11 @@ fn load_textures(
     // Load wavefront - test code
     let tree_handle: Handle<Mesh> = asset_server.load("obj/Low_Poly_Forest_treeTall01.obj");
     crate::simulation::terrain::PLANET_STORE.write().tree_handle = Some(tree_handle.clone());
+
+    // Load cryobed - also test code
+    let bed_mesh = crate::asset_handlers::vox::load_vox_file("assets/vox/cryobed32.vox").to_mesh();
+    let bed_handle = meshes.add(bed_mesh);
+    crate::simulation::terrain::PLANET_STORE.write().bed_handle = Some(bed_handle.clone());
 }
 
 fn load_raws(res: &mut ResMut<LoadingResource>, ui: &mut egui::Ui) {
