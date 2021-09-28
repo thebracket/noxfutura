@@ -25,6 +25,7 @@ flate2 = "1.0"
 byteorder = "1.4"
 bevy_obj = "0.5"
 dot_vox = "4.1"
+image = "0.23"
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]

@@ -42,4 +42,12 @@ pub fn setup_ui(
         ..Default::default()
     });
     crate::simulation::terrain::PLANET_STORE.write().tree_mat = Some(tree_mat);
+
+    let vox_tex: Handle<Texture> = asset_server.load("vox/palette.png");
+    let vox_mat = materials.add(StandardMaterial {
+        base_color_texture: Some(vox_tex),
+        roughness: 0.8,
+        ..Default::default()
+    });
+    crate::simulation::terrain::PLANET_STORE.write().vox_mat = Some(vox_mat);
 }

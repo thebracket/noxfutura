@@ -1,6 +1,8 @@
-use std::collections::HashMap;
-
+use std::{collections::HashMap, path::Path};
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
+use crate::asset_handlers::vox::greedy::VoxMap;
+use self::model_size::ModelSize;
+mod model_size;
 mod greedy;
 
 pub fn load_vox_file(filename: &str) -> VoxTemplate {
@@ -8,14 +10,12 @@ pub fn load_vox_file(filename: &str) -> VoxTemplate {
         println!("Loaded {}", filename);
         for model in &model.models {
             let mut template = VoxTemplate {
-                width: model.size.x as u8,
-                height: model.size.y as u8,
-                depth: model.size.z as u8,
-                voxels: HashMap::new(),
+                size: ModelSize::new(model.size),
+                voxels: VoxMap::new(),
             };
             for vox in model.voxels.iter() {
-                let idx = template.idx(vox.x, vox.y, vox.z);
-                template.voxels.insert(idx, vox.i);
+                let idx = template.size.idx(vox.x.into(), vox.y.into(), vox.z.into());
+                template.voxels.insert(idx as i32, vox.i);
             }
             return template;
         }
@@ -26,33 +26,13 @@ pub fn load_vox_file(filename: &str) -> VoxTemplate {
 }
 
 pub struct VoxTemplate {
-    pub width: u8,
-    pub height: u8,
-    pub depth: u8,
-    pub voxels: HashMap<usize, u8>,
+    pub size: ModelSize,
+    pub voxels: VoxMap,
 }
 
 impl VoxTemplate {
-    pub fn idx(&self, x: u8, y: u8, z: u8) -> usize {
-        ((z as usize * self.width as usize * self.height as usize)
-            + (y as usize * self.width as usize)
-            + x as usize) as usize
-    }
-
-    pub fn idxmap(&self, mut idx: usize) -> (usize, usize, usize) {
-        let layer_size: usize = self.width as usize * self.height as usize;
-        let z = idx / layer_size;
-        idx -= z * layer_size;
-
-        let y = idx / self.width as usize;
-        idx -= y * self.width as usize;
-
-        let x = idx;
-        (x, y, z)
-    }
-
     pub fn merge(&mut self, other: &VoxTemplate) {
-        if self.width != other.width || self.height != other.height || self.depth != other.depth {
+        if self.size != other.size {
             panic!("Cannot merge voxel templates of differing size");
         }
 
@@ -78,4 +58,28 @@ impl VoxTemplate {
         mesh.set_attribute(Mesh::ATTRIBUTE_UV_0, VertexAttributeValues::Float2(uvs));
         mesh
     }
+}
+
+pub fn build_palette_png() {
+    use image::{ImageBuffer, Rgb};
+    if Path::new("assets/vox/palette.png").exists() {
+        return;
+    }
+    let mut image = ImageBuffer::<Rgb<u8>, std::vec::Vec<u8>>::new(64, 64);
+    for (index, color_bytes) in dot_vox::DEFAULT_PALETTE.iter().enumerate() {
+        let r: u8 = ((color_bytes & 0x00ff0000) >> 16) as u8;
+        let g: u8 = ((color_bytes & 0x0000ff00) >> 8) as u8;
+        let b: u8 = (color_bytes & 0x000000ff) as u8;
+
+        println!("{}", index);
+        let x = ((index % 16)*4) as u32;
+        let y = ((index / 16)*4) as u32;
+
+        for iy in 0..4 {
+            for ix in 0..4 {
+                *image.get_pixel_mut(x+ix, y+iy) = image::Rgb([r,g,b]);
+            }
+        }
+    }
+    image.save("assets/vox/palette.png").unwrap();
 }

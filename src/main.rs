@@ -1,3 +1,4 @@
+use asset_handlers::vox::build_palette_png;
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*};
 use bevy_egui::EguiPlugin;
 use bevy_obj::*;
@@ -28,6 +29,7 @@ pub enum AppState {
 }
 
 fn main() {
+    build_palette_png();
     App::build()
         .insert_resource(WindowDescriptor {
             title: "Nox Futura".to_string(),

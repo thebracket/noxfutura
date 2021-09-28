@@ -36,9 +36,13 @@ pub fn spawn_game_entities(mut commands: Commands) {
                 });
             }
             SpawnRequest::CryoBed => {
+                let mut transform = Transform::default();
+                transform.translation = Vec3::new(mx, my, mz);
+                transform.scale = Vec3::new(0.03125, 0.03125, 0.03125);
                 commands.spawn_bundle(PbrBundle {
                     mesh: plock.bed_handle.as_ref().unwrap().clone(),
-                    transform: Transform::from_xyz(mx, my, mz),
+                    material: plock.vox_mat.as_ref().unwrap().clone(),
+                    transform,
                     visible: Visible {
                         is_visible: true,
                         is_transparent: false,

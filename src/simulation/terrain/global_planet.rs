@@ -19,6 +19,7 @@ pub struct PlanetData {
     pub tree_handle: Option<Handle<Mesh>>,
     pub tree_mat: Option<Handle<StandardMaterial>>,
     pub bed_handle: Option<Handle<Mesh>>,
+    pub vox_mat: Option<Handle<StandardMaterial>>,
 }
 
 impl PlanetData {
@@ -33,6 +34,7 @@ impl PlanetData {
             tree_handle: None,
             tree_mat: None,
             bed_handle: None,
+            vox_mat: None,
         }
     }
 }
