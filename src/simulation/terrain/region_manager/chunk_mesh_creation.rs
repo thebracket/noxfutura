@@ -57,7 +57,12 @@ pub fn chunk_mesh_creation_system(
                                     mesh_handle: mesh_handle.clone(),
                                     region_id: chunk.region,
                                 })
-                                .insert(Position::new(chunk.region, chunk.location.x, chunk.location.y, layer.location.z));
+                                .insert(Position::new(
+                                    chunk.region,
+                                    chunk.location.x,
+                                    chunk.location.y,
+                                    layer.location.z,
+                                ));
                         }
                     }
                 }

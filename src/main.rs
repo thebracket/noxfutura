@@ -14,10 +14,10 @@ use simulation::{
 //use simulation::terrain::{game_camera_system, manage_terrain_tasks, tile_changes_system};
 use ui::*;
 mod asset_handlers;
+mod components;
 mod geometry;
 mod raws;
 mod simulation;
-mod components;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum AppState {

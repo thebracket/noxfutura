@@ -1,5 +1,11 @@
-use super::{SPAWNS, SpawnRequest};
-use crate::{components::Position, simulation::{idxmap, terrain::{PLANET_STORE, PlanetLocation}}};
+use super::{SpawnRequest, SPAWNS};
+use crate::{
+    components::Position,
+    simulation::{
+        idxmap,
+        terrain::{PlanetLocation, PLANET_STORE},
+    },
+};
 use bevy::prelude::*;
 
 pub fn spawn_game_entities(mut commands: Commands) {
@@ -22,23 +28,24 @@ pub fn spawn_game_entities(mut commands: Commands) {
 
         match &s.event {
             SpawnRequest::Tree => {
-                let (x,y,z) = idxmap(s.tile_location);
+                let (x, y, z) = idxmap(s.tile_location);
                 let pos = Position::new(s.region_id, x, y, z);
                 let plock = PLANET_STORE.read();
-                commands.spawn_bundle(PbrBundle {
-                    mesh: plock.tree_handle.as_ref().unwrap().clone(),
-                    material: plock.tree_mat.as_ref().unwrap().clone(),
-                    transform,
-                    visible: Visible {
-                        is_visible: true,
-                        is_transparent: false,
-                    },
-                    ..Default::default()
-                })
-                .insert(pos);
+                commands
+                    .spawn_bundle(PbrBundle {
+                        mesh: plock.tree_handle.as_ref().unwrap().clone(),
+                        material: plock.tree_mat.as_ref().unwrap().clone(),
+                        transform,
+                        visible: Visible {
+                            is_visible: true,
+                            is_transparent: false,
+                        },
+                        ..Default::default()
+                    })
+                    .insert(pos);
             }
-            SpawnRequest::RawEntity{tag} => {
-                let (x,y,z) = idxmap(s.tile_location);
+            SpawnRequest::RawEntity { tag } => {
+                let (x, y, z) = idxmap(s.tile_location);
                 spawn_vox_mesh(&mut commands, s.region_id, x, y, z, &tag);
             }
         }
@@ -46,7 +53,14 @@ pub fn spawn_game_entities(mut commands: Commands) {
     spawns.clear();
 }
 
-fn spawn_vox_mesh(commands: &mut Commands, region_id: PlanetLocation, x: usize, y: usize, z:usize, tag: &str) {
+fn spawn_vox_mesh(
+    commands: &mut Commands,
+    region_id: PlanetLocation,
+    x: usize,
+    y: usize,
+    z: usize,
+    tag: &str,
+) {
     let pos = Position::new(region_id, x, y, z);
     let world_pos = pos.to_world();
     let plock = PLANET_STORE.read();
@@ -54,14 +68,16 @@ fn spawn_vox_mesh(commands: &mut Commands, region_id: PlanetLocation, x: usize, 
     let mut transform = Transform::default();
     transform.translation = world_pos;
     transform.scale = Vec3::new(0.03125, 0.03125, 0.03125);
-    commands.spawn_bundle(PbrBundle {
-        mesh: plock.vox_meshes[mesh_id].clone(),
-        material: plock.vox_mat.as_ref().unwrap().clone(),
-        transform,
-        visible: Visible {
-            is_visible: true,
-            is_transparent: false,
-        },
-        ..Default::default()
-    }).insert(pos);
+    commands
+        .spawn_bundle(PbrBundle {
+            mesh: plock.vox_meshes[mesh_id].clone(),
+            material: plock.vox_mat.as_ref().unwrap().clone(),
+            transform,
+            visible: Visible {
+                is_visible: true,
+                is_transparent: false,
+            },
+            ..Default::default()
+        })
+        .insert(pos);
 }

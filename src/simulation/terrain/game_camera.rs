@@ -1,6 +1,9 @@
-use crate::{components::Position, simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH}};
-use bevy::prelude::*;
 use crate::components::MapRenderLayer;
+use crate::{
+    components::Position,
+    simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH},
+};
+use bevy::prelude::*;
 
 pub fn spawn_game_camera(
     commands: &mut Commands,

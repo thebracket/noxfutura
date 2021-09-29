@@ -1,6 +1,6 @@
 use crate::geometry::constants::CUBE_NORMALS;
 
-use super::{VoxTemplate, model_size::ModelSize};
+use super::{model_size::ModelSize, VoxTemplate};
 use std::collections::{HashMap, HashSet};
 pub type VoxMap = HashMap<i32, u8>;
 
@@ -134,7 +134,7 @@ fn grow_in(
 }
 
 //const GEOMETRY_SIZE : f32 = 1.0 / 32.0;
-const GEOMETRY_SIZE : f32 = 1.0 / 1.0;
+const GEOMETRY_SIZE: f32 = 1.0 / 1.0;
 
 fn add_vox_cube(
     vertices: &mut Vec<[f32; 3]>,
@@ -249,8 +249,8 @@ fn add_vox_cube(
     ];
     normals.extend_from_slice(&NORMAL_GEOMETRY);
 
-    let mx = ((mat_idx % 16) * 4)+2;
-    let my = ((mat_idx / 16) * 4)+2;
+    let mx = ((mat_idx % 16) * 4) + 2;
+    let my = ((mat_idx / 16) * 4) + 2;
     //println!("Mat: {}={},{}",mat_idx, mx, my);
 
     let mat_x = 1.0 - (mx as f32 / 64.0);

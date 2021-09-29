@@ -15,7 +15,7 @@ pub struct EntitySpawn {
 
 pub enum SpawnRequest {
     Tree,
-    RawEntity{tag: String}
+    RawEntity { tag: String },
 }
 
 pub fn spawn_tree(region_id: PlanetLocation, tile_location: usize) {
@@ -30,6 +30,8 @@ pub fn spawn_raws_entity(region_id: PlanetLocation, tile_location: usize, tag: &
     SPAWNS.write().push(EntitySpawn {
         region_id,
         tile_location,
-        event: SpawnRequest::RawEntity{tag: tag.to_string()},
+        event: SpawnRequest::RawEntity {
+            tag: tag.to_string(),
+        },
     });
 }

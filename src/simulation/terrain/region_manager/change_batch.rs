@@ -1,6 +1,6 @@
 use crate::simulation::{
     idxmap,
-    terrain::{ChunkLocation, PlanetLocation, RampDirection, TileType, REGIONS},
+    terrain::{ChunkLocation, PlanetLocation, RampDirection, StairsType, TileType, REGIONS},
     CHUNK_SIZE,
 };
 use lazy_static::*;
@@ -26,6 +26,11 @@ pub enum ChangeRequest {
         idx: usize,
         material: usize,
         direction: RampDirection,
+    },
+    Stairs {
+        idx: usize,
+        material: usize,
+        direction: StairsType,
     },
     SpawnPlant {
         idx: usize,
@@ -116,6 +121,15 @@ fn process_batch(batch: MapChangeBatch) -> HashSet<ChunkLocation> {
                     direction,
                 } => {
                     region.tile_types[idx] = TileType::Ramp { direction };
+                    region.material[idx] = material;
+                    add_chunk(&mut refresh_chunks, idx);
+                }
+                ChangeRequest::Stairs {
+                    idx,
+                    material,
+                    direction,
+                } => {
+                    region.tile_types[idx] = TileType::Stairs { direction };
                     region.material[idx] = material;
                     add_chunk(&mut refresh_chunks, idx);
                 }

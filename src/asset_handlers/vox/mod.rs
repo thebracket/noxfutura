@@ -1,9 +1,9 @@
-use std::{collections::HashMap, path::Path};
-use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
-use crate::asset_handlers::vox::greedy::VoxMap;
 use self::model_size::ModelSize;
-mod model_size;
+use crate::asset_handlers::vox::greedy::VoxMap;
+use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
+use std::{collections::HashMap, path::Path};
 mod greedy;
+mod model_size;
 
 pub fn load_vox_file(filename: &str) -> VoxTemplate {
     if let Ok(model) = dot_vox::load(filename) {
@@ -73,12 +73,12 @@ pub fn build_palette_png() {
         let b: u8 = (color_bytes & 0x000000ff) as u8;
 
         println!("{}", index);
-        let x = ((index % 16)*4) as u32;
-        let y = ((index / 16)*4) as u32;
+        let x = ((index % 16) * 4) as u32;
+        let y = ((index / 16) * 4) as u32;
 
         for iy in 0..4 {
             for ix in 0..4 {
-                *image.get_pixel_mut(x+ix, y+iy) = image::Rgb([r,g,b]);
+                *image.get_pixel_mut(x + ix, y + iy) = image::Rgb([r, g, b]);
             }
         }
     }

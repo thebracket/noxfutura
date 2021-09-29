@@ -1,5 +1,6 @@
 use super::{render_chunk_layer::RenderChunkLayer, RenderChunk};
-use crate::simulation::terrain::{Region, REGIONS};
+use crate::simulation::spawner::spawn_raws_entity;
+use crate::simulation::terrain::{Region, StairsType, REGIONS};
 use crate::simulation::{
     terrain::{chunk_iter::ChunkIterator, ChunkLocation, PlanetLocation, TileType},
     CHUNK_SIZE,
@@ -49,7 +50,6 @@ pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) ->
                                 material,
                                 idx,
                             );
-                            //chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
                         }
                         TileType::Solid => {
                             add_cube(
@@ -58,7 +58,6 @@ pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) ->
                                 material,
                                 idx,
                             );
-                            //chunk.layers.as_mut().unwrap()[layer].add_cube(material, idx)
                         }
                         TileType::Floor => {
                             chunk.layers.as_mut().unwrap()[layer].add_floor(material, idx)
@@ -66,6 +65,11 @@ pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) ->
                         TileType::Ramp { direction } => {
                             chunk.layers.as_mut().unwrap()[layer].add_ramp(material, idx, direction)
                         }
+                        TileType::Stairs { direction } => match direction {
+                            StairsType::Up => {}
+                            StairsType::Down => {}
+                            StairsType::UpDown => {}
+                        },
                         _ => {}
                     }
                 });

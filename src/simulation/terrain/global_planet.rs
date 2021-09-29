@@ -1,5 +1,5 @@
-use crate::{asset_handlers::vox::VoxTemplate, raws::StrataMaterials};
 use crate::simulation::Planet;
+use crate::{asset_handlers::vox::VoxTemplate, raws::StrataMaterials};
 use bevy::prelude::{Handle, Mesh, StandardMaterial};
 use bracket_noise::prelude::FastNoise;
 use lazy_static::*;
