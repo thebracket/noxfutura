@@ -84,7 +84,7 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx - (REGION_WIDTH+1), "cordex");
+                            spawn_raws_entity(region_id, tile_idx - (REGION_WIDTH + 1), "cordex");
                         }
                         76 => {
                             changes.enqueue_change(ChangeRequest::Floor {

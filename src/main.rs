@@ -30,6 +30,7 @@ pub enum AppState {
 }
 
 fn main() {
+    //crate::geometry::ramp_rotation_helper(); // Use this to help with math
     build_palette_png();
     App::build()
         .insert_resource(WindowDescriptor {

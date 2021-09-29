@@ -94,7 +94,7 @@ pub fn is_tile_floor(region_id: PlanetLocation, tile_idx: usize) -> bool {
     if let Some(region) = region_lock.regions.get(&index) {
         match region.tile_types[tile_idx] {
             TileType::Floor => true,
-            TileType::Empty => {
+            /*TileType::Empty => {
                 let (x, y, z) = idxmap(tile_idx);
                 if z > 1 {
                     let below_idx = mapidx(x, y, z - 1);
@@ -102,7 +102,7 @@ pub fn is_tile_floor(region_id: PlanetLocation, tile_idx: usize) -> bool {
                 } else {
                     false // Bottom of map
                 }
-            }
+            }*/
             _ => false,
         }
     } else {
