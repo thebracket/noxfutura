@@ -13,7 +13,7 @@ pub fn greedy_cubes(
     let mut cube_index = template.voxels.clone();
     let size = &template.size;
 
-    /*let invisible = cube_index
+    let invisible = cube_index
         .iter()
         .filter(|(idx, _)| {
             cube_index.contains_key(&(*idx - 1))
@@ -26,7 +26,7 @@ pub fn greedy_cubes(
         .map(|(idx, _)| *idx)
         .collect::<HashSet<i32>>();
     //println!("Invisibility cull: {}", invisible.len());
-    cube_index.retain(|idx, _| !invisible.contains(idx));*/
+    cube_index.retain(|idx, _| !invisible.contains(idx));
 
     loop {
         let min_iter = cube_index.keys().min();
