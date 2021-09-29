@@ -1,4 +1,4 @@
-use super::{SpawnRequest, SPAWNS};
+use super::{SPAWNS, SpawnRequest, buildings::spawn_building};
 use crate::{
     components::Position,
     simulation::{
@@ -46,7 +46,11 @@ pub fn spawn_game_entities(mut commands: Commands) {
             }
             SpawnRequest::RawEntity { tag } => {
                 let (x, y, z) = idxmap(s.tile_location);
-                spawn_vox_mesh(&mut commands, s.region_id, x, y, z, &tag);
+                if tag == "stairs_up" || tag == "stairs_down" || tag == "stairs_updown" {
+                    spawn_vox_mesh(&mut commands, s.region_id, x, y, z, &tag);
+                } else {
+                    spawn_building(&mut commands, s.region_id, x, y, z, &tag);
+                }
             }
         }
     });

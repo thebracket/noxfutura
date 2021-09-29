@@ -1,7 +1,7 @@
 use self::model_size::ModelSize;
 use crate::asset_handlers::vox::greedy::VoxMap;
 use bevy::{prelude::Mesh, render::mesh::VertexAttributeValues};
-use std::{collections::HashMap, path::Path};
+use std::path::Path;
 mod greedy;
 mod model_size;
 
