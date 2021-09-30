@@ -1,5 +1,6 @@
-use crate::simulation::{terrain::PlanetLocation, REGION_HEIGHT, REGION_WIDTH};
+use crate::simulation::{REGION_HEIGHT, REGION_WIDTH};
 use bevy::prelude::Vec3;
+use super::PlanetLocation;
 
 /// Represents a location in the world
 pub struct Position {

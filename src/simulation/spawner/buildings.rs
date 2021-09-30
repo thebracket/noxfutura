@@ -1,6 +1,6 @@
-use crate::components::{Description, Position};
+use crate::components::{Description, Position, PlanetLocation};
 use crate::raws::{BuildingProvides, RAWS};
-use crate::simulation::terrain::{PlanetLocation, PLANET_STORE};
+use crate::simulation::terrain::PLANET_STORE;
 use bevy::math::Vec3;
 use bevy::prelude::*;
 

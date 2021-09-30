@@ -1,9 +1,7 @@
 use super::{
-    mapidx,
-    spawner::spawn_tree,
     terrain::{
-        ground_z, is_region_loaded, set_global_planet, spawn_playable_region,
-        terrain_changes_requested, PlanetLocation,
+        is_region_loaded, set_global_planet, spawn_playable_region,
+        terrain_changes_requested,
     },
     Planet,
 };
@@ -17,20 +15,19 @@ mod ramping;
 mod shipwright;
 mod trees;
 use crate::simulation::terrain::PLANET_STORE;
+use crate::components::PlanetLocation;
 
 pub struct RegionBuilder {
     planet: Planet,
-    tile_x: usize,
-    tile_y: usize,
+    crash_site: PlanetLocation,
     started: bool,
 }
 
 impl RegionBuilder {
-    pub fn new(planet: Planet, tile_x: usize, tile_y: usize) -> Self {
+    pub fn new(planet: Planet, crash_site: PlanetLocation) -> Self {
         Self {
             planet,
-            tile_x,
-            tile_y,
+            crash_site,
             started: false,
         }
     }
@@ -39,10 +36,9 @@ impl RegionBuilder {
         if !self.started {
             self.started = true;
             let p = self.planet.clone();
-            let x = self.tile_x;
-            let y = self.tile_y;
+            let c = self.crash_site.clone();
             let task = task_master.spawn(async move {
-                build_region(p, x, y);
+                build_region(p, c);
             });
             commands.spawn().insert(task);
         }
@@ -96,10 +92,9 @@ fn update_status(new_status: RegionBuilderStatus) {
     REGION_GEN.write().status = new_status;
 }
 
-fn build_region(planet: Planet, tile_x: usize, tile_y: usize) {
+fn build_region(planet: Planet, planet_idx: PlanetLocation) {
     set_global_planet(planet);
     update_status(RegionBuilderStatus::Chunking);
-    let planet_idx = PlanetLocation::new(tile_x, tile_y);
     spawn_playable_region(planet_idx);
     while !is_region_loaded(planet_idx) {
         std::thread::sleep(Duration::from_millis(10));

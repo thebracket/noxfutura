@@ -1,11 +1,11 @@
 use super::{render_chunk_layer::RenderChunkLayer, RenderChunk};
-use crate::simulation::spawner::spawn_raws_entity;
 use crate::simulation::terrain::{Region, StairsType, REGIONS};
 use crate::simulation::{
-    terrain::{chunk_iter::ChunkIterator, ChunkLocation, PlanetLocation, TileType},
+    terrain::{chunk_iter::ChunkIterator, ChunkLocation, TileType},
     CHUNK_SIZE,
 };
 use crate::simulation::{REGION_HEIGHT, REGION_TILES_COUNT, REGION_WIDTH};
+use crate::components::PlanetLocation;
 
 pub fn build_render_chunk(region_id: PlanetLocation, location: ChunkLocation) -> RenderChunk {
     if is_chunk_empty(region_id, location) {

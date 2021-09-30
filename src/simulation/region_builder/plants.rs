@@ -1,12 +1,11 @@
 use crate::raws::{MaterialLayer, RAWS};
 use crate::simulation::region_builder::PLANET_STORE;
-use crate::simulation::spawner::spawn_tree;
 use crate::simulation::terrain::{
     get_material_idx, ground_z, is_tile_floor, submit_change_batch, ChangeRequest, MapChangeBatch,
-    PlanetLocation,
 };
 use crate::simulation::{mapidx, REGION_HEIGHT, REGION_WIDTH};
 use bracket_random::prelude::RandomNumberGenerator;
+use crate::components::PlanetLocation;
 
 pub(crate) fn grow_plants(region_id: PlanetLocation) {
     let planet_lock = PLANET_STORE.read();

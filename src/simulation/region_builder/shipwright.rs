@@ -6,12 +6,13 @@ use crate::{
         mapidx,
         spawner::spawn_raws_entity,
         terrain::{
-            ground_z, submit_change_batch, ChangeRequest, MapChangeBatch, PlanetLocation,
+            ground_z, submit_change_batch, ChangeRequest, MapChangeBatch,
             StairsType,
         },
         REGION_HEIGHT, REGION_WIDTH,
     },
 };
+use crate::components::PlanetLocation;
 use std::fs::File;
 
 fn load_ship() -> XpFile {

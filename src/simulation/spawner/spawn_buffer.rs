@@ -1,7 +1,6 @@
 use lazy_static::*;
 use parking_lot::RwLock;
-
-use crate::simulation::terrain::PlanetLocation;
+use crate::components::PlanetLocation;
 
 lazy_static! {
     pub static ref SPAWNS: RwLock<Vec<EntitySpawn>> = RwLock::new(Vec::new());

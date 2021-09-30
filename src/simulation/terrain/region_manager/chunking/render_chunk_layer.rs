@@ -1,8 +1,9 @@
 use super::material_buffer::MaterialBuffer;
 use crate::simulation::{
-    terrain::{ChunkLocation, PlanetLocation, RampDirection},
+    terrain::{ChunkLocation, RampDirection},
     REGION_HEIGHT, REGION_WIDTH,
 };
+use crate::components::PlanetLocation;
 use bevy::prelude::Mesh;
 use std::collections::HashMap;
 

@@ -1,5 +1,6 @@
-use super::{PlanetLocation, TileType};
+use super::TileType;
 use crate::simulation::{CHUNKS_PER_REGION, REGION_TILES_COUNT};
+use crate::components::PlanetLocation;
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum RegionStatus {

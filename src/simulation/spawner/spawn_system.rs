@@ -1,9 +1,9 @@
 use super::{SPAWNS, SpawnRequest, buildings::spawn_building};
 use crate::{
-    components::Position,
+    components::{Position, PlanetLocation},
     simulation::{
         idxmap,
-        terrain::{PlanetLocation, PLANET_STORE},
+        terrain::PLANET_STORE,
     },
 };
 use bevy::prelude::*;

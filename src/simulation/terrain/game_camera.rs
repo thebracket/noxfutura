@@ -1,4 +1,3 @@
-use crate::components::MapRenderLayer;
 use crate::{
     components::Position,
     simulation::{REGION_DEPTH, REGION_HEIGHT, REGION_WIDTH},

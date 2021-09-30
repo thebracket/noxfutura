@@ -2,10 +2,11 @@ use crate::simulation::{
     mapidx,
     terrain::{
         get_material_idx, ground_z, is_tile_floor, submit_change_batch, ChangeRequest,
-        MapChangeBatch, PlanetLocation, RampDirection,
+        MapChangeBatch, RampDirection,
     },
     REGION_HEIGHT, REGION_WIDTH,
 };
+use crate::components::PlanetLocation;
 
 pub(crate) fn build_ramps(planet_idx: PlanetLocation) {
     let mut changes = MapChangeBatch::new(planet_idx);
