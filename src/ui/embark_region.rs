@@ -1,6 +1,6 @@
 use super::EmbarkResources;
-use crate::simulation::{region_builder::RegionBuilder, terrain::spawn_game_camera};
 use crate::components::PlanetLocation;
+use crate::simulation::{region_builder::RegionBuilder, terrain::spawn_game_camera};
 use bevy::{pbr::AmbientLight, prelude::*, tasks::AsyncComputeTaskPool};
 use bevy_egui::{
     egui::{self, Pos2},
@@ -78,7 +78,10 @@ pub fn resume_embark_region(
 
     // Region build link
     spawn_game_camera(&mut commands, embark.tile_x, embark.tile_y, 128, 128, 200);
-    let rb = RegionBuilder::new(embark.planet.clone(), PlanetLocation::new(embark.tile_x, embark.tile_y));
+    let rb = RegionBuilder::new(
+        embark.planet.clone(),
+        PlanetLocation::new(embark.tile_x, embark.tile_y),
+    );
     commands.insert_resource(rb);
 }
 

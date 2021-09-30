@@ -1,4 +1,4 @@
-use crate::components::{Description, Position, PlanetLocation};
+use crate::components::{Description, PlanetLocation, Position};
 use crate::raws::{BuildingProvides, RAWS};
 use crate::simulation::terrain::PLANET_STORE;
 use bevy::math::Vec3;
@@ -24,7 +24,7 @@ pub fn spawn_building(
         };
 
         // Actually perform the spawning
-        let pos = Position::new(region_id, x, y, z);
+        let pos = Position::with_tile_coords(region_id, x, y, z);
         let world_pos = pos.to_world();
         let plock = PLANET_STORE.read();
         let mesh_id = crate::raws::RAWS.read().vox.get_model_idx(tag);
@@ -54,7 +54,7 @@ pub fn spawn_building(
                     light: Light {
                         color: Color::rgb(color.0, color.1, color.2),
                         fov: 360.0,
-                        depth: -(*radius as f32) .. *radius as f32,
+                        depth: -(*radius as f32)..*radius as f32,
                         range: *radius as f32,
                         intensity: 50.0,
                     },

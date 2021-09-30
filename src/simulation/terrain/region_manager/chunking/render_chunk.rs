@@ -1,6 +1,6 @@
 use super::render_chunk_layer::RenderChunkLayer;
-use crate::simulation::terrain::ChunkLocation;
 use crate::components::PlanetLocation;
+use crate::simulation::terrain::ChunkLocation;
 
 /// A RenderChunk represents a single, renderable chunk. To support
 /// Dwarf Fortress layer-cake maps, each layer is represented by its

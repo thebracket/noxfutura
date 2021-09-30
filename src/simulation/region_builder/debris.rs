@@ -1,8 +1,8 @@
+use crate::components::PlanetLocation;
 use crate::simulation::{
     mapidx,
     terrain::{ground_z, submit_change_batch, ChangeRequest, MapChangeBatch},
 };
-use crate::components::PlanetLocation;
 
 pub(crate) fn debris_trail(region_id: PlanetLocation) {
     let ship_x = 128;

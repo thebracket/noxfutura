@@ -1,18 +1,15 @@
 use bevy::math::Vec3;
 
+use crate::components::PlanetLocation;
 use crate::{
     asset_handlers::rex::XpFile,
     simulation::{
         mapidx,
         spawner::spawn_raws_entity,
-        terrain::{
-            ground_z, submit_change_batch, ChangeRequest, MapChangeBatch,
-            StairsType,
-        },
+        terrain::{ground_z, submit_change_batch, ChangeRequest, MapChangeBatch, StairsType},
         REGION_HEIGHT, REGION_WIDTH,
     },
 };
-use crate::components::PlanetLocation;
 use std::fs::File;
 
 fn load_ship() -> XpFile {

@@ -1,10 +1,7 @@
-use super::{SPAWNS, SpawnRequest, buildings::spawn_building};
+use super::{buildings::spawn_building, SpawnRequest, SPAWNS};
 use crate::{
-    components::{Position, PlanetLocation},
-    simulation::{
-        idxmap,
-        terrain::PLANET_STORE,
-    },
+    components::{PlanetLocation, Position},
+    simulation::{idxmap, terrain::PLANET_STORE},
 };
 use bevy::prelude::*;
 
@@ -16,10 +13,10 @@ pub fn spawn_game_entities(mut commands: Commands) {
     let mut spawns = SPAWNS.write();
     spawns.iter().for_each(|s| {
         let (x, y, z) = idxmap(s.tile_location);
-        let (rx, ry, rz) = s.region_id.to_world();
-        let mx = rx + x as f32;
-        let my = ry + y as f32;
-        let mz = rz + z as f32;
+        let r = s.region_id.to_world();
+        let mx = r.x + x as f32;
+        let my = r.y + y as f32;
+        let mz = r.z + z as f32;
 
         let mut transform = Transform::default();
         transform.translation = Vec3::new(mx, my, mz);
@@ -29,7 +26,7 @@ pub fn spawn_game_entities(mut commands: Commands) {
         match &s.event {
             SpawnRequest::Tree => {
                 let (x, y, z) = idxmap(s.tile_location);
-                let pos = Position::new(s.region_id, x, y, z);
+                let pos = Position::with_tile_coords(s.region_id, x, y, z);
                 let plock = PLANET_STORE.read();
                 commands
                     .spawn_bundle(PbrBundle {
@@ -65,7 +62,7 @@ fn spawn_vox_mesh(
     z: usize,
     tag: &str,
 ) {
-    let pos = Position::new(region_id, x, y, z);
+    let pos = Position::with_tile_coords(region_id, x, y, z);
     let world_pos = pos.to_world();
     let plock = PLANET_STORE.read();
     let mesh_id = crate::raws::RAWS.read().vox.get_model_idx(tag);

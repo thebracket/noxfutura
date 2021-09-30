@@ -57,7 +57,7 @@ pub fn chunk_mesh_creation_system(
                                     mesh_handle: mesh_handle.clone(),
                                     region_id: chunk.region,
                                 })
-                                .insert(Position::new(
+                                .insert(Position::with_tile_coords(
                                     chunk.region,
                                     chunk.location.x,
                                     chunk.location.y,

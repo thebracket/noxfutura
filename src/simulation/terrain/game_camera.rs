@@ -187,7 +187,7 @@ pub fn game_camera_system(
             let camera_vec3 = game_camera.pos_world();
 
             for (pos, mut visible) in renderable_query.iter_mut() {
-                if pos.z > game_camera.z || pos.z < game_camera.z - 64 {
+                if pos.tile.z > game_camera.z || pos.tile.z < game_camera.z - 64 {
                     visible.is_visible = false;
                 } else {
                     let distance = camera_vec3.distance(pos.to_world());

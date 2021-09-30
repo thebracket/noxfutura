@@ -1,7 +1,6 @@
 use super::{
     terrain::{
-        is_region_loaded, set_global_planet, spawn_playable_region,
-        terrain_changes_requested,
+        is_region_loaded, set_global_planet, spawn_playable_region, terrain_changes_requested,
     },
     Planet,
 };
@@ -14,8 +13,8 @@ mod plants;
 mod ramping;
 mod shipwright;
 mod trees;
-use crate::simulation::terrain::PLANET_STORE;
 use crate::components::PlanetLocation;
+use crate::simulation::terrain::PLANET_STORE;
 
 pub struct RegionBuilder {
     planet: Planet,

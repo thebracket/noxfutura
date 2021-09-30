@@ -1,9 +1,9 @@
 use super::{build_render_chunk, RegionChunkPopulator};
+use crate::components::PlanetLocation;
 use crate::simulation::{
     terrain::{chunk_iter::ChunkIterator, RegionStatus, REGIONS},
     CHUNKS_PER_REGION, CHUNK_HEIGHT, CHUNK_SIZE, CHUNK_WIDTH, WORLD_WIDTH,
 };
-use crate::components::PlanetLocation;
 use bevy::{
     prelude::*,
     tasks::{AsyncComputeTaskPool, Task},

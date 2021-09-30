@@ -1,10 +1,10 @@
 use super::REGIONS;
+use crate::components::PlanetLocation;
 use crate::simulation::{
     mapidx,
     terrain::{RegionStatus, TileType},
     REGION_DEPTH,
 };
-use crate::components::PlanetLocation;
 
 /// Returns true when a region has reached the "TilesCreated" stage---it
 /// can be queried for tile content. Prettying hasn't occurred yet,

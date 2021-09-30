@@ -1,12 +1,12 @@
 use bevy::math::Vec3;
 use bracket_random::prelude::RandomNumberGenerator;
 
+use crate::components::PlanetLocation;
 use crate::raws::{MaterialLayer, RAWS};
 use crate::simulation::spawner::spawn_tree;
 use crate::simulation::terrain::PLANET_STORE;
 use crate::simulation::terrain::{get_material_idx, ground_z, is_tile_floor};
 use crate::simulation::{mapidx, REGION_HEIGHT, REGION_WIDTH};
-use crate::components::PlanetLocation;
 
 pub(crate) fn plant_trees(region_id: PlanetLocation) {
     let mut rng = RandomNumberGenerator::seeded(
