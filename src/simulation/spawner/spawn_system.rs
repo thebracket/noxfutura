@@ -1,6 +1,6 @@
 use super::{buildings::spawn_building, SpawnRequest, SPAWNS};
 use crate::{
-    components::{PlanetLocation, Position},
+    components::Position,
     simulation::{idxmap, terrain::PLANET_STORE},
 };
 use bevy::prelude::*;
@@ -44,9 +44,17 @@ pub fn spawn_game_entities(mut commands: Commands) {
             SpawnRequest::RawEntity { tag } => {
                 let (x, y, z) = idxmap(s.tile_location);
                 if tag == "stairs_up" || tag == "stairs_down" || tag == "stairs_updown" {
-                    spawn_vox_mesh(&mut commands, s.region_id, x, y, z, &tag);
+                    spawn_vox_mesh(
+                        &mut commands,
+                        Position::with_tile_coords(s.region_id, x, y, z),
+                        &tag,
+                    );
                 } else {
-                    spawn_building(&mut commands, s.region_id, x, y, z, &tag);
+                    spawn_building(
+                        &mut commands,
+                        Position::with_tile_coords(s.region_id, x, y, z),
+                        &tag,
+                    );
                 }
             }
         }
@@ -54,16 +62,8 @@ pub fn spawn_game_entities(mut commands: Commands) {
     spawns.clear();
 }
 
-fn spawn_vox_mesh(
-    commands: &mut Commands,
-    region_id: PlanetLocation,
-    x: usize,
-    y: usize,
-    z: usize,
-    tag: &str,
-) {
-    let pos = Position::with_tile_coords(region_id, x, y, z);
-    let world_pos = pos.to_world();
+fn spawn_vox_mesh(commands: &mut Commands, position: Position, tag: &str) {
+    let world_pos = position.to_world();
     let plock = PLANET_STORE.read();
     let mesh_id = crate::raws::RAWS.read().vox.get_model_idx(tag);
     let mut transform = Transform::default();
@@ -80,5 +80,5 @@ fn spawn_vox_mesh(
             },
             ..Default::default()
         })
-        .insert(pos);
+        .insert(position);
 }
