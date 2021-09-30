@@ -1,4 +1,4 @@
-use crate::components::PlanetLocation;
+use crate::components::Position;
 use lazy_static::*;
 use parking_lot::RwLock;
 
@@ -7,8 +7,7 @@ lazy_static! {
 }
 
 pub struct EntitySpawn {
-    pub region_id: PlanetLocation,
-    pub tile_location: usize,
+    pub position: Position,
     pub event: SpawnRequest,
 }
 
@@ -17,18 +16,16 @@ pub enum SpawnRequest {
     RawEntity { tag: String },
 }
 
-pub fn spawn_tree(region_id: PlanetLocation, tile_location: usize) {
+pub fn spawn_tree(position: Position) {
     SPAWNS.write().push(EntitySpawn {
-        region_id,
-        tile_location,
+        position,
         event: SpawnRequest::Tree,
     });
 }
 
-pub fn spawn_raws_entity(region_id: PlanetLocation, tile_location: usize, tag: &str) {
+pub fn spawn_raws_entity(position: Position, tag: &str) {
     SPAWNS.write().push(EntitySpawn {
-        region_id,
-        tile_location,
+        position,
         event: SpawnRequest::RawEntity {
             tag: tag.to_string(),
         },

@@ -1,7 +1,7 @@
 use super::{buildings::spawn_building, SpawnRequest, SPAWNS};
 use crate::{
     components::Position,
-    simulation::{idxmap, terrain::PLANET_STORE},
+    simulation::terrain::PLANET_STORE,
 };
 use bevy::prelude::*;
 
@@ -12,21 +12,15 @@ pub fn spawn_game_entities(mut commands: Commands) {
 
     let mut spawns = SPAWNS.write();
     spawns.iter().for_each(|s| {
-        let (x, y, z) = idxmap(s.tile_location);
-        let r = s.region_id.to_world();
-        let mx = r.x + x as f32;
-        let my = r.y + y as f32;
-        let mz = r.z + z as f32;
+        let world_position = s.position.to_world();
 
         let mut transform = Transform::default();
-        transform.translation = Vec3::new(mx, my, mz);
+        transform.translation = world_position;
         transform.scale = Vec3::new(0.005, 0.005, 0.005);
         transform.rotate(Quat::from_rotation_ypr(0.0, 1.5708, 0.0));
 
         match &s.event {
             SpawnRequest::Tree => {
-                let (x, y, z) = idxmap(s.tile_location);
-                let pos = Position::with_tile_coords(s.region_id, x, y, z);
                 let plock = PLANET_STORE.read();
                 commands
                     .spawn_bundle(PbrBundle {
@@ -39,20 +33,19 @@ pub fn spawn_game_entities(mut commands: Commands) {
                         },
                         ..Default::default()
                     })
-                    .insert(pos);
+                    .insert(s.position);
             }
             SpawnRequest::RawEntity { tag } => {
-                let (x, y, z) = idxmap(s.tile_location);
                 if tag == "stairs_up" || tag == "stairs_down" || tag == "stairs_updown" {
                     spawn_vox_mesh(
                         &mut commands,
-                        Position::with_tile_coords(s.region_id, x, y, z),
+                        s.position,
                         &tag,
                     );
                 } else {
                     spawn_building(
                         &mut commands,
-                        Position::with_tile_coords(s.region_id, x, y, z),
+                        s.position,
                         &tag,
                     );
                 }

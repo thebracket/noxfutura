@@ -1,6 +1,7 @@
 use crate::simulation::{REGION_HEIGHT, REGION_WIDTH};
 use bevy::math::Vec3;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct RegionTileLocation {
     pub x: usize,
     pub y: usize,

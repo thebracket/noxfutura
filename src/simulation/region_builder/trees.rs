@@ -1,7 +1,7 @@
 use bevy::math::Vec3;
 use bracket_random::prelude::RandomNumberGenerator;
 
-use crate::components::PlanetLocation;
+use crate::components::{PlanetLocation, Position};
 use crate::raws::{MaterialLayer, RAWS};
 use crate::simulation::spawner::spawn_tree;
 use crate::simulation::terrain::PLANET_STORE;
@@ -36,6 +36,7 @@ pub(crate) fn plant_trees(region_id: PlanetLocation) {
                     .distance(Vec3::new(x as f32, y as f32, 0.0));
             let tile_idx = mapidx(x, y, z);
             if crash_distance > 20.0 && is_tile_floor(region_id, tile_idx) {
+                let position = Position::with_tile_coords(region_id, x, y, z);
                 let mat_idx = get_material_idx(region_id, tile_idx);
                 let floor_material = &RAWS.read().materials.materials[mat_idx];
                 let (can_plant, quality) = match floor_material.layer {
@@ -48,9 +49,9 @@ pub(crate) fn plant_trees(region_id: PlanetLocation) {
                     if (rng.roll_dice(1, 10) as f32) < quality {
                         let die_roll = rng.roll_dice(1, 1000);
                         if die_roll < deciduous_chance {
-                            spawn_tree(region_id, tile_idx);
+                            spawn_tree(position);
                         } else if die_roll < evergreen_chance {
-                            spawn_tree(region_id, tile_idx);
+                            spawn_tree(position);
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 use bevy::math::Vec3;
 
-use crate::components::PlanetLocation;
+use crate::components::{PlanetLocation, Position};
 use crate::{
     asset_handlers::rex::XpFile,
     simulation::{
@@ -46,7 +46,8 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                 let mx = (x as i32 - 5 + crash_x as i32) as usize;
                 let my = (y as i32 - 11 + crash_y as i32) as usize;
                 let mz = z + i;
-                let tile_idx = mapidx(mx as usize, my as usize, mz);
+                let position = Position::with_tile_coords(region_id, mx, my, mz);
+                let tile_idx = position.to_tile_index();
 
                 let glyph = layer.get(x, y);
                 if let Some(glyph) = glyph {
@@ -59,7 +60,7 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "cryo_bed");
+                            spawn_raws_entity(position, "cryo_bed");
                         }
                         60 => {
                             changes.enqueue_change(ChangeRequest::Stairs {
@@ -67,7 +68,7 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                                 material: plasteel,
                                 direction: StairsType::Up,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "stairs_up");
+                            spawn_raws_entity(position, "stairs_up");
                         }
                         62 => {
                             changes.enqueue_change(ChangeRequest::Stairs {
@@ -75,21 +76,21 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                                 material: plasteel,
                                 direction: StairsType::Down,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "stairs_down");
+                            spawn_raws_entity(position, "stairs_down");
                         }
                         67 => {
                             changes.enqueue_change(ChangeRequest::Floor {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx - (REGION_WIDTH + 1), "cordex");
+                            spawn_raws_entity(position.offset(-1, -1, 0), "cordex");
                         }
                         76 => {
                             changes.enqueue_change(ChangeRequest::Floor {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "ship_lamp");
+                            spawn_raws_entity(position, "ship_lamp");
                         }
                         // Ship window - needs work
                         87 => changes.enqueue_change(ChangeRequest::SolidTile {
@@ -102,7 +103,7 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                                 material: plasteel,
                                 direction: StairsType::UpDown,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "stairs_updown");
+                            spawn_raws_entity(position, "stairs_updown");
                         }
                         176 => changes.enqueue_change(ChangeRequest::Floor {
                             idx: tile_idx,
@@ -113,7 +114,7 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "solar_panel");
+                            spawn_raws_entity(position, "solar_panel");
                         }
                         197 => {
                             changes.enqueue_change(ChangeRequest::Floor {
@@ -131,35 +132,35 @@ pub fn build_escape_pod(region_id: PlanetLocation) {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "rtg");
+                            spawn_raws_entity(position, "rtg");
                         }
                         236 => {
                             changes.enqueue_change(ChangeRequest::Floor {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "storage_locker");
+                            spawn_raws_entity(position, "storage_locker");
                         }
                         241 => {
                             changes.enqueue_change(ChangeRequest::Floor {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "battery");
+                            spawn_raws_entity(position, "battery");
                         }
                         243 => {
                             changes.enqueue_change(ChangeRequest::Floor {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "ship_defense_turret");
+                            spawn_raws_entity(position, "ship_defense_turret");
                         }
                         251 => {
                             changes.enqueue_change(ChangeRequest::Floor {
                                 idx: tile_idx,
                                 material: plasteel,
                             });
-                            spawn_raws_entity(region_id, tile_idx, "small_replicator");
+                            spawn_raws_entity(position, "small_replicator");
                         }
                         _ => {
                             changes.enqueue_change(ChangeRequest::EmptyTile { idx: tile_idx });
