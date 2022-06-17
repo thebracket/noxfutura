@@ -21,7 +21,7 @@ image = "0.23.8"
 failure = "0.1"
 glsl-to-spirv = "0.1.7"
 lazy_static = "1.4.0"
-parking_lot = "0.11.0"
+parking_lot = "0.12"
 dot_vox = "4.1.0"
 bracket-random = "0.8.0"
 bracket-geometry = { version = "0.8.1", features = ["serde"] }

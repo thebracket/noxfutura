@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 bengine = { path = "../bengine/" }
 lazy_static = "1.4.0"
-parking_lot = "0.11.0"
+parking_lot = "0.12"
 serde = { version = "1.0.115" }
 ron = "0.6.1"
 Inflector = "0.11.4" # You just had to be clever with a capital letter

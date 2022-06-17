@@ -135,7 +135,7 @@ dependencies = [
  "imgui",
  "imgui-winit-support",
  "lazy_static",
- "parking_lot 0.11.2",
+ "parking_lot 0.12.1",
  "smallvec",
  "ultraviolet 0.7.5",
  "wgpu",
@@ -1423,7 +1423,7 @@ dependencies = [
  "legion",
  "nox_raws",
  "nox_spatial",
- "parking_lot 0.11.2",
+ "parking_lot 0.12.1",
  "ron",
  "serde",
 ]
@@ -1443,7 +1443,7 @@ dependencies = [
  "nox_components",
  "nox_raws",
  "nox_spatial",
- "parking_lot 0.11.2",
+ "parking_lot 0.12.1",
  "serde",
  "smallvec",
 ]
@@ -1455,7 +1455,7 @@ dependencies = [
  "Inflector",
  "bengine",
  "lazy_static",
- "parking_lot 0.11.2",
+ "parking_lot 0.12.1",
  "ron",
  "serde",
 ]
