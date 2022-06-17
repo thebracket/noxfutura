@@ -12,7 +12,7 @@ nox_utils = { path = "nox_utils/" }
 nox_planet = { path = "nox_planet/" }
 nox_components = { path = "nox_components/" }
 lazy_static = "1.4.0"
-parking_lot = "0.11.0"
+parking_lot = "0.12"
 serde = { version = "1.0.115" }
 ron = "0.6.1"
 flate2 = "1.0.17"
